@@ -75,6 +75,12 @@ header{background:var(--azul);padding:9px 12px 11px;position:sticky;top:0;z-inde
 .cartov.on .drawer{transform:none}
 /* ===== Carrinho como MODAL CENTRALIZADO (#cartov) ===== */
 #cartov.on{display:flex;align-items:center;justify-content:center;padding:24px}
+/* ===== Painel admin (modal centralizado) ===== */
+#adminov.on{display:flex;align-items:center;justify-content:center;padding:20px}
+#adminov .drawer{position:relative;right:auto;top:auto;transform:none;width:100%;height:auto;max-height:calc(100dvh - 40px);border-radius:16px;overflow:hidden;box-shadow:0 18px 60px rgba(10,25,45,.45)}
+.admrow{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid #f0f0f0}
+.admrow:last-child{border-bottom:0}
+@media(max-width:600px){#adminov.on{padding:8px}#adminov .drawer{max-height:calc(100dvh - 16px)}#adminov .dbody>div [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr}}
 /* barra de passos e navegacao: escondidas por padrao (desktop mostra tudo) */
 #cartov .csteps{display:none}
 #cartov .cnav{display:none}
@@ -311,11 +317,106 @@ function render(){
   }).join('');
 }
 function setCookie(v){try{localStorage.setItem('sullab_cookie',v);}catch(e){}var b=document.getElementById('cookieBar');if(b)b.style.display='none';if(v==='granted'&&window.sullabLoadGA)sullabLoadGA();}function initCookie(){var c='';try{c=localStorage.getItem('sullab_cookie')||'';}catch(e){}if(!c){var b=document.getElementById('cookieBar');if(b)b.style.display='flex';}}chips();fillBrandSel();renderSegRow();render();initPmode();badgeOrders();initCookie();
+/* ===== PEDIDO MONTADO POR ADMIN (link) ===== */
+function _idxByCod(cod){for(var i=0;i<P.length;i++){if(P[i].cod===cod)return i;}return -1;}
+function loadOrderFromLink(){
+  try{
+    var qs=new URLSearchParams(location.search);
+    var data=qs.get('pedido')||(location.hash.indexOf('pedido=')>=0?decodeURIComponent(location.hash.split('pedido=')[1]):'');
+    if(!data)return false;
+    var _s=data.replace(/-/g,'+').replace(/_/g,'/');while(_s.length%4)_s+='=';var _bin=atob(_s);var _by=new Uint8Array(_bin.length);for(var _i=0;_i<_bin.length;_i++)_by[_i]=_bin.charCodeAt(_i);var o=JSON.parse(new TextDecoder().decode(_by));
+    if(o.items&&o.items.length){cart={};o.items.forEach(function(it){var idx=_idxByCod(it.c);if(idx>=0)cart[idx]=it.q;});}
+    if(o.addr){addr=o.addr;try{localStorage.setItem('sullab_addr',JSON.stringify(addr));}catch(e){}}
+    if(o.cli){try{localStorage.setItem('sullab_cliente_montado',JSON.stringify(o.cli));}catch(e){}}
+    try{localStorage.setItem('sullab_cart',JSON.stringify(cart));}catch(e){}
+    badge();
+    setTimeout(function(){openCart();if(o.cli&&o.cli.nome){toast('Pedido montado para '+o.cli.nome+'. Confira e finalize!');}},400);
+    return true;
+  }catch(e){return false;}
+}
+loadOrderFromLink();
+/* ===== PAINEL ADMIN ===== */
+function isAdmin(){var qs=new URLSearchParams(location.search);return qs.get('admin')==='1'||location.hash==='#admin';}
+var _adminCart={};
+function openAdmin(){var ov=document.getElementById('adminov');if(!ov)return;ov.classList.add('on');adminRender();}
+function closeAdmin(){var ov=document.getElementById('adminov');if(ov)ov.classList.remove('on');}
+function adminSearch(){adminRenderList();}
+function adminRenderList(){
+  var q=(document.getElementById('admq').value||'').trim().toLowerCase();
+  var box=document.getElementById('admresults');if(!box)return;
+  if(!q){box.innerHTML='<div style="color:#888;font-size:13px;padding:8px">Digite para buscar produtos do catálogo…</div>';return;}
+  var hits=[];for(var i=0;i<P.length&&hits.length<40;i++){var p=P[i];var hay=((p.nome||'')+' '+(p.cod||'')+' '+(p.brand||'')+' '+(p.tipo||'')).toLowerCase();if(hay.indexOf(q)>=0)hits.push(i);}
+  if(!hits.length){box.innerHTML='<div style="color:#888;font-size:13px;padding:8px">Nada encontrado.</div>';return;}
+  box.innerHTML=hits.map(function(i){var p=P[i];var pr=prc(p);return '<div class="admrow"><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">'+p.nome+'</div><div style="font-size:11px;color:#777">'+p.cod+' · '+(pr?brl(pr):'sob consulta')+'</div></div><button onclick="admAdd('+i+')" style="background:var(--azul,#16456e);color:#fff;border:0;border-radius:7px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer">+ Add</button></div>';}).join('');
+}
+function admAdd(i){_adminCart[i]=(_adminCart[i]||0)+1;adminRender();}
+function admQty(i,v){v=parseInt(v,10)||0;if(v<=0)delete _adminCart[i];else _adminCart[i]=v;adminRender();}
+function admDel(i){delete _adminCart[i];adminRender();}
+function adminRender(){adminRenderList();var box=document.getElementById('admcart');if(!box)return;var ks=Object.keys(_adminCart);if(!ks.length){box.innerHTML='<div style="color:#888;font-size:13px;padding:8px">Nenhum item adicionado ainda.</div>';document.getElementById('admtotal').textContent='R$ 0,00';return;}var tot=0;box.innerHTML=ks.map(function(k){var p=P[k];var pr=prc(p);tot+=pr*_adminCart[k];return '<div class="admrow"><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">'+p.nome+'</div><div style="font-size:11px;color:#777">'+p.cod+' · '+(pr?brl(pr):'sob consulta')+'</div></div><input type="number" min="1" value="'+_adminCart[k]+'" onchange="admQty('+k+',this.value)" style="width:52px;padding:5px;border:1px solid #ccc;border-radius:6px;text-align:center"><button onclick="admDel('+k+')" style="background:none;border:0;color:#c0392b;cursor:pointer;font-size:18px">×</button></div>';}).join('');document.getElementById('admtotal').textContent=brl(tot);}
+function admGerar(){
+  var ks=Object.keys(_adminCart);
+  if(!ks.length){alert('Adicione pelo menos 1 produto.');return;}
+  var items=ks.map(function(k){return {c:P[k].cod,q:_adminCart[k]};});
+  var cli={nome:val('admnome'),doc:val('admdoc'),tel:val('admtel'),email:val('admemail')};
+  var ad={cep:val('admcep'),end:val('admend'),num:val('admnum'),comp:val('admcomp'),bairro:val('admbairro'),cidade:val('admcidade'),uf:val('admuf')};
+  var o={items:items,cli:cli,addr:ad};
+  var _bytes=new TextEncoder().encode(JSON.stringify(o));var _bins='';for(var _j=0;_j<_bytes.length;_j++)_bins+=String.fromCharCode(_bytes[_j]);var b64=btoa(_bins).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  var base=location.origin+location.pathname;
+  var link=base+'?pedido='+b64;
+  document.getElementById('admlink').value=link;
+  /* whatsapp do cliente */
+  var tot=0;ks.forEach(function(k){tot+=prc(P[k])*_adminCart[k];});
+  var linhas=ks.map(function(k){return '• '+P[k].cod+' — '+P[k].nome+' (x'+_adminCart[k]+')';}).join('\n');
+  var msg='Olá'+(cli.nome?(' '+cli.nome):'')+'! Segue seu pedido SULLAB pronto para finalizar:\n\n'+linhas+'\n\nTotal aprox.: '+brl(tot)+'\n\nAbra este link para finalizar a compra no site:\n'+link;
+  var telCli=(cli.tel||'').replace(/\D/g,'');if(telCli&&telCli.length>=10&&telCli.indexOf('55')!==0)telCli='55'+telCli;
+  var wa=document.getElementById('admwa');
+  wa.href='https://wa.me/'+(telCli||'')+'?text='+encodeURIComponent(msg);
+  document.getElementById('admout').style.display='block';
+}
+function admCopiar(){var el=document.getElementById('admlink');el.select();try{document.execCommand('copy');toast('Link copiado!');}catch(e){}}
+function admLimpar(){_adminCart={};['admnome','admdoc','admtel','admemail','admcep','admend','admnum','admcomp','admbairro','admcidade','admuf'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});document.getElementById('admout').style.display='none';adminRender();}
+if(isAdmin()){setTimeout(openAdmin,300);}
 </script><div class="cartov" id="orcov" onclick="if(event.target.id=='orcov')closeOrc()"><div class="drawer"><div class="dh">📝 Solicitar orçamento formal <span class="x" onclick="closeOrc()">‹ Voltar</span></div><div class="ditems"><div class="orcf"><p class="orcp">Receba uma proposta formal com preços, prazos e condições de pagamento. Resposta em até 1 dia útil.</p><input id="orcnome" placeholder="Nome / Razão social *"><input id="orcdoc" placeholder="CNPJ / CPF"><input id="orcemail" type="email" placeholder="E-mail *"><input id="orcfone" placeholder="Telefone / WhatsApp *"><textarea id="orcitens" rows="5" placeholder="Itens desejados (preenchido com seu carrinho)"></textarea><textarea id="orcobs" rows="2" placeholder="Observações (quantidade, prazo, entrega...)"></textarea><button class="paybtn" onclick="submitOrc()">Enviar solicitação de orçamento</button><div class="orcmail">Ou envie direto para <b id="orcEmailLink">comercial@sullabrj.com.br</b><br><span style="display:block;color:#777;font-size:11px;margin:4px 0">🕒 Atendimento: Seg a Sex, 8h às 18h</span><button class="wabtn" onclick="window.open('https://wa.me/'+WPP,'_blank')">Falar no WhatsApp</button></div></div></div></div></div><div class="cartov" id="ordov" onclick="if(event.target.id=='ordov')closeOrders()"><div class="drawer"><div class="dh">🧾 Meus pedidos <span class="x" onclick="closeOrders()">‹ Voltar</span></div><div class="ditems" id="ordbody"></div></div></div><div class="cartov" id="cmpov" onclick="if(event.target.id=='cmpov')closeCmp()"><div class="drawer"><div class="dh">📊 Comparador de testes rápidos <span class="x" onclick="closeCmp()">‹ Voltar</span></div><div class="ditems" id="cmpbody"></div></div></div><div class="ov" id="lgpdov" onclick="if(event.target.id=='lgpdov')closeLgpd()"><div class="modal tabmodal"><div class="mh"><span>🔒</span><b>Política de Privacidade (LGPD)</b><span class="x" onclick="closeLgpd()">‹ Voltar</span></div><div class="mc lgpdmc"><p class="lgupd">Última atualização: 05/06/2026</p><h4>1. Quem é o controlador dos dados</h4><p><b>SULLAB Comércio de Produtos Hospitalares LTDA</b>, CNPJ 32.198.434/0001-34, com sede em Barra Mansa/RJ. Contato para assuntos de privacidade: <b>comercial@sullabrj.com.br</b>.</p><h4>2. Quais dados coletamos</h4><p>Dados que você nos fornece ao se cadastrar, fazer um pedido ou solicitar orçamento: razão social, CNPJ, nome do contato, e-mail, telefone e endereço de entrega. Coletamos também dados de navegação (páginas visitadas, dispositivo) por meio de cookies e ferramentas de análise.</p><h4>3. Para que usamos seus dados</h4><p>Para processar pedidos e orçamentos, emitir nota fiscal, calcular e contratar frete, prestar atendimento comercial e melhorar a experiência do site. Não usamos seus dados para fins incompatíveis com esses.</p><h4>4. Base legal (LGPD, art. 7º)</h4><p>Execução de contrato e procedimentos preliminares (pedidos/orçamentos), cumprimento de obrigação legal e regulatória (emissão fiscal), legítimo interesse (melhoria do site e prevenção a fraudes) e consentimento (cookies de análise).</p><h4>5. Com quem compartilhamos</h4><p>Apenas com parceiros necessários para concluir sua compra: processador de pagamentos (Mercado Pago), serviços de frete e transportadoras (Melhor Envio/Correios) e ferramenta de análise de audiência (Google Analytics). <b>Não vendemos seus dados.</b></p><h4>6. Cookies e análise</h4><p>Usamos cookies essenciais e o Google Analytics para medir o uso do site. Você pode bloquear cookies nas configurações do seu navegador.</p><h4>7. Seus direitos (LGPD, art. 18)</h4><p>Você pode solicitar a qualquer momento: confirmação e acesso aos seus dados, correção, anonimização, eliminação, portabilidade e revogação do consentimento. Para exercer, escreva para <b>comercial@sullabrj.com.br</b>.</p><h4>8. Retenção e segurança</h4><p>Mantemos seus dados pelo tempo necessário às finalidades acima e ao cumprimento de obrigações legais/fiscais. Adotamos medidas técnicas e administrativas para proteger suas informações.</p><h4>9. Alterações</h4><p>Esta política pode ser atualizada. A versão vigente estará sempre disponível nesta página.</p></div></div></div><div class="ov" id="tabov" oncontextmenu="return false" onclick="if(event.target.id=='tabov')closeTab()"><div class="modal tabmodal"><div class="mh"><span>📄</span><b>Tabela de preços CNPJ</b><span class="x" onclick="closeTab()">‹ Voltar</span></div><div class="mc" id="tabmc"></div></div></div><div class="cartov" id="cartov" onclick="if(event.target.id==\'cartov\')closeCart()"><div class="drawer">
   <div class="dh" id="cartdh" onclick="if(document.getElementById('cartov').classList.contains('min'))expandCart()">🛒 Carrinho <span id="cartmincount" style="font-size:13px;font-weight:600;opacity:.9"></span><span class="minbtn" title="Minimizar" onclick="event.stopPropagation();toggleMinCart()" style="margin-left:auto">–</span><span class="x" onclick="event.stopPropagation();closeCart()">‹ Voltar</span></div>
   <div class="csteps" id="csteps"><span class="cstep-dot on" data-s="1" onclick="goStep(1)"><b>1</b> Produtos</span><span class="cstep-sep"></span><span class="cstep-dot" data-s="2" onclick="goStep(2)"><b>2</b> Entrega</span><span class="cstep-sep"></span><span class="cstep-dot" data-s="3" onclick="goStep(3)"><b>3</b> Pagamento</span></div><div class="dbody"><div class="ditems" id="ditems"></div><div class="dfoot" id="dfoot"></div></div>
   <div class="cnav" id="cnav"><button class="cnav-back" onclick="prevStep()">‹ Voltar</button><button class="cnav-next" onclick="nextStep()">Avançar ›</button></div>
   <div class="cartactions" id="cartActions"></div>
+</div></div>
+<div class="cartov" id="adminov" onclick="if(event.target.id=='adminov')closeAdmin()"><div class="drawer" style="max-width:760px">
+  <div class="dh">🛠️ Montar pedido (admin) <span class="x" onclick="closeAdmin()">‹ Fechar</span></div>
+  <div class="dbody" style="display:block;overflow-y:auto;padding:14px 16px">
+    <div style="background:#fff7e6;border:1px solid #ffe2a8;border-radius:8px;padding:8px 10px;font-size:12px;color:#8a6d3b;margin-bottom:12px">Área interna. Monte o pedido, gere o link e envie ao cliente — ele abre com tudo no carrinho e finaliza.</div>
+    <div style="font-weight:700;font-size:14px;margin:4px 0 6px">1. Produtos</div>
+    <input id="admq" oninput="adminSearch()" placeholder="🔎 Buscar por nome, código ou marca…" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:14px;margin-bottom:6px">
+    <div id="admresults" style="max-height:170px;overflow:auto;border:1px solid #eee;border-radius:8px;margin-bottom:12px"></div>
+    <div style="font-weight:700;font-size:14px;margin:4px 0 6px">Itens do pedido <span style="float:right;color:var(--azul,#16456e)">Total: <b id="admtotal">R$ 0,00</b></span></div>
+    <div id="admcart" style="border:1px solid #eee;border-radius:8px;margin-bottom:14px;min-height:40px"></div>
+    <div style="font-weight:700;font-size:14px;margin:4px 0 6px">2. Dados do cliente</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+      <input id="admnome" placeholder="Nome / Razão social" style="padding:9px;border:1px solid #ccc;border-radius:8px;font-size:13px;grid-column:1/3">
+      <input id="admdoc" placeholder="CNPJ / CPF" style="padding:9px;border:1px solid #ccc;border-radius:8px;font-size:13px">
+      <input id="admtel" placeholder="WhatsApp (com DDD)" inputmode="tel" style="padding:9px;border:1px solid #ccc;border-radius:8px;font-size:13px">
+      <input id="admemail" placeholder="E-mail" type="email" style="padding:9px;border:1px solid #ccc;border-radius:8px;font-size:13px;grid-column:1/3">
+    </div>
+    <div style="font-weight:700;font-size:14px;margin:8px 0 6px">3. Entrega (opcional)</div>
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:6px;margin-bottom:6px">
+      <input id="admcep" placeholder="CEP" style="padding:9px;border:1px solid #ccc;border-radius:8px;font-size:13px">
+      <input id="admend" placeholder="Endereço (rua/avenida)" style="padding:9px;border:1px solid #ccc;border-radius:8px;font-size:13px">
+      <input id="admnum" placeholder="Nº" style="padding:9px;border:1px solid #ccc;border-radius:8px;font-size:13px">
+      <input id="admcomp" placeholder="Complemento" style="padding:9px;border:1px solid #ccc;border-radius:8px;font-size:13px">
+      <input id="admbairro" placeholder="Bairro" style="padding:9px;border:1px solid #ccc;border-radius:8px;font-size:13px">
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px"><input id="admcidade" placeholder="Cidade" style="padding:9px;border:1px solid #ccc;border-radius:8px;font-size:13px"><input id="admuf" placeholder="UF" maxlength="2" style="padding:9px;border:1px solid #ccc;border-radius:8px;font-size:13px"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin:14px 0 4px">
+      <button onclick="admGerar()" style="flex:1;background:var(--azul,#16456e);color:#fff;border:0;border-radius:9px;padding:13px;font-size:15px;font-weight:800;cursor:pointer">🔗 Gerar link do pedido</button>
+      <button onclick="admLimpar()" style="background:#fff;color:#777;border:1px solid #ccc;border-radius:9px;padding:13px 16px;font-size:14px;cursor:pointer">Limpar</button>
+    </div>
+    <div id="admout" style="display:none;background:#f0f7ff;border:1px solid #bcd8f5;border-radius:10px;padding:12px;margin-top:8px">
+      <div style="font-size:13px;font-weight:700;color:var(--azul,#16456e);margin-bottom:6px">✅ Pedido pronto! Compartilhe com o cliente:</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px"><input id="admlink" readonly style="flex:1;padding:9px;border:1px solid #bcd8f5;border-radius:8px;font-size:12px;background:#fff"><button onclick="admCopiar()" style="background:var(--azul,#16456e);color:#fff;border:0;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;cursor:pointer">Copiar</button></div>
+      <a id="admwa" href="#" target="_blank" style="display:block;text-align:center;background:#25d366;color:#fff;border-radius:8px;padding:12px;font-size:14px;font-weight:700;text-decoration:none">📲 Enviar pelo WhatsApp do cliente</a>
+    </div>
+  </div>
 </div></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
