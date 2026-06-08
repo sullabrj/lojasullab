@@ -363,7 +363,19 @@ function loadOrderFromLink(){
     if(o.cli){try{localStorage.setItem('sullab_cliente_montado',JSON.stringify(o.cli));}catch(e){}}
     try{localStorage.setItem('sullab_cart',JSON.stringify(cart));}catch(e){}
     badge();
-    setTimeout(function(){openCart();if(o.cli&&o.cli.nome){toast('Pedido montado para '+o.cli.nome+'. Confira e finalize!');}},400);
+    var _ab=function(tent){
+      try{
+        if(typeof openCart==='function' && document.getElementById('cartov')){
+          openCart();
+          if(o.cli&&o.cli.nome){try{toast('Pedido montado para '+o.cli.nome+'. Confira e finalize!');}catch(e){}}
+          else{try{toast('Seu pedido está no carrinho. É só finalizar ou cadastrar seu CNPJ!');}catch(e){}}
+          return;
+        }
+      }catch(e){}
+      if(tent<20)setTimeout(function(){_ab(tent+1);},250);
+    };
+    if(document.readyState==='complete'||document.readyState==='interactive'){setTimeout(function(){_ab(0);},300);}
+    else{window.addEventListener('load',function(){setTimeout(function(){_ab(0);},300);});}
     return true;
   }catch(e){return false;}
 }
