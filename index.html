@@ -73,6 +73,20 @@ header{background:var(--azul);padding:9px 12px 11px;position:sticky;top:0;z-inde
 .cartov.on{display:block}
 .drawer{position:fixed;right:0;top:0;height:100vh;height:100dvh;width:100%;max-width:440px;background:#f3f6fb;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .2s}
 .cartov.on .drawer{transform:none}
+/* ===== BOTÃO FLUTUANTE DE CARRINHO (sempre visível, centralizado, laranja) ===== */
+#cartFab{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:30;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#ff9d2e,#ff7a00);color:#fff;border:0;border-radius:999px;padding:11px 20px;box-shadow:0 8px 26px rgba(255,122,0,.45);cursor:pointer;font-family:inherit;max-width:calc(100vw - 24px)}
+#cartFab:hover{background:linear-gradient(180deg,#ffa844,#ff8a1a)}
+#cartFab:active{transform:translateX(-50%) scale(.97)}
+#cartFab .cf-ic{font-size:22px;line-height:1}
+#cartFab .cf-txt{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;white-space:nowrap}
+#cartFab .cf-txt b{font-size:14px;font-weight:800}
+#cartFab #cfV{font-size:12px;opacity:.95}
+#cartFab .cf-go{background:rgba(255,255,255,.22);border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;white-space:nowrap}
+@media(max-width:480px){#cartFab{padding:10px 16px;gap:8px}#cartFab .cf-go{display:none}}
+/* esconde o FAB quando algum modal/carrinho está aberto */
+body.modal-open #cartFab{display:none}
+/* destaque do ícone do carrinho no topo (fundo laranja) */
+#hcbtn{background:linear-gradient(180deg,#ff9d2e,#ff7a00)!important;box-shadow:0 2px 8px rgba(255,122,0,.4);font-size:19px!important;padding:9px 14px!important;border-radius:999px!important}
 /* ===== Carrinho como MODAL CENTRALIZADO (#cartov) ===== */
 #cartov.on{display:flex;align-items:center;justify-content:center;padding:24px}
 /* ===== Painel admin (modal centralizado) ===== */
@@ -187,7 +201,7 @@ header{background:var(--azul);padding:9px 12px 11px;position:sticky;top:0;z-inde
 .emptywa{margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:8px}
 .emptywa .buy{max-width:360px}
 </style></head><body><div class="wrap">
-<header><div style="display:flex;align-items:center"><div class="logo"><img class="logoimg" src="https://acdn-us.mitiendanube.com/stores/003/706/975/themes/common/logo-1979127265-1694651326-5cb0e3bc482c69a14bef7d43a46941261694651326-480-0.webp" alt="SULLAB - Produtos hospitalares e laboratoriais"></div><button onclick="openCart()" style="margin-left:auto;background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:9px;padding:8px 12px;font-size:17px;cursor:pointer">🛒<span id="hcb" style="background:#ff5a5a;border-radius:9px;font-size:11px;padding:0 6px;margin-left:3px;vertical-align:2px">0</span></button></div>
+<header><div style="display:flex;align-items:center"><div class="logo"><img class="logoimg" src="https://acdn-us.mitiendanube.com/stores/003/706/975/themes/common/logo-1979127265-1694651326-5cb0e3bc482c69a14bef7d43a46941261694651326-480-0.webp" alt="SULLAB - Produtos hospitalares e laboratoriais"></div><button id="hcbtn" onclick="openCart()" style="margin-left:auto;background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:9px;padding:8px 12px;font-size:17px;cursor:pointer">🛒<span id="hcb" style="background:#ff5a5a;border-radius:9px;font-size:11px;padding:0 6px;margin-left:3px;vertical-align:2px">0</span></button></div>
 <div class="srch"><input id="q" placeholder="Buscar produto, marca ou código…" oninput="onSearch()"><button onclick="document.getElementById('q').focus()">🔍</button></div></header>
 <div class="trust"><span class="trustm">CNPJ 32.198.434/0001-34 · 🧾 Emitimos NF-e · 🔒 Pagamento 100% seguro</span><span class="trustx">🚚 <b>FRETE GRÁTIS</b> para RJ e SP acima de R$ 1.000 · também grátis em testes rápidos (Sudeste) · 💳 até 12x no cartão · ⚡ 5% OFF no Pix · 🧾 Boleto 15/30/45/60 dias · NF-e · CNPJ 32.198.434/0001-34</span></div><div class="mlrep"><div class="mlL"><span class="mlbadge">⭐ MercadoLíder Gold</span><span class="mlg">Hospitais, clínicas e laboratórios · +8.000 clientes no Brasil</span></div><button class="mlbtn" onclick="openRep()">Ver reputação ⭐</button></div><div class="quotebanner"><div class="qbIco">📎</div><div class="qbTxt"><b>Já tem sua lista de compras?</b><span>Envie seu Excel, foto ou PDF e devolvemos o orçamento com preço para CNPJ e nota fiscal — rapidinho.</span></div><div class="qbBtns"><button class="qbWa" onclick="orcArquivoWa()">💬 Enviar pelo WhatsApp</button><button class="qbMail" onclick="orcArquivoMail()">✉️ Enviar por e-mail</button></div></div><div class="banner"><div class="bL"><span class="promotag"><span class="promooff">−20% OFF</span> Testes de Dengue</span><span class="bsm">NS1 · IgG/IgM · combo</span></div><div class="bR">🚚 <b>Frete grátis:</b> testes rápidos (Sudeste) e pedidos RJ/SP acima de R$ 1.000</div></div><div class="actbar"><button onclick="openOrc()">📝 Solicitar orçamento</button><button onclick="openOrders()">🧾 Meus pedidos <span id="ordcb" class="ordcb"></span></button><button onclick="baixarTabela()">📄 Tabela de preços</button><button onclick="openCmp()">📊 Comparar testes</button><button onclick="window.open('https://wa.me/'+WPP,'_blank')">💬 Falar com especialista</button></div><div class="segrow" id="segrow"></div>
 <div class="chips" id="chips"></div>
@@ -259,7 +273,9 @@ function renderCmp(){var rows=[];for(var i=0;i<P.length;i++){var p=P[i];if(p.cat
 function chips(){document.getElementById('chips').innerHTML=CATS.map(c=>'<span class="chip '+(c[0]==cat?'on':'')+'" onclick="setCat(\''+c[0]+'\')">'+c[1]+'</span>').join('');}
 function setCat(c){cat=c;seg='';var qel=document.getElementById('q');if(qel)qel.value='';chips();renderSegRow();render();fixChipsTop();if(window.innerWidth>=900){var g=document.getElementById('crumb');if(g)g.scrollIntoView({behavior:'smooth',block:'start'});}}
 function nameCat(c){var f=CATS.find(x=>x[0]==c);return f?f[1]:'';}
-function badge(){var n=0;for(var k in cart)n+=cart[k];document.getElementById('cb').textContent=n;var h=document.getElementById('hcb');if(h)h.textContent=n;try{updCartMin();}catch(e){}try{localStorage.setItem('sullab_cart',JSON.stringify(cart));}catch(e){}}
+function badge(){var n=0;for(var k in cart)n+=cart[k];document.getElementById('cb').textContent=n;var h=document.getElementById('hcb');if(h)h.textContent=n;try{updCartMin();}catch(e){}try{var _t=0;for(var _k in cart){_t+=unitPrice(P[_k],cart[_k])*cart[_k];}var _cn=document.getElementById('cfN');var _cv=document.getElementById('cfV');if(_cn)_cn.textContent=n+(n===1?' item':' itens');if(_cv)_cv.textContent=brl(_t);}catch(e){}try{localStorage.setItem('sullab_cart',JSON.stringify(cart));}catch(e){}}
+function _syncFab(){try{var aberto=document.querySelector('.cartov.on, .ov.on, .modal.on');if(aberto)document.body.classList.add('modal-open');else document.body.classList.remove('modal-open');}catch(e){}}
+setInterval(_syncFab,300);
 function cotarBusca(){var q=document.getElementById('q').value.trim();if(!q)return;var msg='Olá, SULLAB! Procurei por "'+q+'" no site e não encontrei. Vocês conseguem cotar pra mim?';try{if(typeof sullabEvent==='function')sullabEvent('cotar_busca',{termo:q.slice(0,60)});}catch(e){}window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 function solicitarPreco(i){var p=P[i];var msg='Olá! Vim pelo catálogo SULLAB e gostaria de saber o preço de:\n\n'+p.cod+' — '+p.nome+'\n\nObrigado!';window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 function toast(t){var e=document.getElementById('toast');e.textContent=t;e.classList.add('on');clearTimeout(window._tt);window._tt=setTimeout(function(){e.classList.remove('on')},1400);}
@@ -468,6 +484,7 @@ if(isAdmin()){setTimeout(openAdmin,300);}
   </div>
 </div></div>
 
+<button id="cartFab" onclick="openCart()" aria-label="Abrir carrinho"><span class="cf-ic">🛒</span><span class="cf-txt"><b id="cfN">0 itens</b><span id="cfV">R$ 0,00</span></span><span class="cf-go">Ver carrinho ›</span></button>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
