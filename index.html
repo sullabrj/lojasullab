@@ -396,6 +396,21 @@ function loadOrderFromLink(){
   }catch(e){return false;}
 }
 loadOrderFromLink();
+/* ===== DEEP-LINK DE CATEGORIA (?cat=slug) — para sitelinks do Ads ===== */
+function loadCatFromLink(){
+  try{
+    var qs=new URLSearchParams(location.search);
+    var c=qs.get('cat'); if(!c) return false;
+    c=String(c).toLowerCase().replace(/[^a-z0-9]/g,'');
+    var ok=false; for(var i=0;i<CATS.length;i++){ if(CATS[i][0]===c){ ok=true; break; } }
+    if(!ok) return false;
+    function _go(){ try{ setCat(c); var sec=document.getElementById('grid')||document.getElementById('prods'); if(sec&&sec.scrollIntoView){ setTimeout(function(){ try{ window.scrollTo({top:(document.getElementById('chips')||sec).getBoundingClientRect().top+window.pageYOffset-70,behavior:'smooth'}); }catch(e){} },250); } }catch(e){} }
+    if(document.readyState==='complete'||document.readyState==='interactive'){ setTimeout(_go,200); }
+    else{ window.addEventListener('load',function(){ setTimeout(_go,200); }); }
+    return true;
+  }catch(e){ return false; }
+}
+loadCatFromLink();
 /* ===== PAINEL ADMIN ===== */
 function isAdmin(){var qs=new URLSearchParams(location.search);return qs.get('admin')==='1'||location.hash==='#admin';}
 var _adminCart={};
