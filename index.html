@@ -74,7 +74,26 @@ header{background:var(--azul);padding:9px 12px 11px;position:sticky;top:0;z-inde
 .drawer{position:fixed;right:0;top:0;height:100vh;height:100dvh;width:100%;max-width:440px;background:#f3f6fb;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .2s}
 .cartov.on .drawer{transform:none}
 /* ===== Carrinho como MODAL CENTRALIZADO (#cartov) ===== */
-#cartov.on{display:flex;align-items:center;justify-content:center;padding:18px}
+#cartov.on{display:flex;align-items:center;justify-content:center;padding:24px}
+/* Modal LARGO e rico em informacoes */
+#cartov .drawer{max-width:940px!important}
+/* corpo rola com barra de rolagem SEMPRE visivel */
+#cartov .dbody{overflow-y:scroll;scrollbar-width:thin;scrollbar-color:#9bb0c6 #eef2f7}
+#cartov .dbody::-webkit-scrollbar{width:12px}
+#cartov .dbody::-webkit-scrollbar-track{background:#eef2f7;border-radius:8px}
+#cartov .dbody::-webkit-scrollbar-thumb{background:#9bb0c6;border-radius:8px;border:2px solid #eef2f7}
+#cartov .dbody::-webkit-scrollbar-thumb:hover{background:#7e96b0}
+/* LAYOUT 2 COLUNAS em telas largas: produtos | dados do pedido */
+@media(min-width:760px){
+  #cartov .dbody{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start}
+  #cartov .ditems{padding:16px 18px;border-right:1px solid var(--borda,#e3e8ef)}
+  #cartov .dfoot{padding:16px 18px}
+  #cartov .ci{padding:11px}
+  #cartov .addr input,#cartov .dfoot input,#cartov .dfoot select{font-size:14px}
+}
+@media(min-width:760px){
+  #cartov.on{display:flex;align-items:center;justify-content:center;padding:24px}
+}
 /* Barra de acoes fixa na base do carrinho (Pagar / WhatsApp sempre visiveis) */
 #cartov .cartactions{flex:0 0 auto;background:#fff;border-top:1px solid var(--borda,#e3e8ef);padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;box-shadow:0 -6px 18px rgba(10,25,45,.08)}
 #cartov .cartactions:empty{display:none}
