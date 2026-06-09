@@ -195,7 +195,9 @@ body.modal-open #cartFab{display:none}
   #cartov.on{display:flex;align-items:center;justify-content:center;padding:24px}
 }
 /* Barra de acoes fixa na base do carrinho (Pagar / WhatsApp sempre visiveis) */
-#cartov .cartactions{flex:0 0 auto;background:#fff;border-top:1px solid var(--borda,#e3e8ef);padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;box-shadow:0 -6px 18px rgba(10,25,45,.08)}
+#cartov .cartactions{flex:0 0 auto;background:#fff;border-top:1px solid var(--borda,#e3e8ef);padding:10px 14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;box-shadow:0 -6px 18px rgba(10,25,45,.08)}
+#cartov .cartactions>button{flex:1 1 0;min-width:160px;margin:0!important}
+@media(max-width:759px){#cartov .cartactions{flex-direction:column}#cartov .cartactions>button{min-width:0}}
 #cartov .cartactions:empty{display:none}
 #cartov .cartactions .paybtn,#cartov .cartactions .wabtn{width:100%;margin:0}
 #cartov.min .cartactions{display:none}
