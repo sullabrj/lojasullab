@@ -66,6 +66,7 @@ header{background:var(--azul);padding:9px 12px 11px;position:sticky;top:0;z-inde
 .toast{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:#1f2733;color:#fff;padding:9px 16px;border-radius:20px;font-size:13px;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
 .pmode{display:flex;align-items:center;gap:8px;background:#fff;border-bottom:1px solid var(--borda);padding:9px 12px;font-size:12.5px;color:var(--cinza)}
+#admPill{background:#16365c;color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:12.5px;font-weight:700;cursor:pointer;margin-left:8px}
 .pmode b{color:#16456e;font-weight:700}
 .pmode button{margin-left:auto;border:0;background:var(--azul2);color:#fff;font-weight:700;font-size:12px;padding:7px 11px;border-radius:7px;cursor:pointer}
 .pmode.on{background:#e9f7ee}.pmode.on button{background:var(--verde)}
@@ -124,7 +125,12 @@ body.modal-open #cartFab{display:none}
 @media(max-width:759px){
   .deskTip{display:block;background:#fff7e6;border:1px solid #ffd48a;color:#7a4d00;border-radius:8px;padding:8px 10px;font-size:12.5px;margin-bottom:10px;line-height:1.35}
   #cartov.on{padding:8px}
-  #cartov .drawer{max-width:560px!important;max-height:calc(100dvh - 16px);border-radius:18px}
+  #cartov .drawer{max-width:96vw!important;width:96vw!important;height:94vh!important;max-height:94vh!important;border-radius:14px}
+  #cartov .dwrap{display:flex!important;flex-direction:column;height:100%;min-height:0}
+  #cartov .catcol{max-height:42vh;min-height:0;border-right:none;border-bottom:1px solid #e3e8ef}
+  #cartov .catcol .gridcartwrap{overflow-y:auto}
+  #cartov #gridcart{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  #cartov .ordercol{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
   #cartov .dbody{display:block;overflow-y:auto}
   #cartov .ditems{padding:12px}
   #cartov .dfoot{padding:0 12px 12px}
@@ -151,7 +157,17 @@ body.modal-open #cartFab{display:none}
   #cartov[data-step="3"] .cnav-next{display:none}
 }
 /* Modal LARGO e rico em informacoes */
-#cartov .drawer{max-width:940px!important}
+#cartov .drawer{max-width:1280px!important;width:96vw!important;height:92vh!important;max-height:92vh!important}
+@media(min-width:760px){#cartov .dwrap{display:grid;grid-template-columns:1.15fr 1fr;gap:0;height:100%;min-height:0}#cartov .catcol{display:flex;flex-direction:column;min-height:0;border-right:1px solid #e3e8ef;background:#fff}#cartov .catcol .gridcartwrap{flex:1;overflow-y:auto;padding:10px 12px}#cartov .ordercol{display:flex;flex-direction:column;min-height:0;overflow:hidden}}
+#cartov .catcol{background:#fff}
+#cartov .catbar{padding:10px 12px;border-bottom:1px solid #eef2f7;background:#fff;position:sticky;top:0;z-index:2}
+#cartov .catbar input{width:100%;padding:11px 12px;border:1px solid #ccd6e2;border-radius:10px;font-size:14px}
+#cartov .chipscart{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:thin}
+#cartov .chipscart .chip{white-space:nowrap;font-size:12px;padding:5px 10px;border:1px solid #d6e2f3;border-radius:16px;background:#f5f7fa;cursor:pointer;flex:0 0 auto}
+#cartov .chipscart .chip.on{background:#16365c;color:#fff;border-color:#16365c}
+#cartov #gridcart{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
+#cartov #gridcart .card{font-size:12px}
+#cartov #gridcart .card .ph{height:96px}
 /* corpo rola com barra de rolagem SEMPRE visivel */
 #cartov .dbody{overflow-y:scroll;scrollbar-width:thin;scrollbar-color:#9bb0c6 #eef2f7}
 #cartov .dbody::-webkit-scrollbar{width:12px}
@@ -216,7 +232,7 @@ body.modal-open #cartFab{display:none}
 <div class="trust"><span class="trustm">CNPJ 32.198.434/0001-34 · 🧾 Emitimos NF-e · 🔒 Pagamento 100% seguro</span><span class="trustx">🚚 <b>FRETE GRÁTIS</b> para RJ e SP acima de R$ 1.000 · também grátis em testes rápidos (Sudeste) · 💳 até 12x no cartão · ⚡ 5% OFF no Pix · 🧾 Boleto 15/30/45/60 dias · NF-e · CNPJ 32.198.434/0001-34</span></div><div class="mlrep"><div class="mlL"><span class="mlbadge">⭐ MercadoLíder Gold</span><span class="mlg">Hospitais, clínicas e laboratórios · +8.000 clientes no Brasil</span></div><button class="mlbtn" onclick="openRep()">Ver reputação ⭐</button></div><div class="quotebanner"><div class="qbIco">📎</div><div class="qbTxt"><b>Já tem sua lista de compras?</b><span>Envie seu Excel, foto ou PDF e devolvemos o orçamento com preço para CNPJ e nota fiscal — rapidinho.</span></div><div class="qbBtns"><button class="qbWa" onclick="orcArquivoWa()">💬 Enviar pelo WhatsApp</button><button class="qbMail" onclick="orcArquivoMail()">✉️ Enviar por e-mail</button></div></div><div class="banner"><div class="bL"><span class="promotag"><span class="promooff">−20% OFF</span> Testes de Dengue</span><span class="bsm">NS1 · IgG/IgM · combo</span></div><div class="bR">🚚 <b>Frete grátis:</b> testes rápidos (Sudeste) e pedidos RJ/SP acima de R$ 1.000</div></div><div class="actbar"><button onclick="openOrc()">📝 Solicitar orçamento</button><button onclick="openOrders()">🧾 Meus pedidos <span id="ordcb" class="ordcb"></span></button><button onclick="baixarTabela()">📄 Tabela de preços</button><button onclick="openCmp()">📊 Comparar testes</button><button onclick="window.open('https://wa.me/'+WPP,'_blank')">💬 Falar com especialista</button></div><div class="segrow" id="segrow"></div>
 <div class="chips" id="chips"></div>
 <div class="filters"><select id="fbrand" onchange="setBrand(this.value)"></select><select id="fsort" onchange="setSort(this.value)"><option value="">Ordenar por</option><option value="asc">Menor preço</option><option value="desc">Maior preço</option></select></div>
-<div class="pmode" id="pmode"><span>🔒</span><span id="pmtxt">Você está vendo <b>preço público</b>. CNPJ cadastrado paga menos.</span><button onclick="toggleCnpj()" id="pmbtn">Sou CNPJ</button></div>
+<div class="pmode" id="pmode"><span>💰</span><span id="pmtxt"><b>CNPJ cadastrado tem descontos expressivos em TODOS os produtos.</b> Cadastre-se grátis e veja seu preço.</span><button onclick="toggleCnpj()" id="pmbtn">Entrar / Cadastrar</button><button onclick="openAdmin()" id="admPill" style="display:none">🧾 Montar pedido</button></div>
 <div class="crumb" id="crumb"></div>
 <div class="grid" id="grid"></div>
 <div class="note">Imagens ilustrativas · preços e disponibilidade sujeitos a alteração · equipamentos sob consulta.</div><div class="foot"><b>SULLAB Comércio de Produtos Hospitalares LTDA</b> · CNPJ 32.198.434/0001-34 · Barra Mansa/RJ<div class="footlnk"><a onclick="openLgpd()">Política de Privacidade (LGPD)</a><span class="sep">·</span><a href="mailto:comercial@sullabrj.com.br">comercial@sullabrj.com.br</a><span class="sep">·</span><a onclick="window.open('https://wa.me/'+WPP,'_blank')">WhatsApp (24) 98838-3100</a></div><div class="footc">© 2026 SULLAB · Todos os direitos reservados · Emitimos NF-e</div></div>
@@ -352,7 +368,7 @@ function shareCart(){
 }
 function closeShare(){var ov=document.getElementById('shareov');if(ov)ov.classList.remove('on');}
 function shCopiar(){var el=document.getElementById('shlink');el.select();try{document.execCommand('copy');}catch(e){}try{navigator.clipboard.writeText(el.value);}catch(e){}toast('Link copiado! É só enviar pro cliente.');}
-function openCart(){renderCart();var ov=document.getElementById('cartov');ov.classList.remove('min');ov.classList.add('on');setStep(1);updCartMin();}
+function openCart(){renderCart();try{chipsCart();renderCartCat();}catch(e){}var ov=document.getElementById('cartov');ov.classList.remove('min');ov.classList.add('on');setStep(1);updCartMin();}
 var _cstep=1;
 function setStep(n){_cstep=Math.max(1,Math.min(3,n));var ov=document.getElementById('cartov');if(!ov)return;ov.setAttribute('data-step',_cstep);var dots=ov.querySelectorAll('.cstep-dot');dots.forEach(function(d){var s=parseInt(d.getAttribute('data-s'),10);d.classList.remove('on','done');if(s===_cstep)d.classList.add('on');else if(s<_cstep)d.classList.add('done');});try{var db=ov.querySelector('.dbody');if(db)db.scrollTop=0;}catch(e){}}
 function goStep(n){setStep(n);}
@@ -381,7 +397,33 @@ function selFrete(v){freteSel=v;var df=document.getElementById('dfrete');if(df)d
 function cotarFreteWa(){var a=readAddr();var lines=[];for(var k in cart){var p=P[k];lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+')');}var dest=a&&a.cep?('\n\nDestino: '+(a.cidade?a.cidade+'/'+(a.uf||'')+' — ':'')+'CEP '+a.cep):'';var msg='Olá! Gostaria de uma COTAÇÃO DE FRETE (e opções de transportadora) para estes itens:\n\n'+(lines.length?lines.join('\n'):'(itens do carrinho)')+dest+'\n\nPodem me passar as opções e prazos?';window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 function cotarFrete(){var a=readAddr();var cep=(a.cep||'').replace(/\D/g,'');var box=document.getElementById('freteopts');if(cep.length!=8){if(box)box.innerHTML='<div class="fhint">Informe um CEP v\u00E1lido (8 d\u00EDgitos).</div>';return;}if(box)box.innerHTML='<div class="fhint">Calculando frete\u2026</div>';var prods=[];for(var k in cart){prods.push({id:String(P[k].cod||k),width:11,height:6,length:16,weight:prodWeight(P[k]),insurance_value:unitPrice(P[k],cart[k])*cart[k],quantity:cart[k]});}fetch(FRETE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:ORIGEM_CEP,to:cep,products:prods})}).then(function(r){return r.json();}).then(function(d){if(d&&!Array.isArray(d)){d=(d.price||d.name||d.company)?[d]:(d.error?[]:[]);}if(!d||d.error||!d.length){if(box)box.innerHTML='<div class="fhint">Frete ser\u00E1 confirmado no checkout / WhatsApp.</div>';return;}var ok=d.filter(function(o){return o&&o.price&&!o.error;});if(!ok.length){if(box)box.innerHTML='<div class="fhint">Sem op\u00E7\u00F5es para este CEP. Confirmaremos no checkout.</div>';return;}ok.sort(function(x,y){return parseFloat(x.price)-parseFloat(y.price);});if(box)box.innerHTML=ok.slice(0,4).map(function(o,ix){var dt=o.delivery_time||(o.delivery_range&&o.delivery_range.max)||'?';return '<label class="fopt"><input type="radio" name="frete" value="'+o.price+'" onchange="selFrete('+parseFloat(o.price)+')"'+(ix==0?' checked':'')+'> '+((o.company&&o.company.name)?o.company.name+' ':'')+(o.name||'')+' \u2014 <b>'+brl(parseFloat(o.price))+'</b> ('+dt+' dias)</label>';}).join('');selFrete(parseFloat(ok[0].price));}).catch(function(){if(box)box.innerHTML='<div class="fhint">Frete ser\u00E1 confirmado no checkout / WhatsApp.</div>';});}
 function finalizar(){if(!checkoutGate())return;var c=clienteInfo();var a=readAddr();try{if(typeof sullabEvent==='function')sullabEvent('pedido_mp',{total:total(),qtd:Object.keys(cart).length,itens:_orderItems(),pgto:(typeof pgto!=='undefined'?pgto:''),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a});}catch(e){}recordOrder(pgto=='pix'?'Pix (-5%)':pgto=='boleto'?'Boleto faturado 15/30/45/60':'Cartão até 12x');if(pgto=='boleto'){payBoleto();}else{payMP(pgto);}}
-function isAdminUser(){try{if(localStorage.getItem('sullab_owner')==='1')return true;}catch(e){}try{var u=window.__user;if(u&&((u.email||'').toLowerCase()==='comercial@sullabrj.com.br'))return true;}catch(e){}try{if(/[?&]admin=1/.test(location.search)||location.hash==='#admin')return true;}catch(e){}return false;}
+function isAdminUser(){try{if(localStorage.getItem('sullab_owner')==='1')return true;}catch(e){}try{var u=window.__user;if(u&&((u.email||'').toLowerCase()==='comercial@sullabrj.com.br'))return true;}catch(e){}try{if(/[?&]admin=1/.test(location.search)||location.hash==='#admin')return true;}catch(e){}return false;}try{window.isAdminUser=isAdminUser;}catch(e){}
+
+/* ===== Catálogo dentro do carrinho (busca+chips iguais ao site) — add 09/06/2026 ===== */
+var catCart='maisv';
+function chipsCart(){var el=document.getElementById('chipscart');if(!el)return;el.innerHTML=CATS.map(function(c){return '<span class="chip '+(c[0]==catCart?'on':'')+'" onclick="setCatCart(\''+c[0]+'\')">'+c[1]+'</span>';}).join('');}
+function setCatCart(c){catCart=c;var q=document.getElementById('qcart');if(q)q.value='';chipsCart();renderCartCat();}
+function addFromCart(i){try{var el=document.getElementById('qcc'+i);var q=el?Math.max(1,parseInt(el.value,10)||1):1;cart[i]=(cart[i]||0)+q;badge();try{toastCart(q+(q>1?' itens adicionados':' item adicionado')+' · '+brl(total())+' no pedido');}catch(e){}try{if(typeof sullabEvent==='function')sullabEvent('add_carrinho',{produto:P[i].nome,cod:P[i].cod,qtd:q});}catch(e){}renderCart();}catch(e){}}
+function renderCartCat(){
+  var g=document.getElementById('gridcart'); if(!g) return;
+  var qel=document.getElementById('qcart'); var q=qel?nrm(qel.value).trim():'';
+  var list=[];
+  P.forEach(function(p,i){
+    if(!p.img||p.img.length<6)return;
+    if(p.kind!=='prod'||!p.pub)return; /* só itens com preço para montar pedido */
+    if(!q){ if(catCart=='maisv'){if(!p.mv)return;} else if(catCart=='promo'){if(!p.promo)return;} else if(p.cat!=catCart)return; }
+    if(q){ var hay=nrm(p.nome+' '+p.brand+' '+p.cod+' '+(p.tipo||'')+' '+(p.kw||'')+' '+nameCat(p.cat)); var qw=q.split(/\s+/).filter(Boolean); var ok=true; for(var w=0;w<qw.length;w++){ if(hay.indexOf(qw[w])<0){ok=false;break;} } if(!ok)return; }
+    list.push(i);
+  });
+  if(!list.length){ g.innerHTML='<div style="grid-column:1/-1;padding:20px;text-align:center;color:#888;font-size:13px">'+(q?('Nada encontrado para “'+qel.value+'”. ')+'<button class="buy" style="margin-top:8px" onclick="cotarBusca&&cotarBusca()">💬 Cotar no WhatsApp</button>':'Sem itens nesta categoria.')+'</div>'; return; }
+  g.innerHTML=list.map(function(i){var p=P[i];
+    var off=Math.round((1-p.cnpj/p.pub)*100);
+    var price=cnpj?('<div class="price" style="font-size:15px">'+brl(p.cnpj)+'</div><div class="inst" style="font-size:11px">Preço CNPJ −'+off+'%</div>')
+                  :('<div class="price" style="font-size:15px">'+brl(p.pub)+'</div><div class="cnpjbox" style="margin-top:3px"><span class="lab">CNPJ</span><span class="val" style="font-size:13px">'+brl(p.cnpj)+'</span><span class="off">−'+off+'%</span></div>');
+    return '<div class="card"><div class="ph" style="background-image:url(\''+(p.img||PLACEHOLDER)+'\')"></div><div class="bd" style="padding:8px">'+(p.brand?('<div class="brandtop">'+p.brand+'</div>'):'')+'<div class="title" style="font-size:12.5px;line-height:1.25">'+p.nome+'</div>'+price+'<div class="qrow" style="margin-top:6px"><div class="qsel"><button onclick="var e=document.getElementById(\'qcc'+i+'\');e.value=Math.max(1,(parseInt(e.value,10)||1)-1)">−</button><input id="qcc'+i+'" class="qin" type="number" min="1" value="1"><button onclick="var e=document.getElementById(\'qcc'+i+'\');e.value=(parseInt(e.value,10)||1)+1">+</button></div><button class="buy" onclick="addFromCart('+i+')">+ Adicionar</button></div></div></div>';
+  }).join('');
+}
+
 function renderCart(){
   var ks=Object.keys(cart);var di=document.getElementById('ditems'),df=document.getElementById('dfoot');
   if(!ks.length){di.innerHTML='<div class="cempty">Seu carrinho está vazio.<br>Adicione produtos para comprar ou pedir orçamento.</div>';df.innerHTML='';try{var _ca0=document.getElementById('cartActions');if(_ca0)_ca0.innerHTML='';}catch(e){}return;}
@@ -498,9 +540,20 @@ function admLimpar(){_adminCart={};['admnome','admdoc','admtel','admemail','admc
 if(isAdmin()){setTimeout(openAdmin,300);}
 </script><div class="cartov" id="orcov" onclick="if(event.target.id=='orcov')closeOrc()"><div class="drawer"><div class="dh">📝 Solicitar orçamento formal <span class="x" onclick="closeOrc()">‹ Voltar</span></div><div class="ditems"><div class="orcf"><p class="orcp">Receba uma proposta formal com preços, prazos e condições de pagamento. Resposta em até 1 dia útil.</p><input id="orcnome" placeholder="Nome / Razão social *"><input id="orcdoc" placeholder="CNPJ / CPF"><input id="orcemail" type="email" placeholder="E-mail *"><input id="orcfone" placeholder="Telefone / WhatsApp *"><textarea id="orcitens" rows="5" placeholder="Itens desejados (preenchido com seu carrinho)"></textarea><textarea id="orcobs" rows="2" placeholder="Observações (quantidade, prazo, entrega...)"></textarea><button class="paybtn" onclick="submitOrc()">Enviar solicitação de orçamento</button><div class="orcmail">Ou envie direto para <b id="orcEmailLink">comercial@sullabrj.com.br</b><br><span style="display:block;color:#777;font-size:11px;margin:4px 0">🕒 Atendimento: Seg a Sex, 8h às 18h</span><button class="wabtn" onclick="window.open('https://wa.me/'+WPP,'_blank')">Falar no WhatsApp</button></div></div></div></div></div><div class="cartov" id="ordov" onclick="if(event.target.id=='ordov')closeOrders()"><div class="drawer"><div class="dh">🧾 Meus pedidos <span class="x" onclick="closeOrders()">‹ Voltar</span></div><div class="ditems" id="ordbody"></div></div></div><div class="cartov" id="cmpov" onclick="if(event.target.id=='cmpov')closeCmp()"><div class="drawer"><div class="dh">📊 Comparador de testes rápidos <span class="x" onclick="closeCmp()">‹ Voltar</span></div><div class="ditems" id="cmpbody"></div></div></div><div class="ov" id="lgpdov" onclick="if(event.target.id=='lgpdov')closeLgpd()"><div class="modal tabmodal"><div class="mh"><span>🔒</span><b>Política de Privacidade (LGPD)</b><span class="x" onclick="closeLgpd()">‹ Voltar</span></div><div class="mc lgpdmc"><p class="lgupd">Última atualização: 05/06/2026</p><h4>1. Quem é o controlador dos dados</h4><p><b>SULLAB Comércio de Produtos Hospitalares LTDA</b>, CNPJ 32.198.434/0001-34, com sede em Barra Mansa/RJ. Contato para assuntos de privacidade: <b>comercial@sullabrj.com.br</b>.</p><h4>2. Quais dados coletamos</h4><p>Dados que você nos fornece ao se cadastrar, fazer um pedido ou solicitar orçamento: razão social, CNPJ, nome do contato, e-mail, telefone e endereço de entrega. Coletamos também dados de navegação (páginas visitadas, dispositivo) por meio de cookies e ferramentas de análise.</p><h4>3. Para que usamos seus dados</h4><p>Para processar pedidos e orçamentos, emitir nota fiscal, calcular e contratar frete, prestar atendimento comercial e melhorar a experiência do site. Não usamos seus dados para fins incompatíveis com esses.</p><h4>4. Base legal (LGPD, art. 7º)</h4><p>Execução de contrato e procedimentos preliminares (pedidos/orçamentos), cumprimento de obrigação legal e regulatória (emissão fiscal), legítimo interesse (melhoria do site e prevenção a fraudes) e consentimento (cookies de análise).</p><h4>5. Com quem compartilhamos</h4><p>Apenas com parceiros necessários para concluir sua compra: processador de pagamentos (Mercado Pago), serviços de frete e transportadoras (Melhor Envio/Correios) e ferramenta de análise de audiência (Google Analytics). <b>Não vendemos seus dados.</b></p><h4>6. Cookies e análise</h4><p>Usamos cookies essenciais e o Google Analytics para medir o uso do site. Você pode bloquear cookies nas configurações do seu navegador.</p><h4>7. Seus direitos (LGPD, art. 18)</h4><p>Você pode solicitar a qualquer momento: confirmação e acesso aos seus dados, correção, anonimização, eliminação, portabilidade e revogação do consentimento. Para exercer, escreva para <b>comercial@sullabrj.com.br</b>.</p><h4>8. Retenção e segurança</h4><p>Mantemos seus dados pelo tempo necessário às finalidades acima e ao cumprimento de obrigações legais/fiscais. Adotamos medidas técnicas e administrativas para proteger suas informações.</p><h4>9. Alterações</h4><p>Esta política pode ser atualizada. A versão vigente estará sempre disponível nesta página.</p></div></div></div><div class="ov" id="tabov" oncontextmenu="return false" onclick="if(event.target.id=='tabov')closeTab()"><div class="modal tabmodal"><div class="mh"><span>📄</span><b>Tabela de preços CNPJ</b><span class="x" onclick="closeTab()">‹ Voltar</span></div><div class="mc" id="tabmc"></div></div></div><div class="cartov" id="cartov" onclick="if(event.target.id==\'cartov\')closeCart()"><div class="drawer">
   <div class="dh" id="cartdh" onclick="if(document.getElementById('cartov').classList.contains('min'))expandCart()">🛒 Carrinho <span id="cartmincount" style="font-size:13px;font-weight:600;opacity:.9"></span><span class="minbtn" title="Minimizar" onclick="event.stopPropagation();toggleMinCart()" style="margin-left:auto">–</span><span class="x" onclick="event.stopPropagation();closeCart()">‹ Voltar</span></div>
+  <div class="dwrap">
+    <div class="catcol">
+      <div class="catbar">
+        <input id="qcart" placeholder="🔎 Buscar produto, marca ou código…" oninput="renderCartCat()">
+        <div class="chipscart" id="chipscart"></div>
+      </div>
+      <div class="gridcartwrap"><div id="gridcart"></div></div>
+    </div>
+    <div class="ordercol">
   <div class="csteps" id="csteps"><span class="cstep-dot on" data-s="1" onclick="goStep(1)"><b>1</b> Produtos</span><span class="cstep-sep"></span><span class="cstep-dot" data-s="2" onclick="goStep(2)"><b>2</b> Entrega</span><span class="cstep-sep"></span><span class="cstep-dot" data-s="3" onclick="goStep(3)"><b>3</b> Pagamento</span></div><div class="dbody"><div class="ditems" id="ditems"></div><div class="dfoot" id="dfoot"></div></div>
   <div class="cnav" id="cnav"><button class="cnav-back" onclick="prevStep()">‹ Voltar</button><button class="cnav-next" onclick="nextStep()">Avançar ›</button></div>
-  <div class="cartactions" id="cartActions"></div>
+      <div class="cartactions" id="cartActions"></div>
+    </div>
+  </div>
 </div></div>
 <div class="cartov" id="shareov" onclick="if(event.target.id=='shareov')closeShare()"><div class="drawer" style="max-width:520px"><div class="dh">🔗 Compartilhar carrinho <span class="x" onclick="closeShare()">‹ Fechar</span></div><div class="dbody" style="display:block;overflow-y:auto;padding:16px"><div style="font-size:13.5px;color:#444;margin-bottom:12px">Link gerado com os produtos e o endereço atuais do carrinho. Envie pro cliente — ele abre <b>direto no carrinho</b> e só finaliza a compra (ou cadastra o CNPJ).</div><div style="display:flex;gap:6px;margin-bottom:10px"><input id="shlink" readonly style="flex:1;padding:11px;border:1px solid #bcd8f5;border-radius:8px;font-size:12.5px;background:#f7fbff"><button onclick="shCopiar()" style="background:var(--azul,#16456e);color:#fff;border:0;border-radius:8px;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer">Copiar</button></div><a id="shwa" href="#" target="_blank" rel="noopener" style="display:block;text-align:center;background:#25d366;color:#fff;border-radius:8px;padding:13px;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:8px">📲 Enviar por WhatsApp</a><div style="font-size:11.5px;color:#888;text-align:center">Dica: cole o link no WhatsApp, e-mail ou onde preferir.</div></div></div></div>
 <div class="cartov" id="adminov" onclick="if(event.target.id=='adminov')closeAdmin()"><div class="drawer" style="max-width:760px">
@@ -581,14 +634,15 @@ if(isAdmin()){setTimeout(openAdmin,300);}
     if(window.__user){
       if(bar)bar.classList.add('on');
       var nm=(window.__profile&&window.__profile.razao)?window.__profile.razao:(window.__user.email||'');
-      if(tx)tx.innerHTML='✓ <b>Conectado'+(nm?(' — '+nm):'')+'</b>. Preço CNPJ aplicado.';
+      if(tx)tx.innerHTML='✓ <b>Conectado'+(nm?(' — '+nm):'')+'</b> · Preço CNPJ com desconto aplicado em todos os produtos.';
       if(btn)btn.textContent='Sair';
     } else {
       if(bar)bar.classList.remove('on');
-      if(tx)tx.innerHTML='Tem CNPJ? <b>Entre ou cadastre-se</b> para ver o preço CNPJ e seus pedidos.';
+      if(tx)tx.innerHTML='💰 <b>CNPJ cadastrado tem descontos expressivos em TODOS os produtos.</b> Cadastre-se grátis (CNPJ ou CPF) e veja seu preço.';
       if(btn)btn.textContent='Entrar / Cadastrar';
     }
     if(btn)btn.onclick=window.accountBtn;
+    try{ var ap=$('admPill'); if(ap) ap.style.display=(typeof window.isAdminUser==='function'&&window.isAdminUser())?'inline-block':'none'; }catch(e){}
   }
 
   
