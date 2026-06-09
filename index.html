@@ -357,24 +357,7 @@ function checkoutGate(){
   return true;
 }
 /* Retorna true se pode finalizar; senão mostra aviso e abre o que falta. */
-function checkoutGate(){
-  var ks=Object.keys(cart); if(!ks.length){ toast('Seu carrinho está vazio. Adicione itens antes de finalizar.'); return false; }
-  var c=clienteInfo();
-  if(!c.logado){
-    try{ openReg(); }catch(e){}
-    try{ if(typeof showAccTab==='function') showAccTab((window.__user)?'login':'signup'); }catch(e){}
-    setTimeout(function(){ try{ alert('Para finalizar a compra, faça seu cadastro (só na 1ª vez) ou entre na sua conta.\n\nÉ rápido: razão social/nome, CNPJ ou CPF, telefone, e-mail e senha. Depois é só fazer login.'); }catch(e){} }, 150);
-    return false;
-  }
-  var a=readAddr();
-  if(!addrOk(a)){
-    try{ var el=document.getElementById('acep')||document.getElementById('aend'); if(el&&el.scrollIntoView){ el.scrollIntoView({block:'center'}); el.focus(); } }catch(e){}
-    setTimeout(function(){ try{ alert('Complete o endereço de entrega para finalizar:\nCEP, rua, número, bairro, cidade e UF.'); }catch(e){} }, 100);
-    return false;
-  }
-  saveAddr(a);
-  return true;
-}
+
 
 function sendWa(){if(!checkoutGate())return;var c=clienteInfo();var a2=readAddr();var lines=[];for(var k in cart){var p=P[k];var pr=prc(p);lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+(pr?(' · '+brl(pr*cart[k])):'')+')');}try{if(typeof sullabEvent==='function')sullabEvent('pedido_wa',{total:total(),qtd:lines.length,itens:_orderItems(),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a2,obs:val('aobs')});}catch(e){}try{recordOrder('Orçamento WhatsApp');}catch(e){}var ent='\n\n— Entrega —\n'+a2.end+', '+a2.num+(a2.comp?(' - '+a2.comp):'')+'\n'+a2.bairro+' — '+a2.cidade+'/'+a2.uf+'\nCEP: '+a2.cep;var ident='\n\n— Cliente —\nNome/Razão: '+c.nome+'\n'+c.docTipo+': '+c.doc+'\nTelefone: '+c.tel+'\nE-mail: '+c.email;var msg='Olá! Pedido pelo catálogo SULLAB:\n\n'+lines.join('\n')+'\n\nTotal (sem frete): '+brl(total())+ent+ident+'\n\nPodem confirmar disponibilidade e o frete?';window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 document.getElementById('fab').onclick=function(e){e.preventDefault();sendWa();};
