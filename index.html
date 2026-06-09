@@ -145,9 +145,9 @@ body.modal-open #cartFab{display:none}
   #cartov .cstep-dot.done b{background:#27ae60;color:#fff}
   #cartov .cstep-sep{width:14px;height:2px;background:#d7e0ea;border-radius:2px}
   /* mostra so o passo ativo */
-  #cartov[data-step="1"] .dfoot{display:none}
-  #cartov[data-step="2"] .ditems,#cartov[data-step="2"] .cstep-pagamento{display:none}
-  #cartov[data-step="3"] .ditems,#cartov[data-step="3"] .cstep-entrega{display:none}
+  
+  
+  
   /* barra de navegacao Voltar/Avancar */
   #cartov .cnav{display:flex;gap:8px;padding:8px 12px;background:#fff;border-top:1px solid var(--borda,#e3e8ef)}
   #cartov .cnav button{flex:1;padding:12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:1px solid var(--azul,#16456e)}
@@ -155,12 +155,12 @@ body.modal-open #cartFab{display:none}
   #cartov .cnav-next{background:var(--azul,#16456e);color:#fff}
   #cartov[data-step="1"] .cnav-back{visibility:hidden}
   /* no passo 3, os botoes de pagar (cartActions) aparecem; nos outros, escondidos */
-  #cartov[data-step="1"] .cartactions,#cartov[data-step="2"] .cartactions{display:none}
-  #cartov[data-step="3"] .cnav-next{display:none}
+  
+  
 }
 /* Modal LARGO e rico em informacoes */
 #cartov .drawer{max-width:1280px!important;width:96vw!important;height:92vh!important;max-height:92vh!important}
-@media(min-width:760px){#cartov .dwrap{display:grid;grid-template-columns:1.15fr 1fr;gap:0;height:100%;min-height:0}#cartov .catcol{display:flex;flex-direction:column;min-height:0;border-right:1px solid #e3e8ef;background:#fff}#cartov .catcol .gridcartwrap{flex:1;overflow-y:auto;padding:10px 12px}#cartov .ordercol{display:flex;flex-direction:column;min-height:0;overflow:hidden}}
+@media(min-width:760px){#cartov .dwrap{display:grid;grid-template-columns:1.1fr .9fr;gap:0;height:100%;min-height:0}#cartov .catcol{display:flex;flex-direction:column;min-height:0;border-right:1px solid #e3e8ef;background:#fff}#cartov .catcol .gridcartwrap{flex:1 1 auto;overflow-y:auto;padding:10px 12px;min-height:80px}#cartov .orderlist{flex:0 0 auto;max-height:38%;overflow-y:auto;border-top:2px solid #e3e8ef;background:#f7f9fc}#cartov .ordercol{display:flex;flex-direction:column;min-height:0;overflow:hidden}#cartov .ordercol .dbody{flex:1;overflow-y:auto;display:block}}
 #cartov .catcol{background:#fff}
 #cartov .catbar{padding:10px 12px;border-bottom:1px solid #eef2f7;background:#fff;position:sticky;top:0;z-index:2}
 #cartov .catbar input{width:100%;padding:11px 12px;border:1px solid #ccd6e2;border-radius:10px;font-size:14px}
@@ -170,6 +170,13 @@ body.modal-open #cartFab{display:none}
 #cartov #gridcart{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
 #cartov #gridcart .card{font-size:12px}
 #cartov #gridcart .card .ph{height:96px}
+#cartov .catbar-tt{font-size:13px;font-weight:800;color:#16365c;margin-bottom:6px}
+#cartov .catempty{padding:24px 14px;text-align:center;color:#8a96a5;font-size:13px}
+#cartov .orderlist-tt{font-size:13px;font-weight:800;color:#16365c;padding:8px 12px 4px}
+#cartov .ordercol-tt{font-size:14px;font-weight:800;color:#16365c;padding:12px 16px;border-bottom:1px solid #eef2f7;background:#fff}
+#cartov .ci{display:flex;gap:8px;align-items:center;padding:8px 12px;border-bottom:1px solid #eef2f7}
+#cartov .ci .cimg{width:42px;height:42px;flex:0 0 42px;border-radius:6px;background-size:cover;background-position:center;border:1px solid #eee}
+#cartov .ci .cn{font-size:12px;line-height:1.25}#cartov .ci .cp{font-size:12px;font-weight:700;color:#0a7a4a}
 /* corpo rola com barra de rolagem SEMPRE visivel */
 #cartov .dbody{overflow-y:scroll;scrollbar-width:thin;scrollbar-color:#9bb0c6 #eef2f7}
 #cartov .dbody::-webkit-scrollbar{width:12px}
@@ -393,7 +400,7 @@ function shareCart(){
 }
 function closeShare(){var ov=document.getElementById('shareov');if(ov)ov.classList.remove('on');}
 function shCopiar(){var el=document.getElementById('shlink');el.select();try{document.execCommand('copy');}catch(e){}try{navigator.clipboard.writeText(el.value);}catch(e){}toast('Link copiado! É só enviar pro cliente.');}
-function openCart(){renderCart();try{chipsCart();renderCartCat();}catch(e){}var ov=document.getElementById('cartov');ov.classList.remove('min');ov.classList.add('on');setStep(1);updCartMin();}
+function openCart(){renderCart();try{renderCartCat();}catch(e){}var ov=document.getElementById('cartov');ov.classList.remove('min');ov.classList.add('on');try{updCartMin();}catch(e){}}
 var _cstep=1;
 function setStep(n){_cstep=Math.max(1,Math.min(3,n));var ov=document.getElementById('cartov');if(!ov)return;ov.setAttribute('data-step',_cstep);var dots=ov.querySelectorAll('.cstep-dot');dots.forEach(function(d){var s=parseInt(d.getAttribute('data-s'),10);d.classList.remove('on','done');if(s===_cstep)d.classList.add('on');else if(s<_cstep)d.classList.add('done');});try{var db=ov.querySelector('.dbody');if(db)db.scrollTop=0;}catch(e){}}
 function goStep(n){setStep(n);}
@@ -432,12 +439,12 @@ function addFromCart(i){try{var el=document.getElementById('qcc'+i);var q=el?Mat
 function renderCartCat(){
   var g=document.getElementById('gridcart'); if(!g) return;
   var qel=document.getElementById('qcart'); var q=qel?nrm(qel.value).trim():'';
+  if(!q){ g.innerHTML='<div class="catempty">🔎 Digite acima para buscar produtos e adicionar ao pedido.</div>'; return; }
   var list=[];
   P.forEach(function(p,i){
     if(!p.img||p.img.length<6)return;
     if(p.kind!=='prod'||!p.pub)return; /* só itens com preço para montar pedido */
-    if(!q){ if(catCart=='maisv'){if(!p.mv)return;} else if(catCart=='promo'){if(!p.promo)return;} else if(p.cat!=catCart)return; }
-    if(q){ var hay=nrm(p.nome+' '+p.brand+' '+p.cod+' '+(p.tipo||'')+' '+(p.kw||'')+' '+nameCat(p.cat)); var qw=q.split(/\s+/).filter(Boolean); var ok=true; for(var w=0;w<qw.length;w++){ if(hay.indexOf(qw[w])<0){ok=false;break;} } if(!ok)return; }
+    var hay=nrm(p.nome+' '+p.brand+' '+p.cod+' '+(p.tipo||'')+' '+(p.kw||'')+' '+nameCat(p.cat)); var qw=q.split(/\s+/).filter(Boolean); var ok=true; for(var w=0;w<qw.length;w++){ if(hay.indexOf(qw[w])<0){ok=false;break;} } if(!ok)return;
     list.push(i);
   });
   if(!list.length){ g.innerHTML='<div style="grid-column:1/-1;padding:20px;text-align:center;color:#888;font-size:13px">'+(q?('Nada encontrado para “'+qel.value+'”. ')+'<button class="buy" style="margin-top:8px" onclick="cotarBusca&&cotarBusca()">💬 Cotar no WhatsApp</button>':'Sem itens nesta categoria.')+'</div>'; return; }
@@ -568,14 +575,18 @@ if(isAdmin()){setTimeout(openAdmin,300);}
   <div class="dwrap">
     <div class="catcol">
       <div class="catbar">
-        <input id="qcart" placeholder="🔎 Buscar produto, marca ou código…" oninput="renderCartCat()">
-        <div class="chipscart" id="chipscart"></div>
+        <div class="catbar-tt">🔎 Buscar produtos para adicionar</div>
+        <input id="qcart" placeholder="Digite nome, marca ou código do produto…" oninput="renderCartCat()">
       </div>
       <div class="gridcartwrap"><div id="gridcart"></div></div>
+      <div class="orderlist">
+        <div class="orderlist-tt">🛒 Seu pedido</div>
+        <div class="ditems" id="ditems"></div>
+      </div>
     </div>
     <div class="ordercol">
-  <div class="csteps" id="csteps"><span class="cstep-dot on" data-s="1" onclick="goStep(1)"><b>1</b> Produtos</span><span class="cstep-sep"></span><span class="cstep-dot" data-s="2" onclick="goStep(2)"><b>2</b> Entrega</span><span class="cstep-sep"></span><span class="cstep-dot" data-s="3" onclick="goStep(3)"><b>3</b> Pagamento</span></div><div class="dbody"><div class="ditems" id="ditems"></div><div class="dfoot" id="dfoot"></div></div>
-  <div class="cnav" id="cnav"><button class="cnav-back" onclick="prevStep()">‹ Voltar</button><button class="cnav-next" onclick="nextStep()">Avançar ›</button></div>
+      <div class="ordercol-tt">📦 Dados para entrega</div>
+      <div class="dbody"><div class="dfoot" id="dfoot"></div></div>
       <div class="cartactions" id="cartActions"></div>
     </div>
   </div>
