@@ -282,6 +282,19 @@ body.modal-open #cartFab{display:none}
   #cartFab{display:none!important}  /* FAB substituído pelo botão Pedido da barra inferior */
   /* modal do pedido SEMPRE acima do header (header tem z500) p/ a busca certa receber o toque */
   #cartov{z-index:9000!important}
+  /* ===== Carrinho como JANELA flutuante com bordas arredondadas (mobile) ===== */
+  #cartov.on{padding:14px!important;align-items:center!important;justify-content:center!important}
+  #cartov .drawer{
+    width:92vw!important; max-width:92vw!important;
+    height:auto!important; max-height:86vh!important;
+    border-radius:20px!important; overflow:hidden!important;
+    box-shadow:0 24px 70px rgba(10,25,45,.45)!important;
+    margin:0!important;
+  }
+  /* cabeçalho também arredondado no topo */
+  #cartov .dh{border-radius:20px 20px 0 0}
+  /* fundo escurecido p/ destacar a janela */
+  #cartov.on{background:rgba(15,30,55,.55)!important}
   #cartov.on{z-index:9000!important}
   /* ETAPA 1: "Seu pedido" no TOPO (sempre visível), busca + resultados embaixo */
   #cartov[data-mstep="1"] .catcol{display:flex!important;flex-direction:column}
@@ -1034,7 +1047,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781101572';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781102176';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
