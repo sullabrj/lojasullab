@@ -310,8 +310,31 @@ body.modal-open #cartFab{display:none}
   #cartov #mnav .mnav-next{background:#16456e;color:#fff}
   /* etapa 1: sem Voltar (é a primeira); etapa 3: troca Avançar por nada (botões de enviar já aparecem) */
   #cartov[data-mstep="1"] #mnav .mnav-back{display:none}
-  #cartov[data-mstep="3"] #mnav .mnav-next{display:none}
-  #cartov[data-mstep="3"] #mnav .mnav-back{flex:1}
+  /* ===== Wizard 4 etapas: cada etapa mostra só o seu conteúdo, com scroll ===== */
+  /* ordercol é a coluna de dados (etapas 2,3,4). vira scrollável */
+  #cartov[data-mstep] .ordercol{display:flex!important;flex-direction:column;min-height:0;overflow:hidden}
+  #cartov[data-mstep] .ordercol .dbody{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  /* etapa 1: só itens */
+  #cartov[data-mstep="1"] .ordercol{display:none!important}
+  /* etapa 2: só endereço */
+  #cartov[data-mstep="2"] .catcol{display:none!important}
+  #cartov[data-mstep="2"] .stepnf{display:none!important}
+  #cartov[data-mstep="2"] .steppay{display:none!important}
+  #cartov[data-mstep="2"] .ordercol-tt::after{content:" · Endereço"}
+  /* etapa 3: só nota fiscal */
+  #cartov[data-mstep="3"] .catcol{display:none!important}
+  #cartov[data-mstep="3"] .stepend{display:none!important}
+  #cartov[data-mstep="3"] .steppay{display:none!important}
+  /* etapa 4: só pagamento (botões enviar/pagar) */
+  #cartov[data-mstep="4"] .catcol{display:none!important}
+  #cartov[data-mstep="4"] .stepend{display:none!important}
+  #cartov[data-mstep="4"] .stepnf{display:none!important}
+  #cartov[data-mstep="4"] .freteb,#cartov[data-mstep="4"] .fbcold{display:none!important}
+  #cartov[data-mstep="4"] .steppay{display:flex!important;flex-direction:column;gap:10px;padding:14px}
+  /* navegação: etapa 4 esconde Avançar (são os botões de pagar), só Voltar */
+  #cartov[data-mstep="4"] #mnav .mnav-next{display:none}
+  #cartov[data-mstep="4"] #mnav .mnav-back{flex:1}
+
   /* ===== Wizard 3 etapas (só mobile) ===== */
   #cartov .msteps{display:flex!important;align-items:center;justify-content:center;gap:4px;padding:10px 8px;background:#f3f6fb;border-bottom:1px solid #e3e8ef;flex:0 0 auto}
   #cartov .mstep{display:flex;align-items:center;gap:5px;font-size:12px;color:#8aa0b6;font-weight:600;white-space:nowrap}
@@ -335,11 +358,11 @@ body.modal-open #cartFab{display:none}
   #cartov.on .drawer{display:flex;flex-direction:column}
   #cartov .dwrap{flex:1 1 auto;min-height:0}
   #cartov[data-mstep="1"] .mnav-back{visibility:hidden}
-  #cartov[data-mstep="2"] .catcol{display:none!important}
-  #cartov[data-mstep="2"] .stepnf{display:none!important}
 
-  #cartov[data-mstep="3"] .catcol{display:none!important}
-  #cartov[data-mstep="3"] .stepend{display:none!important}
+
+
+
+
 
   /* na etapa 3 mostram-se os botões de enviar (cartActions) */
   /* esconder topo poluído no mobile - simplifica pro estilo ML */
@@ -739,7 +762,7 @@ function admLimpar(){_adminCart={};['admnome','admdoc','admtel','admemail','admc
 if(isAdmin()){setTimeout(openAdmin,300);}
 </script><div class="cartov" id="orcov" onclick="if(event.target.id=='orcov')closeOrc()"><div class="drawer"><div class="dh">📝 Solicitar orçamento formal <span class="x" onclick="closeOrc()">‹ Voltar</span></div><div class="ditems"><div class="orcf"><p class="orcp">Receba uma proposta formal com preços, prazos e condições de pagamento. Resposta em até 1 dia útil.</p><input id="orcnome" placeholder="Nome / Razão social *"><input id="orcdoc" placeholder="CNPJ / CPF"><input id="orcemail" type="email" placeholder="E-mail *"><input id="orcfone" placeholder="Telefone / WhatsApp *"><textarea id="orcitens" rows="5" placeholder="Itens desejados (preenchido com seu carrinho)"></textarea><textarea id="orcobs" rows="2" placeholder="Observações (quantidade, prazo, entrega...)"></textarea><button class="paybtn" onclick="submitOrc()">Enviar solicitação de orçamento</button><div class="orcmail">Ou envie direto para <b id="orcEmailLink">comercial@sullabrj.com.br</b><br><span style="display:block;color:#777;font-size:11px;margin:4px 0">🕒 Atendimento: Seg a Sex, 8h às 18h</span><button class="wabtn" onclick="window.open('https://wa.me/'+WPP,'_blank')">Falar no WhatsApp</button></div></div></div></div></div><div class="cartov" id="ordov" onclick="if(event.target.id=='ordov')closeOrders()"><div class="drawer"><div class="dh">🧾 Meus pedidos <span class="x" onclick="closeOrders()">‹ Voltar</span></div><div class="ditems" id="ordbody"></div></div></div><div class="cartov" id="cmpov" onclick="if(event.target.id=='cmpov')closeCmp()"><div class="drawer"><div class="dh">📊 Comparador de testes rápidos <span class="x" onclick="closeCmp()">‹ Voltar</span></div><div class="ditems" id="cmpbody"></div></div></div><div class="ov" id="lgpdov" onclick="if(event.target.id=='lgpdov')closeLgpd()"><div class="modal tabmodal"><div class="mh"><span>🔒</span><b>Política de Privacidade (LGPD)</b><span class="x" onclick="closeLgpd()">‹ Voltar</span></div><div class="mc lgpdmc"><p class="lgupd">Última atualização: 05/06/2026</p><h4>1. Quem é o controlador dos dados</h4><p><b>SULLAB Comércio de Produtos Hospitalares LTDA</b>, CNPJ 32.198.434/0001-34, com sede em Barra Mansa/RJ. Contato para assuntos de privacidade: <b>comercial@sullabrj.com.br</b>.</p><h4>2. Quais dados coletamos</h4><p>Dados que você nos fornece ao se cadastrar, fazer um pedido ou solicitar orçamento: razão social, CNPJ, nome do contato, e-mail, telefone e endereço de entrega. Coletamos também dados de navegação (páginas visitadas, dispositivo) por meio de cookies e ferramentas de análise.</p><h4>3. Para que usamos seus dados</h4><p>Para processar pedidos e orçamentos, emitir nota fiscal, calcular e contratar frete, prestar atendimento comercial e melhorar a experiência do site. Não usamos seus dados para fins incompatíveis com esses.</p><h4>4. Base legal (LGPD, art. 7º)</h4><p>Execução de contrato e procedimentos preliminares (pedidos/orçamentos), cumprimento de obrigação legal e regulatória (emissão fiscal), legítimo interesse (melhoria do site e prevenção a fraudes) e consentimento (cookies de análise).</p><h4>5. Com quem compartilhamos</h4><p>Apenas com parceiros necessários para concluir sua compra: processador de pagamentos (Mercado Pago), serviços de frete e transportadoras (Melhor Envio/Correios) e ferramenta de análise de audiência (Google Analytics). <b>Não vendemos seus dados.</b></p><h4>6. Cookies e análise</h4><p>Usamos cookies essenciais e o Google Analytics para medir o uso do site. Você pode bloquear cookies nas configurações do seu navegador.</p><h4>7. Seus direitos (LGPD, art. 18)</h4><p>Você pode solicitar a qualquer momento: confirmação e acesso aos seus dados, correção, anonimização, eliminação, portabilidade e revogação do consentimento. Para exercer, escreva para <b>comercial@sullabrj.com.br</b>.</p><h4>8. Retenção e segurança</h4><p>Mantemos seus dados pelo tempo necessário às finalidades acima e ao cumprimento de obrigações legais/fiscais. Adotamos medidas técnicas e administrativas para proteger suas informações.</p><h4>9. Alterações</h4><p>Esta política pode ser atualizada. A versão vigente estará sempre disponível nesta página.</p></div></div></div><div class="ov" id="tabov" oncontextmenu="return false" onclick="if(event.target.id=='tabov')closeTab()"><div class="modal tabmodal"><div class="mh"><span>📄</span><b>Tabela de preços CNPJ</b><span class="x" onclick="closeTab()">‹ Voltar</span></div><div class="mc" id="tabmc"></div></div></div><div class="cartov" id="cartov" onclick="if(event.target.id==\'cartov\')closeCart()"><div class="drawer">
   <div class="dh" id="cartdh"><span class="dh-tt">🛒 Montar pedido</span> <span id="cartmincount" style="font-size:13px;font-weight:600;opacity:.9"></span><div class="dh-btns"><button class="dhbtn dhclose" title="Fechar" onclick="event.stopPropagation();closeCart()">✕ Fechar</button></div></div>
-  <div class="msteps" id="msteps"><div class="mstep on" data-s="1" onclick="goMStep(1)"><b>1</b>Itens</div><div class="msep"></div><div class="mstep" data-s="2" onclick="goMStep(2)"><b>2</b>Endereço</div><div class="msep"></div><div class="mstep" data-s="3" onclick="goMStep(3)"><b>3</b>Nota fiscal</div></div>
+  <div class="msteps" id="msteps"><div class="mstep on" data-s="1" onclick="goMStep(1)"><b>1</b>Itens</div><div class="msep"></div><div class="mstep" data-s="2" onclick="goMStep(2)"><b>2</b>Endereço</div><div class="msep"></div><div class="mstep" data-s="3" onclick="goMStep(3)"><b>3</b>NF-e</div><div class="msep"></div><div class="mstep" data-s="4" onclick="goMStep(4)"><b>4</b>Pagamento</div></div>
   <div class="dwrap">
     <div class="catcol">
       <div class="catbar">
@@ -755,7 +778,7 @@ if(isAdmin()){setTimeout(openAdmin,300);}
     <div class="ordercol">
       <div class="ordercol-tt">📦 Dados para entrega</div>
       <div class="dbody"><div class="dfoot" id="dfoot"></div></div>
-      <div class="cartactions" id="cartActions"></div>
+      <div class="cartactions steppay" data-step="4" id="cartActions"></div>
     </div>
   </div>
   <div class="mnav" id="mnav"><button class="mnav-back" onclick="goMStep(_mstep-1)">‹ Voltar</button><button class="mnav-next" onclick="mStepNext()">Avançar ›</button></div>
@@ -970,7 +993,8 @@ document.addEventListener('DOMContentLoaded',updMlNavBadge);setTimeout(updMlNavB
 var _mstep=1;
 function _isMobileCart(){return window.matchMedia&&window.matchMedia('(max-width:600px)').matches;}
 function goMStep(n){
-  if(n<1)n=1; if(n>3)n=3; _mstep=n;
+  if(n<1)n=1; if(n>4)n=4; _mstep=n;
+  try{var tt=document.querySelector('#cartov .ordercol-tt');if(tt)tt.textContent=(n===2?'📦 Endereço de entrega':(n===3?'🧾 Dados para nota fiscal':(n===4?'💳 Enviar pedido / Pagamento':'📦 Dados para entrega')));}catch(e){}
   var ov=document.getElementById('cartov'); if(ov)ov.setAttribute('data-mstep',n);
   // marca progresso
   try{var ds=document.querySelectorAll('#msteps .mstep');for(var i=0;i<ds.length;i++){var s=i+1;ds[i].classList.toggle('on',s===n);ds[i].classList.toggle('done',s<n);}}catch(e){}
@@ -990,6 +1014,14 @@ function mStepNext(){
       toast('Complete o endereço de entrega para avançar.'); return;
     }
     goMStep(3); return;
+  }
+  if(_mstep===3){
+    /* valida dados de nota fiscal: doc + email */
+    var fd=document.getElementById('adoc'), fe=document.getElementById('aemail');
+    var _vd=(typeof validaDoc==='function')?validaDoc:(window.validaDoc||function(){return true;});
+    if(fd && !_vd(fd.value)){ try{fd.scrollIntoView({block:'center'});fd.focus();}catch(e){} toast('Informe um CPF ou CNPJ válido.'); return; }
+    if(fe && !/.+@.+\..+/.test(fe.value)){ try{fe.scrollIntoView({block:'center'});fe.focus();}catch(e){} toast('Informe um e-mail válido.'); return; }
+    goMStep(4); return;
   }
 }
 /* ao abrir o carrinho no mobile, começa na etapa 1 */
@@ -1047,7 +1079,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781102176';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781102870';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
