@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lojasullabrj.com.br/sitemap.xml
