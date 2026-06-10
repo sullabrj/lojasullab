@@ -972,4 +972,33 @@ function mStepNext(){
   // safety: if cart overlay loses 'on' class some other way, observe and unlock
 })();
 </script>
+<script>
+/* ===== FIX Safari: garante funções globais + listeners diretos (oninput/onclick inline falhavam no iPhone) ===== */
+(function(){
+  function exp(n){ try{ if(typeof window[n]==='undefined' && typeof eval(n)==='function'){ window[n]=eval(n); } }catch(e){} }
+  ['renderCartCat','mlGoHome','mlGoCats','setMlNav','addFromCart','nameCat','nrm','openCart','closeCart','goMStep','mStepNext'].forEach(exp);
+
+  function bind(){
+    // busca dentro do carrinho
+    var q=document.getElementById('qcart');
+    if(q && !q._bound){ q._bound=1;
+      var run=function(){ try{ (window.renderCartCat||renderCartCat)(); }catch(e){} };
+      q.addEventListener('input',run); q.addEventListener('keyup',run); q.addEventListener('search',run);
+    }
+    // botões da barra inferior — re-bind robusto
+    var nav=document.getElementById('mlnav');
+    if(nav && !nav._bound){ nav._bound=1;
+      var b=nav.querySelectorAll('button');
+      if(b[0]) b[0].addEventListener('click',function(e){e.preventDefault();try{mlGoHome();}catch(_){}});
+      if(b[1]) b[1].addEventListener('click',function(e){e.preventDefault();try{mlGoCats();}catch(_){}});
+      if(b[2]) b[2].addEventListener('click',function(e){e.preventDefault();try{openCart();setMlNav(2);}catch(_){}});
+      if(b[3]) b[3].addEventListener('click',function(e){e.preventDefault();try{(window.accountBtn?accountBtn():openReg());setMlNav(3);}catch(_){}});
+    }
+  }
+  // bind agora e sempre que o carrinho abrir (qcart é recriado às vezes)
+  if(document.readyState!=='loading') bind(); else document.addEventListener('DOMContentLoaded',bind);
+  var _oc=window.openCart; if(typeof _oc==='function'){ window.openCart=function(){ var r; try{r=_oc.apply(this,arguments);}catch(e){} setTimeout(bind,30); return r; }; }
+  setInterval(bind, 1200);
+})();
+</script>
 </body></html>
