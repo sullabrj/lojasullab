@@ -423,7 +423,7 @@ function nextStep(){setStep(_cstep+1);}
 function prevStep(){setStep(_cstep-1);}
 function closeCart(){var ov=document.getElementById('cartov');ov.classList.remove('on');ov.classList.remove('min');}
 function toggleMinCart(){var ov=document.getElementById('cartov');if(ov.classList.contains('min')){expandCart();}else{ov.classList.add('min');updCartMin();}}
-function expandCart(){var ov=document.getElementById('cartov');ov.classList.remove('min');renderCart();}
+function expandCart(){var ov=document.getElementById('cartov');ov.classList.remove('min');renderCart();updCartMin();}
 function updCartMin(){var n=0,t=0;for(var k in cart){n+=cart[k];}try{t=total();}catch(e){}var el=document.getElementById('cartmincount');if(el)el.textContent=n?('· '+n+(n>1?' itens · ':' item · ')+brl(t)):'· vazio';var mb=document.querySelector('#cartov .dhmin');var isMin=document.getElementById('cartov').classList.contains('min');if(mb)mb.textContent=isMin?'⤢ Abrir':'— Minimizar';}
 function chQ(i,d){cart[i]=(cart[i]||0)+d;if(cart[i]<=0)delete cart[i];badge();renderCart();}
 function cqset(k,v){v=Math.max(0,parseInt(v,10)||0);if(v<=0){delete cart[k];}else{cart[k]=v;}badge();renderCart();}
