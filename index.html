@@ -309,6 +309,8 @@ body.modal-open #cartFab{display:none}
 }
 .mlinstall,.mlship{display:none}
 .msteps,.mnav{display:none}
+html.cart-lock,body.cart-lock{overflow:hidden!important}
+body.cart-lock{position:fixed!important;left:0;right:0;width:100%}
 #mlnav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:#fff;border-top:1px solid #e0e0e0;z-index:600;box-shadow:0 -2px 8px rgba(0,0,0,.08);align-items:stretch}
 #mlnav button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;color:#666;cursor:pointer;padding:0}
 #mlnav button .ic{font-size:19px;line-height:1}
@@ -902,12 +904,15 @@ window.fbRegister=function(){
 })();
 </script>
 <nav id="mlnav">
-  <button onclick="window.scrollTo({top:0,behavior:'smooth'});setMlNav(0)"><span class="ic">🏠</span>Início</button>
-  <button onclick="var c=document.getElementById('brandindex')||document.getElementById('chips');if(c)c.scrollIntoView({behavior:'smooth',block:'start'});setMlNav(1)"><span class="ic">🗂️</span>Categorias</button>
+  <button onclick="mlGoHome()"><span class="ic">🏠</span>Início</button>
+  <button onclick="mlGoCats()"><span class="ic">🗂️</span>Categorias</button>
   <button onclick="openCart();setMlNav(2)" style="position:relative"><span class="ic">🛒</span>Pedido<span class="nbadge" id="mlnavbadge" style="display:none">0</span></button>
   <button onclick="(window.accountBtn?accountBtn():openReg());setMlNav(3)"><span class="ic">👤</span>Conta</button>
 </nav>
 <script>
+function mlCloseCartIfOpen(){try{var ov=document.getElementById('cartov');if(ov&&ov.classList.contains('on'))closeCart();}catch(e){}}
+function mlGoHome(){mlCloseCartIfOpen();try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);}setMlNav(0);}
+function mlGoCats(){mlCloseCartIfOpen();setTimeout(function(){var c=document.getElementById('brandindex')||document.getElementById('chips');if(c){var y=c.getBoundingClientRect().top+(window.pageYOffset||0)-70;try{window.scrollTo({top:y,behavior:'smooth'});}catch(e){window.scrollTo(0,y);}}setMlNav(1);},60);}
 function setMlNav(i){try{var b=document.querySelectorAll('#mlnav button');for(var n=0;n<b.length;n++)b[n].classList.toggle('on',n===i);}catch(e){}}
 function updMlNavBadge(){try{var n=0;for(var k in (window.cart||{}))n+=cart[k];var el=document.getElementById('mlnavbadge');if(el){el.textContent=n;el.style.display=n?'inline-block':'none';}}catch(e){}}
 try{var _ob=window.badge;window.badge=function(){try{if(_ob)_ob.apply(this,arguments);}catch(e){}updMlNavBadge();};}catch(e){}
@@ -946,6 +951,17 @@ function mStepNext(){
   if(typeof _oc==='function'){
     window.openCart=function(){ try{_oc.apply(this,arguments);}catch(e){} try{ if(_isMobileCart())goMStep(1); else { var ov=document.getElementById('cartov'); if(ov)ov.removeAttribute('data-mstep'); } }catch(e){} };
   }
+})();
+</script>
+<script>
+/* ===== Trava o scroll do fundo quando o Montar pedido está aberto (mobile + desktop) ===== */
+(function(){
+  var _y=0;
+  function lock(){ try{ _y=window.pageYOffset||document.documentElement.scrollTop||0; document.documentElement.classList.add('cart-lock'); document.body.classList.add('cart-lock'); document.body.style.top=(-_y)+'px'; }catch(e){} }
+  function unlock(){ try{ document.documentElement.classList.remove('cart-lock'); document.body.classList.remove('cart-lock'); document.body.style.top=''; window.scrollTo(0,_y); }catch(e){} }
+  var _oc=window.openCart; if(typeof _oc==='function'){ window.openCart=function(){ var r; try{r=_oc.apply(this,arguments);}catch(e){} lock(); return r; }; }
+  var _cc=window.closeCart; if(typeof _cc==='function'){ window.closeCart=function(){ var r; try{r=_cc.apply(this,arguments);}catch(e){} unlock(); return r; }; }
+  // safety: if cart overlay loses 'on' class some other way, observe and unlock
 })();
 </script>
 </body></html>
