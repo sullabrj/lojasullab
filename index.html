@@ -404,6 +404,7 @@ function setBrandIdx(b){fbrand=b;var sel=document.getElementById('fbrand');if(se
 function chips(){document.getElementById('chips').innerHTML=CATS.map(c=>'<span class="chip '+(c[0]==cat?'on':'')+'" onclick="setCat(\''+c[0]+'\')">'+c[1]+'</span>').join('');}
 function setCat(c){cat=c;seg='';var qel=document.getElementById('q');if(qel)qel.value='';chips();renderSegRow();render();fixChipsTop();if(window.innerWidth>=900){var g=document.getElementById('crumb');if(g)g.scrollIntoView({behavior:'smooth',block:'start'});}}
 function nameCat(c){var f=CATS.find(x=>x[0]==c);return f?f[1]:'';}
+window.nameCat=nameCat;
 function badge(){var n=0;for(var k in cart)n+=cart[k];document.getElementById('cb').textContent=n;var h=document.getElementById('hcb');if(h)h.textContent=n;try{updCartMin();}catch(e){}try{var _t=0;for(var _k in cart){_t+=unitPrice(P[_k],cart[_k])*cart[_k];}var _cn=document.getElementById('cfN');var _cv=document.getElementById('cfV');if(_cn)_cn.textContent=n+(n===1?' item':' itens');if(_cv)_cv.textContent=brl(_t);}catch(e){}try{localStorage.setItem('sullab_cart',JSON.stringify(cart));}catch(e){}}
 function _syncFab(){try{var aberto=document.querySelector('.cartov.on, .ov.on, .modal.on');if(aberto)document.body.classList.add('modal-open');else document.body.classList.remove('modal-open');}catch(e){}}
 setInterval(_syncFab,300);
@@ -568,6 +569,7 @@ var catCart='maisv';
 function chipsCart(){var el=document.getElementById('chipscart');if(!el)return;el.innerHTML=CATS.map(function(c){return '<span class="chip '+(c[0]==catCart?'on':'')+'" onclick="setCatCart(\''+c[0]+'\')">'+c[1]+'</span>';}).join('');}
 function setCatCart(c){catCart=c;var q=document.getElementById('qcart');if(q)q.value='';chipsCart();renderCartCat();}
 function addFromCart(i){try{var el=document.getElementById('qcc'+i);var q=el?Math.max(1,parseInt(el.value,10)||1):1;cart[i]=(cart[i]||0)+q;badge();try{toastCart(q+(q>1?' itens adicionados':' item adicionado')+' · '+brl(total())+' no pedido');}catch(e){}try{if(typeof sullabEvent==='function')sullabEvent('add_carrinho',{produto:P[i].nome,cod:P[i].cod,qtd:q});}catch(e){}renderCart();}catch(e){}}
+window.addFromCart=addFromCart;
 function renderCartCat(){
   var g=document.getElementById('gridcart'); if(!g) return;
   var qel=document.getElementById('qcart'); var q=qel?nrm(qel.value).trim():'';
@@ -587,6 +589,7 @@ function renderCartCat(){
     return '<div class="card"><div class="ph" style="background-image:url(\''+(p.img||PLACEHOLDER)+'\')"></div><div class="bd" style="padding:8px">'+(p.brand?('<div class="brandtop">'+p.brand+'</div>'):'')+'<div class="title" style="font-size:12.5px;line-height:1.25">'+p.nome+'</div>'+price+'<div class="qrow" style="margin-top:6px"><div class="qsel"><button onclick="var e=document.getElementById(\'qcc'+i+'\');e.value=Math.max(1,(parseInt(e.value,10)||1)-1)">−</button><input id="qcc'+i+'" class="qin" type="number" min="1" value="1"><button onclick="var e=document.getElementById(\'qcc'+i+'\');e.value=(parseInt(e.value,10)||1)+1">+</button></div><button class="buy" onclick="addFromCart('+i+')">+ Adicionar</button></div></div></div>';
   }).join('');
 }
+window.renderCartCat=renderCartCat;
 
 function renderCart(){
   var ks=Object.keys(cart);var di=document.getElementById('ditems'),df=document.getElementById('dfoot');
@@ -920,8 +923,11 @@ window.fbRegister=function(){
 <script>
 function mlCloseCartIfOpen(){try{var ov=document.getElementById('cartov');if(ov&&ov.classList.contains('on'))closeCart();}catch(e){}}
 function mlGoHome(){mlCloseCartIfOpen();var doScroll=function(){try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){}try{document.documentElement.scrollTop=0;document.body.scrollTop=0;window.scrollTo(0,0);}catch(e){}};doScroll();setTimeout(doScroll,50);setMlNav(0);}
+window.mlGoHome=mlGoHome;
 function mlGoCats(){mlCloseCartIfOpen();setTimeout(function(){var c=document.getElementById('brandindex')||document.getElementById('chips');if(c){var y=Math.max(0,c.getBoundingClientRect().top+(window.pageYOffset||document.documentElement.scrollTop||0)-66);try{window.scrollTo({top:y,behavior:'smooth'});}catch(e){}try{document.documentElement.scrollTop=y;document.body.scrollTop=y;window.scrollTo(0,y);}catch(e){}}setMlNav(1);},60);}
+window.mlGoCats=mlGoCats;
 function setMlNav(i){try{var b=document.querySelectorAll('#mlnav button');for(var n=0;n<b.length;n++)b[n].classList.toggle('on',n===i);}catch(e){}}
+window.setMlNav=setMlNav;
 function updMlNavBadge(){try{var n=0;for(var k in (window.cart||{}))n+=cart[k];var el=document.getElementById('mlnavbadge');if(el){el.textContent=n;el.style.display=n?'inline-block':'none';}}catch(e){}}
 try{var _ob=window.badge;window.badge=function(){try{if(_ob)_ob.apply(this,arguments);}catch(e){}updMlNavBadge();};}catch(e){}
 document.addEventListener('DOMContentLoaded',updMlNavBadge);setTimeout(updMlNavBadge,1500);
@@ -999,6 +1005,32 @@ function mStepNext(){
   if(document.readyState!=='loading') bind(); else document.addEventListener('DOMContentLoaded',bind);
   var _oc=window.openCart; if(typeof _oc==='function'){ window.openCart=function(){ var r; try{r=_oc.apply(this,arguments);}catch(e){} setTimeout(bind,30); return r; }; }
   setInterval(bind, 1200);
+})();
+</script>
+<script>
+/* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
+(function(){
+  var BUILD='1781098407';                 /* versão embutida nesta cópia do site */
+  window.__SULLAB_BUILD=BUILD;
+  try{
+    /* já recarregamos nesta visita? evita loop */
+    var rk='sullab_reloaded_for';
+    fetch('/version.json?_='+Date.now(),{cache:'no-store'})
+      .then(function(r){return r.ok?r.json():null;})
+      .then(function(j){
+        if(!j||!j.build) return;
+        var server=String(j.build);
+        if(server!==BUILD){
+          var already=sessionStorage.getItem(rk);
+          if(already===server) return;           /* já tentamos p/ esta versão nesta sessão */
+          sessionStorage.setItem(rk,server);
+          /* recarrega pegando a versão nova (cache-busting) */
+          var u=location.pathname+location.search;
+          u+=(u.indexOf('?')<0?'?':'&')+'_v='+server;
+          location.replace(u);
+        }
+      }).catch(function(){});
+  }catch(e){}
 })();
 </script>
 </body></html>
