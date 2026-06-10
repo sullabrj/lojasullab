@@ -280,6 +280,14 @@ body.modal-open #cartFab{display:none}
   /* Barra inferior de navegação ML */
   #mlnav{display:flex!important}
   #cartFab{display:none!important}  /* FAB substituído pelo botão Pedido da barra inferior */
+  /* modal do pedido SEMPRE acima do header (header tem z500) p/ a busca certa receber o toque */
+  #cartov{z-index:9000!important}
+  #cartov.on{z-index:9000!important}
+  /* ETAPA 1: "Seu pedido" no TOPO (sempre visível), busca + resultados embaixo */
+  #cartov[data-mstep="1"] .catcol{display:flex!important;flex-direction:column}
+  #cartov[data-mstep="1"] .orderlist{order:-1;flex:0 0 auto;max-height:34vh;overflow-y:auto;border-top:none;border-bottom:2px solid #e3e8ef}
+  #cartov[data-mstep="1"] .catbar{order:0}
+  #cartov[data-mstep="1"] .gridcartwrap{order:1}
   /* ===== Wizard 3 etapas (só mobile) ===== */
   #cartov .msteps{display:flex!important;align-items:center;justify-content:center;gap:4px;padding:10px 8px;background:#f3f6fb;border-bottom:1px solid #e3e8ef;flex:0 0 auto}
   #cartov .mstep{display:flex;align-items:center;gap:5px;font-size:12px;color:#8aa0b6;font-weight:600;white-space:nowrap}
@@ -1015,7 +1023,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781099569';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781100300';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
