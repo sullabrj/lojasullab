@@ -911,8 +911,8 @@ window.fbRegister=function(){
 </nav>
 <script>
 function mlCloseCartIfOpen(){try{var ov=document.getElementById('cartov');if(ov&&ov.classList.contains('on'))closeCart();}catch(e){}}
-function mlGoHome(){mlCloseCartIfOpen();try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);}setMlNav(0);}
-function mlGoCats(){mlCloseCartIfOpen();setTimeout(function(){var c=document.getElementById('brandindex')||document.getElementById('chips');if(c){var y=c.getBoundingClientRect().top+(window.pageYOffset||0)-70;try{window.scrollTo({top:y,behavior:'smooth'});}catch(e){window.scrollTo(0,y);}}setMlNav(1);},60);}
+function mlGoHome(){mlCloseCartIfOpen();var doScroll=function(){try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){}try{document.documentElement.scrollTop=0;document.body.scrollTop=0;window.scrollTo(0,0);}catch(e){}};doScroll();setTimeout(doScroll,50);setMlNav(0);}
+function mlGoCats(){mlCloseCartIfOpen();setTimeout(function(){var c=document.getElementById('brandindex')||document.getElementById('chips');if(c){var y=Math.max(0,c.getBoundingClientRect().top+(window.pageYOffset||document.documentElement.scrollTop||0)-66);try{window.scrollTo({top:y,behavior:'smooth'});}catch(e){}try{document.documentElement.scrollTop=y;document.body.scrollTop=y;window.scrollTo(0,y);}catch(e){}}setMlNav(1);},60);}
 function setMlNav(i){try{var b=document.querySelectorAll('#mlnav button');for(var n=0;n<b.length;n++)b[n].classList.toggle('on',n===i);}catch(e){}}
 function updMlNavBadge(){try{var n=0;for(var k in (window.cart||{}))n+=cart[k];var el=document.getElementById('mlnavbadge');if(el){el.textContent=n;el.style.display=n?'inline-block':'none';}}catch(e){}}
 try{var _ob=window.badge;window.badge=function(){try{if(_ob)_ob.apply(this,arguments);}catch(e){}updMlNavBadge();};}catch(e){}
