@@ -390,7 +390,39 @@ function checkoutGate(){
 /* Retorna true se pode finalizar; senão mostra aviso e abre o que falta. */
 
 
-function sendEmail(){if(!checkoutGate())return;var c=clienteInfo();var a2=readAddr();var lines=[];for(var k in cart){var p=P[k];lines.push({cod:p.cod,nome:p.nome,q:cart[k]});}try{if(typeof sullabEvent==='function')sullabEvent('pedido_wa',{canal:'email',total:total(),qtd:lines.length,itens:_orderItems(),cliente:(c.nome||c.doc),doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a2,obs:val('aobs')});}catch(e){}try{recordOrder('Pedido por e-mail');}catch(e){}try{var ov=document.getElementById('cartov');if(ov){var db=ov.querySelector('.dwrap')||ov.querySelector('.drawer');}}catch(e){}try{alert('✅ Pedido enviado!\n\nRecebemos seu pedido e enviamos uma confirmação para '+c.email+'.\nNossa equipe vai confirmar disponibilidade, frete e retornar em seguida.\n\nObrigado!');}catch(e){}try{cart={};badge();renderCart();renderCartCat&&renderCartCat();}catch(e){}try{closeCart();}catch(e){}}
+function sendEmail(){
+  if(!checkoutGate())return;
+  var c=clienteInfo(); var a2=readAddr();
+  var lines=[]; for(var k in cart){var p=P[k]; if(!p)continue; lines.push({cod:p.cod,nome:p.nome,q:cart[k],un:unitPrice(p,cart[k])});}
+  if(!lines.length){toast('Seu pedido está vazio.');return;}
+  /* monta corpo do pedido em texto */
+  var T=0,body='PEDIDO - SULLAB\n\n';
+  body+='Cliente: '+(c.nome||'(não informado)')+'\n';
+  body+=(c.docTipo||'Doc')+': '+(c.doc||'')+'\n';
+  body+='E-mail: '+(c.email||'')+'\nTelefone: '+(c.tel||'')+'\n\n';
+  body+='ENTREGA:\n'+(a2.end||'')+', '+(a2.num||'')+(a2.comp?(' - '+a2.comp):'')+'\n'+(a2.bairro||'')+' - '+(a2.cidade||'')+'/'+(a2.uf||'')+' - CEP '+(a2.cep||'')+'\n\n';
+  body+='ITENS:\n';
+  for(var n=0;n<lines.length;n++){var L=lines[n];var sub=L.un*L.q;T+=sub;body+='- '+L.cod+' '+L.nome+' x'+L.q+' = '+brl(sub)+'\n';}
+  body+='\nTOTAL: '+brl(T)+'\n';
+  var obs=val('aobs'); if(obs)body+='\nObservações: '+obs+'\n';
+  /* 1) envia ao backend SEMPRE (dedicado, NÃO bloqueado por isOwner) */
+  try{
+    fetch(SHEET_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({type:'pedido_email',canal:'email',total:T,qtd:lines.length,itens:lines,cliente:(c.nome||c.doc),doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a2,obs:obs,ts:Date.now()})});
+  }catch(e){}
+  /* 2) registra analytics (pode ser bloqueado p/ dono, tudo bem) */
+  try{ if(typeof window.sullabEvent==='function')window.sullabEvent('pedido_wa',{canal:'email',total:T,qtd:lines.length,itens:_orderItems(),cliente:(c.nome||c.doc),doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a2,obs:obs}); }catch(e){}
+  try{ recordOrder('Pedido por e-mail'); }catch(e){}
+  /* 3) fallback garantido: abre o e-mail do cliente já preenchido p/ comercial@ */
+  try{
+    var assunto='Pedido SULLAB - '+(c.nome||c.doc||'cliente');
+    var mailto='mailto:comercial@sullabrj.com.br?cc='+encodeURIComponent(c.email||'')+'&subject='+encodeURIComponent(assunto)+'&body='+encodeURIComponent(body);
+    window.location.href=mailto;
+  }catch(e){}
+  try{ alert('✅ Pedido registrado!\n\nAbrimos seu programa de e-mail com o pedido pronto para '+(c.email||'você')+' enviar a comercial@sullabrj.com.br.\nSe não abrir, é só chamar no WhatsApp.\n\nObrigado!'); }catch(e){}
+  try{ cart={}; badge(); renderCart(); renderCartCat&&renderCartCat(); }catch(e){}
+  try{ closeCart(); }catch(e){}
+}
 function sendWa(){if(!checkoutGate())return;var c=clienteInfo();var a2=readAddr();var lines=[];for(var k in cart){var p=P[k];var pr=prc(p);lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+(pr?(' · '+brl(pr*cart[k])):'')+')');}try{if(typeof sullabEvent==='function')sullabEvent('pedido_wa',{total:total(),qtd:lines.length,itens:_orderItems(),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a2,obs:val('aobs')});}catch(e){}try{recordOrder('Orçamento WhatsApp');}catch(e){}var ent='\n\n— Entrega —\n'+a2.end+', '+a2.num+(a2.comp?(' - '+a2.comp):'')+'\n'+a2.bairro+' — '+a2.cidade+'/'+a2.uf+'\nCEP: '+a2.cep;var ident='\n\n— Cliente —\nNome/Razão: '+c.nome+'\n'+c.docTipo+': '+c.doc+'\nTelefone: '+c.tel+'\nE-mail: '+c.email;var msg='Olá! Pedido pelo catálogo SULLAB:\n\n'+lines.join('\n')+'\n\nTotal (sem frete): '+brl(total())+ent+ident+'\n\nPodem confirmar disponibilidade e o frete?';window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 document.getElementById('fab').onclick=function(e){e.preventDefault();sendWa();};
 
