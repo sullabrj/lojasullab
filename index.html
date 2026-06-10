@@ -245,7 +245,53 @@ body.modal-open #cartFab{display:none}
 .card{position:relative}
 .emptywa{margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:8px}
 .emptywa .buy{max-width:360px}
-</style></head><body><div class="wrap">
+</style><style id="mlmobile">
+@media(max-width:600px){
+  /* ===== ML-STYLE MOBILE ===== */
+  body{background:#ededed}
+  /* Cabeçalho fixo estilo ML */
+  header{position:sticky;top:0;z-index:500;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+  header .actbar2,header .searchwrap{position:static}
+  /* Grade 2 colunas apertada */
+  .grid{grid-template-columns:1fr 1fr!important;gap:8px!important;padding:8px 8px 80px!important;background:#ededed}
+  /* Card estilo ML, compacto */
+  .card{border-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.10);border:none;background:#fff}
+  .card .ph{aspect-ratio:1;background-size:contain;margin:0}
+  .card .bd{padding:6px 8px 10px!important;gap:2px!important}
+  .card .brandtop{font-size:9px!important;padding:1px 5px!important;margin:0 0 1px!important;background:transparent!important;border:none!important;color:#999!important;letter-spacing:.2px}
+  .card .title{font-size:12px!important;line-height:1.25!important;min-height:0!important;font-weight:400!important;color:#333!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important;margin-bottom:2px}
+  /* Preço grande estilo ML */
+  .card .cnpjbox{flex-direction:column!important;align-items:flex-start!important;gap:1px!important;background:transparent!important;border:none!important;padding:0!important;margin:2px 0 0!important}
+  .card .cnpjbox .lab{font-size:9px!important;color:#999!important;order:1}
+  .card .cnpjbox .val{font-size:19px!important;font-weight:500!important;color:#000!important;line-height:1.1!important;order:2}
+  .card .cnpjbox .off{font-size:11px!important;color:#00a650!important;font-weight:600!important;background:transparent!important;padding:0!important;order:3}
+  .card .pubprice,.card .priceline{font-size:12px!important}
+  /* parcelas + frete verde ML */
+  .card .mlinstall{display:block!important;font-size:11px;color:#00a650;font-weight:400;margin-top:1px}
+  .card .mlship{display:block!important;font-size:11px;color:#00a650;font-weight:600;margin-top:1px}
+  /* esconder ruído no card pra focar na compra */
+  .card .fc,.card .rate,.card .brand,.card .shipb,.card .freteb{display:none!important}
+  .card .qrow .qsel{display:none!important}
+  /* botão comprar ML */
+  .card .buy,.card .addbtn,.card .quote{background:#3483fa!important;color:#fff!important;border:none!important;border-radius:5px!important;padding:7px!important;font-size:12px!important;font-weight:600!important;width:100%!important;margin-top:5px!important}
+  .card .qty,.card .qtyrow,.card .qrow{margin-top:4px!important}
+  /* selo MAIS VENDIDO estilo ML */
+  .card .mv,.card .mvbadge{background:#fff159!important;color:#333!important;font-size:9px!important;font-weight:700!important;border-radius:2px!important;padding:1px 5px!important;position:absolute;top:6px;left:6px;z-index:2}
+  /* Barra inferior de navegação ML */
+  #mlnav{display:flex!important}
+  /* esconder topo poluído no mobile - simplifica pro estilo ML */
+  .quotebanner,.coupontop{display:none!important}
+  /* FAB do carrinho sobe pra não cobrir a barra inferior */
+  #cartfab,.cartfab{bottom:64px!important}
+}
+.mlinstall,.mlship{display:none}
+#mlnav{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:#fff;border-top:1px solid #e0e0e0;z-index:600;box-shadow:0 -2px 8px rgba(0,0,0,.08);align-items:stretch}
+#mlnav button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;color:#666;cursor:pointer;padding:0}
+#mlnav button .ic{font-size:19px;line-height:1}
+#mlnav button.on{color:#3483fa}
+#mlnav .nbadge{position:absolute;top:6px;margin-left:16px;background:#f23030;color:#fff;font-size:9px;font-weight:700;border-radius:9px;padding:0 5px;min-width:16px;text-align:center}
+</style>
+</head><body><div class="wrap">
 <header><div style="display:flex;align-items:center"><div class="logo"><img class="logoimg" src="https://acdn-us.mitiendanube.com/stores/003/706/975/themes/common/logo-1979127265-1694651326-5cb0e3bc482c69a14bef7d43a46941261694651326-480-0.webp" alt="SULLAB - Produtos hospitalares e laboratoriais"></div><button id="hcbtn" onclick="openCart()" style="margin-left:auto;background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:9px;padding:8px 12px;font-size:17px;cursor:pointer">🛒<span id="hcb" style="background:#ff5a5a;border-radius:9px;font-size:11px;padding:0 6px;margin-left:3px;vertical-align:2px">0</span></button></div>
 <div class="srch"><input id="q" placeholder="Buscar produto, marca ou código…" oninput="onSearch()"><button onclick="document.getElementById('q').focus()">🔍</button></div></header>
 <div class="trustbar"><span class="tbadge">⭐ MercadoLíder Gold</span><span class="titem">🧾 NF-e</span><span class="titem">🚚 Frete grátis RJ/SP acima de R$ 1.000</span><span class="titem">💳 12x no cartão</span><span class="titem">⚡ 5% OFF no Pix</span><button class="trep" onclick="openRep()">Ver reputação ⭐</button></div><div class="quotebanner"><div class="qbIco">📎</div><div class="qbTxt"><b>Já tem uma lista de compras?</b><span>Envie por Excel, foto ou PDF — devolvemos o orçamento com preço CNPJ e NF-e.</span></div><div class="qbBtns"><button class="qbWa" onclick="orcArquivoWa()">💬 Enviar pelo WhatsApp</button><button class="qbMail" onclick="orcArquivoMail()">✉️ Enviar por e-mail</button></div></div><div class="coupontop" id="coupontop">🎁 <b>Primeira compra com CNPJ?</b> Use o cupom <b>BEMVINDO5</b> e ganhe <b>5% OFF</b> · <a onclick="toggleCnpj&&toggleCnpj()" style="text-decoration:underline;cursor:pointer">cadastre-se grátis</a> <span class="cpx" onclick="document.getElementById('coupontop').style.display='none'">✕</span></div><div class="actbar"><button onclick="openOrc()">📝 Solicitar orçamento</button><button onclick="openOrders()">🧾 Meus pedidos <span id="ordcb" class="ordcb"></span></button><button onclick="baixarTabela()">📄 Tabela de preços</button></div><div class="segrow" id="segrow"></div>
@@ -526,10 +572,10 @@ function render(){
   if(!list.length){var _wa=q?('<div class="emptywa"><div>Não temos esse item no catálogo — mas a SULLAB cota pra você.</div><button class="buy" onclick="cotarBusca()">💬 Cotar “'+q+'” no WhatsApp</button></div>'):'';document.getElementById('grid').innerHTML='<div class="empty">'+(q?'Nada encontrado para “'+q+'”.':'Sem itens nesta categoria.')+_wa+'</div>';return;}
   document.getElementById('grid').innerHTML=list.map(function(i){var p=P[i];
     var priceHtml, actionBtn, shipHtml='';
-    if(p.kind=='prod' && p.pub){var off=Math.round((1-p.cnpj/p.pub)*100);var per=p.un?(' <span style="color:#0a8;font-weight:700;font-size:12px">'+brl(prc(p)/p.un)+'/teste</span>'):'';if(p.promo){var ob=cnpj?p.cnpj:p.pub;var pp=Math.round(ob*(1-p.promo)*100)/100;priceHtml='<div class="price">'+brl(pp)+per+' <span class="pbadge">-'+Math.round(p.promo*100)+'%</span></div><div class="inst"><span class="was">'+brl(ob)+'</span> · '+(cnpj?'seu preço CNPJ':'CNPJ: '+brl(Math.round(p.cnpj*(1-p.promo)*100)/100))+'</div>';}else if(cnpj){priceHtml='<div class="price">'+brl(p.cnpj)+per+'</div><div class="inst">Preço CNPJ · −'+off+'% <span class="was">'+brl(p.pub)+'</span></div>';}else{priceHtml='<div class="price">'+brl(p.pub)+per+'</div><div class="cnpjbox"><span class="lab">CNPJ</span><span class="val">'+brl(p.cnpj)+'</span><span class="off">−'+off+'%</span></div>';}actionBtn='<div class="qrow"><div class="qsel"><button onclick="cq('+i+',-1)">−</button><input id="qc'+i+'" class="qin" type="number" min="1" value="1" onchange="if(this.value<1||!this.value)this.value=1"><button onclick="cq('+i+',1)">+</button></div><button class="buy" onclick="add('+i+',event)">Adicionar</button></div>';var vu=volUnit(p);var stk='<div class="stock"><span class="dot"></span>Em estoque · envio em 24h</div>';var volH=vu?('<div class="volp">📦 1.200+ un · <b>'+brl(vu)+'</b>/un</div>'):'';var frH;if(p.cat=='tr'){frH='<div class="ship">🚚 Frete grátis p/ Sudeste*</div>';}else if(vu){frH='<div class="ship">🚚 Frete grátis RJ/SP acima de R$ 1.000</div>';}else{frH='<div class="ship">🚚 Separação em 24h</div>';}var savH=(!cnpj&&!p.promo&&p.cat!='kit'&&p.pub>p.cnpj)?('<div class="econ">💰 Economize '+brl(Math.round((p.pub-p.cnpj)*100)/100)+' com CNPJ</div>'):'';var qtyH='';if(p.cat=='tr'){var _mq=/c\/(\d+)/.exec(p.nome||'');if(_mq){var _q=+_mq[1];qtyH='<div class="trqty">📦 Caixa com '+_q+' testes · '+brl(Math.round(prc(p)/_q*100)/100)+'/teste</div>';}}var mvH=p.mv?'<div class="mvbadge">⭐ Mais vendido</div>':'';var kitH='';if(p.cat=='kit'&&p.sep){var _sp=cnpj?p.sepc:p.sep,_kp=cnpj?p.cnpj:p.pub,_sv=Math.round((_sp-_kp)*100)/100,_pc=Math.round((1-_kp/_sp)*100);kitH='<div class="kitsave">🎁 Comprando junto: <s>'+brl(_sp)+'</s> · economize <b>'+brl(_sv)+'</b> <span class="kpct">'+_pc+'% OFF</span></div>';}shipHtml=stk+volH+savH+kitH+frH;if(p.cat=='kit'){var _rows=(p.comp||[]).map(function(c){var lt=Math.round(c.q*c.u*100)/100;return '<div class="kli"><span>'+c.q+'\u00D7 '+c.n+'</span><span>'+brl(lt)+'</span></div>';}).join('');priceHtml='<div class="kitbox"><div class="kth">O que vem no kit</div>'+_rows+'<div class="kli kreal"><span>Pre\u00E7o separado</span><span><s>'+brl(p.sep)+'</s></span></div>'+'<div class="kli ksp"><span>Pre\u00E7o do kit</span><span><b>'+brl(p.pub)+'</b></span></div>'+'<div class="keco">\uD83C\uDF81 Voc\u00EA economiza '+brl(Math.round((p.sep-p.pub)*100)/100)+' <span class="kpct">'+Math.round((1-p.pub/p.sep)*100)+'% OFF</span></div></div>';shipHtml=stk;}}
+    if(p.kind=='prod' && p.pub){var off=Math.round((1-p.cnpj/p.pub)*100);var per=p.un?(' <span style="color:#0a8;font-weight:700;font-size:12px">'+brl(prc(p)/p.un)+'/teste</span>'):'';if(p.promo){var ob=cnpj?p.cnpj:p.pub;var pp=Math.round(ob*(1-p.promo)*100)/100;priceHtml='<div class="price">'+brl(pp)+per+' <span class="pbadge">-'+Math.round(p.promo*100)+'%</span></div><div class="inst"><span class="was">'+brl(ob)+'</span> · '+(cnpj?'seu preço CNPJ':'CNPJ: '+brl(Math.round(p.cnpj*(1-p.promo)*100)/100))+'</div>';}else if(cnpj){priceHtml='<div class="price">'+brl(p.cnpj)+per+'</div><div class="inst">Preço CNPJ · −'+off+'% <span class="was">'+brl(p.pub)+'</span></div>';}else{priceHtml='<div class="price">'+brl(p.pub)+per+'</div><div class="cnpjbox"><span class="lab">CNPJ</span><span class="val">'+brl(p.cnpj)+'</span><span class="off">−'+off+'%</span></div>';}actionBtn='<div class="qrow"><div class="qsel"><button onclick="cq('+i+',-1)">−</button><input id="qc'+i+'" class="qin" type="number" min="1" value="1" onchange="if(this.value<1||!this.value)this.value=1"><button onclick="cq('+i+',1)">+</button></div><button class="buy" onclick="add('+i+',event)">Adicionar</button></div>';var vu=volUnit(p);var stk='<div class="stock"><span class="dot"></span>Em estoque · envio em 24h</div>';var volH=vu?('<div class="volp">📦 1.200+ un · <b>'+brl(vu)+'</b>/un</div>'):'';var frH;if(p.cat=='tr'){frH='<div class="ship">🚚 Frete grátis p/ Sudeste*</div>';}else if(vu){frH='<div class="ship">🚚 Frete grátis RJ/SP acima de R$ 1.000</div>';}else{frH='<div class="ship">🚚 Separação em 24h</div>';}var savH=(!cnpj&&!p.promo&&p.cat!='kit'&&p.pub>p.cnpj)?('<div class="econ">💰 Economize '+brl(Math.round((p.pub-p.cnpj)*100)/100)+' com CNPJ</div>'):'';var qtyH='';if(p.cat=='tr'){var _mq=/c\/(\d+)/.exec(p.nome||'');if(_mq){var _q=+_mq[1];qtyH='<div class="trqty">📦 Caixa com '+_q+' testes · '+brl(Math.round(prc(p)/_q*100)/100)+'/teste</div>';}}var mvH=p.mv?'<div class="mvbadge">⭐ Mais vendido</div>':'';var _pp=prc(p);var mlExtraH=(p.kind=='prod'&&p.pub)?('<div class="mlinstall">em até 12x sem juros</div><div class="mlship">Frete grátis acima de R$ 1.000</div>'):'';var kitH='';if(p.cat=='kit'&&p.sep){var _sp=cnpj?p.sepc:p.sep,_kp=cnpj?p.cnpj:p.pub,_sv=Math.round((_sp-_kp)*100)/100,_pc=Math.round((1-_kp/_sp)*100);kitH='<div class="kitsave">🎁 Comprando junto: <s>'+brl(_sp)+'</s> · economize <b>'+brl(_sv)+'</b> <span class="kpct">'+_pc+'% OFF</span></div>';}shipHtml=stk+volH+savH+kitH+frH;if(p.cat=='kit'){var _rows=(p.comp||[]).map(function(c){var lt=Math.round(c.q*c.u*100)/100;return '<div class="kli"><span>'+c.q+'\u00D7 '+c.n+'</span><span>'+brl(lt)+'</span></div>';}).join('');priceHtml='<div class="kitbox"><div class="kth">O que vem no kit</div>'+_rows+'<div class="kli kreal"><span>Pre\u00E7o separado</span><span><s>'+brl(p.sep)+'</s></span></div>'+'<div class="kli ksp"><span>Pre\u00E7o do kit</span><span><b>'+brl(p.pub)+'</b></span></div>'+'<div class="keco">\uD83C\uDF81 Voc\u00EA economiza '+brl(Math.round((p.sep-p.pub)*100)/100)+' <span class="kpct">'+Math.round((1-p.pub/p.sep)*100)+'% OFF</span></div></div>';shipHtml=stk;}}
     else{priceHtml='<div class="consulta">💬 Preço sob consulta</div>';actionBtn='<button class="quote" onclick="solicitarPreco('+i+')">Solicitar preço</button>';}
     if(p.kind=='aparelho'){return '<div class="card"><div class="tag">'+(p.tipo&&/Bioqu/i.test(p.tipo)?'BIOQUÍMICA':(/Hemato/i.test(p.tipo)?'HEMATOLOGIA':'COAGULAÇÃO'))+'</div><div class="ph" style="background-image:url(\''+(p.img||PLACEHOLDER)+'\')"></div><div class="bd"><div class="apnome">'+p.nome+'</div><div class="aptipo">'+p.tipo+'</div><div class="apspec">'+(p.spec||'')+'</div><button class="fc" onclick="openF('+i+')">📄 Ficha técnica</button><div class="brand">'+p.brand+'</div><button class="quote" onclick="quote('+i+')">💬 Solicitar orçamento</button></div></div>';}
-    return '<div class="card">'+mvH+'<div class="ph" style="background-image:url(\''+(p.img||PLACEHOLDER)+'\')"></div><div class="bd">'+(p.brand?('<div class="brandtop">'+p.brand+'</div>'):'')+'<div class="title">'+p.nome+'</div>'+priceHtml+qtyH+shipHtml+'<button class="fc" onclick="openF('+i+')">📄 Ficha técnica</button><div class="brand">'+p.brand+' · cód. '+p.cod+'</div>'+'<button class="rate" onclick="openRep()">⭐ MercadoLíder Gold</button>'+actionBtn+'</div></div>';
+    return '<div class="card">'+mvH+'<div class="ph" style="background-image:url(\''+(p.img||PLACEHOLDER)+'\')"></div><div class="bd">'+(p.brand?('<div class="brandtop">'+p.brand+'</div>'):'')+'<div class="title">'+p.nome+'</div>'+priceHtml+mlExtraH+qtyH+shipHtml+'<button class="fc" onclick="openF('+i+')">📄 Ficha técnica</button><div class="brand">'+p.brand+' · cód. '+p.cod+'</div>'+'<button class="rate" onclick="openRep()">⭐ MercadoLíder Gold</button>'+actionBtn+'</div></div>';
   }).join('');
 }
 function setCookie(v){try{localStorage.setItem('sullab_cookie',v);}catch(e){}var b=document.getElementById('cookieBar');if(b)b.style.display='none';if(v==='granted'&&window.sullabLoadGA)sullabLoadGA();}function initCookie(){var c='';try{c=localStorage.getItem('sullab_cookie')||'';}catch(e){}if(!c){var b=document.getElementById('cookieBar');if(b)b.style.display='flex';}}chips();fillBrandSel();renderSegRow();chipsBrands();render();initPmode();badgeOrders();initCookie();
@@ -827,5 +873,17 @@ window.fbRegister=function(){
   try{window.sullabEvent('acesso',{ref:(document.referrer||'direto')});}catch(e){}
   try{var q=document.getElementById('q');var _bt;if(q)q.addEventListener('input',function(){clearTimeout(_bt);var v=q.value.trim();if(v.length>=3)_bt=setTimeout(function(){window.sullabEvent('busca',{termo:v.slice(0,60)});},900);});}catch(e){}
 })();
+</script>
+<nav id="mlnav">
+  <button onclick="window.scrollTo({top:0,behavior:'smooth'});setMlNav(0)"><span class="ic">🏠</span>Início</button>
+  <button onclick="var c=document.getElementById('brandindex')||document.getElementById('chips');if(c)c.scrollIntoView({behavior:'smooth',block:'start'});setMlNav(1)"><span class="ic">🗂️</span>Categorias</button>
+  <button onclick="openCart();setMlNav(2)" style="position:relative"><span class="ic">🛒</span>Pedido<span class="nbadge" id="mlnavbadge" style="display:none">0</span></button>
+  <button onclick="(window.accountBtn?accountBtn():openReg());setMlNav(3)"><span class="ic">👤</span>Conta</button>
+</nav>
+<script>
+function setMlNav(i){try{var b=document.querySelectorAll('#mlnav button');for(var n=0;n<b.length;n++)b[n].classList.toggle('on',n===i);}catch(e){}}
+function updMlNavBadge(){try{var n=0;for(var k in (window.cart||{}))n+=cart[k];var el=document.getElementById('mlnavbadge');if(el){el.textContent=n;el.style.display=n?'inline-block':'none';}}catch(e){}}
+try{var _ob=window.badge;window.badge=function(){try{if(_ob)_ob.apply(this,arguments);}catch(e){}updMlNavBadge();};}catch(e){}
+document.addEventListener('DOMContentLoaded',updMlNavBadge);setTimeout(updMlNavBadge,1500);
 </script>
 </body></html>
