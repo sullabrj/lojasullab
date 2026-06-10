@@ -293,6 +293,14 @@ body.modal-open #cartFab{display:none}
   #cartov .mnav-next{background:#16456e;color:#fff}
   /* mostra só a etapa ativa */
   #cartov[data-mstep="1"] .ordercol{display:none!important}
+  #cartov[data-mstep="1"] .catcol{display:flex!important;flex-direction:column;height:100%;max-height:100%;min-height:0;overflow:hidden}
+  #cartov[data-mstep="1"] .catbar{flex:0 0 auto}
+  #cartov[data-mstep="1"] .gridcartwrap{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #cartov[data-mstep="1"] #gridcart{grid-template-columns:1fr 1fr;gap:8px}
+  #cartov[data-mstep="1"] .orderlist{flex:0 0 auto;max-height:32vh;overflow-y:auto}
+  /* a drawer precisa ter altura cheia no mobile p/ o flex funcionar */
+  #cartov.on .drawer{display:flex;flex-direction:column}
+  #cartov .dwrap{flex:1 1 auto;min-height:0}
   #cartov[data-mstep="1"] .mnav-back{visibility:hidden}
   #cartov[data-mstep="2"] .catcol{display:none!important}
   #cartov[data-mstep="2"] .stepnf{display:none!important}
