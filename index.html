@@ -964,7 +964,7 @@ function mStepNext(){
 (function(){
   var _oc=window.openCart;
   if(typeof _oc==='function'){
-    window.openCart=function(){ try{_oc.apply(this,arguments);}catch(e){} try{ if(_isMobileCart())goMStep(1); else { var ov=document.getElementById('cartov'); if(ov)ov.removeAttribute('data-mstep'); } }catch(e){} };
+    window.openCart=function(){ try{_oc.apply(this,arguments);}catch(e){} try{ if(_isMobileCart())goMStep(1); else { var ov=document.getElementById('cartov'); if(ov)ov.removeAttribute('data-mstep'); } }catch(e){} try{ if(_isMobileCart()){ var qq=document.getElementById('qcart'); if(qq){ setTimeout(function(){ try{qq.focus({preventScroll:true});}catch(_e){} },120); } } }catch(e){} };
   }
 })();
 </script>
@@ -986,11 +986,15 @@ function mStepNext(){
   ['renderCartCat','mlGoHome','mlGoCats','setMlNav','addFromCart','nameCat','nrm','openCart','closeCart','goMStep','mStepNext'].forEach(exp);
 
   function bind(){
-    // busca dentro do carrinho
+    // busca dentro do carrinho (iOS-friendly: múltiplos eventos + delay)
     var q=document.getElementById('qcart');
     if(q && !q._bound){ q._bound=1;
       var run=function(){ try{ (window.renderCartCat||renderCartCat)(); }catch(e){} };
-      q.addEventListener('input',run); q.addEventListener('keyup',run); q.addEventListener('search',run);
+      var runSoon=function(){ setTimeout(run,0); };
+      ['input','keyup','keydown','search','compositionend','change','paste'].forEach(function(ev){ q.addEventListener(ev,runSoon); });
+      /* fallback iOS: poll do valor enquanto focado */
+      q.addEventListener('focus',function(){ if(q._poll)clearInterval(q._poll); var last=q.value; q._poll=setInterval(function(){ if(q.value!==last){ last=q.value; run(); } },200); });
+      q.addEventListener('blur',function(){ if(q._poll){clearInterval(q._poll);q._poll=null;} });
     }
     // botões da barra inferior — re-bind robusto
     var nav=document.getElementById('mlnav');
@@ -1011,7 +1015,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781098547';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781099569';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
