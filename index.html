@@ -1086,7 +1086,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781193714';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781195742';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
@@ -1177,7 +1177,7 @@ function painelRender(){
       var total=fld(v,8);
       var temValor = moneyNum(total)>0;
       var statusPg = fld(v,11).toLowerCase()+' '+fld(v,12).toLowerCase(); // coluna Status pagamento (11 ou 12)
-      var aprovado = /approv|aprovad|paid|pago/.test(statusPg);
+      var naoPago = /n[aã]o\s*pago|nao pago/.test(statusPg); var aprovado = !naoPago && /approv|aprovad|paid|\bpago\b/.test(statusPg);
       var pendente = /pend|process|in_process|autoriz/.test(statusPg);
       if(temValor){
         var grupo = aprovado ? 'pago' : (pendente ? 'pendente' : 'pendente'); // tem valor mas sem confirmacao => aguardando
