@@ -709,7 +709,7 @@ function loadOrderFromLink(){
     return true;
   }catch(e){return false;}
 }
-loadOrderFromLink();
+loadOrderFromLink(); try{ if(/[?&]painel\b/.test(location.search))abrirPainel(); }catch(e){}
 /* ===== DEEP-LINK DE CATEGORIA (?cat=slug) — para sitelinks do Ads ===== */
 function loadCatFromLink(){
   try{
@@ -1086,7 +1086,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781112964';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781184540';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
@@ -1108,5 +1108,77 @@ function mStepNext(){
       }).catch(function(){});
   }catch(e){}
 })();
+</script>
+<div id="painelOv" style="display:none;position:fixed;inset:0;z-index:99999;background:#0f1f37;color:#e8eef7;overflow:auto;font-family:Arial,Helvetica,sans-serif">
+  <div id="painelLogin" style="max-width:380px;margin:14vh auto;padding:26px 22px;background:#16294a;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.4)">
+    <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:4px">🔒 Painel de Pedidos</div>
+    <div style="font-size:12.5px;opacity:.8;margin-bottom:16px">Área restrita — SULLAB</div>
+    <input id="painelPw" type="password" placeholder="Senha de acesso" style="width:100%;padding:12px;border-radius:9px;border:1px solid #2b4470;background:#0f1f37;color:#fff;font-size:15px" onkeydown="if(event.key==='Enter')painelEntrar()">
+    <div id="painelErr" style="color:#ff8b8b;font-size:12px;margin-top:8px;display:none">Senha incorreta.</div>
+    <button onclick="painelEntrar()" style="width:100%;margin-top:14px;padding:13px;border:0;border-radius:9px;background:#2f6fed;color:#fff;font-size:15px;font-weight:700;cursor:pointer">Entrar</button>
+  </div>
+  <div id="painelApp" style="display:none;max-width:1100px;margin:0 auto;padding:18px 16px">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+      <div style="font-size:20px;font-weight:800;color:#fff">📦 Pedidos do site</div>
+      <span id="painelCount" style="background:#234176;border-radius:20px;padding:4px 12px;font-size:12.5px;font-weight:700"></span>
+      <input id="painelBusca" placeholder="🔎 Filtrar (cliente, produto, data…)" oninput="painelRender()" style="margin-left:auto;flex:1;min-width:160px;max-width:300px;padding:9px 12px;border-radius:9px;border:1px solid #2b4470;background:#16294a;color:#fff;font-size:13px">
+      <button onclick="painelCarregar()" style="padding:9px 14px;border:0;border-radius:9px;background:#234176;color:#fff;font-weight:700;cursor:pointer">↻ Atualizar</button>
+      <button onclick="painelSair()" style="padding:9px 14px;border:0;border-radius:9px;background:#3a2030;color:#ffb3b3;font-weight:700;cursor:pointer">✕ Sair</button>
+    </div>
+    <div id="painelLista" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+</div>
+<script>
+var PAINEL_PEDIDOS=[];
+function abrirPainel(){ try{ document.getElementById('painelOv').style.display='block'; document.documentElement.style.overflow='hidden'; var k=sessionStorage.getItem('painel_pw'); if(k){ document.getElementById('painelPw').value=k; painelEntrar(); } }catch(e){} }
+function painelSair(){ try{ sessionStorage.removeItem('painel_pw'); document.getElementById('painelOv').style.display='none'; document.documentElement.style.overflow=''; location.href=location.pathname; }catch(e){} }
+function painelEntrar(){
+  var pw=document.getElementById('painelPw').value.trim();
+  if(!pw){return;}
+  document.getElementById('painelErr').style.display='none';
+  sessionStorage.setItem('painel_pw',pw);
+  painelCarregar();
+}
+function painelCarregar(){
+  var pw=(document.getElementById('painelPw').value||sessionStorage.getItem('painel_pw')||'').trim();
+  var lista=document.getElementById('painelLista'); if(lista)lista.innerHTML='<div style="opacity:.7;padding:20px">Carregando pedidos…</div>';
+  var cbName='_painelCb'+Date.now();
+  window[cbName]=function(resp){
+    try{ delete window[cbName]; }catch(e){ window[cbName]=undefined; }
+    if(!resp||resp.ok===false){
+      if(resp&&resp.erro==='senha'){ document.getElementById('painelLogin').style.display='block'; document.getElementById('painelApp').style.display='none'; document.getElementById('painelErr').style.display='block'; sessionStorage.removeItem('painel_pw'); return; }
+      if(lista)lista.innerHTML='<div style="color:#ff8b8b;padding:20px">Erro ao carregar. Tente Atualizar.</div>'; return;
+    }
+    document.getElementById('painelLogin').style.display='none';
+    document.getElementById('painelApp').style.display='block';
+    PAINEL_PEDIDOS=resp.pedidos||[];
+    painelRender();
+  };
+  var s=document.createElement('script');
+  s.src=SHEET_ENDPOINT+'?pw='+encodeURIComponent(pw)+'&callback='+cbName+'&_='+Date.now();
+  s.onerror=function(){ if(lista)lista.innerHTML='<div style="color:#ff8b8b;padding:20px">Falha de conexão. Verifique a internet e tente Atualizar.</div>'; };
+  document.body.appendChild(s);
+}
+function painelRender(){
+  var q=(document.getElementById('painelBusca').value||'').toLowerCase();
+  var arr=PAINEL_PEDIDOS.filter(function(p){ if(!q)return true; return JSON.stringify(p).toLowerCase().indexOf(q)>-1; });
+  document.getElementById('painelCount').textContent=arr.length+' pedido'+(arr.length!==1?'s':'');
+  var lista=document.getElementById('painelLista');
+  if(!arr.length){ lista.innerHTML='<div style="opacity:.7;padding:20px">Nenhum pedido'+(q?' para "'+q+'"':'')+'.</div>'; return; }
+  lista.innerHTML=arr.map(function(p){
+    var canal=p['Canal']||''; var corCanal = /pago|mercado/i.test(canal)?'#1f8a4c':(/whats/i.test(canal)?'#1f6f8a':'#7a5c1f');
+    return '<div style="background:#16294a;border:1px solid #243d66;border-radius:12px;padding:13px 15px">'
+      +'<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px">'
+        +'<b style="font-size:14px;color:#fff">'+(p['Cliente']||'(sem nome)')+'</b>'
+        +'<span style="background:'+corCanal+';border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700">'+canal+'</span>'
+        +'<span style="margin-left:auto;font-size:16px;font-weight:800;color:#7fd6a0">'+(p['Total']||'')+'</span>'
+      +'</div>'
+      +'<div style="font-size:12px;opacity:.85;margin-bottom:6px">📅 '+(p['Data']||'')+' &nbsp;·&nbsp; '+(p['Tipo']||'')+': '+(p['Doc']||'')+' &nbsp;·&nbsp; ✉️ '+(p['E-mail']||'—')+' &nbsp;·&nbsp; 📱 '+(p['Telefone']||'—')+'</div>'
+      +(p['Endereço']?('<div style="font-size:12px;opacity:.8;margin-bottom:6px">📍 '+p['Endereço']+'</div>'):'')
+      +'<div style="font-size:12px;background:#0f1f37;border-radius:8px;padding:8px 10px;line-height:1.5">🛒 '+(p['Itens']||'').replace(/\|/g,'<br>')+'</div>'
+      +(p['Obs']?('<div style="font-size:11.5px;opacity:.7;margin-top:5px">📝 '+p['Obs']+'</div>'):'')
+    +'</div>';
+  }).join('');
+}
 </script>
 </body></html>
