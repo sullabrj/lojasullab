@@ -1086,7 +1086,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781185892';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781187679';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
@@ -1165,26 +1165,51 @@ function painelRender(){
   document.getElementById('painelCount').textContent=arr.length+' pedido'+(arr.length!==1?'s':'');
   var lista=document.getElementById('painelLista');
   if(!arr.length){ lista.innerHTML='<div style="opacity:.7;padding:20px">Nenhum pedido'+(q?' para "'+q+'"':'')+'.</div>'; return; }
-  lista.innerHTML=arr.map(function(p){
-    var v=Object.values(p);
-    // mapeamento POSICIONAL (cabeçalho da planilha está desalinhado):
-    // 0 Data · 1 Pedido · 2 Canal · 3 Cliente · 4 CPF/CNPJ · 5 Tipo · 6 CEP · 7 E-mail · 8 Total · 9 Itens · 10 Endereço
-    function g(i){ return (v[i]===undefined||v[i]===null)?'':String(v[i]); }
+  // helpers de campo (parse por POSIÇÃO)
+    function fld(v,i){ return (v[i]===undefined||v[i]===null)?'':String(v[i]); }
     function dataBR(s){ try{var d=new Date(s); if(!isNaN(d)) return d.toLocaleString('pt-BR'); }catch(e){} return s; }
-    var canal=g(2); var corCanal = /pago|mercado/i.test(canal)?'#1f8a4c':(/whats/i.test(canal)?'#1f6f8a':(/mail|e-mail/i.test(canal)?'#7a5c1f':'#3a456b'));
-    var cli=g(3)||'(cliente não informado)';
-    return '<div style="background:#16294a;border:1px solid #243d66;border-radius:12px;padding:13px 15px">'
-      +'<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px">'
-        +'<b style="font-size:14px;color:#fff">'+cli+'</b>'
-        +'<span style="background:'+corCanal+';border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700">'+canal+'</span>'
-        +'<span style="font-size:11px;opacity:.6">#'+g(1)+'</span>'
-        +'<span style="margin-left:auto;font-size:16px;font-weight:800;color:#7fd6a0">'+g(8)+'</span>'
-      +'</div>'
-      +'<div style="font-size:12px;opacity:.85;margin-bottom:6px">📅 '+dataBR(g(0))+' &nbsp;·&nbsp; '+(g(5)||'Doc')+': '+g(4)+' &nbsp;·&nbsp; ✉️ '+(g(7)||'—')+'</div>'
-      +(g(10)?('<div style="font-size:12px;opacity:.8;margin-bottom:6px">📍 '+g(10)+(g(6)?(' · CEP '+g(6)):'')+'</div>'):'')
-      +'<div style="font-size:12px;background:#0f1f37;border-radius:8px;padding:8px 10px;line-height:1.5">🛒 '+(g(9)||'(itens não registrados)').replace(/\|/g,'<br>')+'</div>'
-    +'</div>';
-  }).join('');
+    function moneyNum(s){ var t=String(s||'').replace(/[^0-9.,]/g,'').replace(/\./g,'').replace(',','.'); var n=parseFloat(t); return isNaN(n)?0:n; }
+    // Dois esquemas de coluna:
+    //  PAGO (Mercado Pago):     0 Data 1 Pedido 2 Canal 3 Nome 4 CNPJ 5 Tipo 6 CEP 7 Email 8 Total 9 Itens 10 End
+    //  ORÇAMENTO (form CNPJ):   0 Data 1 Nome 2 Tipo 3 CNPJ 4 Email 5 ? 6 CEP 7 End 8 ? 9 Qtd 10 Itens
+    function norm(p){
+      var v=Object.values(p);
+      var total=fld(v,8);
+      var pago = moneyNum(total)>0;
+      if(pago){
+        return {pago:true, data:fld(v,0), pedido:fld(v,1), canal:fld(v,2)||'Mercado Pago',
+                nome:fld(v,3)||'(sem nome)', doc:fld(v,4), tipo:fld(v,5)||'CNPJ',
+                cep:fld(v,6), email:fld(v,7), total:total, itens:fld(v,9), end:fld(v,10)};
+      } else {
+        // orçamento: nome no índice 1, cnpj 3, email 4, cep 6, end 7, itens 10
+        return {pago:false, data:fld(v,0), pedido:'', canal:'Orçamento',
+                nome:fld(v,1)||'(sem nome)', doc:fld(v,3), tipo:'CNPJ',
+                cep:fld(v,6), email:fld(v,4), total:'', itens:fld(v,10), end:fld(v,7)};
+      }
+    }
+    function card(o){
+      var cor = o.pago?'#1f8a4c':'#7a5c1f';
+      return '<div style="background:#16294a;border:1px solid #243d66;border-radius:12px;padding:13px 15px;margin-bottom:10px">'
+        +'<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px">'
+          +'<b style="font-size:14px;color:#fff">'+o.nome+'</b>'
+          +'<span style="background:'+cor+';border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700">'+o.canal+'</span>'
+          +(o.pedido?'<span style="font-size:11px;opacity:.6">#'+o.pedido+'</span>':'')
+          +(o.total?'<span style="margin-left:auto;font-size:16px;font-weight:800;color:#7fd6a0">'+o.total+'</span>':'')
+        +'</div>'
+        +'<div style="font-size:12px;opacity:.85;margin-bottom:6px">📅 '+dataBR(o.data)+' &nbsp;·&nbsp; '+(o.tipo||'Doc')+': '+(o.doc||'—')+' &nbsp;·&nbsp; ✉️ '+(o.email||'—')+'</div>'
+        +(o.end?('<div style="font-size:12px;opacity:.8;margin-bottom:6px">📍 '+o.end+(o.cep?(' · CEP '+o.cep):'')+'</div>'):'')
+        +'<div style="font-size:12px;background:#0f1f37;border-radius:8px;padding:8px 10px;line-height:1.5">🛒 '+(o.itens||'(itens não registrados)').replace(/\|/g,'<br>')+'</div>'
+      +'</div>';
+    }
+    var norms=arr.map(norm);
+    var pagos=norms.filter(function(o){return o.pago;});
+    var orcs=norms.filter(function(o){return !o.pago;});
+    function secao(tit,emoji,lista2,cor){
+      if(!lista2.length) return '';
+      return '<div style="margin:6px 0 4px;font-size:13px;font-weight:800;letter-spacing:.3px;color:'+cor+'">'+emoji+' '+tit+' ('+lista2.length+')</div>'
+        + lista2.map(card).join('');
+    }
+    lista.innerHTML = secao('PAGOS','💳',pagos,'#7fd6a0') + secao('ORÇAMENTOS / LEADS','📝',orcs,'#e0b057');
 }
 </script>
 </body></html>
