@@ -1086,7 +1086,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781187679';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781192226';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
@@ -1175,24 +1175,29 @@ function painelRender(){
     function norm(p){
       var v=Object.values(p);
       var total=fld(v,8);
-      var pago = moneyNum(total)>0;
-      if(pago){
-        return {pago:true, data:fld(v,0), pedido:fld(v,1), canal:fld(v,2)||'Mercado Pago',
+      var temValor = moneyNum(total)>0;
+      var statusPg = fld(v,11).toLowerCase()+' '+fld(v,12).toLowerCase(); // coluna Status pagamento (11 ou 12)
+      var aprovado = /approv|aprovad|paid|pago/.test(statusPg);
+      var pendente = /pend|process|in_process|autoriz/.test(statusPg);
+      if(temValor){
+        var grupo = aprovado ? 'pago' : (pendente ? 'pendente' : 'pendente'); // tem valor mas sem confirmacao => aguardando
+        return {grupo:grupo, data:fld(v,0), pedido:fld(v,1), canal:fld(v,2)||'Mercado Pago',
                 nome:fld(v,3)||'(sem nome)', doc:fld(v,4), tipo:fld(v,5)||'CNPJ',
-                cep:fld(v,6), email:fld(v,7), total:total, itens:fld(v,9), end:fld(v,10)};
+                cep:fld(v,6), email:fld(v,7), total:total, itens:fld(v,9), end:fld(v,10),
+                statusReal:(fld(v,12)||fld(v,11))};
       } else {
         // orçamento: nome no índice 1, cnpj 3, email 4, cep 6, end 7, itens 10
-        return {pago:false, data:fld(v,0), pedido:'', canal:'Orçamento',
+        return {grupo:'orcamento', data:fld(v,0), pedido:'', canal:'Orçamento',
                 nome:fld(v,1)||'(sem nome)', doc:fld(v,3), tipo:'CNPJ',
-                cep:fld(v,6), email:fld(v,4), total:'', itens:fld(v,10), end:fld(v,7)};
+                cep:fld(v,6), email:fld(v,4), total:'', itens:fld(v,10), end:fld(v,7), statusReal:''};
       }
     }
     function card(o){
-      var cor = o.pago?'#1f8a4c':'#7a5c1f';
+      var cor = (o.grupo==='pago')?'#1f8a4c':(o.grupo==='pendente'?'#b06a1f':'#7a5c1f');
       return '<div style="background:#16294a;border:1px solid #243d66;border-radius:12px;padding:13px 15px;margin-bottom:10px">'
         +'<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px">'
           +'<b style="font-size:14px;color:#fff">'+o.nome+'</b>'
-          +'<span style="background:'+cor+';border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700">'+o.canal+'</span>'
+          +'<span style="background:'+cor+';border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700">'+o.canal+'</span>'+(o.grupo==='pago'?'<span style="background:#0f5132;border:1px solid #1f8a4c;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;color:#7fd6a0">✅ PAGO</span>':'')+(o.grupo==='pendente'?'<span style="background:#5a3d12;border:1px solid #b06a1f;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;color:#e0b057">⏳ aguardando</span>':'')
           +(o.pedido?'<span style="font-size:11px;opacity:.6">#'+o.pedido+'</span>':'')
           +(o.total?'<span style="margin-left:auto;font-size:16px;font-weight:800;color:#7fd6a0">'+o.total+'</span>':'')
         +'</div>'
@@ -1202,14 +1207,17 @@ function painelRender(){
       +'</div>';
     }
     var norms=arr.map(norm);
-    var pagos=norms.filter(function(o){return o.pago;});
-    var orcs=norms.filter(function(o){return !o.pago;});
+    var pagos=norms.filter(function(o){return o.grupo==='pago';});
+    var pend=norms.filter(function(o){return o.grupo==='pendente';});
+    var orcs=norms.filter(function(o){return o.grupo==='orcamento';});
     function secao(tit,emoji,lista2,cor){
       if(!lista2.length) return '';
-      return '<div style="margin:6px 0 4px;font-size:13px;font-weight:800;letter-spacing:.3px;color:'+cor+'">'+emoji+' '+tit+' ('+lista2.length+')</div>'
+      return '<div style="margin:10px 0 4px;font-size:13px;font-weight:800;letter-spacing:.3px;color:'+cor+'">'+emoji+' '+tit+' ('+lista2.length+')</div>'
         + lista2.map(card).join('');
     }
-    lista.innerHTML = secao('PAGOS','💳',pagos,'#7fd6a0') + secao('ORÇAMENTOS / LEADS','📝',orcs,'#e0b057');
+    lista.innerHTML = secao('PAGOS (confirmado pelo Mercado Pago)','✅',pagos,'#7fd6a0')
+      + secao('AGUARDANDO PAGAMENTO','⏳',pend,'#e0b057')
+      + secao('ORÇAMENTOS / LEADS','📝',orcs,'#cbb48a');
 }
 </script>
 </body></html>
