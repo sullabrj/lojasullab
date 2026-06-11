@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Pedido confirmado · SULLAB</title>
+<link rel="icon" href="https://acdn-us.mitiendanube.com/stores/003/706/975/themes/common/logo-1979127265-1694651326-5cb0e3bc482c69a14bef7d43a46941261694651326-480-0.webp">
+<style>
+:root{--navy:#1f3a5f;--green:#1f8a4c;--orange:#e8731c}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#eef2f7;color:#1a2433;-webkit-font-smoothing:antialiased}
+.wrap{max-width:520px;margin:0 auto;padding:24px 16px 48px}
+.top{display:flex;align-items:center;gap:10px;padding:8px 0 18px}
+.top img{height:40px;width:auto;background:#fff;border-radius:8px;padding:4px}
+.card{background:#fff;border-radius:18px;box-shadow:0 8px 30px rgba(20,40,70,.10);padding:30px 24px;text-align:center}
+.ic{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:42px}
+.ic.ok{background:#e7f7ee;color:var(--green)}
+.ic.pend{background:#fff4e0;color:var(--orange)}
+.ic.fail{background:#fdeaea;color:#c0392b}
+h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
+.sub{color:#5a6b80;font-size:15px;line-height:1.5;margin:0 0 18px}
+.box{background:#f5f8fc;border:1px solid #e3ecf6;border-radius:12px;padding:14px 16px;text-align:left;font-size:14px;margin:14px 0}
+.box .row{display:flex;justify-content:space-between;gap:10px;padding:4px 0}
+.box .row b{color:var(--navy)}
+.btns{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:12px;font-size:16px;font-weight:700;text-decoration:none;border:0;cursor:pointer}
+.btn.wa{background:#25d366;color:#fff}
+.btn.home{background:var(--navy);color:#fff}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid #d4def0}
+.help{font-size:13px;color:#7a8aa0;margin-top:18px;line-height:1.5}
+.help a{color:var(--navy);font-weight:600}
+.foot{text-align:center;color:#9aa7ba;font-size:12px;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <img src="https://acdn-us.mitiendanube.com/stores/003/706/975/themes/common/logo-1979127265-1694651326-5cb0e3bc482c69a14bef7d43a46941261694651326-480-0.webp" alt="SULLAB">
+    <strong style="color:var(--navy);font-size:17px">SULLAB</strong>
+  </div>
+
+  <div class="card" id="card">
+    <div class="ic ok" id="ic">✓</div>
+    <h1 id="ttl">Pagamento aprovado!</h1>
+    <p class="sub" id="sub">Recebemos seu pagamento. Seu pedido já está sendo processado e você vai receber a confirmação por e-mail.</p>
+
+    <div class="box" id="detbox" style="display:none">
+      <div class="row" id="rPed" style="display:none"><span>Pedido</span><b id="vPed"></b></div>
+      <div class="row" id="rPay" style="display:none"><span>Nº do pagamento</span><b id="vPay"></b></div>
+      <div class="row" id="rSta"><span>Status</span><b id="vSta"></b></div>
+    </div>
+
+    <div class="btns">
+      <a class="btn wa" id="waBtn" href="#" target="_blank" rel="noopener">💬 Falar com a SULLAB no WhatsApp</a>
+      <a class="btn home" href="https://lojasullabrj.com.br/">Voltar à loja</a>
+    </div>
+
+    <p class="help" id="help">
+      Qualquer dúvida sobre seu pedido, é só chamar no WhatsApp <a href="https://wa.me/5524988383100" target="_blank" rel="noopener">(24) 98838-3100</a> ou e-mail <a href="mailto:comercial@sullabrj.com.br">comercial@sullabrj.com.br</a>.
+    </p>
+  </div>
+
+  <div class="foot">SULLAB · Produtos para laboratório · NF-e · CNPJ</div>
+</div>
+
+<script>
+(function(){
+  function qp(n){try{return new URLSearchParams(location.search).get(n)||'';}catch(e){return '';}}
+  var status=(qp('collection_status')||qp('status')||'approved').toLowerCase();
+  var payId = qp('payment_id')||qp('collection_id')||'';
+  var pref  = qp('preference_id')||'';
+  var extRef= qp('external_reference')||'';
+  var ic=document.getElementById('ic'), ttl=document.getElementById('ttl'), sub=document.getElementById('sub');
+  var vSta=document.getElementById('vSta');
+
+  function set(cls,emoji,title,text,staLabel,staColor){
+    ic.className='ic '+cls; ic.textContent=emoji;
+    ttl.textContent=title; sub.textContent=text;
+    vSta.textContent=staLabel; vSta.style.color=staColor;
+  }
+
+  if(/approv|success|paid/.test(status)){
+    set('ok','✓','Pagamento aprovado!','Recebemos seu pagamento. Seu pedido já está sendo processado — você vai receber a confirmação e a nota fiscal por e-mail.','Aprovado','#1f8a4c');
+  }else if(/pend|process|in_process|authorized/.test(status)){
+    set('pend','⏳','Pagamento em processamento','Seu pagamento está sendo confirmado pelo banco/Pix. Assim que cair, seu pedido segue automaticamente. Pode levar alguns minutos.','Aguardando confirmação','#e8731c');
+  }else if(/reject|fail|cancel/.test(status)){
+    set('fail','✕','Pagamento não concluído','O pagamento não foi aprovado desta vez. Você pode tentar de novo na loja ou falar com a gente pelo WhatsApp que finalizamos seu pedido.','Não aprovado','#c0392b');
+  }else{
+    set('ok','✓','Pedido recebido','Recebemos seu pedido. Em caso de dúvida sobre o pagamento, fale com a gente pelo WhatsApp.','Recebido','#1f3a5f');
+  }
+
+  // detalhes
+  var any=false, box=document.getElementById('detbox');
+  if(extRef){document.getElementById('vPed').textContent=extRef;document.getElementById('rPed').style.display='flex';any=true;}
+  if(payId){document.getElementById('vPay').textContent=payId;document.getElementById('rPay').style.display='flex';any=true;}
+  box.style.display='block';
+
+  // WhatsApp com a mensagem certa
+  var msg='Olá! Acabei de finalizar um pedido no site da SULLAB';
+  if(extRef) msg+=' (pedido '+extRef+')';
+  if(payId)  msg+=' — pagamento '+payId;
+  msg+='. Pode confirmar pra mim?';
+  document.getElementById('waBtn').href='https://wa.me/5524988383100?text='+encodeURIComponent(msg);
+})();
+</script>
+</body>
+</html>
