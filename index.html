@@ -669,6 +669,8 @@ function render(){
   document.getElementById('crumb').innerHTML='Início'+(cat?(' › <b>'+nameCat(cat)+'</b>'):(fbrand?(' › <b>'+fbrand+'</b>'):' › <b>Todos os produtos</b>'));
   var list=[];P.forEach(function(p,i){if(!p.img||p.img.length<6)return;if(!q){if(seg){if(SEG[seg].indexOf(String(p.cod).trim())<0)return;}else if(cat===''){ /* home: mostra tudo (filtra por marca se houver) */ }else if(cat=='maisv'){if(!p.mv)return;}else if(cat=='promo'){if(!p.promo)return;}else if(p.cat!=cat)return;}if(q){var _hay=nrm(p.nome+' '+p.brand+' '+p.cod+' '+(p.tipo||'')+' '+(p.kw||'')+' '+nameCat(p.cat));var _qw=q.split(/\s+/).filter(Boolean);var _ok=true;for(var _w=0;_w<_qw.length;_w++){if(_hay.indexOf(_qw[_w])<0){_ok=false;break;}}if(!_ok)return;}list.push(i);});
   list=applyFilters(list);
+  /* VITRINE: produtos com preço (compra imediata) primeiro; equipamentos sob consulta por último */
+  list.sort(function(a,b){var pa=P[a],pb=P[b];function semPreco(p){return (p.kind=='aparelho'||p.cat=='ap'||!(p.pub>0));}var sa=semPreco(pa)?1:0,sb=semPreco(pb)?1:0;if(sa!==sb)return sa-sb;return 0;});
   try{if(q&&q.length>=2){var _qn=q;clearTimeout(window._buscaT);var _n=list.length;window._buscaT=setTimeout(function(){if(window._ultBusca===_qn)return;window._ultBusca=_qn;try{if(typeof sullabEvent==='function')sullabEvent('busca',{termo:_qn.slice(0,80),achou:_n>0?1:0,n:_n});}catch(e){}try{var H=JSON.parse(localStorage.getItem('sullab_buscas')||'[]');H.unshift({t:_qn.slice(0,80),achou:_n>0?1:0,n:_n,ts:Date.now()});H=H.slice(0,200);localStorage.setItem('sullab_buscas',JSON.stringify(H));}catch(e){}},1200);}}catch(e){}
   if(!list.length){var _wa=q?('<div class="emptywa"><div>Não temos esse item no catálogo — mas a SULLAB cota pra você.</div><button class="buy" onclick="cotarBusca()">💬 Cotar “'+q+'” no WhatsApp</button></div>'):'';document.getElementById('grid').innerHTML='<div class="empty">'+(q?'Nada encontrado para “'+q+'”.':'Sem itens nesta categoria.')+_wa+'</div>';return;}
   document.getElementById('grid').innerHTML=list.map(function(i){var p=P[i];
@@ -889,7 +891,49 @@ function maskDoc(el){var v=_digs(el.value).slice(0,14);var o=v;
   }else{ // CPF 000.000.000-00
     o=v.replace(/^(\d{3})(\d)/,'$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/,'$1.$2.$3').replace(/\.(\d{3})(\d{1,2})$/,'.$1-$2');
   }
-  el.value=o;}
+  el.value=o;
+  if(el.id==='adoc' && v.length===14){ try{ lookupCnpj(v); }catch(e){} }
+}
+window._cnpjCache=window._cnpjCache||{};
+function _setIfEmpty(id,val){var el=document.getElementById(id);if(el&&!el.value && val){el.value=val;return true;}return false;}
+function lookupCnpj(digs){
+  digs=(digs||'').replace(/\D/g,'');
+  if(digs.length!==14) return;
+  if(window._cnpjBusy) return; window._cnpjBusy=true;
+  var raz=document.getElementById('arazao');
+  // micro-feedback
+  if(raz && !raz.value){ raz.setAttribute('data-ph', raz.placeholder||''); raz.placeholder='Buscando dados do CNPJ…'; }
+  function done(){ window._cnpjBusy=false; if(raz && raz.getAttribute('data-ph')!==null){ var ph=raz.getAttribute('data-ph'); if(ph) raz.placeholder=ph; raz.removeAttribute('data-ph'); } }
+  function fill(d){
+    try{
+      if(!d) { done(); return; }
+      _setIfEmpty('arazao', d.razao_social||d.nome_fantasia||'');
+      _setIfEmpty('acep', (d.cep||'').toString().replace(/\D/g,'').replace(/(\d{5})(\d)/,'$1-$2'));
+      var rua=[d.descricao_tipo_de_logradouro,d.logradouro].filter(Boolean).join(' ').trim();
+      _setIfEmpty('aend', rua);
+      _setIfEmpty('anum', d.numero||'');
+      _setIfEmpty('abairro', d.bairro||'');
+      _setIfEmpty('acidade', d.municipio||'');
+      _setIfEmpty('auf', (d.uf||'').toString().toUpperCase().slice(0,2));
+      var tel=(d.ddd_telefone_1||'').toString().replace(/\D/g,'');
+      if(tel) _setIfEmpty('atel', tel);
+      var em=(d.email||'').toString().toLowerCase();
+      if(em) _setIfEmpty('aemail', em);
+      // dispara recálculo de frete/visual se houver UF
+      try{ if(typeof saveAddr==='function') saveAddr(readAddr()); }catch(e){}
+      try{ if(typeof renderCart==='function') renderCart(); }catch(e){}
+    }catch(e){}
+    done();
+  }
+  var cached=window._cnpjCache[digs];
+  if(cached){ fill(cached); return; }
+  fetch('https://brasilapi.com.br/api/cnpj/v1/'+digs)
+    .then(function(r){ return r.ok?r.json():null; })
+    .then(function(d){ if(d){window._cnpjCache[digs]=d;} fill(d); })
+    .catch(function(){ done(); });
+}
+try{ window.lookupCnpj=lookupCnpj; }catch(e){}
+
 function validaCpf(c){c=_digs(c);if(c.length!==11||/^(\d)\1{10}$/.test(c))return false;var s=0,r;for(var i=0;i<9;i++)s+=parseInt(c[i])*(10-i);r=(s*10)%11;if(r===10)r=0;if(r!==parseInt(c[9]))return false;s=0;for(i=0;i<10;i++)s+=parseInt(c[i])*(11-i);r=(s*10)%11;if(r===10)r=0;return r===parseInt(c[10]);}
 function validaCnpj(c){c=_digs(c);if(c.length!==14||/^(\d)\1{13}$/.test(c))return false;var b=[5,4,3,2,9,8,7,6,5,4,3,2],s=0,i;for(i=0;i<12;i++)s+=parseInt(c[i])*b[i];var d1=s%11<2?0:11-s%11;if(d1!==parseInt(c[12]))return false;b=[6,5,4,3,2,9,8,7,6,5,4,3,2];s=0;for(i=0;i<13;i++)s+=parseInt(c[i])*b[i];var d2=s%11<2?0:11-s%11;return d2===parseInt(c[13]);}
 function validaDoc(c){var d=_digs(c);if(d.length===11)return validaCpf(d)?'CPF':false;if(d.length===14)return validaCnpj(d)?'CNPJ':false;return false;}try{window.validaDoc=validaDoc;}catch(e){}
@@ -1086,7 +1130,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781195742';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781197515';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
