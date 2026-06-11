@@ -387,7 +387,7 @@ body.cart-lock{position:fixed!important;left:0;right:0;width:100%}
 #mlnav .nbadge{position:absolute;top:6px;margin-left:16px;background:#f23030;color:#fff;font-size:9px;font-weight:700;border-radius:9px;padding:0 5px;min-width:16px;text-align:center}
 </style>
 </head><body><div class="wrap">
-<header><div style="display:flex;align-items:center"><div class="logo"><img class="logoimg" src="https://acdn-us.mitiendanube.com/stores/003/706/975/themes/common/logo-1979127265-1694651326-5cb0e3bc482c69a14bef7d43a46941261694651326-480-0.webp" alt="SULLAB - Produtos hospitalares e laboratoriais"></div><button id="hcbtn" onclick="openCart()" style="margin-left:auto;background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:9px;padding:8px 12px;font-size:17px;cursor:pointer">🛒<span id="hcb" style="background:#ff5a5a;border-radius:9px;font-size:11px;padding:0 6px;margin-left:3px;vertical-align:2px">0</span></button></div>
+<header><div style="display:flex;align-items:center"><div class="logo"><img class="logoimg" src="https://acdn-us.mitiendanube.com/stores/003/706/975/themes/common/logo-1979127265-1694651326-5cb0e3bc482c69a14bef7d43a46941261694651326-480-0.webp" alt="SULLAB - Produtos hospitalares e laboratoriais"></div><button id="painelBtn" onclick="try{abrirPainel()}catch(e){}" title="Área do administrador" aria-label="Área do administrador" style="margin-left:8px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px;line-height:1;opacity:.4;transition:opacity .15s;display:inline-flex;align-items:center;justify-content:center;padding:0" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.4'">🔒</button><button id="hcbtn" onclick="openCart()" style="margin-left:auto;background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:9px;padding:8px 12px;font-size:17px;cursor:pointer">🛒<span id="hcb" style="background:#ff5a5a;border-radius:9px;font-size:11px;padding:0 6px;margin-left:3px;vertical-align:2px">0</span></button></div>
 <div class="srch"><input id="q" placeholder="Buscar produto, marca ou código…" oninput="onSearch()"><button onclick="document.getElementById('q').focus()">🔍</button></div></header>
 <div class="trustbar"><span class="tbadge">⭐ MercadoLíder Gold</span><span class="titem">🧾 NF-e</span><span class="titem">🚚 Frete grátis RJ/SP acima de R$ 1.000</span><span class="titem">💳 12x no cartão</span><span class="titem">⚡ 5% OFF no Pix</span><button class="trep" onclick="openRep()">Ver reputação ⭐</button></div><div class="quotebanner"><div class="qbIco">📎</div><div class="qbTxt"><b>Já tem uma lista de compras?</b><span>Envie por Excel, foto ou PDF — devolvemos o orçamento com preço CNPJ e NF-e.</span></div><div class="qbBtns"><button class="qbWa" onclick="orcArquivoWa()">💬 Enviar pelo WhatsApp</button><button class="qbMail" onclick="orcArquivoMail()">✉️ Enviar por e-mail</button></div></div><div class="coupontop" id="coupontop">🎁 <b>Primeira compra com CNPJ?</b> Use o cupom <b>BEMVINDO5</b> e ganhe <b>5% OFF</b> · <a onclick="toggleCnpj&&toggleCnpj()" style="text-decoration:underline;cursor:pointer">cadastre-se grátis</a> <span class="cpx" onclick="document.getElementById('coupontop').style.display='none'">✕</span></div><div class="actbar"><button onclick="openOrc()">📝 Solicitar orçamento</button><button onclick="openOrders()">🧾 Meus pedidos <span id="ordcb" class="ordcb"></span></button><button onclick="baixarTabela()">📄 Tabela de preços</button></div><div class="segrow" id="segrow"></div>
 <div class="brandindex" id="brandindex"></div>
@@ -1086,7 +1086,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781192988';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781193714';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
@@ -1220,4 +1220,4 @@ function painelRender(){
       + secao('ORÇAMENTOS / LEADS','📝',orcs,'#cbb48a');
 }
 </script>
-</body></html>
+<script>try{window.abrirPainel=abrirPainel;window.painelEntrar=painelEntrar;window.painelCarregar=painelCarregar;window.painelRender=painelRender;window.painelSair=painelSair;}catch(e){}</script></body></html>
