@@ -920,8 +920,8 @@ function lookupCnpj(digs){
       var em=(d.email||'').toString().toLowerCase();
       if(em) _setIfEmpty('aemail', em);
       // dispara recálculo de frete/visual se houver UF
-      try{ if(typeof saveAddr==='function') saveAddr(readAddr()); }catch(e){}
-      try{ if(typeof renderCart==='function') renderCart(); }catch(e){}
+      // NÃO chamar renderCart aqui: ele recria os inputs e apaga o que preenchemos.
+      // O frete recalcula sozinho quando o cliente avança/edita o CEP.
     }catch(e){}
     done();
   }
@@ -1130,7 +1130,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781197515';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781197989';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
