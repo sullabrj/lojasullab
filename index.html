@@ -505,25 +505,41 @@ function clienteInfo(){
   var tipo=_digs(doc).length===11?'CPF':(_digs(doc).length===14?'CNPJ':'');
   return {logado:false, nome:razao, doc:doc, docTipo:tipo, tel:tel, email:email};
 }
-function checkoutGate(){
+function checkoutGate(strict){
+  /* strict !== false => exige tudo (usado no pagamento online com NF automática).
+     strict === false ('soft') => para WhatsApp/e-mail: exige só itens + 1 contato;
+     CNPJ e endereço viram opcionais (o vendedor coleta na conversa) — reduz abandono. */
+  if(strict===undefined) strict=true;
   var ks=Object.keys(cart); if(!ks.length){ toast('Seu pedido está vazio. Adicione produtos antes de enviar.'); return false; }
-  /* salva o que foi digitado */
   try{ saveCli(); }catch(e){}
   var c=clienteInfo();
-  /* CPF ou CNPJ obrigatório e válido */
-  var _validaDoc=(typeof validaDoc==="function")?validaDoc:window.validaDoc;if(!_validaDoc(c.doc)){
+  var _validaDoc=(typeof validaDoc==="function")?validaDoc:window.validaDoc;
+  var _em=(document.getElementById('aemail')||{}).value||c.email||'';
+  var _emOk=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_em.trim());
+  var _tel=(c.tel||'').replace(/\D/g,'');
+
+  if(!strict){
+    /* MODO SOFT (WhatsApp / e-mail): basta UM contato (e-mail OU telefone). */
+    if(!_emOk && _tel.length<10){
+      try{ var es=document.getElementById('aemail')||document.getElementById('atel'); if(es&&es.scrollIntoView){ es.scrollIntoView({block:'center'}); es.focus(); } }catch(e){}
+      setTimeout(function(){ try{ alert('Deixe um contato (WhatsApp ou e-mail) para a gente confirmar seu pedido.'); }catch(e){} },80);
+      return false;
+    }
+    try{ saveAddr(readAddr()); }catch(e){}
+    return true;
+  }
+
+  /* MODO STRICT (pagamento online): CNPJ/CPF válido + e-mail + endereço completo. */
+  if(!_validaDoc(c.doc)){
     try{ var ed=document.getElementById('adoc'); if(ed&&ed.scrollIntoView){ ed.scrollIntoView({block:'center'}); ed.focus(); } }catch(e){}
-    setTimeout(function(){ try{ alert('Informe um CPF ou CNPJ válido para enviar o pedido.'); }catch(e){} },80);
+    setTimeout(function(){ try{ alert('Informe um CPF ou CNPJ válido para o pagamento com nota fiscal.'); }catch(e){} },80);
     return false;
   }
-  /* e-mail obrigatório */
-  var _em=(document.getElementById('aemail')||{}).value||c.email||'';
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_em.trim())){
+  if(!_emOk){
     try{ var ee=document.getElementById('aemail'); if(ee&&ee.scrollIntoView){ ee.scrollIntoView({block:'center'}); ee.focus(); } }catch(e){}
     setTimeout(function(){ try{ alert('Informe um e-mail válido — usamos para enviar a confirmação do seu pedido.'); }catch(e){} },80);
     return false;
   }
-  /* endereço completo obrigatório */
   var a=readAddr();
   if(!addrOk(a)){
     try{ var el=document.getElementById('acep')||document.getElementById('aend'); if(el&&el.scrollIntoView){ el.scrollIntoView({block:'center'}); el.focus(); } }catch(e){}
@@ -537,7 +553,7 @@ function checkoutGate(){
 
 
 function sendEmail(){
-  if(!checkoutGate())return;
+  if(!checkoutGate(false))return;
   var c=clienteInfo(); var a2=readAddr();
   var lines=[]; for(var k in cart){var p=P[k]; if(!p)continue; lines.push({cod:p.cod,nome:p.nome,q:cart[k],un:unitPrice(p,cart[k])});}
   if(!lines.length){toast('Seu pedido está vazio.');return;}
@@ -569,7 +585,7 @@ function sendEmail(){
   try{ cart={}; badge(); renderCart(); renderCartCat&&renderCartCat(); }catch(e){}
   try{ closeCart(); }catch(e){}
 }
-function sendWa(){if(!checkoutGate())return;var c=clienteInfo();var a2=readAddr();var lines=[];for(var k in cart){var p=P[k];var pr=prc(p);lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+(pr?(' · '+brl(pr*cart[k])):'')+')');}try{if(typeof sullabEvent==='function')sullabEvent('pedido_wa',{total:total(),qtd:lines.length,itens:_orderItems(),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a2,obs:val('aobs')});}catch(e){}try{recordOrder('Orçamento WhatsApp');}catch(e){}var ent='\n\n— Entrega —\n'+a2.end+', '+a2.num+(a2.comp?(' - '+a2.comp):'')+'\n'+a2.bairro+' — '+a2.cidade+'/'+a2.uf+'\nCEP: '+a2.cep;var ident='\n\n— Cliente —\nNome/Razão: '+c.nome+'\n'+c.docTipo+': '+c.doc+'\nTelefone: '+c.tel+'\nE-mail: '+c.email;var msg='Olá! Pedido pelo catálogo SULLAB:\n\n'+lines.join('\n')+'\n\nTotal (sem frete): '+brl(total())+ent+ident+'\n\nPodem confirmar disponibilidade e o frete?';window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
+function sendWa(){if(!checkoutGate(false))return;var c=clienteInfo();var a2=readAddr();var lines=[];for(var k in cart){var p=P[k];var pr=prc(p);lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+(pr?(' · '+brl(pr*cart[k])):'')+')');}try{if(typeof sullabEvent==='function')sullabEvent('pedido_wa',{total:total(),qtd:lines.length,itens:_orderItems(),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a2,obs:val('aobs')});}catch(e){}try{recordOrder('Orçamento WhatsApp');}catch(e){}var ent='\n\n— Entrega —\n'+a2.end+', '+a2.num+(a2.comp?(' - '+a2.comp):'')+'\n'+a2.bairro+' — '+a2.cidade+'/'+a2.uf+'\nCEP: '+a2.cep;var ident='\n\n— Cliente —\nNome/Razão: '+c.nome+'\n'+c.docTipo+': '+c.doc+'\nTelefone: '+c.tel+'\nE-mail: '+c.email;var msg='Olá! Pedido pelo catálogo SULLAB:\n\n'+lines.join('\n')+'\n\nTotal (sem frete): '+brl(total())+ent+ident+'\n\nPodem confirmar disponibilidade e o frete?';window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 document.getElementById('fab').onclick=function(e){e.preventDefault();sendWa();};
 
 function prc(p){if(p.kind!='prod'||!p.pub)return 0;var b=cnpj?p.cnpj:p.pub;if(p.promo)b=Math.round(b*(1-p.promo)*100)/100;return b;}
@@ -612,7 +628,7 @@ function readAddr(){return {cep:val('acep'),end:val('aend'),num:val('anum'),comp
 function addrOk(a){return !!(a.cep&&a.end&&a.num&&a.bairro&&a.cidade&&a.uf);}
 function saveAddr(a){addr=a;try{if(window.__user||(window.__profile&&window.__profile.cnpj))localStorage.setItem('sullab_addr',JSON.stringify(a));}catch(e){}}
 function buscarCep(){var el=document.getElementById('acep');if(!el)return;var v=el.value.replace(/\D/g,'').slice(0,8);el.value=v.length>5?(v.slice(0,5)+'-'+v.slice(5)):v;if(v.length===8){fetch('https://viacep.com.br/ws/'+v+'/json/').then(function(r){return r.json();}).then(function(d){if(d&&!d.erro){var e=document.getElementById('aend');if(e&&!e.value)e.value=d.logradouro||'';var b=document.getElementById('abairro');if(b&&!b.value)b.value=d.bairro||'';var c=document.getElementById('acidade');if(c)c.value=d.localidade||'';var u=document.getElementById('auf');if(u)u.value=d.uf||'';saveAddr(readAddr());if(document.getElementById('dfoot')&&document.getElementById('ditems').innerHTML)renderCart();var nn=document.getElementById('anum');if(nn)nn.focus();}}).catch(function(){});}}
-function pedidoWa(forma,fator){if(!checkoutGate())return;var c=clienteInfo();var lines=[];for(var k in cart){var p=P[k];var pr=prc(p);lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+(pr?(' · '+brl(pr*cart[k])):'')+')');}var a=readAddr();saveAddr(a);var tt=total()*(fator||1);var ent='\n\n— Entrega —\n'+a.end+', '+a.num+(a.comp?(' - '+a.comp):'')+'\n'+a.bairro+' — '+a.cidade+'/'+a.uf+'\nCEP: '+a.cep;var ident='\n\n— Cliente —\nNome/Razão: '+c.nome+'\n'+c.docTipo+': '+c.doc+'\nTelefone: '+c.tel+'\nE-mail: '+c.email;try{if(typeof sullabEvent==='function')sullabEvent('pedido_wa',{total:tt,qtd:lines.length,itens:_orderItems(),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a,forma:forma});}catch(e){}var msg='Olá! Pedido pelo catálogo SULLAB:\n\n'+lines.join('\n')+'\n\nTotal: '+brl(tt)+'\nForma de pagamento: '+forma+ent+ident;window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
+function pedidoWa(forma,fator){if(!checkoutGate(false))return;var c=clienteInfo();var lines=[];for(var k in cart){var p=P[k];var pr=prc(p);lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+(pr?(' · '+brl(pr*cart[k])):'')+')');}var a=readAddr();saveAddr(a);var tt=total()*(fator||1);var ent='\n\n— Entrega —\n'+a.end+', '+a.num+(a.comp?(' - '+a.comp):'')+'\n'+a.bairro+' — '+a.cidade+'/'+a.uf+'\nCEP: '+a.cep;var ident='\n\n— Cliente —\nNome/Razão: '+c.nome+'\n'+c.docTipo+': '+c.doc+'\nTelefone: '+c.tel+'\nE-mail: '+c.email;try{if(typeof sullabEvent==='function')sullabEvent('pedido_wa',{total:tt,qtd:lines.length,itens:_orderItems(),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a,forma:forma});}catch(e){}var msg='Olá! Pedido pelo catálogo SULLAB:\n\n'+lines.join('\n')+'\n\nTotal: '+brl(tt)+'\nForma de pagamento: '+forma+ent+ident;window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 function payPix(){pedidoWa('PIX (5% de desconto)',0.95);}
 function payBoleto(){if(!registered){toast('Boleto faturado é exclusivo CNPJ — cadastre-se.');openReg();return;}pedidoWa('BOLETO FATURADO 15/30/45/60 dias (CNPJ)',1);}
 function setPgFromRadio(el){pgto=el.value;renderCart();}
@@ -624,7 +640,7 @@ function temRefrigerado(){for(var k in cart){var p=P[k];if(p&&CATS_FRIO[p.cat])r
 function cotarFrioWa(){var a=readAddr();var lines=[];for(var k in cart){var p=P[k];lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+')'+(CATS_FRIO[p.cat]?' ❄️ refrigerado':''));}var dest=a&&a.cep?('\n\nEntrega: '+(a.cidade?a.cidade+'/'+(a.uf||'')+' — ':'')+'CEP '+a.cep):'';var msg='Olá! Tenho um pedido com ITENS REFRIGERADOS (precisa de transporte com cadeia fria). Podem cotar o frete expresso refrigerado?\n\n'+lines.join('\n')+dest;window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 function cotarFreteWa(){var a=readAddr();var lines=[];for(var k in cart){var p=P[k];lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+')');}var dest=a&&a.cep?('\n\nDestino: '+(a.cidade?a.cidade+'/'+(a.uf||'')+' — ':'')+'CEP '+a.cep):'';var msg='Olá! Gostaria de uma COTAÇÃO DE FRETE (e opções de transportadora) para estes itens:\n\n'+(lines.length?lines.join('\n'):'(itens do carrinho)')+dest+'\n\nPodem me passar as opções e prazos?';window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 function cotarFrete(){var a=readAddr();var cep=(a.cep||'').replace(/\D/g,'');var box=document.getElementById('freteopts');if(cep.length!=8){if(box)box.innerHTML='<div class="fhint">Informe um CEP v\u00E1lido (8 d\u00EDgitos).</div>';return;}if(box)box.innerHTML='<div class="fhint">Calculando frete\u2026</div>';var prods=[];for(var k in cart){prods.push({id:String(P[k].cod||k),width:11,height:6,length:16,weight:prodWeight(P[k]),insurance_value:unitPrice(P[k],cart[k])*cart[k],quantity:cart[k]});}fetch(FRETE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:ORIGEM_CEP,to:cep,products:prods})}).then(function(r){return r.json();}).then(function(d){if(d&&!Array.isArray(d)){d=(d.price||d.name||d.company)?[d]:(d.error?[]:[]);}if(!d||d.error||!d.length){if(box)box.innerHTML='<div class="fhint">Frete ser\u00E1 confirmado no checkout / WhatsApp.</div>';return;}var ok=d.filter(function(o){return o&&o.price&&!o.error;});if(!ok.length){if(box)box.innerHTML='<div class="fhint">Sem op\u00E7\u00F5es para este CEP. Confirmaremos no checkout.</div>';return;}ok.sort(function(x,y){return parseFloat(x.price)-parseFloat(y.price);});if(box){var _none='<label class="fopt"><input type="radio" name="frete" value="0" checked onchange="selFrete(0)"> <b>Sem frete agora</b> — combinar a entrega depois (R$ 0,00)</label>';box.innerHTML=_none+ok.slice(0,4).map(function(o,ix){var dt=o.delivery_time||(o.delivery_range&&o.delivery_range.max)||'?';return '<label class="fopt"><input type="radio" name="frete" value="'+o.price+'" onchange="selFrete('+parseFloat(o.price)+')"> '+((o.company&&o.company.name)?o.company.name+' ':'')+(o.name||'')+' \u2014 <b>'+brl(parseFloat(o.price))+'</b> ('+dt+' dias)</label>';}).join('');}selFrete(0);}).catch(function(){if(box)box.innerHTML='<div class="fhint">Frete ser\u00E1 confirmado no checkout / WhatsApp.</div>';});}
-function finalizar(){if(!checkoutGate())return;var c=clienteInfo();var a=readAddr();window._pidAtual=(window._gerarPedidoId?window._gerarPedidoId():('SLB-'+Date.now()));try{if(typeof sullabEvent==='function')sullabEvent('pedido_mp',{pedido:window._pidAtual,total:total(),qtd:Object.keys(cart).length,itens:_orderItems(),pgto:(typeof pgto!=='undefined'?pgto:''),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a});}catch(e){}recordOrder(pgto=='pix'?'Pix (-5%)':pgto=='boleto'?'Boleto faturado 15/30/45/60':'Cartão até 12x');if(pgto=='boleto'){payBoleto();}else{payMP(pgto);}}
+function finalizar(){if(!checkoutGate(false))return;var c=clienteInfo();var a=readAddr();window._pidAtual=(window._gerarPedidoId?window._gerarPedidoId():('SLB-'+Date.now()));try{if(typeof sullabEvent==='function')sullabEvent('pedido_mp',{pedido:window._pidAtual,total:total(),qtd:Object.keys(cart).length,itens:_orderItems(),pgto:(typeof pgto!=='undefined'?pgto:''),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a});}catch(e){}recordOrder(pgto=='pix'?'Pix (-5%)':pgto=='boleto'?'Boleto faturado 15/30/45/60':'Cartão até 12x');if(pgto=='boleto'){payBoleto();}else{payMP(pgto);}}
 function isAdminUser(){try{if(localStorage.getItem('sullab_owner')==='1')return true;}catch(e){}try{var u=window.__user;if(u&&((u.email||'').toLowerCase()==='comercial@sullabrj.com.br'))return true;}catch(e){}try{if(/[?&]admin=1/.test(location.search)||location.hash==='#admin')return true;}catch(e){}return false;}try{window.isAdminUser=isAdminUser;}catch(e){}
 
 /* ===== Catálogo dentro do carrinho (busca+chips iguais ao site) — add 09/06/2026 ===== */
@@ -663,7 +679,7 @@ function renderCart(){
   df.innerHTML='<div class="cstep cstep-entrega"><div class="addr stepnf" data-step="3"><div class="albl">🧾 Dados para nota fiscal</div><input id="arazao" placeholder="Razão Social ou Nome completo *" value="'+((window.__profile&&window.__profile.razao)||'')+'" onchange="saveCli()"><input id="adoc" placeholder="CPF ou CNPJ *" inputmode="numeric" maxlength="18" oninput="maskDoc(this)" value="'+((window.__profile&&window.__profile.cnpj)||'')+'" onchange="saveCli()"><div class="arow"><input id="aemail" type="email" placeholder="E-mail *" value="'+(((window.__user&&window.__user.email)||(window.__profile&&window.__profile.email))||'')+'" onchange="saveCli()"><input id="atel" placeholder="Telefone (opcional)" inputmode="tel" value="'+(((window.__profile&&window.__profile.telefone))||'')+'" onchange="saveCli()"></div></div><div class="addr stepend" data-step="2"><div class="albl">📦 Endereço de entrega</div><input id="acep" placeholder="CEP" maxlength="9" value="'+(addr.cep||'')+'" oninput="buscarCep()" onchange="saveAddr(readAddr())"><input id="aend" placeholder="Endereço (rua/avenida)" value="'+(addr.end||'')+'" onchange="saveAddr(readAddr())"><div class="arow"><input id="anum" placeholder="Nº" value="'+(addr.num||'')+'" onchange="saveAddr(readAddr())"><input id="acomp" placeholder="Complemento" value="'+(addr.comp||'')+'" onchange="saveAddr(readAddr())"></div><input id="abairro" placeholder="Bairro" value="'+(addr.bairro||'')+'" onchange="saveAddr(readAddr())"><div class="arow"><input id="acidade" placeholder="Cidade" value="'+(addr.cidade||'')+'" onchange="saveAddr(readAddr())"><input id="auf" placeholder="UF" maxlength="2" value="'+(addr.uf||'')+'" onchange="saveAddr(readAddr())"></div><textarea id="aobs" placeholder="Observações do pedido (opcional): inscrição estadual, prazo, transportadora preferida…" rows="2" style="width:100%;margin-top:8px;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:13.5px;resize:vertical"></textarea></div>'+'<div class="stepfrete">'+freteHtml+'</div>'+'</div><div class="cstep cstep-pagamento"><div class="dtot"><span>Subtotal '+(pgto=='pix'?'(Pix −5%)':pgto=='boleto'?'(Boleto)':'(Cartão)')+'</span><span>'+brl(total()*(pgto=='pix'?0.95:1))+'</span></div>'+'<div class="dtot"><span>Frete</span><span id="dfrete">'+(fi.free===true?'Grátis':(freteSel?brl(freteSel):'a calcular'))+'</span></div>'+couponLine+'<div class="dtot tbig"><span>Total</span><b id="dtotval">'+brl(dispTotal())+'</b></div>'+saveLine+coupBox+'<div class="paysec"><div class="psh">Forma de pagamento</div>'+'<label class="pmopt"><input type="radio" name="pg" value="card"'+(pgto=='card'?' checked':'')+' onchange="setPgFromRadio(this)"> 💳 Cartão de crédito — até 12x (você escolhe as parcelas)</label>'+'<label class="pmopt"><input type="radio" name="pg" value="pix"'+(pgto=='pix'?' checked':'')+' onchange="setPgFromRadio(this)"> ⚡ Pix — 5% de desconto<span class="pmv">'+brl(total()*0.95)+'</span></label>'+(registered?('<label class="pmopt"><input type="radio" name="pg" value="boleto"'+(pgto=='boleto'?' checked':'')+' onchange="setPgFromRadio(this)"> 🧾 Boleto faturado — 15/30/45/60 dias (CNPJ)</label>'):'<div class="pm locked">🧾 <b>Boleto faturado</b> 15/30/45/60 dias — exclusivo <b>CNPJ cadastrado</b>. <a onclick="openReg()" style="color:#16456e;cursor:pointer;text-decoration:underline">Cadastre-se</a></div>')+'</div>'+(pgto=='card'?('<div class="payopt"><div style="font-size:12px;color:#555;margin:4px 0;font-weight:600">Você escolhe o número de parcelas (até 12x) no checkout do Mercado Pago</div><select id="inst">'+opts+'</select></div>'):'')+'<button class="wabtn sendorder" onclick="sendEmail()">📧 Enviar pedido por e-mail</button>'+'<button class="wabtn sendorder2" onclick="sendWa()">📲 Enviar pedido por WhatsApp</button>'+'<button class="paybtn" onclick="finalizar()">💳 Pagar online agora — '+(pgto=='pix'?'Pix (−5%)':(pgto=='boleto'?'Boleto faturado':'Cartão até 12x'))+'</button>'+'<div class="mpnote">Cartão e Pix são processados pelo Mercado Pago (Pix já com 5% de desconto aplicado). Boleto faturado 15/30/45/60 dias é confirmado pela nossa equipe.</div></div>';
   try{var _ca=document.getElementById('cartActions');if(_ca){_ca.innerHTML='';var _wbs=df.querySelectorAll('.wabtn');for(var _i=0;_i<_wbs.length;_i++){_ca.appendChild(_wbs[_i]);}var _pb=df.querySelector('.paybtn');if(_pb)_ca.appendChild(_pb);if(isAdminUser()){var _sh=document.createElement('button');_sh.className='sharebtn';_sh.type='button';_sh.innerHTML='\uD83D\uDD17 Compartilhar pedido (gerar link p/ cliente)';_sh.setAttribute('onclick','shareCart()');_ca.appendChild(_sh);}}}catch(e){}
 }
-function payMP(method){if(!checkoutGate())return;try{var _t=(typeof total==='function')?total():0;localStorage.setItem('sullab_last_purchase',JSON.stringify({v:Math.round(_t*100)/100,ts:Date.now()}));}catch(e){}var _ci=clienteInfo();var a=readAddr();saveAddr(a);var fator=((method=='pix')?0.95:1)*(1-couponPct);var items=[];for(var k in cart){var p=P[k];var pr=unitPrice(p,cart[k])*fator;if(pr>0)items.push({title:(p.cod+' '+p.nome).slice(0,120),quantity:cart[k],unit_price:Math.round(pr*100)/100});}if(!items.length){toast('Adicione itens com preço para pagar online. (Equipamentos são sob consulta — use o WhatsApp.)');return;}var btn=document.querySelector('.paybtn');var orig=btn?btn.textContent:'';if(btn){btn.textContent='Abrindo Mercado Pago…';btn.disabled=true;}fetch('https://sullab-mp.comercial-0a2.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pedido:(window._pidAtual||(window._gerarPedidoId?window._gerarPedidoId():('SLB-'+Date.now()))),items:items,method:method,endereco:a,cliente:{nome:_ci.nome,doc:_ci.doc,docTipo:_ci.docTipo,tel:_ci.tel,email:_ci.email}})}).then(function(r){return r.json();}).then(function(d){if(d.init_point){window.location.href=d.init_point;}else{alert('Não foi possível iniciar o pagamento: '+(d.error||'tente novamente'));if(btn){btn.textContent=orig;btn.disabled=false;}}}).catch(function(){alert('Erro de conexão. Tente novamente.');if(btn){btn.textContent=orig;btn.disabled=false;}});}
+function payMP(method){if(!checkoutGate(true))return;try{var _t=(typeof total==='function')?total():0;localStorage.setItem('sullab_last_purchase',JSON.stringify({v:Math.round(_t*100)/100,ts:Date.now()}));}catch(e){}var _ci=clienteInfo();var a=readAddr();saveAddr(a);var fator=((method=='pix')?0.95:1)*(1-couponPct);var items=[];for(var k in cart){var p=P[k];var pr=unitPrice(p,cart[k])*fator;if(pr>0)items.push({title:(p.cod+' '+p.nome).slice(0,120),quantity:cart[k],unit_price:Math.round(pr*100)/100});}if(!items.length){toast('Adicione itens com preço para pagar online. (Equipamentos são sob consulta — use o WhatsApp.)');return;}var btn=document.querySelector('.paybtn');var orig=btn?btn.textContent:'';if(btn){btn.textContent='Abrindo Mercado Pago…';btn.disabled=true;}var _restaura=function(){if(btn){btn.textContent=orig;btn.disabled=false;}};var _ctrl=(typeof AbortController!=='undefined')?new AbortController():null;var _timedout=false;var _tmr=setTimeout(function(){_timedout=true;if(_ctrl){try{_ctrl.abort();}catch(e){}}},15000);fetch('https://sullab-mp.comercial-0a2.workers.dev/',{method:'POST',signal:_ctrl?_ctrl.signal:undefined,headers:{'Content-Type':'application/json'},body:JSON.stringify({pedido:(window._pidAtual||(window._gerarPedidoId?window._gerarPedidoId():('SLB-'+Date.now()))),items:items,method:method,endereco:a,cliente:{nome:_ci.nome,doc:_ci.doc,docTipo:_ci.docTipo,tel:_ci.tel,email:_ci.email}})}).then(function(r){return r.json();}).then(function(d){clearTimeout(_tmr);if(d.init_point){window.location.href=d.init_point;}else{alert('Não foi possível iniciar o pagamento agora. Tente de novo ou finalize pelo WhatsApp — respondemos na hora.');_restaura();}}).catch(function(){clearTimeout(_tmr);if(_timedout){alert('O pagamento está demorando para abrir (conexão lenta). Tente novamente ou finalize pelo WhatsApp — respondemos na hora.');}else{alert('Erro de conexão. Tente novamente ou finalize pelo WhatsApp.');}_restaura();});}
 function nrm(x){return (x==null?'':String(x)).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}function fixChipsTop(){var h=document.querySelector('header');if(!h)return;var c=document.getElementById('chips'),pf=document.querySelector('.paybar.pbfrete'),pb=document.querySelector('.paybar:not(.pbfrete)'),g=document.getElementById('grid');if(window.innerWidth>=900){var t=h.offsetHeight;if(c){c.style.top=t+'px';t+=c.offsetHeight;}if(pf){pf.style.top=t+'px';t+=pf.offsetHeight;}if(pb){pb.style.top=t+'px';t+=pb.offsetHeight;}if(g)g.style.scrollMarginTop=(t+10)+'px';var cr=document.getElementById('crumb');if(cr)cr.style.scrollMarginTop=(t+10)+'px';}else{[c,pf,pb].forEach(function(e){if(e)e.style.top='';});if(g)g.style.scrollMarginTop='';}}window.addEventListener('load',fixChipsTop);window.addEventListener('resize',fixChipsTop);var _ss=false;function onSearch(){render();if(window.innerWidth>=900){var q=document.getElementById('q');var has=q&&q.value.trim();if(has&&!_ss){_ss=true;var g=document.getElementById('crumb');if(g)g.scrollIntoView({behavior:'smooth',block:'start'});}else if(!has){_ss=false;}}}
 var POP_TOP=["454085","454091","454036","454087","454921","PA31","PA59","450539","454071","454235"];
 var POP_RANK={"13034": 2, "13026": 1, "TR 017-1 RP": 3, "454921": 4, "454036": 4, "454087": 4, "454235": 3, "456211": 3, "454482": 3, "454071": 3, "456071": 3, "455071": 3, "454092": 1, "455092": 1, "456001": 1, "454327": 2, "454085": 6, "454091": 6, "454030": 2, "456080": 2, "PA52": 2, "PA53": 2, "PA54": 2, "PA09": 2, "PA42": 2, "PA344": 2, "PA10": 2, "PA43": 2, "PA56": 2, "PA14": 2, "PA15": 2, "PA57": 2, "PA330": 2, "PA17": 2, "PA340": 2, "PA341": 2, "PA18": 2, "PA19": 2, "PA314": 3, "PA60": 2, "PA313": 3, "PA316": 3, "PA27": 3, "PA28": 3, "PA29": 3, "PA30": 3, "PA31": 4, "PA334": 2, "PA46": 2, "PA338": 2, "PA339": 2, "PA48": 2, "PA63": 2, "PA35": 2, "PA64": 2, "PA65": 2, "PA335": 2, "PA226": 2, "PA67": 2, "PA68": 2, "PA87": 2, "PA69": 2, "PA70": 3, "PA71": 2, "PA73": 2, "PA74": 2, "PA75": 2, "PA76": 2, "PA77": 2, "PA78": 2, "PA79": 2, "PA80": 2, "PA81": 2, "PA82": 2, "PA374": 2, "PA83": 2, "PA84": 2, "PA375": 2, "PA85": 2, "PA323": 2, "PA322": 2, "PA319": 3, "PA318": 3, "PA395": 2, "PA329": 2, "PA41": 2, "PA315": 3, "PA92": 2, "PA93": 2, "PA94": 2, "PA95": 2, "PA376": 2, "PA114": 2, "PA121": 2, "PA96": 2, "PA234": 2, "PA233": 2, "PA235": 2, "PA59": 4, "PA66": 2, "PA86": 2, "PA90": 2, "PA50": 2, "P22X22": 1, "7102": 1, "7105": 1, "7105-1": 1, "PEGUE1000F": 1, "PEGUE10F": 1, "PEGUE20F": 1, "PEGUE200V": 1, "VHS-P": 1, "P10ML": 1, "CITO3": 1, "23007": 2, "23010P": 2, "18286-10": 1, "18288-10": 1, "BEFB100": 1, "BEFB50": 1, "C1010": 1, "25001": 1, "19001NM": 1, "187082": 1, "188082": 1, "18248A": 1, "181401": 1, "18142E": 1, "18266": 1, "18260NM": 2, "181727E": 1, "18432": 1, "258": 1, "3266": 1, "450539": 3, "450071": 2, "450072": 2, "KIT-COLETA": 3, "KIT-SORO": 2, "KIT-MICRO": 3, "KIT-DENGUE": 1, "PA173": 2, "10160610061": 2};
@@ -1031,7 +1047,24 @@ window.fbRegister=function(){
 <script>
 (function(){
   function isOwner(){try{if(localStorage.getItem('sullab_owner')==='1')return true;}catch(e){}var u=window.__user;if(u&&((u.email||'').toLowerCase()==='comercial@sullabrj.com.br'))return true;return false;}
-  window._gerarPedidoId=function(){var d=new Date();function z(n){return(n<10?'0':'')+n;}var y=String(d.getFullYear()).slice(2);return 'SLB-'+y+z(d.getMonth()+1)+z(d.getDate())+'-'+z(d.getHours())+z(d.getMinutes())+z(d.getSeconds());};window.sullabEvent=function(type,extra){try{if(isOwner())return;var b={type:type},k;for(k in (extra||{}))b[k]=extra[k];fetch(SHEET_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(b)});}catch(e){}try{var GE={cadastro:1,conta_cadastro:1,cadastro_cnpj:1,orcamento:1,pedido_wa:1,pedido_mp:1,cotar_busca:1,add_carrinho:1};if(GE[type]&&typeof gtag==='function'&&window.__ga){var gp={},tv=extra&&(extra.total||extra.valor),nv=(typeof tv==='number')?tv:parseFloat(String(tv||'').replace(/[^\d,\.]/g,'').replace(/\.(?=\d{3})/g,'').replace(',','.'));if(!isNaN(nv)&&nv>0){gp.value=Math.round(nv*100)/100;gp.currency='BRL';}gtag('event',type,gp);var STD={add_carrinho:'add_to_cart',pedido_mp:'begin_checkout',pedido_wa:'begin_checkout',cotar_busca:'begin_checkout',busca:'search',conta_cadastro:'sign_up'};if(STD[type]){gtag('event',STD[type],gp);}}}catch(e){}};
+  window._gerarPedidoId=function(){
+  /* ID ESTÁVEL POR CARRINHO: enquanto o mesmo carrinho não for concluído nem alterado,
+     retorna SEMPRE o mesmo número. Evita 2-3 pedidos duplicados quando o cliente
+     clica em WhatsApp e depois Mercado Pago, ou clica mais de uma vez. */
+  function novo(){var d=new Date();function z(n){return(n<10?'0':'')+n;}var y=String(d.getFullYear()).slice(2);return 'SLB-'+y+z(d.getMonth()+1)+z(d.getDate())+'-'+z(d.getHours())+z(d.getMinutes())+z(d.getSeconds());}
+  function sig(){try{var c=JSON.parse(localStorage.getItem('sullab_cart')||'{}');return Object.keys(c).filter(function(k){return parseInt(c[k],10)>0;}).sort().map(function(k){return k+':'+c[k];}).join('|');}catch(e){return '';}}
+  var s=sig();
+  try{
+    var saved=JSON.parse(localStorage.getItem('sullab_pedido_atual')||'null');
+    if(saved && saved.sig===s && saved.id){ window._pidAtual=saved.id; return saved.id; }
+  }catch(e){}
+  var id=novo();
+  try{ localStorage.setItem('sullab_pedido_atual', JSON.stringify({id:id, sig:s, ts:Date.now()})); }catch(e){}
+  window._pidAtual=id;
+  return id;
+};
+/* ao concluir um pedido de fato, libera para o próximo carrinho gerar novo nº */
+window._fecharPedidoAtual=function(){ try{ localStorage.removeItem('sullab_pedido_atual'); }catch(e){} };window.sullabEvent=function(type,extra){try{if(isOwner())return;var b={type:type},k;for(k in (extra||{}))b[k]=extra[k];fetch(SHEET_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(b)});}catch(e){}try{var GE={cadastro:1,conta_cadastro:1,cadastro_cnpj:1,orcamento:1,pedido_wa:1,pedido_mp:1,cotar_busca:1,add_carrinho:1};if(GE[type]&&typeof gtag==='function'&&window.__ga){var gp={},tv=extra&&(extra.total||extra.valor),nv=(typeof tv==='number')?tv:parseFloat(String(tv||'').replace(/[^\d,\.]/g,'').replace(/\.(?=\d{3})/g,'').replace(',','.'));if(!isNaN(nv)&&nv>0){gp.value=Math.round(nv*100)/100;gp.currency='BRL';}gtag('event',type,gp);var STD={add_carrinho:'add_to_cart',pedido_mp:'begin_checkout',pedido_wa:'begin_checkout',cotar_busca:'begin_checkout',busca:'search',conta_cadastro:'sign_up'};if(STD[type]){gtag('event',STD[type],gp);}}}catch(e){}};
   try{var sc=JSON.parse(localStorage.getItem('sullab_cart')||'{}');var ch=false,k,n;for(k in sc){n=parseInt(sc[k],10);if(n>0&&P[k]){cart[k]=n;ch=true;}}if(ch){badge();try{toastCart('Guardamos seu carrinho');}catch(e){}}}catch(e){}
   try{var _ld={'@context':'https://schema.org','@type':'ItemList','itemListElement':[]};var _n=0;P.forEach(function(p){_n++;var _it={'@type':'Product','name':p.nome,'sku':String(p.cod),'image':p.img||undefined,'brand':{'@type':'Brand','name':p.brand||'SULLAB'},'category':(typeof nameCat==='function'?nameCat(p.cat):p.cat)};if(p.kind==='prod'&&p.pub){_it.offers={'@type':'Offer','priceCurrency':'BRL','price':p.pub,'availability':'https://schema.org/InStock','url':'https://lojasullabrj.com.br/'};}if(p.kind==='aparelho'){_it.description=(p.tipo||'')+(p.spec?(' — '+p.spec):'');}_ld.itemListElement.push({'@type':'ListItem','position':_n,'item':_it});});var _s=document.createElement('script');_s.type='application/ld+json';_s.text=JSON.stringify(_ld);document.head.appendChild(_s);}catch(e){}
   try{window.sullabEvent('acesso',{ref:(document.referrer||'direto')});}catch(e){}
@@ -1147,7 +1180,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781242248';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781278792';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
@@ -1281,4 +1314,203 @@ function painelRender(){
       + secao('ORÇAMENTOS / LEADS','📝',orcs,'#cbb48a');
 }
 </script>
-<script>try{window.abrirPainel=abrirPainel;window.painelEntrar=painelEntrar;window.painelCarregar=painelCarregar;window.painelRender=painelRender;window.painelSair=painelSair;}catch(e){}</script></body></html>
+<script>try{window.abrirPainel=abrirPainel;window.painelEntrar=painelEntrar;window.painelCarregar=painelCarregar;window.painelRender=painelRender;window.painelSair=painelSair;}catch(e){}</script>
+<!-- ===== WhatsApp flutuante + captura de lead (checkup conversão) ===== -->
+<style>
+#waFloat{position:fixed;right:16px;bottom:84px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:10px;font-family:inherit}
+#waFloat .waBtn{display:flex;align-items:center;gap:8px;background:#25D366;color:#fff;border:none;border-radius:30px;padding:12px 16px;font-weight:700;font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,.22);cursor:pointer;text-decoration:none;transition:transform .12s}
+#waFloat .waBtn:hover{transform:scale(1.04)}
+#waFloat .waBtn svg{width:20px;height:20px;flex:0 0 auto}
+#leadCard{max-width:288px;background:#fff;border:1px solid #d9e6dd;border-radius:14px;box-shadow:0 10px 28px rgba(0,0,0,.18);padding:14px 14px 12px;display:none;animation:leadUp .25s ease}
+#leadCard.show{display:block}
+@keyframes leadUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#leadCard h4{margin:0 0 4px;font-size:14.5px;color:#16324f}
+#leadCard p{margin:0 0 9px;font-size:12.5px;color:#5a6b7b;line-height:1.4}
+#leadCard input{width:100%;box-sizing:border-box;border:1px solid #cdd8e2;border-radius:9px;padding:9px 10px;font-size:13px;margin-bottom:7px}
+#leadCard .lrow{display:flex;gap:7px}
+#leadCard .lrow button{flex:1;border:none;border-radius:9px;padding:9px;font-weight:700;font-size:12.5px;cursor:pointer}
+#leadCard .lwa{background:#25D366;color:#fff}
+#leadCard .lmail{background:#16324f;color:#fff}
+#leadCard .lclose{position:absolute;top:7px;right:10px;border:none;background:none;color:#9aa7b2;font-size:16px;cursor:pointer;line-height:1}
+#leadCard{position:relative}
+#leadOk{display:none;font-size:12.5px;color:#0a7d3e;font-weight:700;padding:4px 0}
+@media(max-width:600px){#waFloat{bottom:74px;right:12px}#leadCard{max-width:78vw}}
+</style>
+<div id="waFloat">
+  <div id="leadCard">
+    <button class="lclose" onclick="document.getElementById('leadCard').classList.remove('show')" aria-label="Fechar">×</button>
+    <h4>Quer a tabela de preços CNPJ?</h4>
+    <p>Deixe seu contato e enviamos a tabela completa + cupom de 1ª compra. Sem compromisso.</p>
+    <input id="leadNome" placeholder="Seu nome ou laboratório">
+    <input id="leadContato" placeholder="WhatsApp ou e-mail">
+    <div class="lrow">
+      <button class="lwa" onclick="leadSend('wa')">Pelo WhatsApp</button>
+      <button class="lmail" onclick="leadSend('mail')">Por e-mail</button>
+    </div>
+    <div id="leadOk">✓ Recebido! Já vamos te enviar.</div>
+  </div>
+  <a class="waBtn" id="waMainBtn" href="https://wa.me/5524988383100?text=Ol%C3%A1!%20Quero%20tirar%20uma%20d%C3%BAvida%20e%20fazer%20um%20pedido." target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-5-4.3-5.1-4.5-.2-.2-1.3-1.7-1.3-3.2s.8-2.3 1.1-2.6c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6c-.2.2-.3.4-.1.7.2.3.9 1.4 1.9 2.3 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.7-.1l.8-1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.8-.1 1.5z"/></svg>
+    Falar no WhatsApp
+  </a>
+</div>
+<script>
+(function(){
+  try{
+    var isOwn=(localStorage.getItem('sullab_owner')==='1');
+    if(isOwn){ var w=document.getElementById('waFloat'); if(w) w.style.display='none'; return; }
+  }catch(e){}
+  // mostra o card de captura 1x por sessão, após 18s, se ainda não capturou nem fechou
+  function showLead(){
+    try{ if(localStorage.getItem('sullab_lead_done')==='1') return; }catch(e){}
+    if(sessionStorage.getItem('sullab_lead_shown')==='1') return;
+    var c=document.getElementById('leadCard'); if(c){ c.classList.add('show'); sessionStorage.setItem('sullab_lead_shown','1'); }
+  }
+  setTimeout(showLead, 18000);
+  window.leadSend=function(via){
+    var nome=(document.getElementById('leadNome')||{}).value||'';
+    var ct=(document.getElementById('leadContato')||{}).value||'';
+    if(!ct.trim()){ alert('Informe um WhatsApp ou e-mail para enviarmos.'); return; }
+    // registra o lead no backend (não bloqueia a navegação)
+    try{
+      fetch('https://script.google.com/macros/s/AKfycbyPKW71fCDUcjZiID5AicTox1a_inSgYqd-4fXHxzsV9ynX1xrIx5mwf4YIGx5lDpL_Lw/exec',{
+        method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({type:'lead_tabela',nome:nome,contato:ct,via:via,origem:'card_flutuante'})
+      });
+    }catch(e){}
+    try{ if(typeof gtag==='function'){ gtag('event','generate_lead',{method:via}); } }catch(e){}
+    try{ localStorage.setItem('sullab_lead_done','1'); }catch(e){}
+    document.getElementById('leadOk').style.display='block';
+    if(via==='wa'){
+      var msg=encodeURIComponent('Olá! Sou '+(nome||'cliente')+'. Quero a tabela de preços CNPJ e o cupom de 1ª compra.');
+      setTimeout(function(){ window.open('https://wa.me/5524988383100?text='+msg,'_blank'); },400);
+    }
+    setTimeout(function(){ var c=document.getElementById('leadCard'); if(c) c.classList.remove('show'); }, 2200);
+  };
+})();
+</script>
+<!-- ===== Recuperação de carrinho abandonado (lembra cliente + avisa o dono) ===== -->
+<style>
+#cartBack{position:fixed;left:50%;transform:translateX(-50%);bottom:72px;z-index:38;max-width:92vw;background:#16324f;color:#fff;border-radius:14px;box-shadow:0 10px 28px rgba(0,0,0,.28);padding:11px 14px;display:none;align-items:center;gap:12px;font-size:13.5px;animation:cbUp .25s ease}
+#cartBack.show{display:flex}
+@keyframes cbUp{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+#cartBack b{color:#ffd27a}
+#cartBack .cbGo{background:#2ecc71;color:#063b1e;border:none;border-radius:9px;padding:8px 13px;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap}
+#cartBack .cbX{background:none;border:none;color:#b9c6d3;font-size:17px;cursor:pointer;line-height:1;padding:0 2px}
+@media(max-width:600px){#cartBack{bottom:64px;font-size:12.5px;padding:9px 11px;gap:8px}}
+</style>
+<div id="cartBack">
+  <span>🛒 Você tem um pedido em aberto (<b id="cbN">0 itens</b>). Quer continuar?</span>
+  <button class="cbGo" onclick="cbContinuar()">Continuar pedido</button>
+  <button class="cbX" onclick="document.getElementById('cartBack').classList.remove('show')" aria-label="Fechar">×</button>
+</div>
+<script>
+(function(){
+  var OWNER=false; try{ OWNER=(localStorage.getItem('sullab_owner')==='1'); }catch(e){}
+  var ENDPOINT='https://script.google.com/macros/s/AKfycbyPKW71fCDUcjZiID5AicTox1a_inSgYqd-4fXHxzsV9ynX1xrIx5mwf4YIGx5lDpL_Lw/exec';
+
+  function cartObj(){ try{ return JSON.parse(localStorage.getItem('sullab_cart')||'{}'); }catch(e){ return {}; } }
+  function cartCount(){ var c=cartObj(),n=0,k; for(k in c){ var q=parseInt(c[k],10); if(q>0) n+=q; } return n; }
+  function cartKeys(){ var c=cartObj(); return Object.keys(c).filter(function(k){return parseInt(c[k],10)>0;}); }
+  function cartHash(){ var c=cartObj(); return cartKeys().sort().map(function(k){return k+':'+c[k];}).join('|'); }
+
+  /* ---------- (A) Lembrar o cliente que volta ---------- */
+  window.cbContinuar=function(){
+    document.getElementById('cartBack').classList.remove('show');
+    try{ if(typeof openCart==='function'){ openCart(); return; } }catch(e){}
+    try{ var b=[].slice.call(document.querySelectorAll('button,a')).filter(function(x){return /ver pedido|montar pedido/i.test(x.textContent);})[0]; if(b) b.click(); }catch(e){}
+  };
+  function maybeRemind(){
+    if(OWNER) return;
+    if(cartCount()<=0) return;
+    /* não lembrar se acabou de finalizar (pedido enviado nos últimos 30 min) */
+    try{ var od=parseInt(localStorage.getItem('sullab_order_done')||'0',10); if(od && (Date.now()-od)<1800000) return; }catch(e){}
+    /* não repetir o lembrete pro MESMO carrinho na mesma sessão */
+    try{ if(sessionStorage.getItem('sullab_cb_shown')===cartHash()) return; }catch(e){}
+    var n=cartCount();
+    var el=document.getElementById('cbN'); if(el) el.textContent=n+(n===1?' item':' itens');
+    var box=document.getElementById('cartBack'); if(box){ box.classList.add('show'); }
+    try{ sessionStorage.setItem('sullab_cb_shown', cartHash()); }catch(e){}
+    /* some sozinho depois de 14s pra não incomodar */
+    setTimeout(function(){ try{ box.classList.remove('show'); }catch(e){} }, 14000);
+  }
+  /* mostra ~3s após carregar (deixa a home assentar) */
+  setTimeout(maybeRemind, 3000);
+
+  /* ---------- TRAVA ANTI-DUPLICAÇÃO + marca finalização (não é abandono) ----------
+     Antes os recliques (WhatsApp, depois Mercado Pago, depois de novo) geravam
+     2-3 pedidos do MESMO carrinho. Agora, recliques no mesmo carrinho em até 5 min
+     NÃO criam novo registro — só confirmam ao cliente que o pedido já foi enviado. */
+  function _ultimoEnvio(){ try{ return JSON.parse(localStorage.getItem('sullab_envio_atual')||'null'); }catch(e){ return null; } }
+  ['sendWa','sendEmail','pedidoWa','finalizar','payMP'].forEach(function(fn){
+    try{
+      var orig=window[fn];
+      if(typeof orig==='function'){
+        window[fn]=function(){
+          var h=cartHash();
+          var prev=_ultimoEnvio();
+          /* mesmo carrinho enviado há < 5 min: bloqueia novo registro.
+             Exceção: pagar online (payMP) sempre pode prosseguir, pois é a etapa final
+             que efetivamente cobra — mas reusa o MESMO nº de pedido (ID estável já cuida). */
+          if(prev && prev.sig===h && (Date.now()-prev.ts)<300000 && fn!=='payMP'){
+            try{ if(typeof toast==='function'){ toast('Seu pedido já foi enviado ✓ Em instantes nosso time entra em contato. Para pagar agora, use "Pagar online".'); } else { alert('Seu pedido já foi enviado ✓ Para pagar agora, use o botão de pagamento online.'); } }catch(e){}
+            return false;
+          }
+          try{ localStorage.setItem('sullab_order_done', String(Date.now())); }catch(e){}
+          try{ localStorage.setItem('sullab_cart_ab128', h); }catch(e){} /* carrinho concluído (não é abandono) */
+          try{ localStorage.setItem('sullab_envio_atual', JSON.stringify({sig:h, ts:Date.now(), forma:fn})); }catch(e){}
+          return orig.apply(this, arguments);
+        };
+      }
+    }catch(e){}
+  });
+
+  /* ---------- (B) Avisar o dono sobre abandono ---------- */
+  function clientContato(){
+    var nome='', contato='', doc='';
+    try{
+      var rz=document.getElementById('arazao')||document.querySelector('[id*="razao"]');
+      var em=document.getElementById('aemail');
+      var tl=document.getElementById('atel');
+      var dc=document.getElementById('adoc');
+      if(rz) nome=(rz.value||'').trim();
+      var e=(em&&em.value||'').trim(), t=(tl&&tl.value||'').replace(/\D/g,'');
+      doc=(dc&&dc.value||'').trim();
+      if(e) contato=e; else if(t.length>=10) contato=t;
+      /* fallback: cliente salvo */
+      if(!contato){ try{ var cli=JSON.parse(localStorage.getItem('sullab_cli')||'{}'); if(cli.email)contato=cli.email; else if(cli.telefone)contato=cli.telefone; if(!nome&&cli.razao)nome=cli.razao; if(!doc&&cli.doc)doc=cli.doc; }catch(e){} }
+    }catch(e){}
+    return {nome:nome, contato:contato, doc:doc};
+  }
+  function reportAbandono(){
+    if(OWNER) return;
+    if(cartCount()<=0) return;
+    var h=cartHash();
+    /* se este carrinho foi concluído, não é abandono */
+    try{ if(localStorage.getItem('sullab_cart_ab128')===h) return; }catch(e){}
+    /* só avisa se o cliente deixou algum contato (senão não há como recuperar) */
+    var ci=clientContato();
+    if(!ci.contato) return;
+    /* dedup: não reportar o mesmo carrinho+contato duas vezes */
+    var sig=h+'#'+ci.contato;
+    try{ if(localStorage.getItem('sullab_ab_sig')===sig) return; }catch(e){}
+    /* montar itens legíveis */
+    var c=cartObj(), items=[], total=0;
+    try{
+      for(var k in c){ var q=parseInt(c[k],10); if(q<=0)continue; var p=(window.P||[])[k]; if(!p)continue;
+        var un=(typeof unitPrice==='function')?unitPrice(p,q):0; total+=un*q;
+        items.push({cod:p.cod,nome:(p.nome||'').slice(0,80),q:q,un:Math.round(un*100)/100}); }
+    }catch(e){}
+    var payload=JSON.stringify({type:'carrinho_abandonado',nome:ci.nome,contato:ci.contato,doc:ci.doc,itens:items,total:Math.round(total*100)/100,origem:'auto'});
+    var sent=false;
+    try{ if(navigator.sendBeacon){ navigator.sendBeacon(ENDPOINT, new Blob([payload],{type:'text/plain;charset=utf-8'})); sent=true; } }catch(e){}
+    if(!sent){ try{ fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:payload,keepalive:true}); }catch(e){} }
+    try{ localStorage.setItem('sullab_ab_sig', sig); }catch(e){}
+    try{ if(typeof gtag==='function'){ gtag('event','cart_abandon',{value:Math.round(total*100)/100}); } }catch(e){}
+  }
+  /* dispara ao sair/trocar de aba (melhor momento p/ saber que abandonou) */
+  document.addEventListener('visibilitychange', function(){ if(document.visibilityState==='hidden') reportAbandono(); });
+  window.addEventListener('pagehide', reportAbandono);
+})();
+</script>
+</body></html>
