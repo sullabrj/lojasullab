@@ -729,7 +729,19 @@ function loadCatFromLink(){
     return true;
   }catch(e){ return false; }
 }
+function loadSearchFromLink(){
+  try{
+    var qs=new URLSearchParams(location.search);
+    var term=qs.get('q'); if(!term) return false;
+    term=String(term).slice(0,80);
+    function _go(){ try{ var el=document.getElementById('q'); if(el){ el.value=term; } cat=''; if(typeof render==='function') render(); var sec=document.getElementById('grid')||document.getElementById('prods'); setTimeout(function(){ try{ window.scrollTo({top:(document.getElementById('chips')||sec).getBoundingClientRect().top+window.pageYOffset-70,behavior:'smooth'}); }catch(e){} },250); }catch(e){} }
+    if(document.readyState==='complete'||document.readyState==='interactive'){ setTimeout(_go,250); }
+    else{ window.addEventListener('load',function(){ setTimeout(_go,250); }); }
+    return true;
+  }catch(e){ return false; }
+}
 loadCatFromLink();
+loadSearchFromLink();
 /* ===== PAINEL ADMIN ===== */
 function isAdmin(){var qs=new URLSearchParams(location.search);return qs.get('admin')==='1'||location.hash==='#admin';}
 var _adminCart={};
@@ -1133,7 +1145,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781218634';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781227845';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
