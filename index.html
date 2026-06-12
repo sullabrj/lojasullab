@@ -673,7 +673,9 @@ function render(){
   var list=[];P.forEach(function(p,i){if(!p.img||p.img.length<6)return;if(!q){if(seg){if(SEG[seg].indexOf(String(p.cod).trim())<0)return;}else if(cat===''){ /* home: mostra tudo (filtra por marca se houver) */ }else if(cat=='maisv'){if(!p.mv)return;}else if(cat=='promo'){if(!p.promo)return;}else if(p.cat!=cat)return;}if(q){var _hay=nrm(p.nome+' '+p.brand+' '+p.cod+' '+(p.tipo||'')+' '+(p.kw||'')+' '+nameCat(p.cat));var _qw=q.split(/\s+/).filter(Boolean);var _ok=true;for(var _w=0;_w<_qw.length;_w++){if(_hay.indexOf(_qw[_w])<0){_ok=false;break;}}if(!_ok)return;}list.push(i);});
   list=applyFilters(list);
   /* VITRINE: produtos com preço (compra imediata) primeiro; equipamentos sob consulta por último */
-  list.sort(function(a,b){var pa=P[a],pb=P[b];function semPreco(p){return (p.kind=='aparelho'||p.cat=='ap'||!(p.pub>0));}var sa=semPreco(pa)?1:0,sb=semPreco(pb)?1:0;if(sa!==sb)return sa-sb;var ra=(POP_RANK[String(pa.cod)]||0),rb=(POP_RANK[String(pb.cod)]||0);if(ra!==rb)return rb-ra;return 0;});
+  var _qterm=''; try{ _qterm=nrm((document.getElementById('q')||{}).value||''); }catch(e){}
+  function _relevNome(p){ if(!_qterm) return 0; var nm=nrm((p.nome||'')+' '+(p.cod||'')); var ws=_qterm.split(/\s+/).filter(Boolean); var hit=0; for(var k=0;k<ws.length;k++){ if(nm.indexOf(ws[k])>=0) hit++; } return hit; }
+  list.sort(function(a,b){var pa=P[a],pb=P[b];function semPreco(p){return (p.kind=='aparelho'||p.cat=='ap'||!(p.pub>0));}var sa=semPreco(pa)?1:0,sb=semPreco(pb)?1:0;if(sa!==sb)return sa-sb;if(_qterm){var na=_relevNome(pa),nb=_relevNome(pb);if(na!==nb)return nb-na;}var ra=(POP_RANK[String(pa.cod)]||0),rb=(POP_RANK[String(pb.cod)]||0);if(ra!==rb)return rb-ra;return 0;});
   try{if(q&&q.length>=2){var _qn=q;clearTimeout(window._buscaT);var _n=list.length;window._buscaT=setTimeout(function(){if(window._ultBusca===_qn)return;window._ultBusca=_qn;try{if(typeof sullabEvent==='function')sullabEvent('busca',{termo:_qn.slice(0,80),achou:_n>0?1:0,n:_n});}catch(e){}try{var H=JSON.parse(localStorage.getItem('sullab_buscas')||'[]');H.unshift({t:_qn.slice(0,80),achou:_n>0?1:0,n:_n,ts:Date.now()});H=H.slice(0,200);localStorage.setItem('sullab_buscas',JSON.stringify(H));}catch(e){}},1200);}}catch(e){}
   if(!list.length){var _wa=q?('<div class="emptywa"><div>Não temos esse item no catálogo — mas a SULLAB cota pra você.</div><button class="buy" onclick="cotarBusca()">💬 Cotar “'+q+'” no WhatsApp</button></div>'):'';document.getElementById('grid').innerHTML='<div class="empty">'+(q?'Nada encontrado para “'+q+'”.':'Sem itens nesta categoria.')+_wa+'</div>';return;}
   document.getElementById('grid').innerHTML=list.map(function(i){var p=P[i];
@@ -1145,7 +1147,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781234584';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781237200';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
