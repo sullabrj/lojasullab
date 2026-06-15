@@ -704,7 +704,39 @@ function hydrateAddrFromProfile(){try{var p=window.__profile;if(!p)return;var ha
 function buscarCep(){var el=document.getElementById('acep');if(!el)return;var v=el.value.replace(/\D/g,'').slice(0,8);el.value=v.length>5?(v.slice(0,5)+'-'+v.slice(5)):v;if(v.length===8){fetch('https://viacep.com.br/ws/'+v+'/json/').then(function(r){return r.json();}).then(function(d){if(d&&!d.erro){var e=document.getElementById('aend');if(e&&!e.value)e.value=d.logradouro||'';var b=document.getElementById('abairro');if(b&&!b.value)b.value=d.bairro||'';var c=document.getElementById('acidade');if(c)c.value=d.localidade||'';var u=document.getElementById('auf');if(u)u.value=d.uf||'';saveAddr(readAddr());if(document.getElementById('dfoot')&&document.getElementById('ditems').innerHTML)renderCart();var nn=document.getElementById('anum');if(nn)nn.focus();}}).catch(function(){});}}
 function pedidoWa(forma,fator){if(!checkoutGate(false))return;var c=clienteInfo();var lines=[];for(var k in cart){var p=P[k];var pr=prc(p);lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+(pr?(' · '+brl(pr*cart[k])):'')+')');}var a=readAddr();saveAddr(a);var tt=total()*(fator||1);var ent='\n\n— Entrega —\n'+a.end+', '+a.num+(a.comp?(' - '+a.comp):'')+'\n'+a.bairro+' — '+a.cidade+'/'+a.uf+'\nCEP: '+a.cep;var ident='\n\n— Cliente —\nNome/Razão: '+c.nome+'\n'+c.docTipo+': '+c.doc+'\nTelefone: '+c.tel+'\nE-mail: '+c.email;try{if(typeof sullabEvent==='function')sullabEvent('pedido_wa',{total:tt,qtd:lines.length,itens:_orderItems(),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a,forma:forma,obs:(sellerName()?('[Vendedor: '+sellerName()+']'):'')});}catch(e){}var msg='Olá! Pedido pelo catálogo SULLAB:\n\n'+lines.join('\n')+'\n\nTotal: '+brl(tt)+'\nForma de pagamento: '+forma+ent+ident;window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 function payPix(){pedidoWa('PIX (5% de desconto)',0.95);}
-function payBoleto(){if(!registered){toast('Boleto faturado é exclusivo CNPJ — cadastre-se.');openReg();return;}pedidoWa('BOLETO FATURADO 15/30/45/60 dias (CNPJ)',1);}
+function payBoleto(){
+  /* Boleto faturado = aprovação manual pela equipe. Registra o pedido no site
+     (planilha + e-mail comercial) e mostra confirmação clara na própria tela.
+     Não depende de abrir o WhatsApp nem trava quem não está logado. */
+  if(!checkoutGate(false))return;
+  var c=clienteInfo(); var a=readAddr(); try{saveAddr(a);}catch(e){}
+  var ks=Object.keys(cart); if(!ks.length){toast('Seu pedido está vazio.');return;}
+  var lines=[]; for(var k in cart){var p=P[k]; if(!p)continue; var pr=prc(p); lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+(pr?(' · '+brl(pr*cart[k])):'')+')');}
+  var tt=total();
+  var _pid=''; try{ _pid=(window._gerarPedidoId&&window._gerarPedidoId())||('SLB-'+Date.now()); window._pidAtual=_pid; }catch(e){ _pid='SLB-'+Date.now(); }
+  /* registra no backend (vai p/ planilha + e-mail do comercial) */
+  try{if(typeof sullabEvent==='function')sullabEvent('pedido_wa',{pedido:_pid,total:tt,qtd:lines.length,itens:_orderItems(),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a,forma:'BOLETO FATURADO 15/30/45/60 dias',obs:'PAGAMENTO: Boleto faturado (a confirmar pela equipe)'+(sellerName()?(' [Vendedor: '+sellerName()+']'):'')});}catch(e){}
+  try{recordOrder('Boleto faturado 15/30/45/60');}catch(e){}
+  /* confirmação clara na tela */
+  try{
+    var ca=document.getElementById('cartActions');
+    if(ca){
+      var fb=document.getElementById('boletoFeedback');
+      if(!fb){ fb=document.createElement('div'); fb.id='boletoFeedback'; ca.parentNode.insertBefore(fb, ca); }
+      var msg='Olá! Quero finalizar meu pedido '+_pid+' com *BOLETO FATURADO*.\n\n'+lines.join('\n')+'\n\nTotal: '+brl(tt)+'\nCliente: '+(c.nome||'')+' · '+(c.docTipo||'Doc')+': '+(c.doc||'');
+      var wa='https://wa.me/'+WPP+'?text='+encodeURIComponent(msg);
+      fb.innerHTML='<div style="background:#e9f7ef;border:1px solid #00a650;border-radius:10px;padding:13px;margin:8px 0;font-size:13px;color:#14532d">'
+        +'<div style="font-weight:800;font-size:14px;margin-bottom:4px">✅ Pedido recebido! ('+_pid+')</div>'
+        +'O <b>boleto faturado</b> é liberado com aprovação da nossa equipe (15/30/45/60 dias para CNPJ). '
+        +'Já recebemos seu pedido e vamos <b>confirmar e enviar o boleto</b> para você em breve, no contato informado.'
+        +'<a href="'+wa+'" target="_blank" style="display:block;text-align:center;margin-top:10px;background:#25d366;color:#fff;font-weight:700;border-radius:8px;padding:11px;text-decoration:none">📲 Agilizar pelo WhatsApp</a>'
+        +'</div>';
+      fb.scrollIntoView&&fb.scrollIntoView({block:'center',behavior:'smooth'});
+    } else {
+      toast('Pedido recebido! Boleto faturado — vamos confirmar e enviar o boleto pra você.');
+    }
+  }catch(e){ toast('Pedido recebido! Boleto faturado — vamos confirmar e enviar o boleto.'); }
+}
 function setPgFromRadio(el){pgto=el.value;renderCart();}
 function freteValor(){var fi=freteInfo(readAddr(),total());if(fi.free===true)return 0;return freteSel||0;}
 function dispTotal(){var f=(pgto=='pix')?0.95:1;return total()*f*(1-couponPct)+freteValor();}
@@ -745,6 +777,7 @@ function renderCartCat(){
 window.renderCartCat=renderCartCat;
 
 function renderCart(){
+  try{var _bf=document.getElementById('boletoFeedback'); if(_bf&&_bf.parentNode) _bf.parentNode.removeChild(_bf);}catch(e){}
   var ks=Object.keys(cart);var di=document.getElementById('ditems'),df=document.getElementById('dfoot');
   if(!ks.length){di.innerHTML='<div class="cempty">Seu pedido está vazio.<br>Adicione produtos para comprar ou pedir orçamento.</div>';df.innerHTML='';try{var _ca0=document.getElementById('cartActions');if(_ca0)_ca0.innerHTML='';}catch(e){}return;}
   di.innerHTML='<div class="deskTip">💻 Dica: para uma experiência melhor (preencher dados, ver tudo na tela e pagar), <b>abra o site pelo computador</b>.</div>'+ks.map(function(k){var p=P[k];var pr=unitPrice(p,cart[k]);var vu=volUnit(p);var vn=vu?(cart[k]>=VOLQ?' <span class=\"vok\">pre\u00E7o volume</span>':' <span class=\"vhint\">+'+(VOLQ-cart[k])+' racks p/ '+brl(vu)+'</span>'):'';return '<div class="ci"><div class="cimg" style="background-image:url(\''+(p.img||PLACEHOLDER)+'\')"></div><div class="cinfo"><div class="cn">'+p.nome+'</div><div class="cp">'+(pr?brl(pr):'sob consulta')+vn+'</div><button class="crm" onclick="chQ('+k+',-99)">remover</button></div><div class="qty"><button onclick="chQ('+k+',-1)">−</button><input class="qin" type="number" min="1" value="'+cart[k]+'" onchange="cqset('+k+',this.value)"><button onclick="chQ('+k+',1)">+</button></div></div>';}).join('');
@@ -1274,7 +1307,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781535755698';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781536547235';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
