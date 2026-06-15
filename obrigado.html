@@ -53,7 +53,13 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
       <div class="row" id="rSta"><span>Status</span><b id="vSta"></b></div>
     </div>
 
+    <div class="boletobox" id="boletobox" style="display:none;background:#fff8ec;border:1px solid #f3d9a6;border-radius:12px;padding:14px 16px;text-align:left;font-size:13.5px;color:#7a5a18;margin:14px 0">
+      <b style="color:#b8730a">🧾 Pagou com boleto?</b><br>
+      O banco pode levar até 1–2 dias úteis para confirmar. Para <b>acelerar a liberação</b> do seu pedido, envie o comprovante pra gente pelo WhatsApp. 📎
+    </div>
+
     <div class="btns">
+      <a class="btn wa" id="compBtn" href="#" target="_blank" rel="noopener" style="display:none">📎 Enviar comprovante do boleto</a>
       <a class="btn wa" id="waBtn" href="#" target="_blank" rel="noopener">💬 Falar com a SULLAB no WhatsApp</a>
       <a class="btn home" href="https://lojasullabrj.com.br/">Voltar à loja</a>
     </div>
@@ -104,6 +110,19 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
   if(payId)  msg+=' — pagamento '+payId;
   msg+='. Pode confirmar pra mim?';
   document.getElementById('waBtn').href='https://wa.me/5524988383100?text='+encodeURIComponent(msg);
+
+  // === Boleto: opção de enviar comprovante para acelerar a liberação ===
+  var pmId=(qp('payment_method_id')||qp('payment_type_id')||'').toLowerCase();
+  var ehBoleto = /bol|ticket|bradesco|pec/.test(pmId) || /pend|process|in_process/.test(status);
+  if(ehBoleto){
+    var bx=document.getElementById('boletobox'); if(bx) bx.style.display='block';
+    var cmsg='Olá! Paguei meu pedido da SULLAB com *boleto*';
+    if(extRef) cmsg+=' (pedido '+extRef+')';
+    if(payId)  cmsg+=' — pagamento '+payId;
+    cmsg+='. Vou enviar o *comprovante* aqui para acelerar a liberação do pedido. 📎';
+    var cb=document.getElementById('compBtn');
+    if(cb){ cb.href='https://wa.me/5524988383100?text='+encodeURIComponent(cmsg); cb.style.display='flex'; }
+  }
 })();
 </script>
 </body>
