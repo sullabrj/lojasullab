@@ -34,6 +34,23 @@ header{background:var(--azul);padding:9px 12px 11px;position:sticky;top:0;z-inde
 .chip.on{background:var(--azul);color:#fff;border-color:var(--azul)}
 .crumb{font-size:12px;color:#888;padding:10px 12px 2px}.crumb b{color:#333}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 12px}
+/* ===== Vitrine enxuta (pedido do dono): sem pílulas, card respirável, detalhes no hover ===== */
+#chips{display:none!important}
+@media(min-width:601px){
+  .grid{gap:18px;padding:16px}
+  .card{border:1px solid #e7edf4;box-shadow:0 1px 4px rgba(20,60,110,.06);transition:box-shadow .15s,transform .15s,border-color .15s}
+  .card:hover{box-shadow:0 8px 24px rgba(20,60,110,.16);border-color:#cfe0f5;transform:translateY(-2px);z-index:2}
+  .card .ph{padding:10px;background-clip:content-box}
+  /* detalhes escondidos no card limpo; revela ao passar o mouse */
+  .card .stock,.card .volp,.card .ship,.card .econ,.card .trqty,.card .fc{display:none}
+  .card .inst .was{display:none}
+  .card:hover .stock,.card:hover .volp,.card:hover .ship,.card:hover .econ,.card:hover .trqty{display:block}
+  .card:hover .fc{display:inline-block}
+  .card:hover .inst .was{display:inline}
+  /* dica sutil de que há mais ao passar o mouse */
+  .card .ph{cursor:zoom-in}
+  .card .title{cursor:pointer}
+}
 @media(min-width:600px){.grid{grid-template-columns:1fr 1fr 1fr}}
 @media(min-width:820px){.grid{grid-template-columns:1fr 1fr 1fr 1fr}}
 .card{position:relative;background:#fff;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.12)}
@@ -1307,7 +1324,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781538171661';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781549193887';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
