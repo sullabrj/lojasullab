@@ -88,6 +88,7 @@ header{background:var(--azul);padding:9px 12px 11px;position:sticky;top:0;z-inde
 .modal .mc .k{color:#888}.modal .mc b{color:#16456e}
 .toast{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:#1f2733;color:#fff;padding:9px 16px;border-radius:20px;font-size:13px;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
+.toast.err{background:#c0392b;color:#fff;font-size:14px;font-weight:700;padding:13px 20px;max-width:92vw;box-shadow:0 6px 24px rgba(192,57,43,.4)}
 .pmode{display:flex;align-items:center;gap:8px;background:#fff;border-bottom:1px solid var(--borda);padding:9px 12px;font-size:12.5px;color:var(--cinza)}
 #admPill{background:#16365c;color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:12.5px;font-weight:700;cursor:pointer;margin-left:8px}
 .pmode b{color:#16456e;font-weight:700}
@@ -546,7 +547,8 @@ function _syncFab(){try{var aberto=document.querySelector('.cartov.on, .ov.on, .
 setInterval(_syncFab,300);
 function cotarBusca(){var q=document.getElementById('q').value.trim();if(!q)return;var msg='Olá, SULLAB! Procurei por "'+q+'" no site e não encontrei. Vocês conseguem cotar pra mim?';try{if(typeof sullabEvent==='function')sullabEvent('cotar_busca',{termo:q.slice(0,60)});}catch(e){}window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 function solicitarPreco(i){var p=P[i];var msg='Olá! Vim pelo catálogo SULLAB e gostaria de saber o preço de:\n\n'+p.cod+' — '+p.nome+'\n\nObrigado!';window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
-function toast(t){var e=document.getElementById('toast');e.textContent=t;e.classList.add('on');clearTimeout(window._tt);window._tt=setTimeout(function(){e.classList.remove('on')},1400);}
+function toast(t,ms){var e=document.getElementById('toast');e.textContent=t;e.classList.remove('err');e.classList.add('on');clearTimeout(window._tt);window._tt=setTimeout(function(){e.classList.remove('on')},ms||1400);}
+function toastErr(t){var e=document.getElementById('toast');if(!e)return;e.textContent=t;e.classList.add('on','err');clearTimeout(window._tt);window._tt=setTimeout(function(){e.classList.remove('on','err')},6000);}try{window.toastErr=toastErr;}catch(_e){}
 function toastCart(t){var e=document.getElementById('toast');e.innerHTML=t+' · <b style="text-decoration:underline">Ver pedido ›</b>';e.style.pointerEvents='auto';e.style.cursor='pointer';e.onclick=function(){e.classList.remove('on');e.onclick=null;e.style.pointerEvents='none';openCart();};e.classList.add('on');clearTimeout(window._tt);window._tt=setTimeout(function(){e.classList.remove('on');e.onclick=null;e.style.pointerEvents='none';},3200);}
 function add(i,ev){var el=document.getElementById('qc'+i);var q=el?Math.max(1,parseInt(el.value,10)||1):1;cart[i]=(cart[i]||0)+q;badge();try{var b=(ev&&(ev.currentTarget||ev.target))||(typeof event!=='undefined'&&event&&event.target)||null;if(b){if(b.tagName!=='BUTTON'&&b.closest)b=b.closest('button')||b;var o=b.textContent;b.textContent='✓ Adicionado';b.style.background='#0f3858';setTimeout(function(){b.textContent=o;b.style.background=''},900);}}catch(e){}try{toastCart(q+(q>1?' itens adicionados':' item adicionado')+' · '+brl(total())+' no pedido');}catch(e){}try{if(typeof sullabEvent==='function')sullabEvent('add_carrinho',{produto:P[i].nome,cod:P[i].cod,qtd:q});}catch(e){}}
 function cq(i,d){var el=document.getElementById('qc'+i);if(!el)return;var v=Math.max(1,(parseInt(el.value,10)||1)+d);el.value=v;}
@@ -1114,16 +1116,29 @@ window.window.suCepLookup=function(el){
       }).catch(function(){});
     }
   };
+  function suErr(msg,fieldId){ try{toastErr(msg);}catch(_e){tst(msg);} try{var f=$(fieldId)||document.getElementById(fieldId); if(f){f.scrollIntoView({block:'center'});f.focus();f.style.borderColor='#c0392b';f.style.boxShadow='0 0 0 3px rgba(192,57,43,.18)';setTimeout(function(){f.style.borderColor='';f.style.boxShadow='';},6000);}}catch(_e){} }
+  function suBtn(on){ try{var b=document.querySelector('#accSignup button.buy'); if(b){ if(on){b.disabled=true;b.dataset.t=b.textContent;b.textContent='Criando conta…';b.style.opacity='.7';b.style.cursor='wait';} else {b.disabled=false;if(b.dataset.t)b.textContent=b.dataset.t;b.style.opacity='';b.style.cursor='';} } }catch(_e){} }
   fbRegister=function(){
     var razao=val('suRazao'),docv=val('suCnpj'),tel=val('suTel'),email=val('suEmail'),pass=val('suPass');
     var cep=val('suCep'),end=val('suEnd'),num=val('suNum'),comp=val('suComp'),bairro=val('suBairro'),cidade=val('suCidade'),uf=val('suUf');
-    if(!razao||!docv||!tel||!email||!pass){ tst('Preencha razão social/nome, CNPJ ou CPF, telefone, e-mail e senha.'); return; }
-    if(!cep||!end||!num||!bairro||!cidade||!uf){ tst('Preencha o endereço de entrega completo: CEP, rua, número, bairro, cidade e UF.'); try{var f=document.getElementById('suCep'); if(f&&f.scrollIntoView){f.scrollIntoView({block:'center'}); f.focus();}}catch(_e){} return; }
+    if(!razao){ suErr('Preencha a Razão social / responsável.','suRazao'); return; }
+    if(!docv){ suErr('Preencha o CNPJ ou CPF.','suCnpj'); return; }
+    if(!tel){ suErr('Preencha o Telefone / WhatsApp.','suTel'); return; }
+    if(!email){ suErr('Preencha o e-mail.','suEmail'); return; }
+    if(!pass){ suErr('Crie uma senha (mín. 6 caracteres).','suPass'); return; }
+    if(!cep){ suErr('Preencha o CEP do endereço de entrega.','suCep'); return; }
+    if(!end){ suErr('Preencha o endereço (rua / avenida).','suEnd'); return; }
+    if(!num){ suErr('Preencha o número do endereço.','suNum'); return; }
+    if(!bairro){ suErr('Preencha o bairro.','suBairro'); return; }
+    if(!cidade){ suErr('Preencha a cidade.','suCidade'); return; }
+    if(!uf){ suErr('Preencha a UF (estado).','suUf'); return; }
     var tipoDoc=validaDoc(docv);
-    if(!tipoDoc){ tst('CNPJ ou CPF inválido — confira os números.'); return; }
-    if(_digs(tel).length<10){ tst('Telefone inválido — informe DDD + número.'); return; }
-    if(pass.length<6){ tst('A senha precisa ter ao menos 6 caracteres.'); return; }
-    if(!auth||!db){ tst('Serviço indisponível. Tente novamente.'); return; }
+    if(!tipoDoc){ suErr('CNPJ ou CPF inválido — confira os números (precisa ter 14 dígitos para CNPJ ou 11 para CPF).','suCnpj'); return; }
+    if(_digs(tel).length<10){ suErr('Telefone inválido — informe DDD + número.','suTel'); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ suErr('E-mail inválido — confira o endereço (ex.: nome@empresa.com.br).','suEmail'); return; }
+    if(pass.length<6){ suErr('A senha precisa ter ao menos 6 caracteres.','suPass'); return; }
+    if(!auth||!db){ suErr('Serviço indisponível no momento. Recarregue a página e tente novamente.'); return; }
+    suBtn(true);
     auth.createUserWithEmailAndPassword(email,pass).then(function(cred){
       var endStr=[end+(num?(', '+num):''),(comp||''),bairro,(cidade+'/'+uf),('CEP '+cep)].filter(Boolean).join(', ');
       var u=cred.user, prof={razao:razao,cnpj:docv,docTipo:tipoDoc,telefone:tel,email:email,cep:cep,endereco:end,numero:num,complemento:comp,bairro:bairro,cidade:cidade,uf:uf,enderecoCompleto:endStr,criadoEm:Date.now()};
@@ -1131,24 +1146,29 @@ window.window.suCepLookup=function(el){
       /* pré-preenche o endereço do checkout com o do cadastro */
       try{ var sa={cep:cep,end:end,num:num,comp:comp,bairro:bairro,cidade:cidade,uf:uf}; if(typeof saveAddr==='function') saveAddr(sa); localStorage.setItem('sullab_addr',JSON.stringify(sa)); }catch(_e){}
       try{ if(typeof sullabEvent==='function') sullabEvent('conta_cadastro',{razao:razao,nome:razao,doc:docv,cnpj:docv,docTipo:tipoDoc,telefone:tel,whatsapp:tel,tel:tel,email:email,cep:cep,endereco:endStr,bairro:bairro,cidade:cidade,uf:uf}); }catch(_e){}
-      return db.collection('clientes').doc(u.uid).set(prof,{merge:true});
+      return db.collection('clientes').doc(u.uid).set(prof,{merge:true}).catch(function(_e){/* perfil é secundário; conta já foi criada */});
     }).then(function(){
-      closeReg(); tst('Conta criada! Preço CNPJ liberado. 🎁 Cupom BEMVINDO5 (5% OFF) na 1ª compra.');
-    }).catch(function(e){ tst(fbErr(e)); });
+      suBtn(false); closeReg(); tst('Conta criada! Preço CNPJ liberado. 🎁 Cupom BEMVINDO5 (5% OFF) na 1ª compra.',5000);
+    }).catch(function(e){ suBtn(false); var c=(e&&e.code)||''; if(c=='auth/email-already-in-use'){ suErr('Este e-mail já tem conta. Toque em "Entrar" no topo e faça login (ou use "Esqueci minha senha").','suEmail'); } else { suErr(fbErr(e),'suEmail'); } });
   };
   window.fbLogin=function(){
     var email=val('liEmail'),pass=val('liPass');
-    if(!email||!pass){ tst('Informe e-mail e senha.'); return; }
-    if(!auth){ tst('Serviço indisponível.'); return; }
+    if(!email){ try{toastErr('Informe seu e-mail.');}catch(_e){tst('Informe seu e-mail.');} return; }
+    if(!pass){ try{toastErr('Informe sua senha.');}catch(_e){tst('Informe sua senha.');} return; }
+    if(!auth){ try{toastErr('Serviço indisponível. Recarregue a página.');}catch(_e){} return; }
     auth.signInWithEmailAndPassword(email,pass).then(function(){
-      closeReg(); tst('Bem-vindo de volta! Preço CNPJ aplicado.');
-    }).catch(function(e){ tst(fbErr(e)); });
+      closeReg(); tst('Bem-vindo de volta! Preço CNPJ aplicado.',4000);
+    }).catch(function(e){ var c=(e&&e.code)||'';
+      if(c=='auth/user-not-found'||c=='auth/invalid-credential'||c=='auth/wrong-password'){ try{toastErr('E-mail ou senha incorretos. Se você nunca criou conta, toque em "Criar conta". Se esqueceu a senha, use "Esqueci minha senha".');}catch(_e){tst(fbErr(e));} }
+      else { try{toastErr(fbErr(e));}catch(_e){tst(fbErr(e));} }
+    });
   };
   window.fbLogout=function(){ if(auth) auth.signOut().then(function(){ tst('Você saiu da conta.'); }); };
   window.fbReset=function(){
-    var email=val('liEmail'); if(!email){ tst('Digite seu e-mail no campo acima para enviarmos o link.'); return; }
+    var email=val('liEmail'); if(!email){ try{toastErr('Digite seu e-mail no campo acima para enviarmos o link.');}catch(_e){tst('Digite seu e-mail no campo acima.');} try{var f=$('liEmail');if(f){f.focus();f.scrollIntoView({block:'center'});}}catch(_e){} return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ try{toastErr('E-mail inválido — confira o endereço.');}catch(_e){} return; }
     if(!auth) return;
-    auth.sendPasswordResetEmail(email).then(function(){ tst('Enviamos um link de redefinição para seu e-mail.'); }).catch(function(e){ tst(fbErr(e)); });
+    auth.sendPasswordResetEmail(email).then(function(){ try{toastErr('Se houver uma conta com esse e-mail, o link de redefinição foi enviado. ⚠️ Verifique também a caixa de SPAM/Lixo eletrônico. Se nada chegar, talvez a conta ainda não exista — toque em "Criar conta".');}catch(_e){tst('Link enviado. Verifique também o spam.');} }).catch(function(e){ try{toastErr(fbErr(e));}catch(_e){tst(fbErr(e));} });
   };
 
   function loadFbOrders(){
@@ -1328,7 +1348,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781549987856';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781621314775';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
