@@ -846,8 +846,15 @@ function loadOrderFromLink(){
     if(o.cli){try{localStorage.setItem('sullab_cliente_montado',JSON.stringify(o.cli));}catch(e){}}
     try{localStorage.setItem('sullab_cart',JSON.stringify(cart));}catch(e){}
     badge();
+    var _semItens=!(o.items&&o.items.length);
     var _ab=function(tent){
       try{
+        /* Link só de cadastro (ficha do cliente, sem itens): abre o formulário de cadastro já preenchido */
+        if(_semItens && o.cli && (typeof window.openReg==='function')){
+          window.openReg();
+          try{toast('Confira seus dados e crie sua senha para liberar o preço CNPJ.',5000);}catch(e){}
+          return;
+        }
         if(typeof openCart==='function' && document.getElementById('cartov')){
           openCart();
           if(o.cli&&o.cli.nome){try{toast('Pedido montado para '+o.cli.nome+'. Confira e finalize!');}catch(e){}}
@@ -1024,8 +1031,21 @@ if(isAdmin()){setTimeout(openAdmin,300);}
     if(S)S.style.display=login?'none':'flex';
     if(bL){bL.style.background=login?'var(--azul2)':'#fff';bL.style.color=login?'#fff':'var(--azul2)';}
     if(bS){bS.style.background=login?'#fff':'var(--azul2)';bS.style.color=login?'var(--azul2)':'#fff';}
+    if(!login){ try{ setTimeout(prefillSignupFromMontado,40); }catch(_e){} }
   };
-  window.openReg=function(){var m=$('regov');if(m)m.classList.add('on');showAccTab(window.__user?'login':'signup');};
+  function prefillSignupFromMontado(){
+    try{
+      if(window.__user) return; /* já logado, não mexe */
+      var cli=null,ad=null;
+      try{ cli=JSON.parse(localStorage.getItem('sullab_cliente_montado')||'null'); }catch(_e){}
+      try{ ad=JSON.parse(localStorage.getItem('sullab_addr')||'null'); }catch(_e){}
+      if(!cli&&!ad) return;
+      function setIf(id,v){ var e=$(id)||document.getElementById(id); if(e&&!e.value&&v){ e.value=v; } }
+      if(cli){ setIf('suRazao',cli.nome||cli.razao); setIf('suCnpj',cli.doc||cli.cnpj); setIf('suTel',cli.tel||cli.telefone); setIf('suEmail',cli.email); }
+      if(ad){ setIf('suCep',ad.cep); setIf('suEnd',ad.end||ad.endereco); setIf('suNum',ad.num||ad.numero); setIf('suComp',ad.comp||ad.complemento); setIf('suBairro',ad.bairro); setIf('suCidade',ad.cidade); setIf('suUf',ad.uf); }
+    }catch(_e){}
+  }
+  window.openReg=function(){var m=$('regov');if(m)m.classList.add('on');var t=(window.__user?'login':'signup');showAccTab(t);if(t==='signup'){setTimeout(prefillSignupFromMontado,60);}};
   window.accountBtn=function(){ if(window.__user){ fbLogout(); } else { openReg(); } };
   window.toggleCnpj=function(){ if(!window.__user){ openReg(); return; } cnpj=!cnpj; updatePmodeBar(); try{render();}catch(e){} };
 
@@ -1348,7 +1368,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781621314775';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781626887886';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
