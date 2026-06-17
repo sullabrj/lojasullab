@@ -1454,6 +1454,16 @@ function mStepNext(){
   var _cc=window.closeCart; if(typeof _cc==='function'){ window.closeCart=function(){ var r; try{r=_cc.apply(this,arguments);}catch(e){} unlock(); return r; }; }
   // safety: if cart overlay loses 'on' class some other way, observe and unlock
 })();
+/* ===== Trava o scroll do fundo quando a JANELA DE DETALHES do produto (openProd / #ov) está aberta ===== */
+(function(){
+  var _y=0;
+  function lock(){ try{ _y=window.pageYOffset||document.documentElement.scrollTop||0; document.documentElement.classList.add('cart-lock'); document.body.classList.add('cart-lock'); document.body.style.top=(-_y)+'px'; }catch(e){} }
+  function unlock(){ try{ document.documentElement.classList.remove('cart-lock'); document.body.classList.remove('cart-lock'); document.body.style.top=''; window.scrollTo(0,_y); }catch(e){} }
+  if(typeof window.openProd==='undefined' && typeof openProd==='function') window.openProd=openProd;
+  if(typeof window.closeF==='undefined' && typeof closeF==='function') window.closeF=closeF;
+  var _op=window.openProd; if(typeof _op==='function'){ window.openProd=function(){ var r; try{r=_op.apply(this,arguments);}catch(e){} lock(); return r; }; }
+  var _cf=window.closeF; if(typeof _cf==='function'){ window.closeF=function(){ var r; try{r=_cf.apply(this,arguments);}catch(e){} unlock(); return r; }; }
+})();
 </script>
 <script>
 /* ===== FIX Safari: garante funções globais + listeners diretos (oninput/onclick inline falhavam no iPhone) ===== */
@@ -1491,7 +1501,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781669207358';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781669638790';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
