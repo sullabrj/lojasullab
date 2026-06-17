@@ -1518,7 +1518,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781673566313';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781699430284';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
@@ -1624,7 +1624,7 @@ function painelRender(){
                 cep:fld(v,6), email:fld(v,4), total:'', itens:fld(v,10), end:fld(v,7), statusReal:''};
       }
     }
-    function card(o){
+    function card(o,idx){
       var cor = (o.grupo==='pago')?'#1f8a4c':(o.grupo==='pendente'?'#b06a1f':'#7a5c1f');
       return '<div style="background:#16294a;border:1px solid #243d66;border-radius:12px;padding:13px 15px;margin-bottom:10px">'
         +'<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px">'
@@ -1636,23 +1636,72 @@ function painelRender(){
         +'<div style="font-size:12px;opacity:.85;margin-bottom:6px">📅 '+dataBR(o.data)+' &nbsp;·&nbsp; '+(o.tipo||'Doc')+': '+(o.doc||'—')+' &nbsp;·&nbsp; ✉️ '+(o.email||'—')+'</div>'
         +(o.end?('<div style="font-size:12px;opacity:.8;margin-bottom:6px">📍 '+o.end+(o.cep?(' · CEP '+o.cep):'')+'</div>'):'')
         +'<div style="font-size:12px;background:#0f1f37;border-radius:8px;padding:8px 10px;line-height:1.5">🛒 '+(o.itens||'(itens não registrados)').replace(/\|/g,'<br>')+'</div>'
+        +'<div style="margin-top:9px;text-align:right"><button onclick="painelPrintPedido('+idx+')" style="background:#1f6fb2;color:#fff;border:0;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer">🖨️ Imprimir / PDF</button></div>'
       +'</div>';
     }
     var norms=arr.map(norm);
+    window.__PAINEL_NORMS = norms;            // guarda p/ a impressão por pedido
     var pagos=norms.filter(function(o){return o.grupo==='pago';});
     var pend=norms.filter(function(o){return o.grupo==='pendente';});
     var orcs=norms.filter(function(o){return o.grupo==='orcamento';});
     function secao(tit,emoji,lista2,cor){
       if(!lista2.length) return '';
       return '<div style="margin:10px 0 4px;font-size:13px;font-weight:800;letter-spacing:.3px;color:'+cor+'">'+emoji+' '+tit+' ('+lista2.length+')</div>'
-        + lista2.map(card).join('');
+        + lista2.map(function(o){ return card(o, norms.indexOf(o)); }).join('');
     }
     lista.innerHTML = secao('PAGOS (confirmado pelo Mercado Pago)','✅',pagos,'#7fd6a0')
       + secao('AGUARDANDO PAGAMENTO','⏳',pend,'#e0b057')
       + secao('ORÇAMENTOS / LEADS','📝',orcs,'#cbb48a');
 }
+function painelPrintPedido(idx){
+  try{
+    var o=(window.__PAINEL_NORMS||[])[idx]; if(!o){ alert('Pedido não encontrado.'); return; }
+    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    var statusTxt = o.grupo==='pago'?'PAGO (confirmado)':(o.grupo==='pendente'?'AGUARDANDO PAGAMENTO':'ORÇAMENTO / LEAD');
+    var statusCor = o.grupo==='pago'?'#1b7a3d':(o.grupo==='pendente'?'#b06a1f':'#7a5c1f');
+    // itens: "2x Tubo... · R$ 10,00 | 1x ..." → tabela
+    var rawItens=String(o.itens||'').split('|').map(function(s){return s.trim();}).filter(Boolean);
+    var linhas = rawItens.length
+      ? rawItens.map(function(it){ return '<tr><td style="padding:7px 9px;border-bottom:1px solid #e5e5e5">'+esc(it)+'</td></tr>'; }).join('')
+      : '<tr><td style="padding:7px 9px;color:#888">(itens não registrados)</td></tr>';
+    var hoje=new Date().toLocaleString('pt-BR');
+    var html=''
+      +'<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>Pedido'+(o.pedido?(' #'+esc(o.pedido)):'')+' — SULLAB</title>'
+      +'<style>@page{size:A4;margin:14mm}*{box-sizing:border-box}body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1a2433;margin:0}'
+      +'.hd{display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #16456e;padding-bottom:10px;margin-bottom:14px}'
+      +'.hd .lg{font-size:22px;font-weight:800;color:#16456e;letter-spacing:.5px}.hd .sub{font-size:11px;color:#5a6b80}'
+      +'.st{display:inline-block;background:'+statusCor+';color:#fff;font-weight:800;font-size:12px;border-radius:6px;padding:4px 12px}'
+      +'h1{font-size:16px;color:#16456e;margin:16px 0 6px;border-bottom:1px solid #dbe6f5;padding-bottom:4px}'
+      +'.row{font-size:13px;line-height:1.7;color:#27384a}.row b{color:#16456e}'
+      +'table{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px}'
+      +'th{background:#16456e;color:#fff;text-align:left;padding:7px 9px;font-size:12px}'
+      +'.tot{margin-top:12px;text-align:right;font-size:18px;font-weight:800;color:#16456e}'
+      +'.ft{margin-top:26px;border-top:1px solid #dbe6f5;padding-top:10px;font-size:11px;color:#8090a0;text-align:center;line-height:1.6}'
+      +'.sign{margin-top:34px;display:flex;justify-content:space-between;gap:30px}.sign div{flex:1;border-top:1px solid #555;padding-top:5px;font-size:11px;color:#666;text-align:center}'
+      +'@media print{.noprint{display:none}}'
+      +'.noprint{position:fixed;top:10px;right:10px}.noprint button{background:#16456e;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer}'
+      +'</style></head><body>'
+      +'<div class="noprint"><button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button></div>'
+      +'<div class="hd"><div><div class="lg">SULLAB</div><div class="sub">Produtos para laboratório e diagnóstico · NF-e · lojasullabrj.com.br</div></div><div class="st">'+statusTxt+'</div></div>'
+      +'<div class="row"><b>Pedido:</b> '+(o.pedido?('#'+esc(o.pedido)):'—')+' &nbsp;&nbsp; <b>Data:</b> '+esc((function(){try{var d=new Date(o.data);return isNaN(d)?o.data:d.toLocaleString("pt-BR");}catch(e){return o.data;}})())+' &nbsp;&nbsp; <b>Canal:</b> '+esc(o.canal||'—')+'</div>'
+      +'<h1>Cliente</h1>'
+      +'<div class="row"><b>Nome / Razão social:</b> '+esc(o.nome||'—')+'<br><b>'+esc(o.tipo||'Doc')+':</b> '+esc(o.doc||'—')+' &nbsp;&nbsp; <b>E-mail:</b> '+esc(o.email||'—')+'</div>'
+      +'<h1>Endereço de entrega</h1>'
+      +'<div class="row">'+(o.end?esc(o.end):'—')+(o.cep?(' &nbsp;·&nbsp; <b>CEP:</b> '+esc(o.cep)):'')+'</div>'
+      +'<h1>Itens do pedido</h1>'
+      +'<table><thead><tr><th>Produto · quantidade · preço</th></tr></thead><tbody>'+linhas+'</tbody></table>'
+      +(o.total?('<div class="tot">Total: '+esc(o.total)+'</div>'):'')
+      +'<div class="sign"><div>Conferido por</div><div>Separado por</div><div>Data / assinatura</div></div>'
+      +'<div class="ft"><b>SULLAB</b> — distribuidora de produtos para laboratório e diagnóstico clínico.<br>WhatsApp (24) 98838-3100 · comercial@sullabrj.com.br · Documento gerado em '+esc(hoje)+'</div>'
+      +'<script>setTimeout(function(){try{window.print();}catch(e){}},350);<\/script>'
+      +'</body></html>';
+    var w=window.open('','_blank');
+    if(!w){ alert('Permita pop-ups para gerar o PDF do pedido.'); return; }
+    w.document.open(); w.document.write(html); w.document.close();
+  }catch(e){ alert('Erro ao gerar o PDF: '+e.message); }
+}
 </script>
-<script>try{window.abrirPainel=abrirPainel;window.painelEntrar=painelEntrar;window.painelCarregar=painelCarregar;window.painelRender=painelRender;window.painelSair=painelSair;}catch(e){}</script>
+<script>try{window.abrirPainel=abrirPainel;window.painelEntrar=painelEntrar;window.painelCarregar=painelCarregar;window.painelRender=painelRender;window.painelSair=painelSair;window.painelPrintPedido=painelPrintPedido;}catch(e){}</script>
 <!-- ===== WhatsApp flutuante + captura de lead (checkup conversão) ===== -->
 <style>
 #waFloat{position:fixed;right:16px;bottom:84px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:10px;font-family:inherit}
