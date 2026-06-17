@@ -1518,7 +1518,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781699430284';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781700112025';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
@@ -1665,9 +1665,22 @@ function painelPrintPedido(idx){
       ? rawItens.map(function(it){ return '<tr><td style="padding:7px 9px;border-bottom:1px solid #e5e5e5">'+esc(it)+'</td></tr>'; }).join('')
       : '<tr><td style="padding:7px 9px;color:#888">(itens não registrados)</td></tr>';
     var hoje=new Date().toLocaleString('pt-BR');
+    // o campo "cep" (col 6) às vezes traz o TELEFONE do cliente; decide o rótulo certo
+    function fmtContato(s){
+      var dig=String(s||'').replace(/\D/g,'');
+      if(!dig) return '';
+      if(dig.length===8) return '<b>CEP:</b> '+dig.slice(0,5)+'-'+dig.slice(5);     // CEP real
+      if(dig.length===10) return '<b>Tel:</b> ('+dig.slice(0,2)+') '+dig.slice(2,6)+'-'+dig.slice(6);
+      if(dig.length===11) return '<b>Tel:</b> ('+dig.slice(0,2)+') '+dig.slice(2,7)+'-'+dig.slice(7);
+      return '<b>Contato:</b> '+esc(s);
+    }
+    // se o endereço já contém "CEP 00000-000", não repetir
+    var endTemCep = /cep\s*\d{5}-?\d{3}/i.test(String(o.end||''));
+    var contatoLinha = (function(){ var c=fmtContato(o.cep); if(!c) return ''; if(endTemCep && c.indexOf('CEP')>-1) return ''; return ' &nbsp;·&nbsp; '+c; })();
     var html=''
       +'<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>Pedido'+(o.pedido?(' #'+esc(o.pedido)):'')+' — SULLAB</title>'
-      +'<style>@page{size:A4;margin:14mm}*{box-sizing:border-box}body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1a2433;margin:0}'
+      +'<style>@page{size:A4;margin:12mm}*{box-sizing:border-box}html,body{height:100%}body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1a2433;margin:0}'
+      +'.sheet{min-height:calc(100vh - 24mm);display:flex;flex-direction:column}'   /* ocupa a folha toda */
       +'.hd{display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #16456e;padding-bottom:10px;margin-bottom:14px}'
       +'.hd .lg{font-size:22px;font-weight:800;color:#16456e;letter-spacing:.5px}.hd .sub{font-size:11px;color:#5a6b80}'
       +'.st{display:inline-block;background:'+statusCor+';color:#fff;font-weight:800;font-size:12px;border-radius:6px;padding:4px 12px}'
@@ -1676,23 +1689,50 @@ function painelPrintPedido(idx){
       +'table{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px}'
       +'th{background:#16456e;color:#fff;text-align:left;padding:7px 9px;font-size:12px}'
       +'.tot{margin-top:12px;text-align:right;font-size:18px;font-weight:800;color:#16456e}'
-      +'.ft{margin-top:26px;border-top:1px solid #dbe6f5;padding-top:10px;font-size:11px;color:#8090a0;text-align:center;line-height:1.6}'
-      +'.sign{margin-top:34px;display:flex;justify-content:space-between;gap:30px}.sign div{flex:1;border-top:1px solid #555;padding-top:5px;font-size:11px;color:#666;text-align:center}'
-      +'@media print{.noprint{display:none}}'
+      /* ===== Bloco de conferência ocupa o espaço que sobra, no rodapé ===== */
+      +'.confwrap{margin-top:auto;padding-top:18px}'
+      +'.conftitle{font-size:13px;font-weight:800;color:#16456e;letter-spacing:.3px;border-top:2px solid #16456e;padding-top:8px;margin-bottom:10px}'
+      +'.chkrow{display:flex;flex-wrap:wrap;gap:10px 26px;font-size:12.5px;color:#27384a;margin-bottom:18px}'
+      +'.chk{display:flex;align-items:center;gap:7px}.chk .box{width:15px;height:15px;border:1.5px solid #16456e;border-radius:3px;display:inline-block}'
+      +'.obsbox{border:1px solid #c9d6e6;border-radius:8px;min-height:58px;padding:7px 10px;font-size:12px;color:#8090a0;margin-bottom:20px}'
+      +'.sign{display:flex;justify-content:space-between;gap:34px}'
+      +'.sign .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end}'
+      +'.sign .line{border-bottom:1px solid #444;height:58px}'                       /* espaço ALTO pra assinar */
+      +'.sign .lbl{font-size:12px;color:#3a4756;font-weight:700;text-align:center;padding-top:6px}'
+      +'.sign .sub2{font-size:10.5px;color:#8090a0;text-align:center}'
+      +'.ft{margin-top:14px;border-top:1px solid #dbe6f5;padding-top:8px;font-size:10.5px;color:#8090a0;text-align:center;line-height:1.6}'
+      +'@media print{.noprint{display:none}.sheet{min-height:calc(100vh - 0mm)}}'
       +'.noprint{position:fixed;top:10px;right:10px}.noprint button{background:#16456e;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer}'
       +'</style></head><body>'
       +'<div class="noprint"><button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button></div>'
+      +'<div class="sheet">'
       +'<div class="hd"><div><div class="lg">SULLAB</div><div class="sub">Produtos para laboratório e diagnóstico · NF-e · lojasullabrj.com.br</div></div><div class="st">'+statusTxt+'</div></div>'
       +'<div class="row"><b>Pedido:</b> '+(o.pedido?('#'+esc(o.pedido)):'—')+' &nbsp;&nbsp; <b>Data:</b> '+esc((function(){try{var d=new Date(o.data);return isNaN(d)?o.data:d.toLocaleString("pt-BR");}catch(e){return o.data;}})())+' &nbsp;&nbsp; <b>Canal:</b> '+esc(o.canal||'—')+'</div>'
       +'<h1>Cliente</h1>'
       +'<div class="row"><b>Nome / Razão social:</b> '+esc(o.nome||'—')+'<br><b>'+esc(o.tipo||'Doc')+':</b> '+esc(o.doc||'—')+' &nbsp;&nbsp; <b>E-mail:</b> '+esc(o.email||'—')+'</div>'
       +'<h1>Endereço de entrega</h1>'
-      +'<div class="row">'+(o.end?esc(o.end):'—')+(o.cep?(' &nbsp;·&nbsp; <b>CEP:</b> '+esc(o.cep)):'')+'</div>'
+      +'<div class="row">'+(o.end?esc(o.end):'—')+contatoLinha+'</div>'
       +'<h1>Itens do pedido</h1>'
       +'<table><thead><tr><th>Produto · quantidade · preço</th></tr></thead><tbody>'+linhas+'</tbody></table>'
       +(o.total?('<div class="tot">Total: '+esc(o.total)+'</div>'):'')
-      +'<div class="sign"><div>Conferido por</div><div>Separado por</div><div>Data / assinatura</div></div>'
-      +'<div class="ft"><b>SULLAB</b> — distribuidora de produtos para laboratório e diagnóstico clínico.<br>WhatsApp (24) 98838-3100 · comercial@sullabrj.com.br · Documento gerado em '+esc(hoje)+'</div>'
+      +'<div class="confwrap">'
+        +'<div class="conftitle">CONFERÊNCIA E SEPARAÇÃO</div>'
+        +'<div class="chkrow">'
+          +'<span class="chk"><span class="box"></span> Itens conferidos</span>'
+          +'<span class="chk"><span class="box"></span> Quantidades OK</span>'
+          +'<span class="chk"><span class="box"></span> Embalado</span>'
+          +'<span class="chk"><span class="box"></span> Etiqueta / NF-e</span>'
+          +'<span class="chk"><span class="box"></span> Liberado p/ envio</span>'
+        +'</div>'
+        +'<div class="obsbox">Observações:</div>'
+        +'<div class="sign">'
+          +'<div class="col"><div class="line"></div><div class="lbl">Conferido por</div><div class="sub2">Nome / assinatura</div></div>'
+          +'<div class="col"><div class="line"></div><div class="lbl">Separado por</div><div class="sub2">Nome / assinatura</div></div>'
+          +'<div class="col"><div class="line"></div><div class="lbl">Data / responsável</div><div class="sub2">____/____/______</div></div>'
+        +'</div>'
+      +'</div>'
+      +'<div class="ft"><b>SULLAB</b> — distribuidora de produtos para laboratório e diagnóstico clínico. WhatsApp (24) 98838-3100 · comercial@sullabrj.com.br · Documento gerado em '+esc(hoje)+'</div>'
+      +'</div>'  /* /.sheet */
       +'<script>setTimeout(function(){try{window.print();}catch(e){}},350);<\/script>'
       +'</body></html>';
     var w=window.open('','_blank');
