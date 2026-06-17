@@ -670,7 +670,7 @@ function openProd(i){try{var p=P[i];if(!p)return;
   var priceBlock='';
   if(p.kind=='aparelho'||!p.cnpj){priceBlock='<div style="margin:6px 0 12px;font-size:13px;color:#16456e;font-weight:700">Equipamento sob consulta — fale com a SULLAB para preço e condições.</div>';}
   else if(cnpj){priceBlock='<div style="margin:6px 0 12px"><div style="font-size:24px;font-weight:800;color:#16456e">'+brl(p.cnpj)+'</div><div style="font-size:12px;color:#00a650;font-weight:700">Preço CNPJ −'+off+'% · em estoque · envio em 24h</div></div>';}
-  else{priceBlock='<div style="margin:6px 0 12px"><div style="font-size:22px;font-weight:800;color:#1a1a1a">'+brl(p.pub)+'</div><div style="font-size:12.5px;margin-top:2px"><span style="background:#eaf5ec;color:#1b7a3d;font-weight:700;border-radius:6px;padding:2px 8px">Com CNPJ: '+brl(p.cnpj)+' (−'+off+'%)</span></div><div style="font-size:11.5px;color:#888;margin-top:4px">Cadastre seu CNPJ para o preço com desconto.</div></div>';}
+  else{priceBlock='<div style="margin:6px 0 12px"><div style="font-size:22px;font-weight:800;color:#1a1a1a">'+brl(p.pub)+'</div><div style="font-size:12.5px;margin-top:2px"><span style="background:#e6f7ee;color:#067a43;font-weight:800;border:1px solid #b7e6c6;border-radius:7px;padding:3px 9px">Com CNPJ: '+brl(p.cnpj)+' (−'+off+'%)</span></div><div style="font-size:11.5px;color:#888;margin-top:4px">Cadastre seu CNPJ para o preço com desconto.</div></div>';}
   var FK=[['ap','Apresentação'],['fab','Fabricante'],['anvisa','Registro ANVISA'],['fin','Finalidade'],['adit','Aditivo'],['vol','Volume de coleta'],['dim','Dimensão'],['tampa','Cor da tampa'],['mat','Material'],['est','Esterilidade'],['me','Método'],['amostra','Amostra'],['formato','Formato'],['kit','Embalagem'],['leitura','Leitura'],['cons','Conservação'],['ln','Linha']];
   var ftHtml=p.ft?FK.map(function(fk){return p.ft[fk[0]]?('<div><span class="k">'+fk[1]+':</span> '+p.ft[fk[0]]+'</div>'):'';}).join(''):'';
   var infoBits='';
@@ -1516,7 +1516,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781672197915';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781672693312';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
