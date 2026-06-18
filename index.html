@@ -532,7 +532,7 @@ var ORIGEM_CEP='27323450';
 var EMAIL_COM='comercial@sullabrj.com.br';
 var SP_STATS={vendas:11700,clientes:8000,estados:27,cidades:1764};
 var UF_SE=['SP','RJ','MG','ES'];
-var fbrand='',fsort='',freteSel=null,freteSelLabel='',freteCalculado=false;var seg='';var coupon=null,couponPct=0;var CUPONS={BEMVINDO5:0.05};var ESPEC='Seg a Sex, 8h às 18h';var PLACEHOLDER="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23eef2f6'/%3E%3Ctext x='50' y='54' font-size='12' fill='%2316456e' text-anchor='middle' font-family='Arial' font-weight='bold'%3ESULLAB%3C/text%3E%3C/svg%3E";var SEG={lab:['454036','454087','455092','456071','455071','454071','454327','456001','TR 009 IST','TR 007 IST','TR 008-1 IST','KIT-IST','KIT-COLETA'],clinica:['TR 017-1 RP','TR 016-1 RP','TR 010 DT','454036','455092','450071','450072','KIT-COLETA','TR 008-1 IST'],vet:['454036','454087','454921','450071','450072','450539','455092','454092'],hospital:['454036','455092','456071','455071','TR 017-1 RP','TR 007 IST','TR 009 IST','450071','KIT-COLETA','KIT-SORO']};var WT={vedta:0.010,vsoro:0.011,vcoag:0.010,vglic:0.010,vhepar:0.010,vagulha:0.002,tr:0.5,kit:0.6,bioq:0.3,meio:0.2,lamina:0.1,coletor:0.05,cassete:0.1,sorol:0.3,hemato:0.3,imunoh:0.3,ap:3};var PESO={'450539':0.003,'KIT-IST':1.2};function prodWeight(p){if(!p)return 0.3;if(PESO[p.cod])return PESO[p.cod];if(p.pe)return p.pe;return WT[p.cat]||0.3;}
+var fbrand='',fsort='',freteSel=null,freteSelLabel='',freteCalculado=false,fretePrazo='';var seg='';var coupon=null,couponPct=0;var CUPONS={BEMVINDO5:0.05};var ESPEC='Seg a Sex, 8h às 18h';var PLACEHOLDER="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23eef2f6'/%3E%3Ctext x='50' y='54' font-size='12' fill='%2316456e' text-anchor='middle' font-family='Arial' font-weight='bold'%3ESULLAB%3C/text%3E%3C/svg%3E";var SEG={lab:['454036','454087','455092','456071','455071','454071','454327','456001','TR 009 IST','TR 007 IST','TR 008-1 IST','KIT-IST','KIT-COLETA'],clinica:['TR 017-1 RP','TR 016-1 RP','TR 010 DT','454036','455092','450071','450072','KIT-COLETA','TR 008-1 IST'],vet:['454036','454087','454921','450071','450072','450539','455092','454092'],hospital:['454036','455092','456071','455071','TR 017-1 RP','TR 007 IST','TR 009 IST','450071','KIT-COLETA','KIT-SORO']};var WT={vedta:0.010,vsoro:0.011,vcoag:0.010,vglic:0.010,vhepar:0.010,vagulha:0.002,tr:0.5,kit:0.6,bioq:0.3,meio:0.2,lamina:0.1,coletor:0.05,cassete:0.1,sorol:0.3,hemato:0.3,imunoh:0.3,ap:3};var PESO={'450539':0.003,'KIT-IST':1.2};function prodWeight(p){if(!p)return 0.3;if(PESO[p.cod])return PESO[p.cod];if(p.pe)return p.pe;return WT[p.cat]||0.3;}
 var MK={Ebram:{pub:2.0,cnpj:1.8},Vacuette:{pub:1.75,cnpj:1.6}};
 function toggleCnpj(){if(!registered){openReg();return;}cnpj=!cnpj;var b=document.getElementById('pmode');b.classList.toggle('on',cnpj);document.getElementById('pmbtn').textContent=cnpj?'Ver público':'Aplicar preço CNPJ';document.getElementById('pmtxt').innerHTML=cnpj?'✓ <b>Preço CNPJ aplicado</b> (cadastro salvo).':'Você está vendo <b>preço público</b>. Clique para aplicar seu preço CNPJ.';render();}
 function openReg(){document.getElementById('regov').classList.add('on');}
@@ -548,7 +548,19 @@ function remoto(a){return false;}
 function freteInfo(a,tot){var uf=((a&&a.uf)||'').toUpperCase();var sudeste=UF_SE.indexOf(uf)>=0;var rjsp=(uf=='RJ'||uf=='SP');if(rjsp&&tot>=1000)return{free:true,label:'\uD83D\uDE9A Frete GR\u00C1TIS \u2014 RJ/SP acima de R$ 1.000'};if(cartAllTeste()&&sudeste&&!remoto(a))return{free:true,label:'\uD83D\uDE9A Frete GR\u00C1TIS \u2014 testes r\u00E1pidos (Sudeste)'};if(cartHasTeste()&&sudeste&&!remoto(a))return{free:'parcial',label:'\uD83D\uDE9A Frete gr\u00E1tis nos testes r\u00E1pidos (Sudeste)'};return{free:false,label:''};}
 function getOrders(){try{return JSON.parse(localStorage.getItem('sullab_orders')||'[]');}catch(e){return[];}}
 function saveOrder(o){var a=getOrders();a.unshift(o);if(a.length>30)a=a.slice(0,30);try{localStorage.setItem('sullab_orders',JSON.stringify(a));}catch(e){}}
-function _orderItems(){var it=[];for(var k in cart){var p=P[k];if(!p)continue;it.push({cod:p.cod,nome:p.nome,q:cart[k],un:unitPrice(p,cart[k])});}return it;}
+function _orderItems(){var it=[];for(var k in cart){var p=P[k];if(!p)continue;it.push({cod:p.cod,nome:p.nome,q:cart[k],un:unitPrice(p,cart[k])});}
+  /* anexa a linha de FRETE no pedido (gravada junto dos itens; o painel destaca) */
+  try{
+    var _fi=freteInfo(readAddr(),total());
+    if(_fi && _fi.free===true){
+      it.push({cod:'FRETE',nome:'Frete GRÁTIS — RJ/SP acima de R$ 1.000',q:1,un:0});
+    } else if(typeof freteValor==='function' && freteValor()>0){
+      var _pz=fretePrazo?(' · '+fretePrazo+' dias úteis'):'';
+      var _tr=freteSelLabel?(' — '+freteSelLabel):'';
+      it.push({cod:'FRETE',nome:'Frete'+_tr+_pz,q:1,un:Math.round(freteValor()*100)/100});
+    }
+  }catch(e){}
+  return it;}
 function recordOrder(forma){var items=[];for(var k in cart){var p=P[k];if(!p)continue;items.push({cod:p.cod,nome:p.nome,q:cart[k],un:unitPrice(p,cart[k])});}if(!items.length)return;saveOrder({ts:Date.now(),forma:forma,total:total(),items:items});badgeOrders();}
 function badgeOrders(){var b=document.getElementById('ordcb');if(b){var n=getOrders().length;b.textContent=n;b.style.display=n?'inline-block':'none';}}
 function openOrders(){renderOrders();document.getElementById('ordov').classList.add('on');}
@@ -898,12 +910,12 @@ function payBoleto(){
 function setPgFromRadio(el){pgto=el.value;renderCart();}
 function freteValor(){var fi=freteInfo(readAddr(),total());if(fi.free===true)return 0;return freteSel||0;}
 function dispTotal(){var f=(pgto=='pix')?0.95:1;return total()*f*(1-couponPct)+freteValor();}
-function selFrete(v,lbl){freteSel=v;freteSelLabel=(lbl||'');var df=document.getElementById('dfrete');if(df)df.textContent=(v>0?brl(v):(freteCalculado?'A combinar':brl(0)));var dt=document.getElementById('dtotval');if(dt)dt.textContent=brl(dispTotal());try{var pb=document.querySelector('.paybtn');if(pb){pb.removeAttribute('disabled');pb.style.opacity='';}}catch(e){}}
+function selFrete(v,lbl,prazo){freteSel=v;freteSelLabel=(lbl||'');if(prazo!==undefined&&prazo!==null&&prazo!=='')fretePrazo=String(prazo);var df=document.getElementById('dfrete');if(df)df.textContent=(v>0?brl(v):(freteCalculado?'A combinar':brl(0)));var dt=document.getElementById('dtotval');if(dt)dt.textContent=brl(dispTotal());try{var pb=document.querySelector('.paybtn');if(pb){pb.removeAttribute('disabled');pb.style.opacity='';}}catch(e){}}
 var CATS_FRIO={meio:1,bioq:1,imunoh:1,reagap:1,reagmic:1};
 function temRefrigerado(){for(var k in cart){var p=P[k];if(p&&CATS_FRIO[p.cat])return true;}return false;}
 function cotarFrioWa(){var a=readAddr();var lines=[];for(var k in cart){var p=P[k];lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+')'+(CATS_FRIO[p.cat]?' ❄️ refrigerado':''));}var dest=a&&a.cep?('\n\nEntrega: '+(a.cidade?a.cidade+'/'+(a.uf||'')+' — ':'')+'CEP '+a.cep):'';var msg='Olá! Tenho um pedido com ITENS REFRIGERADOS (precisa de transporte com cadeia fria). Podem cotar o frete expresso refrigerado?\n\n'+lines.join('\n')+dest;window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
 function cotarFreteWa(){var a=readAddr();var lines=[];for(var k in cart){var p=P[k];lines.push('• '+p.cod+' — '+p.nome+' (x'+cart[k]+')');}var dest=a&&a.cep?('\n\nDestino: '+(a.cidade?a.cidade+'/'+(a.uf||'')+' — ':'')+'CEP '+a.cep):'';var msg='Olá! Gostaria de uma COTAÇÃO DE FRETE (e opções de transportadora) para estes itens:\n\n'+(lines.length?lines.join('\n'):'(itens do carrinho)')+dest+'\n\nPodem me passar as opções e prazos?';window.open('https://wa.me/'+WPP+'?text='+encodeURIComponent(msg),'_blank');}
-function cotarFrete(){var a=readAddr();var cep=(a.cep||'').replace(/\D/g,'');var box=document.getElementById('freteopts');if(cep.length!=8){if(box)box.innerHTML='<div class="fhint">Informe um CEP v\u00E1lido (8 d\u00EDgitos).</div>';return;}if(box)box.innerHTML='<div class="fhint">Calculando frete\u2026</div>';var prods=[];for(var k in cart){prods.push({id:String(P[k].cod||k),width:11,height:6,length:16,weight:prodWeight(P[k]),insurance_value:unitPrice(P[k],cart[k])*cart[k],quantity:cart[k]});}fetch(FRETE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:ORIGEM_CEP,to:cep,products:prods})}).then(function(r){return r.json();}).then(function(d){if(d&&!Array.isArray(d)){d=(d.price||d.name||d.company)?[d]:(d.error?[]:[]);}if(!d||d.error||!d.length){if(box)box.innerHTML='<div class="fhint">Frete ser\u00E1 confirmado no checkout / WhatsApp.</div>';return;}var ok=d.filter(function(o){return o&&o.price&&!o.error;});if(!ok.length){if(box)box.innerHTML='<div class="fhint">Sem op\u00E7\u00F5es para este CEP. Confirmaremos no checkout.</div>';return;}ok.sort(function(x,y){return parseFloat(x.price)-parseFloat(y.price);});freteCalculado=true;if(box){box.innerHTML=ok.slice(0,4).map(function(o,ix){var dt=o.delivery_time||(o.delivery_range&&o.delivery_range.max)||'?';var lbl=(((o.company&&o.company.name)?o.company.name+' ':'')+(o.name||'')).trim();return '<label class="fopt"><input type="radio" name="frete" value="'+o.price+'"'+(ix===0?' checked':'')+' onchange="selFrete('+parseFloat(o.price)+',\''+lbl.replace(/'/g,"")+'\')"> '+lbl+' \u2014 <b>'+brl(parseFloat(o.price))+'</b> ('+dt+' dias)</label>';}).join('');}var _f0=ok[0];selFrete(parseFloat(_f0.price),(((_f0.company&&_f0.company.name)?_f0.company.name+' ':'')+(_f0.name||'')).trim());}).catch(function(){if(box)box.innerHTML='<div class="fhint">Frete ser\u00E1 confirmado no checkout / WhatsApp.</div>';});}
+function cotarFrete(){var a=readAddr();var cep=(a.cep||'').replace(/\D/g,'');var box=document.getElementById('freteopts');if(cep.length!=8){if(box)box.innerHTML='<div class="fhint">Informe um CEP v\u00E1lido (8 d\u00EDgitos).</div>';return;}if(box)box.innerHTML='<div class="fhint">Calculando frete\u2026</div>';var prods=[];for(var k in cart){prods.push({id:String(P[k].cod||k),width:11,height:6,length:16,weight:prodWeight(P[k]),insurance_value:unitPrice(P[k],cart[k])*cart[k],quantity:cart[k]});}fetch(FRETE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:ORIGEM_CEP,to:cep,products:prods})}).then(function(r){return r.json();}).then(function(d){if(d&&!Array.isArray(d)){d=(d.price||d.name||d.company)?[d]:(d.error?[]:[]);}if(!d||d.error||!d.length){if(box)box.innerHTML='<div class="fhint">Frete ser\u00E1 confirmado no checkout / WhatsApp.</div>';return;}var ok=d.filter(function(o){return o&&o.price&&!o.error;});if(!ok.length){if(box)box.innerHTML='<div class="fhint">Sem op\u00E7\u00F5es para este CEP. Confirmaremos no checkout.</div>';return;}ok.sort(function(x,y){return parseFloat(x.price)-parseFloat(y.price);});freteCalculado=true;if(box){box.innerHTML=ok.slice(0,4).map(function(o,ix){var dt=o.delivery_time||(o.delivery_range&&o.delivery_range.max)||'?';var lbl=(((o.company&&o.company.name)?o.company.name+' ':'')+(o.name||'')).trim();return '<label class="fopt"><input type="radio" name="frete" value="'+o.price+'"'+(ix===0?' checked':'')+' onchange="selFrete('+parseFloat(o.price)+',\''+lbl.replace(/'/g,"")+'\',\''+String(dt).replace(/'/g,"")+'\')"> '+lbl+' \u2014 <b>'+brl(parseFloat(o.price))+'</b> ('+dt+' dias)</label>';}).join('');}var _f0=ok[0];var _dt0=_f0.delivery_time||(_f0.delivery_range&&_f0.delivery_range.max)||'';selFrete(parseFloat(_f0.price),(((_f0.company&&_f0.company.name)?_f0.company.name+' ':'')+(_f0.name||'')).trim(),_dt0);}).catch(function(){if(box)box.innerHTML='<div class="fhint">Frete ser\u00E1 confirmado no checkout / WhatsApp.</div>';});}
 function finalizar(){if(!checkoutGate(false))return;var c=clienteInfo();var a=readAddr();window._pidAtual=(window._gerarPedidoId?window._gerarPedidoId():('SLB-'+Date.now()));try{if(typeof sullabEvent==='function')sullabEvent('pedido_mp',{pedido:window._pidAtual,total:total(),qtd:Object.keys(cart).length,itens:_orderItems(),pgto:(typeof pgto!=='undefined'?pgto:''),cliente:c.nome,doc:c.doc,docTipo:c.docTipo,tel:c.tel,email:c.email,endereco:a,obs:(sellerName()?('[Vendedor: '+sellerName()+']'):'')});}catch(e){}recordOrder(pgto=='pix'?'Pix (-5%)':pgto=='boleto'?'Boleto (Mercado Pago)':'Cartão até 12x');payMP(pgto);}
 /* ===== Checkout desktop em 2 telas: confirmar dados -> pagamento ===== */
 window.irPagamento=function(){
@@ -1538,7 +1550,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781804013000';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781805883000';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
@@ -1644,8 +1656,29 @@ function painelRender(){
                 cep:fld(v,6), email:fld(v,4), total:'', itens:fld(v,10), end:fld(v,7), statusReal:''};
       }
     }
+    /* separa itens de produto da linha de FRETE; devolve {produtos, freteHtml} */
+    function _splitFrete(o){
+      var raw=String(o.itens||'').split('|').map(function(s){return s.trim();}).filter(Boolean);
+      var prods=[], freteLinha=null;
+      raw.forEach(function(l){ if(/(^|\b)FRETE\b/i.test(l)||/\bFrete\b/.test(l)) freteLinha=l; else prods.push(l); });
+      var totalNum=(function(){var t=String(o.total||'').replace(/[^0-9.,]/g,'').replace(/\./g,'').replace(',','.');var n=parseFloat(t);return isNaN(n)?0:n;})();
+      var uf=(function(){var m=String(o.end||'').match(/\/([A-Z]{2})\b/);return m?m[1]:'';})();
+      var ehGratis = /gr[áa]tis|gratuito|R\$\s*0[,.]00/i.test(freteLinha||'') || ((uf==='RJ'||uf==='SP') && totalNum>=1000);
+      var temFrete = !!freteLinha;
+      var html='';
+      if(ehGratis){
+        html='<div style="margin-top:8px;display:flex;align-items:center;gap:7px;background:#0f3d24;border:1px solid #1f8a4c;border-radius:8px;padding:7px 11px;font-size:12.5px;font-weight:700;color:#7fd6a0">🚚 Frete GRÁTIS <span style="font-weight:500;opacity:.85">— RJ/SP acima de R$ 1.000</span></div>';
+      } else if(temFrete){
+        html='<div style="margin-top:8px;display:flex;align-items:center;gap:7px;background:#102a4d;border:1px solid #2b6fb2;border-radius:8px;padding:7px 11px;font-size:12.5px;font-weight:700;color:#9fd0ff">🚚 '+freteLinha+'</div>';
+      } else if(o.grupo==='pago'||o.grupo==='pendente'){
+        /* frete obrigatório e ausente => alerta */
+        html='<div style="margin-top:8px;display:flex;align-items:center;gap:7px;background:#4a1d1d;border:1px solid #c0392b;border-radius:8px;padding:7px 11px;font-size:12.5px;font-weight:700;color:#ff9b8b">⚠️ Frete não registrado — confirmar valor e prazo antes de despachar</div>';
+      }
+      return {produtos:prods, freteHtml:html};
+    }
     function card(o,idx){
       var cor = (o.grupo==='pago')?'#1f8a4c':(o.grupo==='pendente'?'#b06a1f':'#7a5c1f');
+      var _sf=_splitFrete(o);
       return '<div style="background:#16294a;border:1px solid #243d66;border-radius:12px;padding:13px 15px;margin-bottom:10px">'
         +'<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:6px">'
           +'<b style="font-size:14px;color:#fff">'+o.nome+'</b>'
@@ -1655,7 +1688,8 @@ function painelRender(){
         +'</div>'
         +'<div style="font-size:12px;opacity:.85;margin-bottom:6px">📅 '+dataBR(o.data)+' &nbsp;·&nbsp; '+(o.tipo||'Doc')+': '+(o.doc||'—')+' &nbsp;·&nbsp; ✉️ '+(o.email||'—')+'</div>'
         +(o.end?('<div style="font-size:12px;opacity:.8;margin-bottom:6px">📍 '+o.end+(o.cep?(' · CEP '+o.cep):'')+'</div>'):'')
-        +'<div style="font-size:12px;background:#0f1f37;border-radius:8px;padding:8px 10px;line-height:1.5">🛒 '+(o.itens||'(itens não registrados)').replace(/\|/g,'<br>')+'</div>'
+        +'<div style="font-size:12px;background:#0f1f37;border-radius:8px;padding:8px 10px;line-height:1.5">🛒 '+(_sf.produtos.length?_sf.produtos.join('<br>'):'(itens não registrados)')+'</div>'
+        +_sf.freteHtml
         +((o.grupo==='pago'||o.grupo==='pendente')?sullabEtapasHtml(o,idx):'')
         +'<div style="margin-top:9px;text-align:right"><button onclick="painelPrintPedido('+idx+')" style="background:#1f6fb2;color:#fff;border:0;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer">🖨️ Imprimir / PDF</button></div>'
       +'</div>';
