@@ -1538,7 +1538,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781739331000';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781804013000';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
@@ -1656,6 +1656,7 @@ function painelRender(){
         +'<div style="font-size:12px;opacity:.85;margin-bottom:6px">📅 '+dataBR(o.data)+' &nbsp;·&nbsp; '+(o.tipo||'Doc')+': '+(o.doc||'—')+' &nbsp;·&nbsp; ✉️ '+(o.email||'—')+'</div>'
         +(o.end?('<div style="font-size:12px;opacity:.8;margin-bottom:6px">📍 '+o.end+(o.cep?(' · CEP '+o.cep):'')+'</div>'):'')
         +'<div style="font-size:12px;background:#0f1f37;border-radius:8px;padding:8px 10px;line-height:1.5">🛒 '+(o.itens||'(itens não registrados)').replace(/\|/g,'<br>')+'</div>'
+        +((o.grupo==='pago'||o.grupo==='pendente')?sullabEtapasHtml(o,idx):'')
         +'<div style="margin-top:9px;text-align:right"><button onclick="painelPrintPedido('+idx+')" style="background:#1f6fb2;color:#fff;border:0;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer">🖨️ Imprimir / PDF</button></div>'
       +'</div>';
     }
@@ -1760,8 +1761,63 @@ function painelPrintPedido(idx){
     w.document.open(); w.document.write(html); w.document.close();
   }catch(e){ alert('Erro ao gerar o PDF: '+e.message); }
 }
+
+/* ===== CHECKLIST DE ETAPAS DO PEDIDO (controle interno do dono) =====
+   Estados salvos no navegador (localStorage) por chave do pedido.
+   Etapas: separado -> faturado -> embalado -> postado -> entregue */
+var SULLAB_ETAPAS=[
+  {k:'separado', t:'Separado',  e:'📦'},
+  {k:'faturado', t:'Faturado (NF-e)', e:'🧾'},
+  {k:'embalado', t:'Embalado',  e:'🎁'},
+  {k:'postado',  t:'Postado',   e:'🚚'},
+  {k:'entregue', t:'Entregue',  e:'✅'}
+];
+function _etapaKey(o){
+  /* chave estável: nº do pedido se houver, senão data+nome */
+  var base = (o&&o.pedido)? o.pedido : ((o&&o.data||'')+'|'+(o&&o.nome||''));
+  return 'sullab_etapas_'+String(base).replace(/[^A-Za-z0-9|:_-]/g,'').slice(0,60);
+}
+function _etapaGet(o){
+  try{ return JSON.parse(localStorage.getItem(_etapaKey(o))||'{}'); }catch(e){ return {}; }
+}
+function _etapaSet(o,st){
+  try{ localStorage.setItem(_etapaKey(o), JSON.stringify(st)); }catch(e){}
+}
+function sullabToggleEtapa(idx,k){
+  var o=(window.__PAINEL_NORMS||[])[idx]; if(!o) return;
+  var st=_etapaGet(o);
+  if(st[k]){ delete st[k]; } else { st[k]=new Date().toISOString(); }
+  _etapaSet(o,st);
+  /* re-renderiza só o bloco desse card */
+  var box=document.getElementById('etapas_'+idx);
+  if(box){ box.innerHTML=_etapasInner(o,idx); }
+}
+function _etapasInner(o,idx){
+  var st=_etapaGet(o);
+  var feitas=SULLAB_ETAPAS.filter(function(x){return st[x.k];}).length;
+  var pct=Math.round(feitas/SULLAB_ETAPAS.length*100);
+  var barCor = pct===100?'#1f8a4c':(pct>0?'#1f6fb2':'#3a4d70');
+  var chips=SULLAB_ETAPAS.map(function(x){
+    var on=!!st[x.k];
+    var quando = on? (function(){ try{return new Date(st[x.k]).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});}catch(e){return '';} })() : '';
+    return '<button onclick="sullabToggleEtapa('+idx+',\''+x.k+'\')" '
+      +'style="cursor:pointer;border:1px solid '+(on?'#1f8a4c':'#2b4470')+';background:'+(on?'#0f5132':'#0f1f37')+';color:'+(on?'#7fd6a0':'#9fb3d6')+';border-radius:20px;padding:5px 11px;font-size:11.5px;font-weight:700;display:inline-flex;align-items:center;gap:5px">'
+      +'<span style="font-size:13px">'+(on?'✔':x.e)+'</span>'+x.t+(quando?'<span style="opacity:.65;font-weight:500"> · '+quando+'</span>':'')+'</button>';
+  }).join(' ');
+  return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">'
+      +'<div style="flex:1;height:7px;background:#0f1f37;border-radius:6px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+barCor+';transition:width .2s"></div></div>'
+      +'<span style="font-size:11px;font-weight:800;color:'+(pct===100?'#7fd6a0':'#9fb3d6')+'">'+pct+'%</span>'
+    +'</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:6px">'+chips+'</div>';
+}
+function sullabEtapasHtml(o,idx){
+  return '<div style="margin-top:10px;background:#12233f;border:1px solid #243d66;border-radius:9px;padding:9px 11px">'
+    +'<div style="font-size:11px;font-weight:800;letter-spacing:.4px;color:#cbd8f0;margin-bottom:7px">🗂️ ETAPAS DO PEDIDO</div>'
+    +'<div id="etapas_'+idx+'">'+_etapasInner(o,idx)+'</div>'
+  +'</div>';
+}
 </script>
-<script>try{window.abrirPainel=abrirPainel;window.painelEntrar=painelEntrar;window.painelCarregar=painelCarregar;window.painelRender=painelRender;window.painelSair=painelSair;window.painelPrintPedido=painelPrintPedido;}catch(e){}</script>
+<script>try{window.abrirPainel=abrirPainel;window.painelEntrar=painelEntrar;window.painelCarregar=painelCarregar;window.painelRender=painelRender;window.painelSair=painelSair;window.painelPrintPedido=painelPrintPedido;window.sullabToggleEtapa=sullabToggleEtapa;window.sullabEtapasHtml=sullabEtapasHtml;}catch(e){}</script>
 <!-- ===== WhatsApp flutuante + captura de lead (checkup conversão) ===== -->
 <style>
 #waFloat{position:fixed;right:16px;bottom:84px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:10px;font-family:inherit}
