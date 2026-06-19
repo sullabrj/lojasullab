@@ -501,7 +501,7 @@ body.cart-lock{position:fixed!important;left:0;right:0;width:100%}
 #mlnav .nbadge{position:absolute;top:6px;margin-left:16px;background:#f23030;color:#fff;font-size:9px;font-weight:700;border-radius:9px;padding:0 5px;min-width:16px;text-align:center}
 </style>
 </head><body><div class="wrap">
-<header><div style="display:flex;align-items:center"><div class="logo"><img class="logoimg" src="https://acdn-us.mitiendanube.com/stores/003/706/975/themes/common/logo-1979127265-1694651326-5cb0e3bc482c69a14bef7d43a46941261694651326-480-0.webp" alt="SULLAB - Produtos hospitalares e laboratoriais"></div><button id="painelBtn" onclick="try{abrirPainel()}catch(e){}" title="Área do administrador" aria-label="Área do administrador" style="margin-left:8px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px;line-height:1;opacity:.4;transition:opacity .15s;display:inline-flex;align-items:center;justify-content:center;padding:0" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.4'">🔒</button><div class="hcenter"><button onclick="toggleCnpj()" id="pmbtn" class="hcbtnL">Entrar / Cadastrar</button><button onclick="fbChangePass()" id="pmpass" class="hcbtnP" style="display:none">🔑 Alterar senha</button><button onclick="openAdmin()" id="admPill" style="display:none">🧾 Montar pedido</button></div><button id="hcbtn" onclick="openCart()" style="margin-left:auto;background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:9px;padding:8px 12px;font-size:17px;cursor:pointer">🛒<span id="hcb" style="background:#ff5a5a;border-radius:9px;font-size:11px;padding:0 6px;margin-left:3px;vertical-align:2px">0</span></button></div>
+<header><div style="display:flex;align-items:center"><div class="logo"><img class="logoimg" src="https://acdn-us.mitiendanube.com/stores/003/706/975/themes/common/logo-1979127265-1694651326-5cb0e3bc482c69a14bef7d43a46941261694651326-480-0.webp" alt="SULLAB - Produtos hospitalares e laboratoriais"></div><button id="painelBtn" onclick="try{abrirPainel()}catch(e){}" title="Área do administrador" aria-label="Área do administrador" style="margin-left:8px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px;line-height:1;opacity:.4;transition:opacity .15s;display:inline-flex;align-items:center;justify-content:center;padding:0" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.4'">🔒</button><div class="hcenter"><button onclick="toggleCnpj()" id="pmbtn" class="hcbtnL">Entrar / Cadastrar</button><button onclick="fbChangePass()" id="pmpass" class="hcbtnP" style="display:none">🔑 Alterar senha</button><button onclick="fbChangeEmail()" id="pmemail" class="hcbtnP" style="display:none">✉️ Alterar e-mail</button><button onclick="openAdmin()" id="admPill" style="display:none">🧾 Montar pedido</button></div><button id="hcbtn" onclick="openCart()" style="margin-left:auto;background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:9px;padding:8px 12px;font-size:17px;cursor:pointer">🛒<span id="hcb" style="background:#ff5a5a;border-radius:9px;font-size:11px;padding:0 6px;margin-left:3px;vertical-align:2px">0</span></button></div>
 <div class="srch"><input id="q" placeholder="Buscar produto, marca ou código…" oninput="onSearch()"><button onclick="document.getElementById('q').focus()">🔍</button></div></header>
 <main id="mainContent">
 <section class="seohero" aria-label="Apresentação da loja"><h1 class="seoh1">Tubos a Vácuo, Testes Rápidos e Reagentes para Laboratório</h1><p class="seosub">Distribuidora de produtos para laboratório e diagnóstico clínico — tubos a vácuo (EDTA, soro, fluoreto), testes rápidos (dengue, COVID, sífilis, HIV), reagentes, meios de cultura e descartáveis. <b>Preço para CNPJ</b>, emissão de NF-e e entrega para todo o Brasil.</p></section>
@@ -1220,14 +1220,16 @@ if(isAdmin()){setTimeout(openAdmin,300);}
   window.toggleCnpj=function(){ if(!window.__user){ openReg(); return; } cnpj=!cnpj; updatePmodeBar(); try{render();}catch(e){} };
 
   function updatePmodeBar(){
-    var bar=$('pmode'),btn=$('pmbtn'),tx=$('pmtxt'),pp=$('pmpass');
+    var bar=$('pmode'),btn=$('pmbtn'),tx=$('pmtxt'),pp=$('pmpass'),pe=$('pmemail');
     if(window.__user){
       if(bar)bar.classList.add('on');
       var nm=(window.__profile&&window.__profile.razao)?window.__profile.razao:(window.__user.email||'');
       if(tx)tx.innerHTML='✓ <b>Conectado'+(nm?(' — '+nm):'')+'</b> · Preço CNPJ com desconto aplicado em todos os produtos.';
       if(btn)btn.textContent='Sair';
       if(pp)pp.style.display='inline-block';
+      if(pe)pe.style.display='inline-block';
     } else {
+      if(pe)pe.style.display='none';
       if(bar)bar.classList.remove('on');
       if(tx)tx.innerHTML='💰 <b>CNPJ cadastrado tem descontos expressivos em TODOS os produtos.</b> Cadastre-se grátis (CNPJ ou CPF) e veja seu preço.';
       if(btn)btn.textContent='Entrar / Cadastrar';
@@ -1245,7 +1247,34 @@ if(isAdmin()){setTimeout(openAdmin,300);}
     }).catch(function(e){ try{toastErr(fbErr(e));}catch(_e){tst(fbErr(e));} });
   };
 
-  
+  /* ===== Alterar e-mail (19/06/2026) — reautentica c/ senha e envia link de confirmação p/ o e-mail NOVO ===== */
+  window.fbChangeEmail=function(){
+    if(!window.__user||!auth||!auth.currentUser){ try{toastErr('Você precisa estar conectado para alterar o e-mail.');}catch(_e){} return; }
+    var atual=window.__user.email||'';
+    var novo=(prompt('Digite o NOVO e-mail que deseja usar:\n\n(seu e-mail atual: '+atual+')','')||'').trim();
+    if(!novo) return;
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(novo)){ try{toastErr('E-mail inválido. Confira e tente de novo.');}catch(_e){} return; }
+    if(novo.toLowerCase()===atual.toLowerCase()){ try{toastErr('Esse já é o seu e-mail atual.');}catch(_e){} return; }
+    var senha=(prompt('Por segurança, confirme sua SENHA atual para alterar o e-mail:','')||'');
+    if(!senha) return;
+    var cred=firebase.auth.EmailAuthProvider.credential(atual, senha);
+    auth.currentUser.reauthenticateWithCredential(cred).then(function(){
+      /* envia link de verificação p/ o e-mail NOVO; a troca só efetiva quando o cliente clica no link */
+      return auth.currentUser.verifyBeforeUpdateEmail(novo);
+    }).then(function(){
+      /* avisa o backend p/ atualizar e-mail no Firestore/planilha (após confirmação fica completo) */
+      try{ if(typeof sullabEvent==='function') sullabEvent('alterar_email',{de:atual,para:novo,doc:(window.__profile&&window.__profile.cnpj)||''}); }catch(_e){}
+      try{toastErr('Enviamos um link de confirmação para o NOVO e-mail ('+novo+'). ✅ Abra esse e-mail e clique no link para concluir a troca. ⚠️ Confira também o SPAM.', 9000);}catch(_e){alert('Link enviado para '+novo+'. Confirme pelo e-mail novo.');}
+    }).catch(function(e){
+      var msg=fbErr(e);
+      if(e&&e.code==='auth/wrong-password') msg='Senha incorreta. Tente novamente.';
+      else if(e&&e.code==='auth/email-already-in-use') msg='Esse e-mail já está em uso por outra conta.';
+      else if(e&&e.code==='auth/requires-recent-login') msg='Por segurança, saia e entre de novo, depois tente alterar o e-mail.';
+      try{toastErr(msg);}catch(_e){tst(msg);}
+    });
+  };
+
+
 /* ===== Validadores de documento (CPF/CNPJ) — add 09/06/2026 ===== */
 function _digs(s){return String(s||'').replace(/\D/g,'');}try{window._digs=_digs;}catch(e){}
 function maskDoc(el){var v=_digs(el.value).slice(0,14);var o=v;
@@ -1558,7 +1587,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781877782000';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781879063000';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
