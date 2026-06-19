@@ -350,7 +350,10 @@ body.modal-open #cartFab{display:none}
   /* ===== WhatsApp flutuante não cobre as infos da janela de produto ===== */
   body.modal-open #waFloat,body.modal-open #cartBack{display:none!important}
   /* ===== Cadastro/Login compactos no mobile (menos rolagem) ===== */
-  #regov .drawer{max-height:calc(100dvh - 16px)}
+  /* FIX cadastro: centraliza o modal e o põe ACIMA do header fixo (antes encostava no topo e o header cortava o cabeçalho) */
+  #regov.on{display:flex!important;align-items:center!important;justify-content:center!important;padding:14px!important;z-index:9000!important;overflow:auto}
+  #regov .drawer{max-height:calc(100dvh - 28px);width:100%;max-width:480px}
+  #accSignup,#accLogin{overflow:auto;-webkit-overflow-scrolling:touch}
   #accSignup,#accLogin{padding:8px 14px 14px!important;gap:6px!important}
   #accSignup input,#accLogin input{padding:8px 10px!important;font-size:13px!important;border-radius:7px!important}
   #accSignup>div:first-child,#accLogin>div:first-child{font-size:11.5px!important;line-height:1.35}
@@ -1550,7 +1553,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1781805883000';                 /* versão embutida nesta cópia do site */
+  var BUILD='1781875393000';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
