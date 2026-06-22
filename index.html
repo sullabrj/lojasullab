@@ -543,7 +543,23 @@ function _jaComprouSite(){
   try{ if(window.__profile && (window.__profile.jaComprou===true || window.__profile.pedidos>0)) return true; }catch(e){}
   return false;
 }
-function _marcarPrimeiraCompra(){ try{ localStorage.setItem('sullab_1acompra_usada','1'); }catch(e){} }var ESPEC='Seg a Sex, 8h às 18h';var PLACEHOLDER="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23eef2f6'/%3E%3Ctext x='50' y='54' font-size='12' fill='%2316456e' text-anchor='middle' font-family='Arial' font-weight='bold'%3ESULLAB%3C/text%3E%3C/svg%3E";var SEG={lab:['454036','454087','455092','456071','455071','454071','454327','456001','TR 009 IST','TR 007 IST','TR 008-1 IST','KIT-IST','KIT-COLETA'],clinica:['TR 017-1 RP','TR 016-1 RP','TR 010 DT','454036','455092','450071','450072','KIT-COLETA','TR 008-1 IST'],vet:['454036','454087','454921','450071','450072','450539','455092','454092'],hospital:['454036','455092','456071','455071','TR 017-1 RP','TR 007 IST','TR 009 IST','450071','KIT-COLETA','KIT-SORO']};/* PESO POR EMBALAGEM VENDIDA (kg) — corrigido p/ bater com frete real (antes estava em peso de UNIDADE) */
+function _marcarPrimeiraCompra(){ try{ localStorage.setItem('sullab_1acompra_usada','1'); }catch(e){} }
+/* CAMADA BACKEND (a prova de fraude): consulta a planilha por CNPJ/CPF antes de aplicar o cupom de 1a compra */
+function _docCliente(){ try{ var ci=(typeof clienteInfo==='function')?clienteInfo():null; var d=(ci&&ci.doc)?String(ci.doc):''; if(!d){ var fd=document.getElementById('adoc'); if(fd&&fd.value)d=fd.value; } return d.replace(/[^0-9]/g,''); }catch(e){ return ''; } }
+function _check1aBackend(doc, cb){
+  try{
+    if(!doc || doc.length<11 || typeof SHEET_ENDPOINT==='undefined'){ cb(null); return; }
+    var name='__c1a_'+Math.random().toString(36).slice(2);
+    var done=false; var s=document.createElement('script');
+    var to=setTimeout(function(){ if(done)return; done=true; cleanup(); cb(null); }, 9000);
+    function cleanup(){ try{ delete window[name]; }catch(e){} if(s&&s.parentNode)s.parentNode.removeChild(s); clearTimeout(to); }
+    window[name]=function(r){ if(done)return; done=true; cleanup(); cb(r); };
+    s.onerror=function(){ if(done)return; done=true; cleanup(); cb(null); };
+    s.src=SHEET_ENDPOINT+'?check1a='+encodeURIComponent(doc)+'&callback='+name+'&_='+Date.now();
+    document.body.appendChild(s);
+  }catch(e){ cb(null); }
+}
+var ESPEC='Seg a Sex, 8h às 18h';var PLACEHOLDER="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23eef2f6'/%3E%3Ctext x='50' y='54' font-size='12' fill='%2316456e' text-anchor='middle' font-family='Arial' font-weight='bold'%3ESULLAB%3C/text%3E%3C/svg%3E";var SEG={lab:['454036','454087','455092','456071','455071','454071','454327','456001','TR 009 IST','TR 007 IST','TR 008-1 IST','KIT-IST','KIT-COLETA'],clinica:['TR 017-1 RP','TR 016-1 RP','TR 010 DT','454036','455092','450071','450072','KIT-COLETA','TR 008-1 IST'],vet:['454036','454087','454921','450071','450072','450539','455092','454092'],hospital:['454036','455092','456071','455071','TR 017-1 RP','TR 007 IST','TR 009 IST','450071','KIT-COLETA','KIT-SORO']};/* PESO POR EMBALAGEM VENDIDA (kg) — corrigido p/ bater com frete real (antes estava em peso de UNIDADE) */
 var WT={vedta:0.55,vsoro:0.55,vcoag:0.55,vglic:0.55,vhepar:0.6,vagulha:0.35,tr:0.5,kit:1.6,bioq:0.7,meio:0.7,lamina:0.45,coletor:0.4,cassete:0.3,sorol:0.25,hemato:0.4,imunoh:0.3,reagmic:0.25,reagap:0.4,ap:5};
 var PESO={'450539':0.4,'KIT-IST':1.4,'KIT-COLETA':1.6,'KIT-SORO':1.6,'CLT24H2LT':0.25};
 /* fator de cubagem/segurança: caixas volumosas e baixa densidade pesam mais na transportadora (memória calculo-frete ~1,8x) */
@@ -640,8 +656,11 @@ function renderSegRow(){var el=document.getElementById('segrow');if(!el)return;v
 function savings(){var s=0;for(var k in cart){var p=P[k];if(!p||!p.pub)continue;var eff=unitPrice(p,cart[k]);if(eff<p.pub)s+=(p.pub-eff)*cart[k];}return Math.round(s*100)/100;}
 function applyCoupon(){var el=document.getElementById('cupcode');var code=(el?el.value:'').trim().toUpperCase();
   if(CUPONS[code]!==undefined){
+    /* CAMADA 1 (navegador): bloqueio instantâneo se já consta compra neste aparelho/perfil */
     if(CUPONS_1ACOMPRA[code] && _jaComprouSite()){ coupon=null;couponPct=0; try{toastErr('O cupom '+code+' é válido apenas na 1ª compra no site. Você já tem pedido conosco. 😉',6000);}catch(e){toast('Cupom '+code+' é só para a primeira compra.');} renderCart(); return; }
     coupon=code;couponPct=CUPONS[code];toast('Cupom '+code+' aplicado! ('+Math.round(CUPONS[code]*100)+'% OFF)');
+    /* CAMADA 2 (backend, a prova de fraude): confere o CNPJ/CPF na planilha e revoga se já comprou */
+    if(CUPONS_1ACOMPRA[code]){ var _d=_docCliente(); if(_d && _d.length>=11){ _check1aBackend(_d, function(r){ if(r && r.ok && r.ja===true && coupon===code){ coupon=null;couponPct=0; try{ _marcarPrimeiraCompra(); }catch(e){} try{toastErr('O cupom '+code+' é só para a 1ª compra. Este CNPJ já tem pedido conosco. 😉',6000);}catch(e){} try{renderCart();}catch(e){} } }); } }
   }else{coupon=null;couponPct=0;toast('Cupom inválido.');}
   renderCart();}
 function openCmp(){renderCmp();document.getElementById('cmpov').classList.add('on');}
@@ -1603,7 +1622,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1782164878000';                 /* versão embutida nesta cópia do site */
+  var BUILD='1782166772934';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
