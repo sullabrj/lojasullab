@@ -4,7 +4,7 @@
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
 function sullabLoadGA(){
   try{ if(/[?&]eu=1/.test(location.search)) localStorage.setItem('sullab_owner','1'); }catch(e){}
-  try{ var SELLERS={'marcelo':'Marcelo'}; var mv=location.search.match(/[?&]vendedor=([a-zA-Z0-9_-]+)/); if(mv){ var sk=mv[1].toLowerCase(); if(SELLERS[sk]) localStorage.setItem('sullab_vendedor',SELLERS[sk]); else if(sk==='sair'||sk==='off') localStorage.removeItem('sullab_vendedor'); } }catch(e){}
+  try{ var SELLERS={'marcelo':'Marcelo','jorge':'Jorge'}; var mv=location.search.match(/[?&]vendedor=([a-zA-Z0-9_-]+)/); if(mv){ var sk=mv[1].toLowerCase(); if(SELLERS[sk]) localStorage.setItem('sullab_vendedor',SELLERS[sk]); else if(sk==='sair'||sk==='off') localStorage.removeItem('sullab_vendedor'); } }catch(e){}
   var owner=false; try{ owner=localStorage.getItem('sullab_owner')==='1'; }catch(e){}
   if(owner) return;
   if(window.__ga) return; window.__ga=1;
@@ -1640,7 +1640,7 @@ function mStepNext(){
 <script>
 /* ===== Auto-atualização: garante que o cliente sempre veja a versão mais nova ===== */
 (function(){
-  var BUILD='1782171829334';                 /* versão embutida nesta cópia do site */
+  var BUILD='1782240697690';                 /* versão embutida nesta cópia do site */
   window.__SULLAB_BUILD=BUILD;
   try{
     /* já recarregamos nesta visita? evita loop */
