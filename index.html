@@ -182,6 +182,9 @@
   .add:hover{background:var(--navy-d)}
   .add.cot{background:var(--green)}.add.cot:hover{background:var(--green-d)}
   .empty{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--muted)}
+.moreWrap{display:flex;justify-content:center;margin:22px 0 6px;min-height:1px}
+.moreBtn{background:var(--navy);color:#fff;border:none;border-radius:10px;padding:12px 26px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:var(--shadow)}
+.moreBtn:hover{background:var(--navy-d)}
 
   /* WHY US */
   .why{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;margin:34px 0;box-shadow:var(--shadow);display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
@@ -372,6 +375,7 @@
         </div>
       </div>
       <div class="grid" id="grid"></div>
+      <div id="moreWrap" class="moreWrap"></div>
     </div>
   </div>
 
@@ -557,6 +561,7 @@ var CATALOG=SEED.slice();
 var CART=(function(){try{var v=JSON.parse(localStorage.getItem('sullab_cart')||'[]');return Array.isArray(v)?v:[];}catch(e){return [];}})();
 var CNPJ=true; // mostrar preço CNPJ por padrão
 var FILTRO={dept:'', marca:'', busca:''};
+var _CUR=[],_SHOWN=0,_PAGE=60,_card=null,_io=null;
 var WHATS='5524988383100';
 
 function brl(v){return 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -635,8 +640,8 @@ function render(){
   else if(FILTRO.marca)t.textContent=FILTRO.marca;
   else t.textContent='Catálogo';
   var g=document.getElementById('grid');
-  if(!arr.length){g.innerHTML='<div class="empty">Nenhum produto encontrado.<br>Tente outro termo ou <a class="lk" onclick="abrirWhats(\'Olá! Procuro um produto que não achei no site.\')" style="color:var(--navy-l);cursor:pointer">peça pelo WhatsApp</a>.</div>';return;}
-  g.innerHTML=arr.map(function(p,idx){
+  if(!arr.length){g.innerHTML='<div class="empty">Nenhum produto encontrado.<br>Tente outro termo ou <a class="lk" onclick="abrirWhats(\'Olá! Procuro um produto que não achei no site.\')" style="color:var(--navy-l);cursor:pointer">peça pelo WhatsApp</a>.</div>';_CUR=[];_SHOWN=0;var _mw=document.getElementById('moreWrap');if(_mw)_mw.innerHTML='';return;}
+  _CUR=arr;_SHOWN=Math.min(arr.length,_PAGE);_card=function(p){
     var i=CATALOG.indexOf(p);
     var selo=p.selo==='hot'?'<span class="selo hot">🔥 Mais procurado</span>':(p.selo==='top'?'<span class="selo">⭐ Mais vendido</span>':'');
     var precoBloco='';
@@ -647,8 +652,11 @@ function render(){
       '<div class="pt" onclick="abrirProd('+i+')">'+p.n+'</div>'+
       precoBloco+
       '<div class="pf">'+btns+'</div></div></div>';
-  }).join('');
+  };g.innerHTML=_CUR.slice(0,_SHOWN).map(_card).join('');_more();_setupIO();
 }
+function _more(){var w=document.getElementById('moreWrap');if(!w)return;w.innerHTML=(_SHOWN<_CUR.length)?'<button class="moreBtn" onclick="verMais()">Ver mais produtos ('+(_CUR.length-_SHOWN)+' restantes)</button>':'';}
+function verMais(){if(!_card||_SHOWN>=_CUR.length)return;var g=document.getElementById('grid');var prev=_SHOWN;_SHOWN=Math.min(_CUR.length,_SHOWN+_PAGE);g.insertAdjacentHTML('beforeend',_CUR.slice(prev,_SHOWN).map(_card).join(''));_more();}
+function _setupIO(){var w=document.getElementById('moreWrap');if(!w)return;if(_io){_io.disconnect();}else{_io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&_SHOWN<_CUR.length)verMais();});},{rootMargin:'700px'});}_io.observe(w);}
 
 /* ====== AÇÕES DE FILTRO/BUSCA ====== */
 function setDept(k){FILTRO.dept=k;FILTRO.marca='';FILTRO.busca='';document.getElementById('searchInput').value='';montarFiltros();render();irProdutos();marcarNav();}
