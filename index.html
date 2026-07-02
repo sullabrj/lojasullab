@@ -285,9 +285,55 @@
   .cksafe{font-size:11px;color:var(--muted);text-align:center;margin-top:9px}
   #cnpjSwitch{display:none!important}
   .prod .b2bsob{font-size:10.5px;color:var(--navy);font-weight:700;background:var(--navy-soft);border-radius:6px;padding:4px 8px;width:max-content;margin-top:2px}
+
+  /* ===== MOBILE MAIS LEGÍVEL E FÁCIL DE TOCAR ===== */
+  @media(max-width:600px){
+    body{font-size:15px}
+    .grid{gap:14px}
+    .prod .ph{height:158px}
+    .prod .pb{padding:13px 13px 14px;gap:6px}
+    .prod .bc{font-size:12px}
+    .prod .pt{font-size:14.5px;min-height:40px;line-height:1.35}
+    .prod .pf{gap:8px;margin-top:9px}
+    .add{font-size:14.5px;padding:13px 10px;border-radius:11px}
+    .stepper button{min-width:42px;height:42px;font-size:20px}
+    .stepper span{min-width:34px;font-size:16px}
+    .dept{padding:11px 15px;font-size:15px}
+    .search input{font-size:16px;padding:13px 12px}
+    .search select{font-size:14px}
+    .hbtn{padding:11px 14px;font-size:14px}
+    .moreBtn{width:92%;padding:16px;font-size:15.5px}
+    .cats{grid-template-columns:1fr 1fr;gap:12px}
+    .cat,.brand{padding:16px 12px}
+    .shopTitle,#shopTitle{font-size:19px}
+  }
+
+  /* ===== AVISO: MELHOR NO COMPUTADOR (pop-up 1x no celular) ===== */
+  .deskNote{position:fixed;inset:0;z-index:130;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(16,32,60,.62)}
+  .deskNote.on{display:flex}
+  .deskCard{background:#fff;border-radius:18px;max-width:360px;width:100%;padding:28px 22px 22px;text-align:center;box-shadow:0 22px 55px rgba(0,0,0,.32);animation:deskUp .22s ease}
+  @keyframes deskUp{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+  .deskIco{font-size:46px;line-height:1;margin-bottom:8px}
+  .deskCard h3{margin:0 0 10px;font-size:21px;color:var(--navy)}
+  .deskCard p{margin:0 0 9px;font-size:14.5px;line-height:1.5;color:var(--ink)}
+  .deskCard .deskSmall{font-size:12.5px;color:var(--muted);margin-bottom:2px}
+  .deskOk{display:block;width:100%;background:var(--navy);color:#fff;border:0;border-radius:12px;padding:15px;font-size:15.5px;font-weight:800;cursor:pointer;margin-top:14px}
+  .deskWa{display:block;width:100%;background:var(--green-soft);color:var(--green-d);border:0;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:9px}
 </style>
 </head>
 <body>
+
+<!-- AVISO: MELHOR NO COMPUTADOR (aparece 1x no celular) -->
+<div id="deskNote" class="deskNote" role="dialog" aria-modal="true">
+  <div class="deskCard">
+    <div class="deskIco">💻</div>
+    <h3>Melhor no computador</h3>
+    <p>Nosso catálogo tem <b>mais de 2.000 produtos</b> com busca, filtros e orçamento. Para uma experiência completa e confortável, recomendamos acessar pelo <b>computador</b>.</p>
+    <p class="deskSmall">Você pode continuar navegando por aqui ou pedir direto no WhatsApp.</p>
+    <button class="deskOk" onclick="fecharDeskNote()">Continuar no celular</button>
+    <button class="deskWa" onclick="abrirWhats('Olá! Estou pelo celular e gostaria de atendimento.');fecharDeskNote()">Falar no WhatsApp</button>
+  </div>
+</div>
 
 <!-- TOP UTILITY -->
 <div class="util"><div class="wrap">
@@ -907,7 +953,14 @@ function carregarLive(){
 }
 
 /* ====== BOOT ====== */
-function boot(){montarDeptNav();montarCatTiles();montarBrands();montarFiltros();render();atualizarCart();}
+function fecharDeskNote(){var n=document.getElementById('deskNote');if(n)n.classList.remove('on');try{localStorage.setItem('sullab_desknote','1');}catch(e){}}
+function maybeDeskNote(){
+  try{if(localStorage.getItem('sullab_desknote'))return;}catch(e){}
+  var mob=window.matchMedia('(max-width:760px)').matches||(('ontouchstart'in window)&&window.innerWidth<900);
+  if(!mob)return;
+  var n=document.getElementById('deskNote');if(n)setTimeout(function(){n.classList.add('on');},700);
+}
+function boot(){montarDeptNav();montarCatTiles();montarBrands();montarFiltros();render();atualizarCart();maybeDeskNote();}
 boot();
 carregarLive();
 </script>
