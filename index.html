@@ -505,8 +505,26 @@
   </div>
   <div class="cktot"><span>Total <span id="ckQt" style="color:var(--muted);font-size:12px"></span></span><b id="ckTot">R$ 0,00</b></div>
   <button class="ckpay" id="ckPayBtn" onclick="pagarMP()">Ir para o pagamento seguro &rarr;</button>
-  <button class="ckwa" onclick="fecharCheckout();enviarOrcamento()">ou fechar pelo WhatsApp</button>
+  <button class="ckwa" onclick="salvarFichaCheckout();fecharCheckout();enviarOrcamento()">ou fechar pelo WhatsApp</button>
   <div class="cksafe">🔒 Você será redirecionado ao ambiente seguro do Mercado Pago.</div>
+ </div>
+</div>
+
+<!-- CONTATO P/ ORÇAMENTO WHATSAPP -->
+<div class="cko" id="waq" onclick="if(event.target===this)fecharContatoWA()">
+ <div class="ckb">
+  <button class="ckx" onclick="fecharContatoWA()">&times;</button>
+  <h3>Quase lá! Como te retornamos?</h3>
+  <div class="sub">Precisamos do seu contato para te enviar o orçamento com preço CNPJ, frete e NF-e.</div>
+  <div class="ckerr" id="waqErr"></div>
+  <div class="fld"><label>Nome / Empresa *</label><input id="waNome" placeholder="Seu nome ou o da empresa"></div>
+  <div class="fld"><label>WhatsApp *</label><input id="waTel" inputmode="tel" placeholder="(24) 90000-0000"></div>
+  <div class="frow c2">
+   <div class="fld"><label>CNPJ (opcional)</label><input id="waDoc" inputmode="numeric" placeholder="00.000.000/0000-00"></div>
+   <div class="fld"><label>E-mail (opcional)</label><input id="waEmail" type="email" placeholder="voce@empresa.com.br"></div>
+  </div>
+  <button class="ckpay" onclick="confirmarContatoWA()">Enviar meu orçamento pelo WhatsApp &rarr;</button>
+  <div class="cksafe">🔒 Usamos seus dados só para retornar o seu orçamento.</div>
  </div>
 </div>
 
@@ -751,11 +769,42 @@ function fecharCarrinho(){document.getElementById('ov').classList.remove('on');d
 function abrirWhats(msg){window.open('https://wa.me/'+WHATS+'?text='+encodeURIComponent(msg),'_blank');}
 function enviarOrcamento(){
   if(!CART.length){abrirWhats('Olá! Quero fazer um pedido.');return;}
-  var _pid='SLB-'+Date.now();window._pedAtual=_pid;dispararPedido('pedido_wa','whatsapp',fichaSalva(),_pid);
-  var linhas=CART.map(x=>'• '+x.qty+'x '+x.n+' (cód '+x.c+')');
-  var msg='Olá! Quero um orçamento na SULLAB destes itens:\n\n'+linhas.join('\n')+'\n\nPodem me passar preço CNPJ, disponibilidade, frete e NF-e?';
+  var f=fichaSalva();
+  // só envia direto se já temos nome + WhatsApp; senão pede o contato antes
+  if((f.nome||'').trim() && soDig(f.tel).length>=10){ _enviarOrcamentoCom(f); }
+  else { abrirContatoWA(); }
+}
+function _enviarOrcamentoCom(f){
+  if(!CART.length)return;
+  var _pid='SLB-'+Date.now();window._pedAtual=_pid;
+  dispararPedido('pedido_wa','whatsapp',f,_pid);
+  var linhas=CART.map(function(x){return '• '+x.qty+'x '+x.n+' (cód '+x.c+')';});
+  var ident='— Meus dados —\nNome/Empresa: '+(f.nome||'')+(f.doc?('\nCNPJ/CPF: '+f.doc):'')+'\nWhatsApp: '+(f.tel||'')+(f.email?('\nE-mail: '+f.email):'');
+  var msg='Olá! Quero um orçamento na SULLAB (pedido '+_pid+') destes itens:\n\n'+linhas.join('\n')+'\n\n'+ident+'\n\nPodem me passar preço CNPJ, disponibilidade, frete e NF-e?';
   abrirWhats(msg);
 }
+function abrirContatoWA(){
+  var f=fichaSalva();
+  var s=function(id,v){var e=document.getElementById(id);if(e)e.value=v||'';};
+  s('waNome',f.nome);s('waTel',f.tel);s('waDoc',f.doc);s('waEmail',f.email);
+  var err=document.getElementById('waqErr');if(err)err.style.display='none';
+  window.__mdT=document.getElementById('waq');
+  document.getElementById('waq').classList.add('on');
+  setTimeout(function(){var n=document.getElementById('waNome');if(n)n.focus();},80);
+}
+function fecharContatoWA(){document.getElementById('waq').classList.remove('on');}
+function waqErro(m){var e=document.getElementById('waqErr');if(!e)return;e.textContent=m;e.style.display='block';e.scrollIntoView&&e.scrollIntoView({block:'nearest'});}
+function confirmarContatoWA(){
+  var nome=val('waNome'),tel=val('waTel'),doc=val('waDoc'),email=val('waEmail');
+  if(!nome)return waqErro('Por favor, informe seu nome ou o da empresa.');
+  if(soDig(tel).length<10)return waqErro('Informe um WhatsApp com DDD — ex.: (24) 90000-0000.');
+  if(email&&!/.+@.+\..+/.test(email))return waqErro('E-mail inválido — corrija ou deixe em branco.');
+  var f=fichaSalva();f.nome=nome;f.tel=tel;if(doc){f.doc=doc;f.doct=(soDig(doc).length>11?'cnpj':'cpf');}if(email)f.email=email;
+  try{localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}
+  fecharContatoWA();
+  _enviarOrcamentoCom(f);
+}
+function salvarFichaCheckout(){try{var f=coletarFicha(),cur=fichaSalva(),k;for(k in f){if(f[k])cur[k]=f[k];}localStorage.setItem('sullab_ficha',JSON.stringify(cur));}catch(e){}}
 
 /* ====== CHECKOUT / PAGAMENTO (Mercado Pago) ====== */
 var MP_WORKER='https://sullab-mp.comercial-0a2.workers.dev/';
