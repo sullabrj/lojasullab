@@ -3,85 +3,67 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,follow">
 <title>Redirecionando… · SULLAB</title>
-<link rel="icon" href="https://acdn-us.mitiendanube.com/stores/003/706/975/themes/common/logo-1979127265-1694651326-5cb0e3bc482c69a14bef7d43a46941261694651326-480-0.webp">
+<link rel="icon" href="https://lojasullabrj.com.br/og-sullab.png">
 <style>
 body{margin:0;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;background:#eef2f7;color:#1a2433;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}
 .box{background:#fff;border-radius:16px;box-shadow:0 8px 30px rgba(20,40,70,.10);padding:34px 28px;max-width:440px;margin:16px}
-img{height:42px;background:#fff;border-radius:8px;padding:4px;margin-bottom:8px}
-h1{font-size:19px;color:#1f3a5f;margin:6px 0 4px}
+img{height:46px;border-radius:8px;margin-bottom:8px}
+h1{font-size:19px;color:#1f3c73;margin:6px 0 4px}
 p{color:#5a6b80;font-size:14px;line-height:1.5;margin:0 0 16px}
-.spin{width:34px;height:34px;border:3px solid #e3ecf6;border-top-color:#1f3a5f;border-radius:50%;animation:s .8s linear infinite;margin:14px auto}
+.spin{width:34px;height:34px;border:3px solid #e3ecf6;border-top-color:#2f9e63;border-radius:50%;animation:s .8s linear infinite;margin:14px auto}
 @keyframes s{to{transform:rotate(360deg)}}
-a.btn{display:inline-block;background:#1f3a5f;color:#fff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px;font-size:15px}
+a.btn{display:inline-block;background:#2f9e63;color:#fff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px;font-size:15px}
 .small{font-size:12px;color:#9aa7ba;margin-top:14px}
 </style>
 </head>
 <body>
 <div class="box">
-  <img src="https://acdn-us.mitiendanube.com/stores/003/706/975/themes/common/logo-1979127265-1694651326-5cb0e3bc482c69a14bef7d43a46941261694651326-480-0.webp" alt="SULLAB">
-  <h1>Estamos te levando ao produto certo…</h1>
-  <p>Nosso site foi renovado. Aguarde um instante que já te levamos para o lugar certo.</p>
-  <div class="spin"></div>
-  <a class="btn" id="goLink" href="https://lojasullabrj.com.br/">Ir para a loja agora</a>
-  <div class="small">SULLAB · Produtos para laboratório · NF-e · preço CNPJ</div>
+<img src="https://lojasullabrj.com.br/og-sullab.png" alt="SULLAB">
+<h1>Estamos te levando ao produto certo…</h1>
+<p>Nosso site foi renovado. Aguarde um instante que já te levamos para o lugar certo.</p>
+<div class="spin"></div>
+<a class="btn" id="goLink" href="https://lojasullabrj.com.br/">Ir para a loja agora</a>
+<div class="small">SULLAB · Produtos para laboratório · NF-e · preço CNPJ</div>
 </div>
 
 <script>
 (function(){
-  var path = (location.pathname || '').toLowerCase();
-  var seg  = decodeURIComponent(path).replace(/^\/+|\/+$/g,''); // sem barras nas pontas
-  var dest = '/'; // padrão: home
+  var seg = decodeURIComponent((location.pathname||'').toLowerCase()).replace(/^\/+|\/+$/g,'');
 
-  // ---- 1) Mapa de palavras -> categoria do site novo (?cat=) ----
-  // ordem importa: termos mais específicos primeiro
-  var RULES = [
-    [/(agulha|escalp|scalp|coleta a vacuo)/, 'vagulha'],
-    [/(edta|k2|k3|tampa roxa|hematolog|hemograma)/, 'vedta'],
-    [/(soro com gel|gel separador|tampa amarela|sorologia com gel|454071|454235)/, 'vsoro'],
-    [/(coagulac|citrato|tampa azul|tp|ttpa)/, 'vcoag'],
-    [/(glicose|lactato|fluoreto|tampa cinza)/, 'vglic'],
-    [/(heparina|tampa verde)/, 'vhepar'],
-    [/(tipagem|imuno.?hematolog|anti.?a|anti.?b|anti.?d|anti.?rh|hemoclass)/, 'imunoh'],
-    [/(teste rapido|covid|dengue|hiv|sifilis|hbsag|influenza|vsr|rsv|cassete teste)/, 'tr'],
-    [/(agar|caldo|meio de cultura|mueller|maconkey|mac conkey|sabouraud|mycosel|cultivo|tubos de 3ml|newprov)/, 'meio'],
-    [/(corante|gram|ziehl|neelsen|fucsina|violeta|genciana|safranina|lugol|citolog|panotico|leishman|giemsa|naftol|hidroxido|kovacs|reagente.*micro)/, 'reagmic'],
-    [/(bioquim|colesterol|triglic|glicose oxidase|ureia|creatinina|acido urico|tgo|tgp|amilase|albumina|calcio|ferro|fosfat)/, 'bioq'],
-    [/(sorolog|aso|pcr latex|latex|waaler|fator reumatoide|antiestreptolisina)/, 'sorol'],
-    [/(calibrador|controle|liofiliz|reagente.*equipamento|cubeta|sample cup|hitachi)/, 'reagap'],
-    [/(alca|al[cç]a bacter|inocula|swab|zaragatoa)/, 'lamina'],
-    [/(lamina|laminula|vidraria|descartav|ponteira|pipeta|tubo de ensaio|frasco|fita de urina|tira)/, 'lamina'],
-    [/(coletor|frasco coleta|urina 50|pa de fezes|fezes)/, 'coletor'],
-    [/(kit)/, 'kit'],
-    [/(equipament|analisador|aparelho|ebram|ebio|ebcoag|maquina)/, 'ap']
-  ];
+  // marcas antigas que apareciam como prefixo de caminho (ex.: /descarpack/seringas/)
+  var MARCAS = ['descarpack','cral','cralplast','biocon','uniqmed','kasvi','newprov','labtest','bioclin','vacuette','greiner','firstlab','olen','prolab','global','medix','bd','injex','labor import','laborimport'];
 
-  // ---- 2) Decide destino ----
-  var produtoSlug = '';
-  var m = seg.match(/produtos?\/([^\/]+)/);
-  if (m) { produtoSlug = m[1].replace(/-/g,' '); }
+  // pega o "miolo" pra virar termo de busca
+  var termo = seg;
 
-  // texto para casar: usa o slug do produto se houver, senão o caminho inteiro
-  var hay = (produtoSlug || seg).replace(/-/g,' ');
-
-  var cat = '';
-  for (var i=0;i<RULES.length;i++){ if(RULES[i][0].test(hay)){ cat = RULES[i][1]; break; } }
-
-  if (produtoSlug) {
-    // produto específico: joga o termo na BUSCA do site (cai direto no item)
-    var termo = produtoSlug
-      .replace(/\b(c\/?\d+|ml|un|und|ref|newprov|ebram|biocon|\d+ml|\d+|x)\b/gi,' ')
-      .replace(/\s+/g,' ').trim();
-    dest = '/?q=' + encodeURIComponent(termo);
-  } else if (cat) {
-    dest = '/?cat=' + cat;
+  // 1) /produtos/<slug>/...  -> usa o slug do produto
+  var mp = seg.match(/produtos?\/([^\/]+)/);
+  if (mp) {
+    termo = mp[1];
   } else {
-    dest = '/';
+    // 2) /<marca>/<categoria>/  -> usa a categoria (parte mais útil pra busca)
+    var parts = seg.split('/').filter(Boolean);
+    if (parts.length >= 2 && MARCAS.indexOf(parts[0]) !== -1) {
+      termo = parts[1];
+    } else {
+      // 3) caminho simples: usa a última parte significativa
+      termo = parts[parts.length - 1] || seg;
+    }
   }
 
-  // atualiza o link visível e redireciona
+  // limpa o termo: tira hifens, "1" no fim (coleções antigas), tamanhos/qtd e códigos
+  termo = termo
+    .replace(/-/g,' ')
+    .replace(/\b(c\/?\d+|pacote com \d+|\d+ml|\d+un|\d+und|und|ref|cod|com \d+|\d{3,})\b/gi,' ')
+    .replace(/(\w)1$/,'$1')
+    .replace(/\s+/g,' ')
+    .trim();
+
+  var dest = (termo && termo.length >= 3) ? ('/?q=' + encodeURIComponent(termo)) : '/';
+
   try { document.getElementById('goLink').href = 'https://lojasullabrj.com.br' + dest; } catch(e){}
-  // pequeno atraso só pra mostrar a marca; o Google segue o link e o JS
   setTimeout(function(){ location.replace(dest); }, 600);
 })();
 </script>
