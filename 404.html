@@ -57,7 +57,7 @@ a.btn{display:inline-block;background:#2f9e63;color:#fff;text-decoration:none;fo
   termo = termo
     .replace(/-/g,' ')
     .replace(/\b(c\/?\d+|pacote com \d+|\d+ml|\d+un|\d+und|und|ref|cod|com \d+|\d{3,})\b/gi,' ')
-    .replace(/(\w)1$/,'$1')
+    .replace(/(\w)1$/,'$1')          // "swabs1" -> "swabs", "testes-rapidos1" -> "testes rapidos"
     .replace(/\s+/g,' ')
     .trim();
 
