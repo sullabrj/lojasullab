@@ -472,8 +472,8 @@
 <div class="cko" id="cko" onclick="if(event.target===this&&window.__mdT===this)fecharCheckout()">
  <div class="ckb">
   <button class="ckx" onclick="fecharCheckout()">&times;</button>
-  <h3>Finalizar pedido</h3>
-  <div class="sub">Pagamento seguro pelo Mercado Pago &middot; NF-e em todo pedido</div>
+  <h3>Enviar pedido para orçamento</h3>
+  <div class="sub">Orçamento com preço CNPJ, frete e NF-e &middot; retorno rápido pelo WhatsApp</div>
   <div class="ckerr" id="ckErr"></div>
   <div class="doctab" id="docTab">
     <button type="button" data-d="cnpj" class="on" onclick="setDoc('cnpj')">CNPJ (empresa)</button>
@@ -501,16 +501,16 @@
     <div style="display:flex;gap:8px"><input id="ckCupom" placeholder="Ex.: BEMVINDO5" style="flex:1;text-transform:uppercase"><button class="ckpay" style="width:auto;padding:11px 14px;margin:0;white-space:nowrap" onclick="aplicarCupom()">Aplicar</button></div>
     <div id="cupomMsg" style="font-size:11.5px;margin-top:5px"></div>
   </div>
-  <label style="font-size:11.5px;font-weight:700;color:var(--ink);display:block;margin:4px 0 6px">Forma de pagamento</label>
-  <div class="pays" id="pays">
+  <label style="font-size:11.5px;font-weight:700;color:var(--ink);display:none;margin:4px 0 6px">Forma de pagamento</label>
+  <div class="pays" id="pays" style="display:none">
     <label class="pay1 on"><input type="radio" name="pg" value="pix" checked onchange="setPg('pix')"><span><span class="pn">Pix</span> <span class="pd">&middot; aprovação na hora</span></span><span class="ptag">&minus;5%</span></label>
     <label class="pay1"><input type="radio" name="pg" value="cartao" onchange="setPg('cartao')"><span><span class="pn">Cartão de crédito</span> <span class="pd">&middot; em até 12x</span></span></label>
     <label class="pay1"><input type="radio" name="pg" value="boleto" onchange="setPg('boleto')"><span><span class="pn">Boleto</span> <span class="pd">&middot; faturado p/ CNPJ</span></span></label>
   </div>
   <div class="cktot"><span>Total <span id="ckQt" style="color:var(--muted);font-size:12px"></span></span><b id="ckTot">R$ 0,00</b></div>
-  <button class="ckpay" id="ckPayBtn" onclick="pagarMP()">Ir para o pagamento seguro &rarr;</button>
-  <button class="ckwa" onclick="salvarFichaCheckout();fecharCheckout();enviarOrcamento()">ou fechar pelo WhatsApp</button>
-  <div class="cksafe">🔒 Você será redirecionado ao ambiente seguro do Mercado Pago.</div>
+  <button class="ckpay" id="ckPayBtn" onclick="salvarFichaCheckout();fecharCheckout();enviarOrcamento()">Enviar pedido para orçamento &rarr;</button>
+  <button class="ckwa" onclick="fecharCheckout()">Continuar comprando</button>
+  <div class="cksafe">🔒 Sem pagamento online: enviamos seu pedido e retornamos com preço final, frete e NF-e pelo WhatsApp.</div>
  </div>
 </div>
 
