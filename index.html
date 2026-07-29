@@ -698,7 +698,7 @@ function filtrados(){
   if(s==='menor')arr.sort((a,b)=>(precoDe(a)||9e9)-(precoDe(b)||9e9));
   else if(s==='maior')arr.sort((a,b)=>(precoDe(b)||0)-(precoDe(a)||0));
   else if(s==='az')arr.sort((a,b)=>a.n.localeCompare(b.n));
-  else arr.sort((a,b)=>(b.selo?1:0)-(a.selo?1:0));
+  else{var _PR=window.PRECOS||{};var _rk=function(p){var pr=_PR[p.c];var temPreco=(pr&&(Number(pr[1])>0||Number(pr[0])>0))?1:0;var temImg=(p.img&&String(p.img).slice(0,5)!=='data:')?1:0;var isTubo=(p.k==='tubo'||deptOf(p.k)==='tubo')?1:0;return (temPreco&&temImg?0:1)*100+(isTubo?0:1)*10;};arr.sort(function(a,b){var d=_rk(a)-_rk(b);if(d)return d;return (b.selo?1:0)-(a.selo?1:0);});}
   return arr;
 }
 function render(){
