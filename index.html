@@ -686,9 +686,9 @@ function filtrados(){
     if(FILTRO.dept && deptOf(p.k)!==FILTRO.dept) return false;
     if(FILTRO.marca && p.m!==FILTRO.marca) return false;
     if(FILTRO.busca){
-      var q=FILTRO.busca.toLowerCase();
+      var __n=function(s){return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')};var q=__n(FILTRO.busca);
       var hay=(p.n+' '+p.m+' '+p.c+' '+((KWMAP&&KWMAP[p.c])||'')).toLowerCase();
-      if(hay.indexOf(q)<0) return false;
+      if(__n(hay).indexOf(q)<0) return false;
     }
     return true;
   });
@@ -1019,5 +1019,5 @@ function boot(){montarDeptNav();montarCatTiles();montarBrands();montarFiltros();
 boot();
 carregarLive();
 </script>
-</body>
+<script>/* Deep-link: aplica ?q= (busca) e ?dept=/?cat= (categoria) vindos da URL - anuncios do Google e redirects do 404.html */(function(){try{var sp=new URLSearchParams(location.search);var q=(sp.get('q')||'').trim();var d=(sp.get('dept')||sp.get('cat')||'').trim();if(q){buscarTermo(q);}else if(d){setDept(d);}}catch(e){}})();</script></body>
 </html>
