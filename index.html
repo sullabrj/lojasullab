@@ -422,7 +422,7 @@
         <div class="res">Mostrando <b id="resCount">0</b> produtos <span style="color:var(--muted);font-weight:400">· preços para CNPJ · orçamento com NF-e</span></div>
         <div style="display:flex;gap:12px;align-items:center">
           <div class="cnpjsw" id="cnpjSwitch" onclick="toggleCNPJ()"><div class="sw"></div> Preço CNPJ</div>
-          <select id="sortSel" onchange="render()"><option value="rel">Mais procurados</option><option value="az">Nome (A-Z)</option></select>
+          <select id="sortSel" onchange="render()"><option value="rel">Mais procurados</option><option value="menor">Menor preço</option><option value="maior">Maior preço</option><option value="az">Nome (A-Z)</option></select>
         </div>
       </div>
       <div class="grid" id="grid"></div>
@@ -634,7 +634,7 @@ var _CUR=[],_SHOWN=0,_PAGE=60,_card=null,_io=null;
 var WHATS='5524988383100';
 
 function brl(v){return 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function precoDe(p){return CNPJ?p.cnpj:p.pub;}
+function precoDe(p){var pr=(window.PRECOS||{})[p.c];if(!pr)return 0;var v=CNPJ?(Number(pr[1])||Number(pr[0])):Number(pr[0]);return v||0;}
 
 /* ====== RENDER ESTRUTURAS ====== */
 function montarDeptNav(){
@@ -698,7 +698,7 @@ function filtrados(){
   if(s==='menor')arr.sort((a,b)=>(precoDe(a)||9e9)-(precoDe(b)||9e9));
   else if(s==='maior')arr.sort((a,b)=>(precoDe(b)||0)-(precoDe(a)||0));
   else if(s==='az')arr.sort((a,b)=>a.n.localeCompare(b.n));
-  else{var _PR=window.PRECOS||{};var _rk=function(p){var pr=_PR[p.c];var temPreco=(pr&&(Number(pr[1])>0||Number(pr[0])>0))?1:0;var temImg=(p.img&&String(p.img).slice(0,5)!=='data:')?1:0;var isTubo=(p.k==='tubo'||deptOf(p.k)==='tubo')?1:0;return (temPreco&&temImg?0:1)*100+(isTubo?0:1)*10;};arr.sort(function(a,b){var d=_rk(a)-_rk(b);if(d)return d;return (b.selo?1:0)-(a.selo?1:0);});}
+  else{var _PR=window.PRECOS||{};var _bd=(FILTRO.busca&&FILTRO.deptBoost)?FILTRO.deptBoost:'';var _rk=function(p){var pr=_PR[p.c];var temPreco=(pr&&(Number(pr[1])>0||Number(pr[0])>0))?1:0;var temImg=(p.img&&String(p.img).slice(0,5)!=='data:')?1:0;var isTubo=(p.k==='tubo'||deptOf(p.k)==='tubo')?1:0;var isDept=(_bd&&deptOf(p.k)===_bd)?0:1;return isDept*1000+(temPreco&&temImg?0:1)*100+(isTubo?0:1)*10;};arr.sort(function(a,b){var d=_rk(a)-_rk(b);if(d)return d;return (b.selo?1:0)-(a.selo?1:0);});}
   return arr;
 }
 function render(){
@@ -732,7 +732,7 @@ function _setupIO(){var w=document.getElementById('moreWrap');if(!w)return;if(_i
 function setDept(k){FILTRO.dept=k;FILTRO.marca='';FILTRO.busca='';document.getElementById('searchInput').value='';montarFiltros();render();irProdutos();marcarNav();}
 function setMarca(m){FILTRO.marca=m;FILTRO.busca='';montarFiltros();render();irProdutos();}
 function buscarTermo(t){var el=document.getElementById('searchInput');el.value=t;fazerBusca();}
-function fazerBusca(){FILTRO.busca=document.getElementById('searchInput').value.trim();var sc=document.getElementById('searchCat').value;if(sc)FILTRO.dept=sc;FILTRO.marca='';ensureKw(function(){montarFiltros();render();irProdutos();});}
+function fazerBusca(){var sc=(document.getElementById('searchCat')||{}).value||'';FILTRO.deptBoost=sc||FILTRO.dept||'';FILTRO.busca=document.getElementById('searchInput').value.trim();FILTRO.dept='';FILTRO.marca='';ensureKw(function(){montarFiltros();render();irProdutos();marcarNav();});}
 function marcarNav(){[...document.querySelectorAll('#deptNav .dept')].forEach(e=>e.classList.toggle('on',e.getAttribute('data-d')===FILTRO.dept));}
 function irProdutos(){document.getElementById('shopAnchor').scrollIntoView({behavior:'smooth',block:'start'});}
 function toggleCNPJ(){CNPJ=!CNPJ;document.getElementById('cnpjSwitch').classList.toggle('off',!CNPJ);render();atualizarCart();}
