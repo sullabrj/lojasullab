@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://lojasullabrj.com.br/</loc><changefreq>weekly</changefreq></url>
-  <url><loc>https://lojasullabrj.com.br/sobre.html</loc><changefreq>weekly</changefreq></url>
-  <url><loc>https://lojasullabrj.com.br/faq.html</loc><changefreq>weekly</changefreq></url>
-  <url><loc>https://lojasullabrj.com.br/guia/qual-tubo-para-cada-exame.html</loc><changefreq>weekly</changefreq></url>
-  <url><loc>https://lojasullabrj.com.br/guia/edta-x-soro.html</loc><changefreq>weekly</changefreq></url>
-  <url><loc>https://lojasullabrj.com.br/guia/como-ler-teste-rapido.html</loc><changefreq>weekly</changefreq></url>
-  <url><loc>https://lojasullabrj.com.br/guia/tubo-edta-ambar-para-que-serve.html</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://lojasullabrj.com.br/guia/meios-de-cultura-tsi-tioglicolato-stuart-mrvp.html</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+<url><loc>https://lojasullabrj.com.br/</loc><lastmod>2026-09-18</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+<url><loc>https://lojasullabrj.com.br/sobre.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq></url>
+<url><loc>https://lojasullabrj.com.br/faq.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq></url>
+<url><loc>https://lojasullabrj.com.br/catalogo.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq></url>
+<url><loc>https://lojasullabrj.com.br/trocas-e-devolucoes.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq></url>
+<url><loc>https://lojasullabrj.com.br/catalogo</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq></url>
+<url><loc>https://lojasullabrj.com.br/guia/como-ler-teste-rapido-linha-c-e-t.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+<url><loc>https://lojasullabrj.com.br/guia/diferenca-tubo-edta-e-soro.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+<url><loc>https://lojasullabrj.com.br/guia/meios-de-cultura-tsi-tioglicolato-stuart-mrvp.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+<url><loc>https://lojasullabrj.com.br/guia/qual-tubo-usar-para-cada-exame.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+<url><loc>https://lojasullabrj.com.br/guia/tubo-edta-ambar-para-que-serve.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+<url><loc>https://lojasullabrj.com.br/blog/como-escolher-tubo-a-vacuo.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+<url><loc>https://lojasullabrj.com.br/blog/comprar-produtos-laboratorio-cnpj.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+<url><loc>https://lojasullabrj.com.br/blog/teste-dengue-ns1-igg-igm.html</loc><lastmod>2026-09-18</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
