@@ -771,7 +771,8 @@ function abrirCarrinho(){atualizarCart();document.getElementById('ov').classList
 function fecharCarrinho(){document.getElementById('ov').classList.remove('on');document.getElementById('drawer').classList.remove('on');}
 
 /* ====== ORÇAMENTO / WHATSAPP ====== */
-function abrirWhats(msg){window.open('https://wa.me/'+WHATS+'?text='+encodeURIComponent(msg),'_blank');}
+function abrirWhats(msg){window.open('https://wa.me/'+WHATS+'?text='+encodeURIComponent(msg),'_blank');}(function(){var _origAbrirWhats=window.abrirWhats;window.abrirWhats=function(msg){try{if(typeof gtag==='function'){var ids=(window.CART&&CART.length)?CART.map(function(x){return x.c;}).join(','):'';gtag('event','whatsapp_click',{item_id:ids,page:location.pathname});}}catch(e){}return _origAbrirWhats.apply(this,arguments);};})();
+
 function enviarOrcamento(){
   if(!CART.length){abrirWhats('Olá! Quero fazer um pedido.');return;}
   var f=fichaSalva();
