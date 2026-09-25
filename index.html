@@ -821,8 +821,6 @@ function sullabEvent(type,extra){try{var b={type:type},k;for(k in (extra||{}))b[
 function _itensPedido(){return CART.map(function(x){return {cod:x.c,nome:x.n,q:x.qty,un:_uni(x)};});}
 /* ==== Conversões otimizadas p/ leads: e-mail/telefone vão ao Google com hash SHA-256 (gtag faz o hash) ==== */
 function _e164(tel){var d=soDig(tel);if(!d)return '';if(d.indexOf('55')===0&&d.length>=12)return '+'+d;return '+55'+d;}
-function _gclid(){try{var m=document.cookie.match(/(?:^|;\s*)_gcl_aw=([^;]+)/);if(m){var p=decodeURIComponent(m[1]).split('.');return p.slice(2).join('.');}var s=localStorage.getItem('sullab_click');if(s){var o=JSON.parse(s);if(Date.now()-o.t<7776000000)return o.v;}}catch(e){}return '';}
-(function(){try{var m=location.search.match(/[?&](gclid|gbraid|wbraid)=([^&]+)/);if(m)localStorage.setItem('sullab_click',JSON.stringify({k:m[1],v:decodeURIComponent(m[2]),t:Date.now()}));}catch(e){}})();
 function _setUserData(f){try{if(typeof gtag!=='function')return;var u={};if(f.email)u.email=String(f.email).trim().toLowerCase();var ph=_e164(f.tel);if(ph)u.phone_number=ph;if(u.email||u.phone_number)gtag('set','user_data',u);}catch(e){}}
 function dispararPedido(type,pgto,ficha,pedido){
   if(!CART.length)return;
@@ -835,7 +833,7 @@ function dispararPedido(type,pgto,ficha,pedido){
   try{ if(typeof gtag==='function'){ gtag('event', (type==='pedido_wa'?'gerar_orcamento':(type==='pedido_mp'?'purchase':'pedido')), {value: (totalCart()||0), currency:'BRL', transaction_id: ped, items_count: its.length}); } }catch(e){}
   /* ==== Conversão Google Ads: Pedido de orçamento (site) ==== */
   try{ if(typeof gtag==='function'){ gtag('event','conversion',{'send_to':'AW-11390766577/uzk3CNufh9ocEPGbxbcq','value':(totalCart()||1),'currency':'BRL','transaction_id':ped}); } }catch(e){}
-  sullabEvent(type,{pedido:ped,total:totalCart(),qtd:CART.reduce(function(s,x){return s+x.qty;},0),itens:its,pgto:pgto||'',cliente:f.nome||'',doc:f.doc||'',docTipo:f.doct||'',tel:f.tel||'',email:f.email||'',endereco:end,gclid:_gclid()});
+  sullabEvent(type,{pedido:ped,total:totalCart(),qtd:CART.reduce(function(s,x){return s+x.qty;},0),itens:its,pgto:pgto||'',cliente:f.nome||'',doc:f.doc||'',docTipo:f.doct||'',tel:f.tel||'',email:f.email||'',endereco:end});
   try{registrarMeuPedido({pedido:ped,ts:Date.now(),total:totalCart(),qtd:CART.reduce(function(s,x){return s+x.qty;},0),itens:its.map(function(x){return {q:x.q,nome:x.nome,cod:x.cod};}),canal:(type==='pedido_mp'?'online':'whatsapp'),status:'recebido'});}catch(e){}
 }
 var DOCT='cnpj', PG='pix';
