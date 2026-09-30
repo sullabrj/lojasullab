@@ -758,8 +758,8 @@ function enviarOrcamento(){
 }
 
 /* ====== CHECKOUT / PAGAMENTO (Mercado Pago) ====== */
-var MP_WORKER='https://sullab-mp.comercial-0a2.workers.dev/';
-var SHEET_ENDPOINT='https://script.google.com/macros/s/AKfycbyPKW71fCDUcjZiID5AicTox1a_inSgYqd-4fXHxzsV9ynX1xrIx5mwf4YIGx5lDpL_Lw/exec';
+var MP_WORKER='https://api.lojasullabrj.com.br/mp';
+var SHEET_ENDPOINT='https://api.lojasullabrj.com.br/evento';
 function sullabEvent(type,extra){try{var b={type:type},k;for(k in (extra||{}))b[k]=extra[k];fetch(SHEET_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(b)});}catch(e){}}
 function _itensPedido(){return CART.map(function(x){return {cod:x.c,nome:x.n,q:x.qty,un:(CNPJ?x.cnpj:x.pub)};});}
 function dispararPedido(type,pgto,ficha,pedido){
@@ -772,7 +772,7 @@ function dispararPedido(type,pgto,ficha,pedido){
   try{registrarMeuPedido({pedido:ped,ts:Date.now(),total:totalCart(),qtd:CART.reduce(function(s,x){return s+x.qty;},0),itens:its.map(function(x){return {q:x.q,nome:x.nome,cod:x.cod};}),canal:(type==='pedido_mp'?'online':'whatsapp'),status:'recebido'});}catch(e){}
 }
 var DOCT='cnpj', PG='pix';
-var FRETE_ENDPOINT='https://sullab-frete.comercial-0a2.workers.dev/',ORIGEM_CEP='27323450';
+var FRETE_ENDPOINT='https://api.lojasullabrj.com.br/frete',ORIGEM_CEP='27323450';
 var CUPONS={BEMVINDO5:0.05},cupomPct=0,cupomCod='',freteSelLoja=0,freteLabelLoja='';
 function val(id){return (document.getElementById(id).value||'').trim();}
 function soDig(s){return (s||'').replace(/\D/g,'');}
@@ -858,7 +858,7 @@ function fbCadastro(){var razao=val('rgNome'),docv=val('rgDoc'),email=val('rgEma
 function meusPedidos(){try{return JSON.parse(localStorage.getItem('sullab_meus_pedidos')||'[]');}catch(e){return [];}}
 function registrarMeuPedido(o){try{var a=meusPedidos();if(a.some(function(x){return x.pedido===o.pedido;}))return;a.unshift(o);a=a.slice(0,20);localStorage.setItem('sullab_meus_pedidos',JSON.stringify(a));}catch(e){}}
 function statusLabel(st){var m={recebido:'🟡 Recebido — em processamento',pago:'🟢 Pagamento aprovado',separado:'🔵 Em separação',faturado:'🧾 Faturado (NF-e)',postado:'🚚 Postado',entregue:'✅ Entregue'};return m[st]||m.recebido;}
-var RAST_EP=SHEET_ENDPOINT;
+var RAST_EP='https://api.lojasullabrj.com.br/rastreio';
 function _jsonp(url,cb){var s=document.createElement('script');var name='__rcb'+Date.now()+Math.floor(Math.random()*1e4);var done=false;window[name]=function(d){done=true;try{cb(d);}catch(e){}try{delete window[name];}catch(_e){}if(s.parentNode)s.parentNode.removeChild(s);};s.onerror=function(){if(!done){cb(null);try{delete window[name];}catch(_e){}if(s.parentNode)s.parentNode.removeChild(s);}};s.src=url+(url.indexOf('?')>=0?'&':'?')+'callback='+name;document.body.appendChild(s);setTimeout(function(){if(!done){try{window[name]=function(){};}catch(_e){}cb(null);}},9000);}
 function consultarStatus(num,chave,done){if(!num||!chave){done(null);return;}_jsonp(RAST_EP+'?action=rastreio&pedido='+encodeURIComponent(num)+'&chave='+encodeURIComponent(chave),done);}
 function rastStatusTexto(d){var e=((d&&d.etapa)||'').toLowerCase();var pg=((d&&d.statusPagamento)||'').toLowerCase();
