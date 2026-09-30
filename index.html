@@ -345,7 +345,6 @@
   <div class="ur">
     <span onclick="abrirRastreio()">📦 Rastrear pedido</span>
     <span onclick="abrirWhats('Olá! Vim pela loja e preciso de atendimento.')">💬 Atendimento</span>
-    <span onclick="abrirConta()"><b id="accUtil">Entrar / Cadastrar CNPJ</b></span>
   </div>
 </div></div>
 
@@ -359,7 +358,6 @@
   </div>
   <div class="hact">
     <div class="hbtn" onclick="abrirWhats('Olá! Quero enviar uma lista de compras para orçamento.')"><span class="ic">📄</span><span>Pedir<small>orçamento</small></span></div>
-    <div class="hbtn" onclick="abrirConta()"><span class="ic">👤</span><span>Minha conta<small id="accLbl">CNPJ</small></span></div>
     <div class="hbtn green cartbtn" onclick="abrirCarrinho()"><span class="ic">🛒</span><span>Orçamento<small id="cartLabel">vazio</small></span><span class="badge" id="cartBadge">0</span></div>
   </div>
 </div></header>
@@ -397,7 +395,7 @@
     </div>
     <div class="hside">
       <div class="promo a"><div class="pmtop"><span class="pmtag">B2B</span> Atacado para laboratório</div><div class="big" style="font-size:28px;line-height:1.05">Orçamento rápido</div><p>orçamento · NF-e · todo o Brasil</p><button class="pmbtn" onclick="irProdutos()">Montar orçamento →</button></div>
-      <div class="promo b"><div class="pmtop">🧾 Conta CNPJ</div><div class="big" style="font-size:28px;line-height:1.05">Cadastre sua empresa</div><p>agiliza seus próximos orçamentos</p><button class="pmbtn" onclick="abrirConta('reg')">Cadastrar grátis →</button></div>
+      <div class="promo b"><div class="pmtop">💬 WhatsApp</div><div class="big" style="font-size:28px;line-height:1.05">Fale com a SULLAB</div><p>orçamento e dúvidas com resposta rápida</p><button class="pmbtn" onclick="abrirWhats('Olá! Vim pela loja e quero um orçamento.')">Chamar no WhatsApp →</button></div>
     </div>
   </section>
 
@@ -446,7 +444,7 @@
       <div class="pay"><span>NF-e</span><span>Boleto faturado</span><span>Entrega Brasil</span></div>
     </div>
     <div><h5>Categorias</h5><div id="footCats"></div></div>
-    <div><h5>Comprar</h5><a onclick="abrirWhats('Olá! Quero pedir um orçamento.')">Pedir orçamento</a><a onclick="abrirConta()">Minha conta CNPJ</a><a onclick="abrirRastreio()">Rastrear pedido</a><a onclick="irProdutos()">Catálogo completo</a><a href="/catalogo.html">Catálogo por marca 2026</a></div>
+    <div><h5>Comprar</h5><a onclick="abrirWhats('Olá! Quero pedir um orçamento.')">Pedir orçamento</a><a onclick="abrirRastreio()">Rastrear pedido</a><a onclick="irProdutos()">Catálogo completo</a><a href="/catalogo.html">Catálogo por marca 2026</a></div>
     <div><h5>Atendimento</h5><a onclick="abrirWhats('Olá!')">💬 WhatsApp (24) 98838-3100</a><a href="mailto:comercial@sullabrj.com.br">✉️ comercial@sullabrj.com.br</a><a href="https://lojasullabrj.com.br/trocas-e-devolucoes.html">Trocas e devoluções</a><a href="https://lojasullabrj.com.br/privacidade.html">Política de privacidade</a></div>
   </div>
   <div class="fbar">
@@ -549,50 +547,6 @@
  </div>
 </div>
 
-<!-- CONTA (Firebase) -->
-<div class="cko" id="acc" onclick="if(event.target===this&&window.__mdT===this)fecharConta()">
- <div class="ckb" style="max-width:440px">
-  <button class="ckx" onclick="fecharConta()">&times;</button>
-  <div id="accIn" style="display:none;text-align:center;padding:6px 0">
-    <div style="font-size:40px">👤</div>
-    <h3 id="accNome" style="margin:6px 0">Minha conta</h3>
-    <div class="sub" id="accEmail" style="margin-bottom:6px"></div>
-    <div style="background:var(--green-soft);color:var(--green-d);font-weight:700;font-size:12.5px;padding:9px;border-radius:9px;margin:8px 0 14px">✓ Preço CNPJ liberado na sua conta</div>
-    <button class="ckpay" style="background:var(--navy)" onclick="fbLogout()">Sair da conta</button>
-  </div>
-  <div id="accOut">
-    <h3>Sua conta SULLAB</h3>
-    <div class="sub">Entre para ver o <b>preço CNPJ</b>, agilizar o checkout e acompanhar pedidos.</div>
-    <div class="ckerr" id="accErr"></div>
-    <div class="doctab" style="margin-bottom:14px">
-      <button type="button" id="tabLogin" class="on" onclick="setAccTab('login')">Entrar</button>
-      <button type="button" id="tabReg" onclick="setAccTab('reg')">Criar conta CNPJ</button>
-    </div>
-    <div id="paneLogin">
-      <div class="fld"><label>E-mail</label><input id="liEmail" type="email" placeholder="voce@empresa.com.br"></div>
-      <div class="fld"><label>Senha</label><input id="liPass" type="password" placeholder="sua senha"></div>
-      <button class="ckpay" onclick="fbLogin()">Entrar</button>
-      <button class="ckwa" onclick="fbReset()">Esqueci minha senha</button>
-    </div>
-    <div id="paneReg" style="display:none">
-      <div class="doctab">
-        <button type="button" id="rgCnpj" data-d="cnpj" class="on" onclick="setAccDoc('cnpj')">CNPJ (empresa)</button>
-        <button type="button" id="rgCpf" data-d="cpf" onclick="setAccDoc('cpf')">CPF</button>
-      </div>
-      <div class="fld"><label id="rgLbNome">Nome fantasia</label><input id="rgNome" placeholder="Nome popular da empresa"></div>
-      <div class="fld"><label id="rgLbDoc">CNPJ</label><input id="rgDoc" inputmode="numeric" placeholder="00.000.000/0000-00"></div>
-      <div class="frow c2"><div class="fld"><label>E-mail</label><input id="rgEmail" type="email" placeholder="voce@empresa.com.br"></div><div class="fld"><label>WhatsApp</label><input id="rgTel" inputmode="tel" placeholder="(24) 90000-0000"></div></div>
-      <div class="fld"><label>Crie uma senha</label><input id="rgPass" type="password" placeholder="mín. 6 caracteres"></div>
-      <button class="ckpay" onclick="fbCadastro()">Criar conta &middot; liberar preço CNPJ</button>
-    </div>
-    <div class="cksafe">🔒 Seus dados ficam protegidos &middot; NF-e em todo pedido &middot; <a href="https://lojasullabrj.com.br/privacidade.html" target="_blank" rel="noopener">Privacidade</a></div>
-  </div>
- </div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 /* ============ CATÁLOGO ============
    Mapeamento de categorias (departamentos amigáveis) */
@@ -815,7 +769,6 @@ function confirmarContatoWA(){
 function salvarFichaCheckout(){try{var f=coletarFicha(),cur=fichaSalva(),k;for(k in f){if(f[k])cur[k]=f[k];}localStorage.setItem('sullab_ficha',JSON.stringify(cur));}catch(e){}}
 
 /* ====== CHECKOUT / PAGAMENTO (Mercado Pago) ====== */
-var MP_WORKER='https://api.lojasullabrj.com.br/mp';
 var SHEET_ENDPOINT='https://api.lojasullabrj.com.br/evento';
 function sullabEvent(type,extra){try{var b={type:type},k;for(k in (extra||{}))b[k]=extra[k];fetch(SHEET_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(b)});}catch(e){}}
 function _itensPedido(){return CART.map(function(x){return {cod:x.c,nome:x.n,q:x.qty,un:_uni(x)};});}
@@ -872,53 +825,11 @@ function coletarFicha(){return {doct:DOCT,doc:val('ckDoc'),nome:val('ckNome'),em
 function cepAuto(){var c=soDig(val('ckCep'));if(c.length!==8)return;fetch('https://brasilapi.com.br/api/cep/v1/'+c).then(function(r){return r.json();}).then(function(d){if(d&&d.street){if(!val('ckLog'))document.getElementById('ckLog').value=d.street;if(!val('ckBairro'))document.getElementById('ckBairro').value=d.neighborhood||'';document.getElementById('ckCidade').value=d.city||'';document.getElementById('ckUf').value=d.state||'';}renderFrete();}).catch(function(){});}
 function cnpjAuto(){var c=soDig(val('ckDoc'));if(c.length!==14)return;fetch('https://brasilapi.com.br/api/cnpj/v1/'+c).then(function(r){return r.json();}).then(function(d){if(d&&d.razao_social){if(!val('ckNome'))document.getElementById('ckNome').value=d.razao_social;if(!val('ckCep')&&d.cep){document.getElementById('ckCep').value=String(d.cep);cepAuto();}if(!val('ckLog')&&d.logradouro)document.getElementById('ckLog').value=(d.descricao_tipo_de_logradouro?d.descricao_tipo_de_logradouro+' ':'')+d.logradouro;if(!val('ckNum')&&d.numero)document.getElementById('ckNum').value=String(d.numero);if(!val('ckBairro')&&d.bairro)document.getElementById('ckBairro').value=d.bairro;if(!val('ckCidade')&&d.municipio)document.getElementById('ckCidade').value=d.municipio;if(!val('ckUf')&&d.uf)document.getElementById('ckUf').value=d.uf;}renderFrete();}).catch(function(){});}
 function ckErro(m){var e=document.getElementById('ckErr');e.textContent=m;e.style.display='block';e.scrollIntoView({block:'nearest'});}
-function pagarMP(){
-  var f=coletarFicha();
-  if(soDig(f.doc).length<11)return ckErro('Informe um '+(DOCT==='cnpj'?'CNPJ':'CPF')+' válido.');
-  if(!f.nome)return ckErro('Informe o nome fantasia.');
-  if(!/.+@.+\..+/.test(f.email))return ckErro('Informe um e-mail válido.');
-  if(soDig(f.tel).length<10)return ckErro('Informe um telefone com DDD.');
-  if(soDig(f.cep).length!==8||!f.num)return ckErro('Informe CEP e número do endereço.');
-  localStorage.setItem('sullab_ficha',JSON.stringify(f));
-  var fator=fatorPg()*(1-cupomPct);var items=[];
-  CART.forEach(function(x){var pr=_uni(x)*fator;if(pr>0)items.push({title:(x.c+' '+x.n).slice(0,120),quantity:x.qty,unit_price:Math.round(pr*100)/100});});
-  if(freteSelLoja>0)items.push({title:'Frete'+(freteLabelLoja?(' ('+freteLabelLoja+')'):''),quantity:1,unit_price:Math.round(freteSelLoja*100)/100});
-  if(!items.length)return ckErro('Nenhum item com preço para pagar online. Equipamentos são sob consulta — use o WhatsApp.');
-  var pedido='SLB-'+Date.now();window._pedAtual=pedido;
-  dispararPedido('pedido_mp',PG,f,pedido);
-  var endereco={cep:f.cep,logradouro:f.log,numero:f.num,complemento:f.compl,bairro:f.bairro,cidade:f.cidade,uf:f.uf};
-  var btn=document.getElementById('ckPayBtn');var orig=btn.textContent;btn.disabled=true;btn.textContent='Abrindo Mercado Pago…';
-  fetch(MP_WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pedido:pedido,items:items,method:PG,endereco:endereco,cliente:{nome:f.nome,doc:f.doc,docTipo:DOCT,tel:f.tel,email:f.email}})})
-   .then(function(r){return r.json();}).then(function(d){if(d&&d.init_point){window.location.href=d.init_point;}else{btn.disabled=false;btn.textContent=orig;ckErro('Não foi possível iniciar o pagamento: '+((d&&d.error)||'tente novamente.'));}})
-   .catch(function(){btn.disabled=false;btn.textContent=orig;ckErro('Erro de conexão com o pagamento online. Obs.: na versão de teste local (preview) o pagamento só funciona com a loja publicada — você pode fechar pelo WhatsApp logo abaixo.');});
-}
 
-/* ====== CONTA / LOGIN (Firebase) ====== */
-var FBCFG={apiKey:"AIzaSyBoIPsSsAAg0dPsd8rmwNmuXz7SQHwQw68",authDomain:"sullab.firebaseapp.com",projectId:"sullab",storageBucket:"sullab.firebasestorage.app",messagingSenderId:"882002573877",appId:"1:882002573877:web:2808e29ca74e05a5cf0f7c"};
-var AUTH=null,DB=null,ACCDOC='cnpj';window.__user=null;window.__profile=null;
-(function(){try{if(typeof firebase==='undefined')return;firebase.initializeApp(FBCFG);AUTH=firebase.auth();DB=firebase.firestore();AUTH.onAuthStateChanged(function(u){window.__user=u||null;if(u){CNPJ=true;DB.collection('clientes').doc(u.uid).get().then(function(d){if(d.exists){window.__profile=d.data();perfilParaFicha(d.data());}atualizarConta();}).catch(function(){});}else{window.__profile=null;}atualizarConta();try{render();atualizarCart();}catch(e){}});}catch(e){}})();
-function fbErr(e){var c=((e&&e.code)||'')+'';if(c.indexOf('email-already')>=0)return 'Este e-mail já tem conta. Tente entrar.';if(c.indexOf('wrong-password')>=0||c.indexOf('invalid-credential')>=0)return 'E-mail ou senha incorretos.';if(c.indexOf('user-not-found')>=0)return 'Não encontramos uma conta com esse e-mail.';if(c.indexOf('weak-password')>=0)return 'A senha precisa de ao menos 6 caracteres.';if(c.indexOf('invalid-email')>=0)return 'E-mail inválido.';if(c.indexOf('too-many')>=0)return 'Muitas tentativas. Aguarde um pouco.';if(c.indexOf('unauthorized-domain')>=0||c.indexOf('network')>=0)return 'Login só funciona na loja publicada — no preview local o Firebase bloqueia o domínio.';return (e&&e.message)||'Não foi possível concluir agora.';}
-function perfilParaFicha(p){try{var f=fichaSalva();f.nome=p.razao||f.nome;f.doc=p.cnpj||f.doc;f.doct=p.docTipo||f.doct;f.tel=p.telefone||f.tel;f.email=p.email||f.email;localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}}
-function abrirConta(tab){atualizarConta();setAccTab(tab==='reg'?'reg':'login');document.getElementById('accErr').style.display='none';document.getElementById('acc').classList.add('on');}
-function fecharConta(){document.getElementById('acc').classList.remove('on');}
-function setAccTab(t){document.getElementById('tabLogin').classList.toggle('on',t==='login');document.getElementById('tabReg').classList.toggle('on',t==='reg');document.getElementById('paneLogin').style.display=t==='login'?'':'none';document.getElementById('paneReg').style.display=t==='reg'?'':'none';}
-function setAccDoc(d){ACCDOC=d;document.getElementById('rgCnpj').classList.toggle('on',d==='cnpj');document.getElementById('rgCpf').classList.toggle('on',d==='cpf');document.getElementById('rgLbDoc').textContent=d==='cnpj'?'CNPJ':'CPF';document.getElementById('rgLbNome').textContent=d==='cnpj'?'Nome fantasia':'Nome completo';document.getElementById('rgDoc').placeholder=d==='cnpj'?'00.000.000/0000-00':'000.000.000-00';}
-function accErro(m){var e=document.getElementById('accErr');e.textContent=m;e.style.display='block';}
-function _primeiroNome(){return (window.__profile&&window.__profile.razao)?String(window.__profile.razao).split(' ')[0]:'minha conta';}
-function atualizarConta(){var u=window.__user;var inb=document.getElementById('accIn'),outb=document.getElementById('accOut');if(inb&&outb){if(u){inb.style.display='';outb.style.display='none';document.getElementById('accNome').textContent='Olá, '+((window.__profile&&window.__profile.razao)||(u.email||'').split('@')[0])+'!';document.getElementById('accEmail').textContent=u.email||'';}else{inb.style.display='none';outb.style.display='';}}
-  var l=document.getElementById('accLbl');if(l)l.textContent=u?'conectado':'CNPJ';
-  var ut=document.getElementById('accUtil');if(ut)ut.textContent=u?('Olá, '+_primeiroNome()):'Entrar / Cadastrar CNPJ';}
-function fbLogin(){var email=val('liEmail'),pass=document.getElementById('liPass').value;if(!email||!pass)return accErro('Informe e-mail e senha.');if(!AUTH)return accErro('Login disponível na loja publicada.');AUTH.signInWithEmailAndPassword(email,pass).then(function(){fecharConta();}).catch(function(e){accErro(fbErr(e));});}
-function fbReset(){var email=val('liEmail');if(!/.+@.+\..+/.test(email))return accErro('Digite seu e-mail no campo acima para enviar o link.');if(!AUTH)return accErro('Disponível na loja publicada.');AUTH.sendPasswordResetEmail(email).then(function(){accErro('Enviamos um link de redefinição para '+email+'.');}).catch(function(e){accErro(fbErr(e));});}
-function fbLogout(){if(AUTH)AUTH.signOut().then(function(){atualizarConta();fecharConta();});}
-function fbCadastro(){var razao=val('rgNome'),docv=val('rgDoc'),email=val('rgEmail'),tel=val('rgTel'),pass=document.getElementById('rgPass').value;
-  if(!razao)return accErro('Informe o '+(ACCDOC==='cnpj'?'nome fantasia':'nome')+'.');
-  if(soDig(docv).length<11)return accErro('Informe um '+(ACCDOC==='cnpj'?'CNPJ':'CPF')+' válido.');
-  if(!/.+@.+\..+/.test(email))return accErro('E-mail inválido.');
-  if(soDig(tel).length<10)return accErro('Telefone com DDD.');
-  if(pass.length<6)return accErro('A senha precisa de ao menos 6 caracteres.');
-  if(!AUTH||!DB)return accErro('Cadastro disponível na loja publicada (o preview local não conecta o Firebase).');
-  AUTH.createUserWithEmailAndPassword(email,pass).then(function(cred){var u=cred.user;var prof={razao:razao,cnpj:docv,docTipo:ACCDOC,telefone:tel,email:email,criadoEm:Date.now()};window.__profile=prof;try{sullabEvent('conta_cadastro',{razao:razao,doc:docv,docTipo:ACCDOC,telefone:tel,email:email});}catch(_e){}perfilParaFicha(prof);return DB.collection('clientes').doc(u.uid).set(prof,{merge:true});}).then(function(){fecharConta();}).catch(function(e){accErro(fbErr(e));});}
+/* Conta/login removidos em 30/09/2026: o site só faz pedido de orçamento pelo WhatsApp */
+function abrirConta(){abrirWhats('Olá! Quero cadastrar minha empresa para orçamentos.');}
+function atualizarConta(){}
+function fecharConta(){}
 
 /* ====== RASTREIO DE PEDIDO ====== */
 function meusPedidos(){try{return JSON.parse(localStorage.getItem('sullab_meus_pedidos')||'[]');}catch(e){return [];}}
