@@ -735,7 +735,6 @@ function fatorPg(){return PG==='pix'?0.95:1;}
 function _catOf(c){for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===c)return CATALOG[i].k;}return '';}
 function cartTodosTeste(){return CART.length>0&&CART.every(function(x){return _catOf(x.c)==='tr';});}
 function freteInfo(uf,total){uf=(uf||'').toUpperCase();var rjsp=(uf==='RJ'||uf==='SP');var se=['SP','RJ','MG','ES'].indexOf(uf)>=0;
-  if(cartTodosTeste()&&se)return{free:true,label:'🚚 Frete GRÁTIS — testes rápidos (Sudeste)'};
   return{free:false};}
 function _freteBtn(){return '<button class="ckwa" style="text-align:left;color:var(--navy-l);font-weight:700;padding:8px 0" onclick="cotarFreteLoja()">📦 Calcular frete pelo CEP →</button><div id="freteOpts"></div>';}
 function renderFrete(){var box=document.getElementById('freteBox');if(!box)return;var fi=freteInfo(val('ckUf'),totalCart());
