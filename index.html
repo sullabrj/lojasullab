@@ -530,18 +530,17 @@
  <div class="ckb">
   <button class="ckx" onclick="fecharContatoWA()">&times;</button>
   <h3 id="waqTit">Quase lá! Como te retornamos?</h3>
-  <div class="sub" id="waqSub">Só o essencial &mdash; o resto a gente pede pelo WhatsApp.</div>
+  <div class="sub" id="waqSub">Com CNPJ/CPF e CEP já respondemos com preço, frete e NF-e.</div>
   <div class="ckerr" id="waqErr"></div>
   <div class="fld"><label>Nome / Empresa *</label><input id="waNome" autocomplete="organization" placeholder="Seu nome ou o da empresa"></div>
   <div class="frow c2">
    <div class="fld"><label>WhatsApp *</label><input id="waTel" inputmode="tel" autocomplete="tel" placeholder="(24) 90000-0000"></div>
-   <div class="fld"><label>CEP (p/ frete)</label><input id="waCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000"></div>
+   <div class="fld"><label>CEP (p/ frete) *</label><input id="waCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000"></div>
   </div>
   <div class="fld"><label id="waListaLb">Mais itens? Digite ou cole sua lista (opcional)</label><textarea id="waLista" rows="3" placeholder="Ex.: 10 cx tubo coleta a vácuo roxo 4 mL; 5 cx teste dengue NS1"></textarea></div>
-  <a class="waqmore" id="waMaisLk" onclick="document.getElementById('waMais').style.display='flex';this.style.display='none'">+ Informar CNPJ ou e-mail (opcional)</a>
-  <div class="frow c2" id="waMais" style="display:none">
-   <div class="fld"><label>CNPJ / CPF</label><input id="waDoc" inputmode="numeric" placeholder="00.000.000/0000-00"></div>
-   <div class="fld"><label>E-mail</label><input id="waEmail" type="email" autocomplete="email" placeholder="voce@empresa.com.br"></div>
+  <div class="frow c2" id="waMais" style="display:flex">
+   <div class="fld"><label>CNPJ / CPF *</label><input id="waDoc" inputmode="numeric" placeholder="00.000.000/0000-00"></div>
+   <div class="fld"><label>E-mail (opcional)</label><input id="waEmail" type="email" autocomplete="email" placeholder="voce@empresa.com.br"></div>
   </div>
   <button class="ckpay" onclick="confirmarContatoWA()">Enviar meu orçamento pelo WhatsApp &rarr;</button>
   <button class="ckwa" style="color:var(--navy-l)" onclick="waArquivoWhats()">📎 Prefiro mandar foto, PDF, Excel ou áudio direto no WhatsApp</button>
@@ -868,14 +867,18 @@ function _enviarOrcamentoCom(f){
   abrirWhats('Olá! Quero um orçamento na SULLAB (pedido '+_pid+') destes itens:\n\n'+corpo+'\n\n'+ident+'\n\nPodem me passar preço, disponibilidade, frete e NF-e?');
 }
 function waArquivoWhats(){
-  var nome=val('waNome'),tel=val('waTel'),cep=val('waCep');
-  var f=fichaSalva();if(nome)f.nome=nome;if(tel)f.tel=tel;if(soDig(cep).length===8)f.cep=cep;
+  var nome=val('waNome'),tel=val('waTel'),cep=val('waCep'),doc=val('waDoc'),nd=soDig(doc).length;
+  if(!nome)return waqErro('Por favor, informe seu nome ou o da empresa.');
+  if(soDig(tel).length<10)return waqErro('Informe um WhatsApp com DDD — ex.: (24) 90000-0000.');
+  if(nd!==11&&nd!==14)return waqErro('Informe o CNPJ (14 números) ou o CPF (11 números).');
+  if(soDig(cep).length!==8)return waqErro('Informe o CEP com 8 números, para calcular o frete.');
+  var f=fichaSalva();if(nome)f.nome=nome;if(tel)f.tel=tel;if(soDig(cep).length===8)f.cep=cep;f.doc=doc;f.doct=(nd>11?'cnpj':'cpf');
   try{localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}
   fecharContatoWA();
   var _pid='SLB-'+Date.now();window._pedAtual=_pid;
   dispararPedido('pedido_wa','whatsapp',_copiaFicha(f,{lista:'[cliente vai enviar foto/PDF/Excel/áudio pelo WhatsApp]',arquivoWA:1}),_pid);
   var li=_linhasCart();
-  abrirWhats('Olá! Vou enviar minha lista (foto, PDF, Excel ou áudio) para orçamento na SULLAB (pedido '+_pid+').'+(li.length?'\n\nJá escolhi no site:\n'+li.join('\n'):'')+(f.nome?('\n\nNome/Empresa: '+f.nome):'')+(f.cep?('\nCEP: '+f.cep):''));
+  abrirWhats('Olá! Vou enviar minha lista (foto, PDF, Excel ou áudio) para orçamento na SULLAB (pedido '+_pid+').'+(li.length?'\n\nJá escolhi no site:\n'+li.join('\n'):'')+(f.nome?('\n\nNome/Empresa: '+f.nome):'')+(f.doc?('\nCNPJ/CPF: '+f.doc):'')+(f.cep?('\nCEP: '+f.cep):'')+(f.tel?('\nWhatsApp: '+f.tel):''));
 }
 function abrirContatoWA(){
   var f=fichaSalva();
@@ -899,7 +902,9 @@ function confirmarContatoWA(){
   if(!nome)return waqErro('Por favor, informe seu nome ou o da empresa.');
   if(soDig(tel).length<10)return waqErro('Informe um WhatsApp com DDD — ex.: (24) 90000-0000.');
   if(!CART.length&&lista.length<3)return waqErro('Digite pelo menos um item — ou toque em "mandar foto, PDF, Excel ou áudio" logo abaixo.');
-  if(cep&&soDig(cep).length!==8)return waqErro('CEP precisa ter 8 números — ou deixe em branco.');
+  var nd=soDig(doc).length;
+  if(nd!==11&&nd!==14)return waqErro('Informe o CNPJ (14 números) ou o CPF (11 números).');
+  if(soDig(cep).length!==8)return waqErro('Informe o CEP com 8 números, para calcular o frete.');
   if(email&&!/.+@.+\..+/.test(email))return waqErro('E-mail inválido — corrija ou deixe em branco.');
   var f=fichaSalva();f.nome=nome;f.tel=tel;if(soDig(cep).length===8)f.cep=cep;if(doc){f.doc=doc;f.doct=(soDig(doc).length>11?'cnpj':'cpf');}if(email)f.email=email;
   try{localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}
