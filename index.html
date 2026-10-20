@@ -925,7 +925,7 @@ function dispararPedido(type,pgto,ficha,pedido){
   try{registrarMeuPedido({pedido:ped,ts:Date.now(),total:totalCart(),qtd:CART.reduce(function(s,x){return s+x.qty;},0),itens:its.map(function(x){return {q:x.q,nome:x.nome,cod:x.cod};}),canal:(type==='pedido_mp'?'online':'whatsapp'),status:'recebido'});}catch(e){}
 }
 var DOCT='cnpj', PG='pix';
-var FRETE_ENDPOINT='https://sullab-frete.comercial-0a2.workers.dev/',ORIGEM_CEP='27323450';
+var ORIGEM_CEP='27323450';
 var CUPONS={BEMVINDO5:0.05},cupomPct=0,cupomCod='',freteSelLoja=0,freteLabelLoja='';
 function val(id){return (document.getElementById(id).value||'').trim();}
 function soDig(s){return (s||'').replace(/\D/g,'');}
