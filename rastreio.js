@@ -4,7 +4,7 @@
    scroll_depth, tempo_na_pagina, cadastro_cnpj_tentativa, login_clique, rastrear_pedido_abrir,
    alternar_preco_cnpj, cupom_tentativa, pagar_clique. Origem (utm/gclid) guardada em localStorage. */
 (function(){
-  var CLARITY_ID=''; /* opcional: colar aqui o ID do projeto do Microsoft Clarity (mapa de calor e gravação de tela) */
+  var CLARITY_ID='z0ww8oyptt'; /* opcional: colar aqui o ID do projeto do Microsoft Clarity (mapa de calor e gravação de tela) */
   var AW_ID='AW-11390766577';
   function G(){try{window.dataLayer=window.dataLayer||[];if(typeof window.gtag==='function')window.gtag.apply(null,arguments);}catch(e){}}
   function ev(n,p){G('event',n,p||{});}
