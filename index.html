@@ -158,6 +158,7 @@
   .gbox{margin:8px 0 10px;padding:10px 11px;border-radius:10px;background:var(--navy-soft);font-size:12.5px;color:var(--navy);line-height:1.4}
   .gbox.ok{background:var(--green-soft);color:var(--green-d)}
   .gbox .gin{display:flex;gap:6px;margin-bottom:6px}.gbox .gin input{flex:1;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit}.gbox .gin button{padding:8px 12px;border:0;border-radius:8px;background:var(--navy);color:#fff;font-weight:700;cursor:pointer}
+  .gbox .gnudge{margin-top:6px;padding:8px 9px;background:#fff;border:1px dashed var(--green);border-radius:9px}.gbox .gbar{height:7px;background:#dfe6e0;border-radius:6px;margin-top:6px;overflow:hidden}.gbox .gbar i{display:block;height:100%;background:var(--green);border-radius:6px}
   .gbox .gadd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:5px;padding:6px 8px;background:#fff;border-radius:8px}.gbox .gadd button{border:0;background:var(--green);color:#fff;font-weight:700;border-radius:7px;padding:5px 9px;cursor:pointer;font-size:12px}
   .cnpjsw{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--green-d);cursor:pointer}
   .cnpjsw .sw{width:38px;height:21px;border-radius:999px;background:var(--green);position:relative;transition:.15s}
@@ -794,15 +795,20 @@ var _gTimer=null,_gKey='',_gRes=null;
 function _nomeCat(c){for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===c)return CATALOG[i].n;}return c;}
 function addCodigo(c,q){var p=null;for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===c){p=CATALOG[i];break;}}if(!p)return;var ex=CART.find(function(x){return x.c===c;});if(ex)ex.qty+=q;else CART.push({c:p.c,n:p.n,m:p.m,img:p.img,pub:p.pub,cnpj:p.cnpj,qty:q});salvarCart();atualizarCart();}
 function _gratisHtml(d){
-  if(!d||!d.opcoes||!d.opcoes.length)return '';
-  var g=d.gratis,o=d.opcoes[0];
-  if(g&&g.ativo)return '<div style="font-weight:800;color:var(--green-d)">✅ Frete grátis liberado no seu pedido!</div><div style="font-size:11.5px">Opção econômica'+(o.prazo?(' · '+o.prazo+' dias úteis'):'')+'. Outras transportadoras continuam disponíveis.</div>';
-  if(g&&g.sobConsulta)return '<div>🚚 Frete a partir de <b>'+brl(o.preco)+'</b>'+(o.prazo?(' · '+o.prazo+' dias úteis'):'')+'.</div><div style="font-size:11.5px">Frete grátis não se aplica a um ou mais itens deste pedido.</div>';
+  var g=d&&d.gratis,o=d&&d.opcoes&&d.opcoes[0];
+  if(!o&&!(g&&(g.ativo||g.falta)))return '';
+  var frp=o&&!o.gratis?o.preco:(o&&o.economia?o.economia:0);
+  var pz=o&&o.prazo?(' · '+o.prazo+' dias úteis'):'';
+  if(g&&g.ativo)return '<div style="font-weight:800;color:var(--green-d);font-size:13.5px">✅ Frete GRÁTIS neste pedido!</div>'+(o&&o.economia?'<div style="margin-top:2px">Você economizou <b>'+brl(o.economia)+'</b> de frete'+pz+'.</div>':'<div style="margin-top:2px">Opção econômica'+pz+'. Outras transportadoras continuam disponíveis.</div>');
+  if(g&&g.sobConsulta)return (o?'<div>🚚 Frete a partir de <b>'+brl(o.preco)+'</b>'+pz+'.</div>':'')+'<div style="font-size:11.5px">Frete grátis não se aplica a um ou mais itens deste pedido.</div>';
   var h='';
-  if(g&&g.falta){h+='<div style="font-weight:800">🚚 Faltam <b>'+brl(g.falta)+'</b> para você ganhar frete grátis!</div>';
-    if(g.sugestoes&&g.sugestoes.length){h+='<div style="font-size:11.5px;margin-top:3px">Adicione e libere agora:</div>'+g.sugestoes.map(function(s){return '<div class="gadd"><span>'+s.q+' × '+String(_nomeCat(s.c)).slice(0,48)+' <b>('+brl(s.valor)+')</b></span><button onclick="addCodigo(\''+s.c+'\','+s.q+')">+ Adicionar</button></div>';}).join('');}
-  }else if(g){h+='<div>🚚 Frete a partir de <b>'+brl(o.preco)+'</b>'+(o.prazo?(' · '+o.prazo+' dias úteis'):'')+'.</div>';}
-  else h+='<div>🚚 Frete a partir de <b>'+brl(o.preco)+'</b>'+(o.prazo?(' · '+o.prazo+' dias úteis'):'')+'.</div>';
+  if(o)h+='<div>🚚 Frete: <b>'+brl(o.preco)+'</b> · '+String(o.nome||'').slice(0,28)+pz+'</div>';
+  if(g&&g.falta){
+    var V=0;try{V=totalCart();}catch(e){}
+    var pct=V>0?Math.max(6,Math.min(96,Math.round(V/(V+g.falta)*100))):6;
+    h+='<div class="gnudge"><div style="font-weight:800;color:var(--green-d)">🎁 Adicione mais <b>'+brl(g.falta)+'</b> em produtos e ganhe <b>FRETE GRÁTIS</b>'+(frp?' — você economiza <b>'+brl(frp)+'</b>!':'!')+'</div><div class="gbar"><i style="width:'+pct+'%"></i></div></div>';
+    if(g.sugestoes&&g.sugestoes.length){h+='<div style="font-size:11.5px;margin-top:5px;font-weight:700">Atalho — adicione e economize'+(frp?' '+brl(frp)+' de frete':' o frete')+':</div>'+g.sugestoes.map(function(s){return '<div class="gadd"><span>+ '+s.q+' × '+String(_nomeCat(s.c)).slice(0,44)+' <b>('+brl(s.valor)+')</b><br><em style="font-style:normal;font-size:11px;color:var(--green-d)">libera frete grátis'+(frp?' · economiza '+brl(frp):'')+'</em></span><button onclick="addCodigo(\''+s.c+'\','+s.q+')">+ Adicionar</button></div>';}).join('');}
+  }
   return h;
 }
 function gboxRender(){
@@ -826,7 +832,7 @@ function cotarFreteCarrinho(auto){
   msg.innerHTML='Calculando frete…';
   fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){
     var m2=document.getElementById('gmsg'),b2=document.getElementById('gbox');if(!m2)return;
-    if(!d||!d.opcoes||!d.opcoes.length){m2.innerHTML='🚚 Frete será confirmado no atendimento.';return;}
+    if((!d||!d.opcoes||!d.opcoes.length)&&!(d&&d.gratis&&(d.gratis.ativo||d.gratis.falta))){m2.innerHTML='🚚 Frete será confirmado no atendimento.';return;}
     _gKey=key;_gRes=d;m2.innerHTML=_gratisHtml(d);if(b2)b2.className='gbox'+((d.gratis&&d.gratis.ativo)?' ok':'');
   }).catch(function(){var m3=document.getElementById('gmsg');if(m3)m3.innerHTML='Não foi possível calcular o frete agora — confirmamos no atendimento.';});
 }
@@ -938,7 +944,7 @@ function selFreteLoja(v,nm,pz,id){freteSelLoja=parseFloat(v)||0;freteLabelLoja=n
 var FRETE2='https://api.lojasullabrj.com.br/frete2',freteSelPrazo=0,freteSelId='',freteMeta=null;
 function cotarFreteLoja(){var cep=soDig(val('ckCep'));var opt=document.getElementById('freteOpts');if(!opt)return;if(cep.length!==8){opt.innerHTML='<div style="font-size:11.5px;color:var(--muted);padding:5px 0">Informe o CEP no campo acima.</div>';return;}opt.innerHTML='<div style="font-size:11.5px;color:var(--muted);padding:6px 0">Calculando…</div>';
   var itens=CART.map(function(x){return {c:String(x.c),q:x.qty,v:precoItem(x)};});
-  fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){var ok=(d&&d.opcoes)||[];if(!ok.length){freteMeta=null;opt.innerHTML='<div style="font-size:11.5px;color:var(--muted);padding:5px 0">Frete será confirmado no checkout / WhatsApp.</div>';return;}freteMeta={pesoKg:d.peso,pacotes:d.pacotes,gratis:!!(d.gratis&&d.gratis.ativo)};opt.innerHTML=_gratisHtml(d)+ok.map(function(o,ix){var nm=String(o.nome||'Transportadora').replace(/\x27/g,'');return '<label class="pay1'+(ix===0?' on':'')+'" style="margin-top:6px"><input type="radio" name="frt" value="'+o.preco+'" '+(ix===0?'checked':'')+' onchange="selFreteLoja('+o.preco+',\''+nm+'\','+(o.prazo||0)+',\''+String(o.id||'')+'\')"><span><span class="pn">'+nm+'</span> <span class="pd">'+(o.prazo?('· '+o.prazo+' dias úteis'):'')+'</span></span><span class="ptag" style="color:var(--navy)">'+(o.gratis?'Grátis':brl(o.preco))+'</span></label>';}).join('');selFreteLoja(ok[0].preco,String(ok[0].nome||'Transportadora').replace(/\x27/g,''),ok[0].prazo||0,String(ok[0].id||''));}).catch(function(){opt.innerHTML='<div style="font-size:11.5px;color:var(--muted);padding:5px 0">Não foi possível calcular agora — o frete será confirmado pelo WhatsApp.</div>';});}
+  fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){var ok=(d&&d.opcoes)||[];if(!ok.length){freteMeta=null;opt.innerHTML=_gratisHtml(d)+'<div style="font-size:11.5px;color:var(--muted);padding:5px 0">Frete será confirmado no checkout / WhatsApp.</div>';return;}freteMeta={pesoKg:d.peso,pacotes:d.pacotes,gratis:!!(d.gratis&&d.gratis.ativo)};opt.innerHTML=_gratisHtml(d)+ok.map(function(o,ix){var nm=String(o.nome||'Transportadora').replace(/\x27/g,'');return '<label class="pay1'+(ix===0?' on':'')+'" style="margin-top:6px"><input type="radio" name="frt" value="'+o.preco+'" '+(ix===0?'checked':'')+' onchange="selFreteLoja('+o.preco+',\''+nm+'\','+(o.prazo||0)+',\''+String(o.id||'')+'\')"><span><span class="pn">'+nm+'</span> <span class="pd">'+(o.prazo?('· '+o.prazo+' dias úteis'):'')+'</span></span><span class="ptag" style="color:var(--navy)">'+(o.gratis?'Grátis':brl(o.preco))+'</span></label>';}).join('');selFreteLoja(ok[0].preco,String(ok[0].nome||'Transportadora').replace(/\x27/g,''),ok[0].prazo||0,String(ok[0].id||''));}).catch(function(){opt.innerHTML='<div style="font-size:11.5px;color:var(--muted);padding:5px 0">Não foi possível calcular agora — o frete será confirmado pelo WhatsApp.</div>';});}
 function aplicarCupom(){var c=(val('ckCupom')||'').toUpperCase().replace(/\s/g,'');var msg=document.getElementById('cupomMsg');if(!c){cupomPct=0;cupomCod='';if(msg)msg.textContent='';ckTotais();return;}if(CUPONS[c]){cupomPct=CUPONS[c];cupomCod=c;if(msg){msg.style.color='var(--green-d)';msg.innerHTML='✓ Cupom '+c+' aplicado — '+Math.round(cupomPct*100)+'% OFF.';}}else{cupomPct=0;cupomCod='';if(msg){msg.style.color='#b3261e';msg.textContent='Cupom inválido.';}}ckTotais();}
 function _freteBarCart(){return '';}
 function ckTotais(){var base=totalCart();var t=base*fatorPg()*(1-cupomPct)+(freteSelLoja||0);var n=CART.reduce(function(s,x){return s+x.qty;},0);document.getElementById('ckTot').textContent=brl(t);document.getElementById('ckQt').textContent='('+n+' '+(n===1?'item':'itens')+(PG==='pix'?' · −5% Pix':'')+(cupomPct?(' · −'+Math.round(cupomPct*100)+'%'):'')+(freteSelLoja?(' · frete '+brl(freteSelLoja)):'')+')';}
