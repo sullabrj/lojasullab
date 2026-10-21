@@ -522,6 +522,7 @@
   <div class="popq"><b>Buscas populares:</b><span onclick="buscarTermo('tubo EDTA')">tubo EDTA</span><span onclick="buscarTermo('teste COVID')">teste COVID</span><span onclick="buscarTermo('ágar')">ágar</span><span onclick="buscarTermo('agulha')">agulha</span><span onclick="buscarTermo('luva nitrílica')">luva nitrílica</span><span onclick="buscarTermo('lâmina')">lâmina</span><span onclick="buscarTermo('seringa')">seringa</span></div>
   <!-- OFERTAS / QUEIMA DE ESTOQUE: edite a lista window.OFERTAS (código do produto, selo, texto e, se quiser, preço "de") -->
   <section id="ofSec" style="display:none"><div class="ofh"><h2 id="ofTitulo">🔥 Ofertas da semana</h2><small>Estoque limitado · aproveite antes que acabe</small></div><div class="ofgrid" id="ofGrid"></div></section>
+  <section id="kitSec" style="display:none"><div class="ofh"><h2>📦 Kits prontos para o seu laboratório</h2><small>Tudo em 1 clique · desconto extra de 5% no kit, além do Pix</small></div><div class="kitgrid" id="kitGrid"></div></section>
   <!-- CATEGORY TILES -->
   <div id="catPanel"><div class="sec" id="catSec"><h2>Compre por categoria</h2><span class="lk" onclick="irProdutos()">Ver tudo →</span></div>
   <div class="cats" id="catTiles"></div></div>
@@ -566,7 +567,7 @@
     </div>
     <div><h2 class="fh">Categorias</h2><div id="footCats"></div></div>
     <div><h2 class="fh">Comprar</h2><a href="#orcamento" onclick="abrirListaOrcamento();return false">Pedir orçamento</a><a href="#conta" onclick="abrirConta();return false">Minha conta CNPJ</a><a href="#rastreio" onclick="abrirRastreio();return false">Rastrear pedido</a><a href="#catalogo" onclick="irProdutos();return false">Catálogo completo</a></div>
-    <div><h2 class="fh">Atendimento</h2><a href="https://wa.me/5524988383100" onclick="abrirContatoWA('duvida');return false">💬 WhatsApp (24) 98838-3100</a><a href="mailto:comercial@sullabrj.com.br">✉️ comercial@sullabrj.com.br</a><a href="/devolucao.html">Trocas e devoluções</a></div>
+    <div><h2 class="fh">Atendimento</h2><a href="https://wa.me/5524988383100" onclick="abrirContatoWA('duvida');return false">💬 WhatsApp (24) 98838-3100</a><a href="mailto:comercial@sullabrj.com.br">✉️ comercial@sullabrj.com.br</a><a href="/indique.html">🤝 Indique e ganhe comissão</a><a href="/devolucao.html">Trocas e devoluções</a></div>
   </div>
   <div class="fbar">
     <span>© 2026 SULLAB Comércio de Produtos Hospitalares · CNPJ 32.198.434/0001-34</span>
@@ -808,7 +809,8 @@ var WHATS='5524988383100';
 
 function brl(v){return 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function precoDe(p){var r=(window.PRECOS||{})[p.c];return r&&r[1]?r[1]:0;}
-function precoItem(x){var r=(window.PRECOS||{})[x.c];return r&&r[1]?r[1]:0;}
+function precoItem(x){var r=(window.PRECOS||{})[x.c];var b=r&&r[1]?r[1]:0;if(b&&x.kq&&x.kd&&x.qty){var q=Math.min(x.kq,x.qty);return (b*(x.qty-q)+b*(1-x.kd)*q)/x.qty;}return b;}
+function precoBase(x){var r=(window.PRECOS||{})[x.c];return r&&r[1]?r[1]:0;}
 
 /* ====== RENDER ESTRUTURAS ====== */
 function montarDeptNav(){
@@ -1007,7 +1009,7 @@ function cartAddRes(btn){
 }
 function cartVerTodos(){var q=document.getElementById('cartSearch').value.trim();fecharCarrinho();var si=document.getElementById('searchInput');if(si){si.value=q;}fazerBusca();}
 
-function _cpLinha(x){var p=precoItem(x);return p?('<div class="cp">'+brl(p*x.qty)+'<small>'+x.qty+' × '+brl(p)+'</small></div>'):'<div class="cp" style="font-size:12.5px;color:#217a4b">Preço sob consulta</div>';}
+function _cpLinha(x){var p=precoItem(x);if(!p)return '<div class="cp" style="font-size:12.5px;color:#217a4b">Preço sob consulta</div>';var q=(x.kq&&x.kd)?Math.min(x.kq,x.qty):0;var tot=Math.round(p*x.qty*100)/100;return '<div class="cp">'+brl(tot)+'<small>'+(q?('<span style="color:#14653b;font-weight:800">Kit −'+Math.round(x.kd*100)+'%</span> em '+q+' un'):(x.qty+' × '+brl(p)))+'</small></div>';}
 var _gTimer=null,_gKey='',_gRes=null;
 function _nomeCat(c){for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===c)return CATALOG[i].n;}return c;}
 function addCodigo(c,q){var p=null;for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===c){p=CATALOG[i];break;}}if(!p)return;var ex=CART.find(function(x){return x.c===c;});if(ex)ex.qty+=q;else CART.push({c:p.c,n:p.n,m:p.m,img:p.img,pub:p.pub,cnpj:p.cnpj,qty:q});salvarCart();atualizarCart();}
@@ -1250,7 +1252,7 @@ function pagarMP(){
   if(soDig(f.cep).length!==8||!f.num)return ckErro('Informe CEP e número do endereço.');
   localStorage.setItem('sullab_ficha',JSON.stringify(f));
   var fator=fatorPg()*(1-cupomPct);var items=[];
-  CART.forEach(function(x){var pr=precoItem(x)*fator;if(pr>0)items.push({title:(x.c+' '+x.n).slice(0,120),quantity:x.qty,unit_price:Math.round(pr*100)/100});});
+  CART.forEach(function(x){var b=precoBase(x);if(b<=0)return;var q=(x.kq&&x.kd)?Math.min(x.kq,x.qty):0;if(q)items.push({title:('KIT -'+Math.round(x.kd*100)+'% '+x.c+' '+x.n).slice(0,120),quantity:q,unit_price:Math.round(b*(1-x.kd)*fator*100)/100});if(x.qty-q>0)items.push({title:(x.c+' '+x.n).slice(0,120),quantity:x.qty-q,unit_price:Math.round(b*fator*100)/100});});
   if(freteSelLoja>0)items.push({title:'Frete'+(freteLabelLoja?(' ('+freteLabelLoja+')'):''),quantity:1,unit_price:Math.round(freteSelLoja*100)/100});
   if(!items.length)return ckErro('Nenhum item com preço para pagar online. Equipamentos são sob consulta — use o WhatsApp.');
   var pedido='SLB-'+Date.now();window._pedAtual=pedido;
@@ -1512,6 +1514,122 @@ try{montarCatTiles();}catch(e){}
     abrirContatoWA(q==='duvida'?'duvida':undefined);
   }catch(e){}},900);
 }catch(e){}})();
+</script>
+
+<style id="growthCss">
+.kitgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:980px){.kitgrid{grid-template-columns:repeat(2,1fr)}}@media(max-width:640px){.kitgrid{grid-template-columns:1fr}}
+.kit{background:#fff;border:1px solid #cfe3f7;border-radius:14px;padding:16px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(31,78,121,.08)}
+.kit .kt{font-size:16px;font-weight:800;color:var(--navy);margin:0 0 3px}.kit .kw{font-size:12.5px;color:var(--muted);margin:0 0 10px;line-height:1.35}
+.kit ul{list-style:none;margin:0 0 12px;padding:0;font-size:13px;line-height:1.35;flex:1}.kit li{display:flex;gap:7px;padding:4px 0;border-top:1px dashed #e1e8f1}.kit li:first-child{border-top:0}.kit li b{color:var(--navy);min-width:26px}
+.kit .kp{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.kit .kp s{color:#8a97ab;font-size:13px}.kit .kp strong{font-size:22px;color:#1f7d4c;font-weight:900}
+.kit .ks{font-size:12.5px;color:#14653b;font-weight:700;margin:2px 0 10px}.kit .ks small{display:block;color:#3d6a53;font-weight:600;margin-top:2px}
+.kit button{border:0;background:var(--green-d,#217a4b);color:#fff;font-weight:800;font-size:14px;padding:12px;border-radius:10px;cursor:pointer;font-family:inherit}.kit button:hover{filter:brightness(1.1)}
+.trustp{display:flex;flex-wrap:wrap;gap:6px 8px;margin:12px 0 2px}.trustp span{background:#eaf2ff;color:#1f3a5f;border-radius:18px;padding:5px 11px;font-size:12px;font-weight:700}
+.sv{background:#f1faf5;border:1px solid #bfe5cc;border-radius:10px;padding:10px 11px;margin:10px 0;font-size:12.5px;color:#14653b;line-height:1.35}
+.sv b{font-weight:800}.sv .svr{display:flex;gap:6px;margin-top:7px}.sv input{flex:1;min-width:0;padding:9px 10px;border:1px solid #b9d9c6;border-radius:8px;font-size:14px;font-family:inherit}.sv button{border:0;background:#1f7d4c;color:#fff;font-weight:800;font-size:12.5px;padding:9px 12px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.sv .svlk{display:inline-block;margin-top:7px;color:var(--navy-l,#1f5fa8);font-weight:800;cursor:pointer;text-decoration:underline}
+#retBar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:80;background:#1f4e79;color:#fff;border-radius:14px;padding:11px 14px;display:none;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(16,32,60,.35);max-width:min(560px,94vw);font-size:13.5px}
+#retBar.on{display:flex}#retBar b{font-weight:800}#retBar button{border:0;border-radius:9px;padding:9px 13px;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}#retBar .go{background:#25c06a;color:#fff}#retBar .x{background:transparent;color:#cfe0f3;font-size:18px;padding:4px 8px}
+</style>
+
+<script id="growthJs">
+(function(){
+/* ===== Kits promocionais (desconto extra de 5% só nas unidades do kit) ===== */
+var KIT_DESC=0.05;
+var KITS=[
+ {id:'coleta-basica',nome:'Coleta de sangue — básico',para:'Laboratório pequeno e posto de coleta: o essencial para começar.',itens:[['454036',1,'Tubo EDTA 4 mL (roxo) rack c/ 50'],['454092',1,'Tubo soro 4 mL (vermelho) rack c/ 50'],['450071',1,'Agulha múltipla 22G cx c/ 100'],['GRL36',1,'Garrote descartável cx c/ 25'],['PRD00003',1,'Curativo stopper slim c/ 100']]},
+ {id:'coleta-completa',nome:'Coleta de sangue — completo',para:'Hemograma, bioquímica, coagulação e glicose na mesma rotina.',itens:[['454036',2,'Tubo EDTA 4 mL (roxo) rack c/ 50'],['454071',1,'Tubo soro gel 3,5 mL (amarelo) rack c/ 50'],['454327',1,'Tubo citrato 3,5 mL (azul) rack c/ 50'],['454085',1,'Tubo glicose/lactato 2 mL (cinza) rack c/ 50'],['450071',2,'Agulha múltipla 22G cx c/ 100'],['GRL36',1,'Garrote descartável cx c/ 25'],['PRD00003',2,'Curativo stopper slim c/ 100']]},
+ {id:'triagem-ist',nome:'Triagem de IST',para:'HIV, sífilis e hepatite B com lanceta para a coleta de ponta de dedo.',itens:[['TR 007 IST',1,'Teste rápido HIV 1/2 cx c/ 50'],['TR 008-1 IST',1,'Teste rápido Sífilis cx c/ 25'],['TR 009-1 IST',1,'Teste rápido HBsAg (tira) cx c/ 50'],['25492',1,'Lanceta de segurança 28G cx c/ 100']]},
+ {id:'dengue-covid',nome:'Dengue e COVID — balcão',para:'Os três testes mais pedidos na alta temporada, mais swab para coleta.',itens:[['TR 008-1 DT',1,'Teste rápido Dengue NS1 cx c/ 50'],['TR 009-1 DT',1,'Teste rápido Dengue IgG/IgM cx c/ 50'],['TR 017-1 RP',1,'Teste rápido COVID-19 Ag cx c/ 25'],['23007',1,'Swab estéril cx c/ 100']]},
+ {id:'hematologia',nome:'Hematologia e microscopia',para:'Lâminas, corantes e pipetas de VHS para o setor de hematologia.',itens:[['7105',1,'Lâmina 26×76 mm cx c/ 50'],['P22X22',1,'Lamínula 22×22 mm cx c/ 100'],['PA285',1,'Óleo de imersão 100 mL'],['PA220',1,'May Grunwald 500 mL'],['PA210',1,'Leishmann 500 mL'],['VHS-P',1,'Pipeta plástica para VHS c/ 25']]},
+ {id:'urina-coletas',nome:'Urina e coletas',para:'Coletores e swab para uroanálise e material biológico.',itens:[['CLT80ES-RGM',1,'Coletor de urina 80 mL pc c/ 100'],['CLT24H2LT',2,'Coletor de urina 24 h 2 L'],['S350RAZPA',1,'Coletor universal com pá pc c/ 100'],['23007',1,'Swab estéril cx c/ 100']]}
+];
+window.KITS=KITS;
+function pr(c){var r=(window.PRECOS||{})[c];return r&&r[1]?r[1]:0;}
+function kitTotal(k){return k.itens.reduce(function(s,i){return s+pr(i[0])*i[1];},0);}
+function kitOk(k){return k.itens.every(function(i){return pr(i[0])>0&&CATALOG.some(function(p){return p.c===i[0];});});}
+window.montarKits=function(){
+  try{var sec=document.getElementById('kitSec'),g=document.getElementById('kitGrid');if(!sec||!g)return;
+  var L=KITS.filter(kitOk);if(!L.length){sec.style.display='none';return;}
+  g.innerHTML=L.map(function(k){var t=kitTotal(k),v=Math.round(t*(1-KIT_DESC)*100)/100,e=Math.round((t-v)*100)/100,px=Math.round(v*95)/100;
+   return '<div class="kit"><div class="kt">'+k.nome+'</div><div class="kw">'+k.para+'</div><ul>'+k.itens.map(function(i){return '<li><b>'+i[1]+'×</b><span>'+i[2]+'</span></li>';}).join('')+'</ul><div class="kp"><s>'+brl(t)+'</s><strong>'+brl(v)+'</strong></div><div class="ks">Você economiza '+brl(e)+' (5%) · no Pix '+brl(px)+'<small>Desconto do kit vale para as unidades do kit.</small></div><button onclick="addKit(\''+k.id+'\')">Adicionar kit ao carrinho</button></div>';}).join('');
+  sec.style.display='';}catch(e){}
+};
+window.addKit=function(id,silent){
+  var k=KITS.filter(function(x){return x.id===id;})[0];if(!k)return;
+  k.itens.forEach(function(i){var p=CATALOG.filter(function(x){return x.c===i[0];})[0];if(!p)return;
+    var ex=CART.filter(function(x){return x.c===i[0];})[0];
+    if(ex){ex.qty+=i[1];ex.kq=(ex.kq||0)+i[1];ex.kd=Math.max(ex.kd||0,KIT_DESC);}
+    else CART.push({c:p.c,n:p.n,m:p.m,img:p.img,pub:p.pub,cnpj:p.cnpj,qty:i[1],kq:i[1],kd:KIT_DESC});});
+  salvarCart();atualizarCart();try{sullabEvent('kit_add',{kit:id});}catch(e){}
+  if(!silent)abrirCarrinho();
+};
+window.addEventListener('load',function(){setTimeout(function(){try{montarKits();}catch(e){}},250);});
+var _bt=window.boot;
+if(typeof _bt==='function'){window.boot=function(){_bt.apply(this,arguments);montarKits();};}
+
+/* ===== Referência (indique e ganhe), link de carrinho e kit por URL ===== */
+try{var q=new URLSearchParams(location.search);
+ var ref=(q.get('ref')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,24);if(ref){localStorage.setItem('sullab_ref',ref);localStorage.setItem('sullab_ref_ts',String(Date.now()));}
+ var rts=parseInt(localStorage.getItem('sullab_ref_ts')||'0',10);if(rts&&Date.now()-rts>5184000000){localStorage.removeItem('sullab_ref');localStorage.removeItem('sullab_ref_ts');}
+}catch(e){}
+var _se=window.sullabEvent;
+window.sullabEvent=function(t,e){e=e||{};try{var r=localStorage.getItem('sullab_ref');if(r&&!e.ref)e.ref=r;}catch(_){}return _se.call(this,t,e);};
+function aplicarUrl(){
+  try{var q=new URLSearchParams(location.search),c=q.get('carrinho'),kit=q.get('kit'),did=false;
+   if(c){c.split(',').forEach(function(par){var a=par.split(':'),cod=decodeURIComponent(a[0]||''),n=Math.max(1,Math.min(9999,parseInt(a[1])||1));if(cod&&CATALOG.some(function(p){return p.c===cod;})){addCodigo(cod,n);did=true;}});}
+   if(kit){addKit(kit,true);did=true;}
+   if(did){history.replaceState(null,'',location.pathname);abrirCarrinho();try{sullabEvent('carrinho_por_link',{});}catch(e){}}
+  }catch(e){}
+}
+if(document.readyState==='complete')setTimeout(aplicarUrl,300);else window.addEventListener('load',function(){setTimeout(aplicarUrl,500);});
+
+/* ===== Carrinho: salvar por WhatsApp, copiar link, selos ===== */
+var _ac2=window.atualizarCart;
+window.atualizarCart=function(){_ac2.apply(this,arguments);
+  try{var df=document.getElementById('df');if(!df||!CART.length)return;
+   var f={};try{f=fichaSalva();}catch(e){}
+   var tel=(f&&f.tel)||'';
+   var box=document.createElement('div');box.className='sv';box.id='svBox';
+   box.innerHTML='<b>Não vai fechar agora?</b> Guardamos seu carrinho e avisamos se o preço mudar ou o estoque estiver acabando.'+(tel?'<div style="margin-top:6px">Aviso no WhatsApp ativo: <b>'+tel+'</b></div>':'<div class="svr"><input id="svTel" inputmode="tel" placeholder="Seu WhatsApp com DDD"><button onclick="salvarCarrinhoTel()">Guardar</button></div>')+'<span class="svlk" onclick="copiarLinkCarrinho()">🔗 Copiar link deste carrinho</span><span id="svMsg" style="display:block;margin-top:5px;font-weight:700"></span>';
+   df.appendChild(box);
+   var tp=document.createElement('div');tp.className='trustp';tp.innerHTML='<span>🧾 NF-e em todo pedido</span><span>🛡️ Registro ANVISA quando exigido</span><span>🏆 38 anos de mercado</span><span>🚚 Frota própria no RJ</span>';df.appendChild(tp);
+  }catch(e){}
+};
+window.salvarCarrinhoTel=function(){var el=document.getElementById('svTel'),m=document.getElementById('svMsg');if(!el)return;var t=el.value.replace(/\D/g,'');
+  if(t.length<10){if(m)m.textContent='Informe o WhatsApp com DDD.';return;}
+  try{var f=fichaSalva();f.tel=t;localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}
+  try{sullabEvent('carrinho_salvo',{tel:t,total:Math.round(totalCart()*100)/100,qtd:CART.reduce(function(s,x){return s+x.qty;},0),itens:CART.map(function(x){return {cod:x.c,nome:x.n,q:x.qty};}),link:linkCarrinho()});}catch(e){}
+  try{if(typeof gtag==='function')gtag('event','carrinho_salvo',{value:totalCart(),currency:'BRL'});}catch(e){}
+  atualizarCart();var m2=document.getElementById('svMsg');if(m2)m2.textContent='Pronto! Carrinho guardado.';};
+function linkCarrinho(){return location.origin+'/?carrinho='+CART.map(function(x){return encodeURIComponent(x.c)+':'+x.qty;}).join(',');}
+window.copiarLinkCarrinho=function(){var l=linkCarrinho(),m=document.getElementById('svMsg');
+  function ok(){if(m)m.textContent='Link copiado! Cole no WhatsApp ou e-mail.';}
+  try{navigator.clipboard.writeText(l).then(ok,function(){prompt('Copie o link:',l);});}catch(e){prompt('Copie o link:',l);}};
+
+/* ===== Aviso para quem volta com itens no carrinho + evento de abandono ===== */
+var PREV_VISIT=0;try{PREV_VISIT=parseInt(localStorage.getItem('sullab_last')||'0',10);}catch(e){}
+function retorno(){try{
+  if(!CART.length)return;var last=PREV_VISIT,now=Date.now();
+  if(last&&now-last>1800000&&!sessionStorage.getItem('retShown')){
+    var n=CART.reduce(function(s,x){return s+x.qty;},0);var b=document.createElement('div');b.id='retBar';b.className='on';
+    b.innerHTML='<span>Você deixou <b>'+n+(n===1?' item':' itens')+'</b> no carrinho. Finalize com <b>Pix 5% de desconto</b>.</span><button class="go" onclick="abrirCarrinho();this.parentNode.remove()">Ver carrinho</button><button class="x" onclick="this.parentNode.remove()" aria-label="Fechar">×</button>';
+    document.body.appendChild(b);sessionStorage.setItem('retShown','1');try{sullabEvent('carrinho_retorno',{});}catch(e){}}
+ }catch(e){}}
+window.addEventListener('load',function(){setTimeout(retorno,1200);});
+function marca(){try{localStorage.setItem('sullab_last',String(Date.now()));}catch(e){}}
+marca();
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState!=='hidden')return;marca();
+  try{if(!CART.length||sessionStorage.getItem('abSent'))return;var f=fichaSalva(),t=(f&&f.tel)||'';if(!t)return;
+    sessionStorage.setItem('abSent','1');sullabEvent('carrinho_abandonado',{tel:t,total:Math.round(totalCart()*100)/100,itens:CART.map(function(x){return {cod:x.c,nome:x.n,q:x.qty};}),link:linkCarrinho()});}catch(e){}
+});
+
+/* ===== Selos de confiança no produto ===== */
+var _ap3=window.abrirProd;
+window.abrirProd=function(i){_ap3.apply(this,arguments);try{var b=document.querySelector('#pmInner .pmb');if(b&&!b.querySelector('.trustp'))b.insertAdjacentHTML('beforeend','<div class="trustp"><span>🧾 NF-e em todo pedido</span><span>🛡️ Registro ANVISA quando exigido</span><span>🏆 Distribuidora há 38 anos</span><span>🚚 Entrega com frota própria no RJ</span></div>');}catch(e){}};
+})();
 </script>
 </body>
 </html>
