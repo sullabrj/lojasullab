@@ -358,22 +358,27 @@
 @media(max-width:700px){.search{min-width:0}.search select{max-width:92px;padding:0 6px;font-size:11.5px}.search input{min-width:0;width:100%;padding:12px 10px;font-size:14px}.search button{padding:0 14px}}
 </style>
 <style id="ofertasCss">
-#ofSec{margin:18px 0 6px}
-#ofSec .ofh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
-#ofSec .ofh h2{margin:0;font-size:20px;color:var(--navy-d)}
-#ofSec .ofh small{color:var(--muted,#6b7a90);font-size:13px}
+#ofSec{margin:22px 0 8px;padding:18px 18px 20px;border-radius:18px;border:1px solid #fdba74;background:linear-gradient(135deg,#fff7ed 0%,#ffe8d2 100%);box-shadow:0 2px 10px rgba(194,65,12,.10)}
+#ofSec .ofh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+#ofSec .ofh h2{margin:0;font-size:21px;color:#9a3412}
+#ofSec .ofh small{color:#7c2d12;font-size:13px;font-weight:600}
 .ofgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
-.ofc{position:relative;background:#fff;border:1px solid #e3e9f3;border-radius:14px;padding:12px;cursor:pointer;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(31,60,115,.06);transition:box-shadow .15s,transform .15s}
-.ofc:hover{box-shadow:0 6px 18px rgba(31,60,115,.14);transform:translateY(-2px)}
-.ofc .oft{position:absolute;top:10px;left:10px;background:#d6336c;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;letter-spacing:.2px}
+.ofc{position:relative;background:#fff;border:1px solid #fed7aa;border-radius:14px;padding:12px;cursor:pointer;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(194,65,12,.08);transition:box-shadow .15s,transform .15s}
+.ofc:hover{box-shadow:0 8px 20px rgba(194,65,12,.20);transform:translateY(-2px)}
+.ofc .oft{position:absolute;top:10px;left:10px;background:#c2410c;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;letter-spacing:.2px}
 .ofc .ofi{height:120px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
 .ofc .ofi img{max-width:100%;max-height:120px;object-fit:contain}
 .ofc .ofn{font-size:13px;font-weight:700;color:#1b2a44;line-height:1.3;min-height:34px}
 .ofc .ofd{font-size:12px;color:#55627a;margin-top:2px}
-.ofc .ofp{margin-top:6px;font-size:20px;font-weight:800;color:#2f9e63}
+.ofc .ofp{margin-top:6px;font-size:20px;font-weight:800;color:#1f7d4c}
 .ofc .ofp s{font-size:13px;color:#8a97ab;font-weight:600;margin-right:6px}
-.ofc .ofb{margin-top:8px;background:var(--green-d);color:#fff;border:0;border-radius:9px;padding:8px;font-weight:700;font-size:13px;cursor:pointer}
-@media(max-width:900px){.ofgrid{grid-template-columns:repeat(2,1fr);gap:10px}}
+.ofc .ofb{margin-top:8px;background:#c2410c;color:#fff;border:0;border-radius:9px;padding:8px;font-weight:700;font-size:13px;cursor:pointer}
+.ofc .ofb:hover{background:#9a3412}
+#catPanel{margin:22px 0 8px;padding:18px 18px 20px;border-radius:18px;border:1px solid #cfdcf0;background:linear-gradient(135deg,#f3f7fd 0%,#e4edf9 100%)}
+#catPanel .sec{margin-top:0}
+.secdiv{display:flex;align-items:center;gap:14px;margin:28px 0 6px;color:var(--navy-d);font-weight:800;font-size:15px;letter-spacing:.4px;text-transform:uppercase}
+.secdiv:before,.secdiv:after{content:"";flex:1;height:2px;background:linear-gradient(90deg,transparent,#9db4d8,transparent)}
+@media(max-width:900px){.ofgrid{grid-template-columns:repeat(2,1fr);gap:10px}#ofSec,#catPanel{padding:14px 12px 16px;border-radius:14px}}
 </style>
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"></head>
 <body>
@@ -473,10 +478,11 @@
 
   <div class="popq"><b>Buscas populares:</b><span onclick="buscarTermo('tubo EDTA')">tubo EDTA</span><span onclick="buscarTermo('teste COVID')">teste COVID</span><span onclick="buscarTermo('ágar')">ágar</span><span onclick="buscarTermo('agulha')">agulha</span><span onclick="buscarTermo('luva nitrílica')">luva nitrílica</span><span onclick="buscarTermo('lâmina')">lâmina</span><span onclick="buscarTermo('seringa')">seringa</span></div>
   <!-- OFERTAS / QUEIMA DE ESTOQUE: edite a lista window.OFERTAS (código do produto, selo, texto e, se quiser, preço "de") -->
-  <section id="ofSec" style="display:none"><div class="ofh"><h2 id="ofTitulo">🔥 Ofertas da semana</h2><small>Estoque limitado · peça já o seu orçamento</small></div><div class="ofgrid" id="ofGrid"></div></section>
+  <section id="ofSec" style="display:none"><div class="ofh"><h2 id="ofTitulo">🔥 Ofertas da semana</h2><small>Estoque limitado · aproveite antes que acabe</small></div><div class="ofgrid" id="ofGrid"></div></section>
   <!-- CATEGORY TILES -->
-  <div class="sec" id="catSec"><h2>Compre por categoria</h2><span class="lk" onclick="irProdutos()">Ver tudo →</span></div>
-  <div class="cats" id="catTiles"></div>
+  <div id="catPanel"><div class="sec" id="catSec"><h2>Compre por categoria</h2><span class="lk" onclick="irProdutos()">Ver tudo →</span></div>
+  <div class="cats" id="catTiles"></div></div>
+  <div class="secdiv" role="separator"><span>Catálogo completo</span></div>
 
   <!-- (seção de marcas removida — loja organizada por categoria de produto) -->
 
