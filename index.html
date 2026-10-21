@@ -1059,7 +1059,7 @@ function ckModo(){var online=(DOCT==='cnpj');var b=document.getElementById('ckPa
   if(sb)sb.textContent=online?'Pagamento seguro pelo Mercado Pago · NF-e em todo pedido':'Para CPF o pedido segue por orçamento: enviamos preço final e frete pelo WhatsApp';
   if(sf)sf.innerHTML=online?'🔒 Pagamento processado pelo Mercado Pago. Seus dados não ficam no nosso site.':'🔒 Sem pagamento online: retornamos com preço final, frete e NF-e pelo WhatsApp.';
 }
-function abrirCarrinho(){atualizarCart();document.getElementById('ov').classList.add('on');document.getElementById('drawer').classList.add('on');}
+function abrirCarrinho(){try{var _pm=document.getElementById('pmodal');if(_pm&&_pm.classList.contains('on'))fecharProd();}catch(e){}atualizarCart();document.getElementById('ov').classList.add('on');document.getElementById('drawer').classList.add('on');}
 function abrirCarrinhoBusca(){abrirCarrinho();setTimeout(function(){var e=document.getElementById('cartSearch');if(e)e.focus();},260);}
 function fecharCarrinho(){document.getElementById('ov').classList.remove('on');document.getElementById('drawer').classList.remove('on');}
 
