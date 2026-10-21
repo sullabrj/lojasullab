@@ -413,6 +413,7 @@
 .ofc .ofn{font-size:13px;font-weight:700;color:#1b2a44;line-height:1.3;min-height:34px}
 .ofc .ofd{font-size:12px;color:#55627a;margin-top:2px}
 .ofc .ofp{margin-top:6px;font-size:20px;font-weight:800;color:#1f7d4c}
+.ofc .ofu{font-size:13px;line-height:1.3;margin-top:2px}.ofc .ofu b{font-weight:800}
 .ofc .ofp s{font-size:13px;color:#8a97ab;font-weight:600;margin-right:6px}
 .ofc .ofb{margin-top:8px;background:#c2410c;color:#fff;border:0;border-radius:9px;padding:8px;font-weight:700;font-size:13px;cursor:pointer}
 .ofc .ofb:hover{background:#9a3412}
@@ -758,7 +759,7 @@ function montarOfertas(){
     if(!sec||!g||!L.length){if(sec)sec.style.display='none';return;}
     g.innerHTML=L.slice(0,4).map(function(x){
       var pr=(window.PRECOS||{})[x.p.c],v=pr&&pr[1]?pr[1]:0;
-      var preco=v?'<div class="ofp">'+(x.o.de?'<s>'+brl(x.o.de)+'</s>':'')+brl(v)+'</div>':'<div class="ofp" style="font-size:14px;color:#1f3c73">Sob consulta</div>';
+      var preco=v?'<div class="ofp">'+(x.o.de?'<s>'+brl(x.o.de)+'</s>':'')+brl(v)+'</div>'+(typeof unitLn==='function'?'<div class="ofu">'+unitLn(x.p.c,v)+'</div>':''):'<div class="ofp" style="font-size:14px;color:#1f3c73">Sob consulta</div>';
       return '<div class="ofc" onclick="abrirProd('+x.i+')"><span class="oft">'+(x.o.tag||'Oferta')+'</span><div class="ofi"><img src="'+x.p.img+'" width="120" height="120" loading="lazy" alt="'+x.p.n.replace(/"/g,'&quot;')+'"></div><div class="ofn">'+x.p.n+'</div><div class="ofd">'+(x.o.txt||x.p.m)+'</div>'+preco+'<button class="ofb" onclick="event.stopPropagation();abrirProd('+x.i+')">Ver oferta</button></div>';
     }).join('');
     sec.style.display='';
