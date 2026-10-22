@@ -1885,6 +1885,24 @@ window.pagarMP=function(){
 };
 })();
 </script>
+<script id="freteObrigatorio">
+/* 22/10/2026: pedido SLB-1792698754293 foi pago sem frete (o cliente não clicou em "Calcular frete").
+   Agora o frete é calculado sozinho quando o CEP fica completo e não dá para pagar sem transportadora escolhida. */
+(function(){
+function semFrete(){return !(freteSelLoja>0)&&!(window.freteMeta&&freteMeta.gratis);}
+var _pg=window.pagarMP;
+window.pagarMP=function(){
+  if(semFrete()){
+    if(soDig(val('ckCep')).length===8){try{cotarFreteLoja();}catch(e){}return ckErro('Calculando o frete para o seu CEP: escolha a transportadora e toque em pagar de novo.');}
+    return ckErro('Informe o CEP para calcular o frete antes de pagar.');
+  }
+  return _pg.apply(this,arguments);
+};
+var _ult='';
+setInterval(function(){try{var c=document.getElementById('cko');if(!c||!c.classList.contains('on'))return;var cep=soDig(val('ckCep'));
+  if(cep.length===8&&cep!==_ult&&document.getElementById('freteOpts')){_ult=cep;if(semFrete())cotarFreteLoja();}}catch(e){}},800);
+})();
+</script>
 
 </body>
 </html>
