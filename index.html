@@ -600,7 +600,7 @@
     </div>
     <div><h2 class="fh">Categorias</h2><div id="footCats"></div></div>
     <div><h2 class="fh">Comprar</h2><a href="#orcamento" onclick="abrirListaOrcamento();return false">Colar lista (orçamento)</a><a href="#conta" onclick="abrirConta();return false">Minha conta CNPJ</a><a href="#rastreio" onclick="abrirRastreio();return false">Rastrear pedido</a><a href="#catalogo" onclick="irProdutos();return false">Catálogo completo</a></div>
-    <div><h2 class="fh">Atendimento</h2><a href="https://wa.me/5524988383100" onclick="abrirContatoWA('duvida');return false">💬 WhatsApp (24) 98838-3100</a><a href="mailto:comercial@sullabrj.com.br">✉️ comercial@sullabrj.com.br</a><a href="/indique.html">🤝 Indique e ganhe comissão</a><a href="/devolucao.html">Trocas e devoluções</a></div>
+    <div><h2 class="fh">Atendimento</h2><a href="/?orcar=duvida" onclick="abrirContatoWA('duvida');return false">💬 Dúvidas</a><a href="mailto:comercial@sullabrj.com.br">✉️ comercial@sullabrj.com.br</a><a href="/indique.html">🤝 Indique e ganhe comissão</a><a href="/devolucao.html">Trocas e devoluções</a></div>
   </div>
   <div class="fbar">
     <span>© 2026 SULLAB Comércio de Produtos Hospitalares · CNPJ 32.198.434/0001-34</span>
@@ -896,8 +896,10 @@ var FTMAP=null,_ftLoading=false;
 function ensureFT(cb){if(FTMAP){return cb&&cb();}if(_ftLoading){return setTimeout(function(){ensureFT(cb);},120);}_ftLoading=true;fetch('ft.json').then(function(r){return r.json();}).then(function(d){FTMAP=d;cb&&cb();}).catch(function(){FTMAP={};cb&&cb();});}
 function semAcento(s){return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 var BUSCA_STOP={de:1,do:1,da:1,dos:1,das:1,para:1,pra:1,com:1,e:1,em:1,o:1,a:1,os:1,as:1,um:1,uma:1,no:1,na:1};
+function _nrmMed(t){return String(t).replace(/[×✕]/g,'x').replace(/ø/g,' ').replace(/(\d)\s*x\s*(\d)/g,'$1x$2').replace(/(\d)\s+(mm|ml|cm|ul)\b/g,'$1$2');}
 function buscaCasa(hay,termo){
-  var q=semAcento(termo);
+  hay=_nrmMed(hay);
+  var q=_nrmMed(semAcento(termo));
   if(hay.indexOf(q)>=0) return true;
   var tk=q.split(/[^a-z0-9\-]+/).filter(function(t){return t&&!BUSCA_STOP[t];});
   if(!tk.length) return false;
@@ -1808,6 +1810,10 @@ window._cartBuscarGo=function(){_cb.apply(this,arguments);
   setTimeout(function(){try{var n=document.querySelector('#cartRes .none');if(n&&/WhatsApp/i.test(n.innerHTML)){var q=val('cartSearch');
     n.innerHTML='Nenhum produto encontrado para “'+_esc(q)+'”.<br><a class="lk" style="color:var(--navy-l,#1f5fa8);cursor:pointer;font-weight:700" onclick="abrirContatoWA(\'equipe\','+JSON.stringify(q).replace(/"/g,'&quot;')+')">Avisar a equipe que preciso</a>';}}catch(x){}},400);
 };
+/* ?lista= : link que o robô do WhatsApp manda com o pedido do cliente (abre a conferência da lista) */
+function _listaUrl(){try{var t=new URLSearchParams(location.search).get('lista');if(!t)return;
+  history.replaceState(null,'',location.pathname);mostrarLista(_nrmMed(t));try{sullabEvent('lista_por_link',{lista:String(t).slice(0,500)});}catch(e){}}catch(e){}}
+if(document.readyState==='complete')setTimeout(_listaUrl,600);else window.addEventListener('load',function(){setTimeout(_listaUrl,800);});
 try{render();atualizarCart();}catch(e){}
 })();
 </script>
