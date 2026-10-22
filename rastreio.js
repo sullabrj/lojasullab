@@ -1,4 +1,4 @@
-/* SULLAB — rastreio de visitas, cliques e leads (GA4 + Google Ads). v1 20/10/2026
+/* SULLAB — rastreio de visitas, cliques e leads (GA4 + Google Ads). v2 22/10/2026
    Eventos (GA4): view_item, add_to_cart, view_cart, begin_checkout, add_payment_info, generate_lead,
    iniciar_orcamento, search, select_content, whatsapp_click, contact_click, clique_elemento,
    scroll_depth, tempo_na_pagina, cadastro_cnpj_tentativa, login_clique, rastrear_pedido_abrir,
@@ -6,6 +6,8 @@
 (function(){
   var CLARITY_ID='z0ww8oyptt'; /* opcional: colar aqui o ID do projeto do Microsoft Clarity (mapa de calor e gravação de tela) */
   var AW_ID='AW-11390766577';
+  /* v2 22/10/2026: páginas sem a tag do GA4 no HTML (categorias, guias, blog, ofertas, indique, institucionais) carregam o gtag.js aqui */
+  if(typeof window.gtag!=='function'){try{window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};window.gtag('js',new Date());window.gtag('config','G-RK2PX868MS');var gs=document.createElement('script');gs.async=1;gs.src='https://www.googletagmanager.com/gtag/js?id=G-RK2PX868MS';document.head.appendChild(gs);}catch(e){}}
   function G(){try{window.dataLayer=window.dataLayer||[];if(typeof window.gtag==='function')window.gtag.apply(null,arguments);}catch(e){}}
   function ev(n,p){G('event',n,p||{});}
   var isProd=/^\/p\//.test(location.pathname);
@@ -66,7 +68,9 @@
     wrap('fbCadastro',function(){ev('cadastro_cnpj_tentativa');});
     wrap('fbLogin',function(){ev('login_clique');});
     /* envia a origem junto do pedido para a planilha (atribuição do lead) */
-    wrap('sullabEvent',function(type,extra){try{if(extra&&typeof extra==='object'&&window.SULLAB_ORIGEM)extra.origem=window.SULLAB_ORIGEM;}catch(e){}});
+    wrap('sullabEvent',function(type,extra){try{if(extra&&typeof extra==='object'&&window.SULLAB_ORIGEM)extra.origem=window.SULLAB_ORIGEM;}catch(e){}
+      /* v2: espelha no GA4 os eventos que antes iam só para a planilha */
+      try{if(/^(kit_add|carrinho_abandonado|carrinho_retorno|carrinho_por_link|conta_cadastro|cross_sell_add|frete_gratis_consulta|indicacao_cadastro|indicacao_pedido)$/.test(type)){var x=extra||{};ev('sullab_'+type,{ref:x.ref||'',kit:x.kit||x.id||'',valor:x.total||x.valor||0});}}catch(e){}});
   }
 
   /* ---- página de produto estática ---- */
