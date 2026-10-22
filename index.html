@@ -99,7 +99,7 @@
   .hmain h1 span{color:#7fe3b3}
   .hmain p{font-size:14.5px;color:#d4e4f3;max-width:420px;line-height:1.5;margin:0 0 18px}
   .hcta{display:flex;gap:10px;flex-wrap:wrap}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:11px;font-weight:800;font-size:14px;cursor:pointer;border:0}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:17px 28px;border-radius:12px;font-weight:800;font-size:16.5px;cursor:pointer;border:0}
   .btn.green{background:var(--green-d);color:#fff}.btn.green:hover{background:#176339}
   .btn.ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.35)}
   .btn.navy{background:var(--navy);color:#fff}
@@ -526,7 +526,7 @@
     <div class="fgx" id="fgx"><div class="fgt">🚚 <b>Frete grátis</b> <span>a partir de um valor que muda conforme a sua região</span></div><div class="fgin"><input id="fgCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="Digite seu CEP" aria-label="CEP para consultar frete grátis" onkeydown="if(event.key===\'Enter\')fgConsulta()"><button type="button" onclick="fgConsulta()">Ver o valor para mim</button></div><div class="fgr" id="fgRes" aria-live="polite"></div></div>
   <div class="bact">
       <button class="btn green" onclick="irProdutos()">Ver catálogo completo →</button>
-      <button class="btn navy" onclick="abrirListaOrcamento()">📋 Colar minha lista de compras</button>
+      <button class="btn navy" onclick="abrirListaOrcamento()">📋 Colar lista e receber orçamento</button>
     </div>
   </section>
 
@@ -538,7 +538,7 @@
       <p>Tubos a vácuo, testes rápidos, reagentes e descartáveis com <b>compra direta no site</b>, NF-e e entrega para todo o Brasil.</p>
       <div class="hcta">
         <button class="btn green" onclick="irProdutos()">Ver catálogo completo →</button>
-        <button class="btn ghost" onclick="abrirListaOrcamento()">📋 Colar minha lista de compras</button>
+        <button class="btn ghost" onclick="abrirListaOrcamento()">📋 Colar lista e receber orçamento</button>
       </div>
       <div class="hstats">
         <div><b>+38 anos</b><span>de mercado (desde 1988)</span></div>
@@ -585,7 +585,7 @@
   <!-- RFQ -->
   <div class="rfqbig">
     <div><h3>📋 Lista grande de compras?</h3><p>Cole a lista: o site encontra os produtos, monta o carrinho e calcula o frete pelo CEP. Foto, PDF ou áudio? Mande no WhatsApp que devolvemos o carrinho pronto para pagar.</p></div>
-    <button class="btn green" onclick="abrirListaOrcamento()">Colar minha lista →</button>
+    <button class="btn green" onclick="abrirListaOrcamento()">Colar lista e gerar orçamento →</button>
   </div>
 
 </div>
@@ -599,7 +599,7 @@
       <div class="pay"><span>NF-e</span><span>Pix e cartão</span><span>Entrega Brasil</span></div>
     </div>
     <div><h2 class="fh">Categorias</h2><div id="footCats"></div></div>
-    <div><h2 class="fh">Comprar</h2><a href="#orcamento" onclick="abrirListaOrcamento();return false">Colar minha lista</a><a href="#conta" onclick="abrirConta();return false">Minha conta CNPJ</a><a href="#rastreio" onclick="abrirRastreio();return false">Rastrear pedido</a><a href="#catalogo" onclick="irProdutos();return false">Catálogo completo</a></div>
+    <div><h2 class="fh">Comprar</h2><a href="#orcamento" onclick="abrirListaOrcamento();return false">Colar lista (orçamento)</a><a href="#conta" onclick="abrirConta();return false">Minha conta CNPJ</a><a href="#rastreio" onclick="abrirRastreio();return false">Rastrear pedido</a><a href="#catalogo" onclick="irProdutos();return false">Catálogo completo</a></div>
     <div><h2 class="fh">Atendimento</h2><a href="https://wa.me/5524988383100" onclick="abrirContatoWA('duvida');return false">💬 WhatsApp (24) 98838-3100</a><a href="mailto:comercial@sullabrj.com.br">✉️ comercial@sullabrj.com.br</a><a href="/indique.html">🤝 Indique e ganhe comissão</a><a href="/devolucao.html">Trocas e devoluções</a></div>
   </div>
   <div class="fbar">
@@ -744,7 +744,7 @@
     <h3 id="accNome" style="margin:6px 0">Minha conta</h3>
     <div class="sub" id="accEmail" style="margin-bottom:6px"></div>
     <div style="background:var(--green-soft);color:var(--green-d);font-weight:700;font-size:12.5px;padding:9px;border-radius:9px;margin:8px 0 14px">✓ Preço CNPJ liberado na sua conta</div>
-    <button class="ckpay" onclick="fecharConta();abrirListaOrcamento()">📋 Colar minha lista</button>
+    <button class="ckpay" onclick="fecharConta();abrirListaOrcamento()">📋 Colar lista e receber orçamento</button>
     <button class="ckpay" style="background:var(--navy)" onclick="fbLogout()">Sair da conta</button>
   </div>
   <div id="accOut">
