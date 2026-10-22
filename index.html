@@ -556,7 +556,6 @@
   <div class="popq"><b>Buscas populares:</b><span onclick="buscarTermo('tubo EDTA')">tubo EDTA</span><span onclick="buscarTermo('teste COVID')">teste COVID</span><span onclick="buscarTermo('ágar')">ágar</span><span onclick="buscarTermo('agulha')">agulha</span><span onclick="buscarTermo('luva nitrílica')">luva nitrílica</span><span onclick="buscarTermo('lâmina')">lâmina</span><span onclick="buscarTermo('seringa')">seringa</span></div>
   <!-- OFERTAS / QUEIMA DE ESTOQUE: edite a lista window.OFERTAS (código do produto, selo, texto e, se quiser, preço "de") -->
   <section id="ofSec" style="display:none"><div class="ofh"><h2 id="ofTitulo">🔥 Ofertas da semana</h2><small>Estoque limitado · aproveite antes que acabe</small></div><div class="ofgrid" id="ofGrid"></div></section>
-  <section id="kitSec" style="display:none"><div class="ofh"><h2>📦 Kits prontos para o seu laboratório</h2><small>Tudo em 1 clique · desconto extra de 5% no kit, além do Pix</small></div><div class="kitgrid" id="kitGrid"></div></section>
   <!-- CATEGORY TILES -->
   <div id="catPanel"><div class="sec" id="catSec"><h2>Compre por categoria</h2><span class="lk" onclick="irProdutos()">Ver tudo →</span></div>
   <div class="cats" id="catTiles"></div></div>
@@ -1554,14 +1553,6 @@ try{montarCatTiles();}catch(e){}
 </script>
 
 <style id="growthCss">
-.kitgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:980px){.kitgrid{grid-template-columns:repeat(2,1fr)}}@media(max-width:640px){.kitgrid{grid-template-columns:1fr}}
-.kit{background:#fff;border:1px solid #cfe3f7;border-radius:14px;padding:16px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(31,78,121,.08)}
-.kit .kt{font-size:16px;font-weight:800;color:var(--navy);margin:0 0 3px}.kit .kw{font-size:12.5px;color:var(--muted);margin:0 0 10px;line-height:1.35}
-.kit ul{list-style:none;margin:0 0 12px;padding:0;font-size:13px;line-height:1.35;flex:1}.kit li{display:flex;gap:7px;padding:4px 0;border-top:1px dashed #e1e8f1}.kit li:first-child{border-top:0}.kit li b{color:var(--navy);min-width:26px}
-.kit .kp{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.kit .kp s{color:#8a97ab;font-size:13px}.kit .kp strong{font-size:22px;color:#1f7d4c;font-weight:900}
-.kit .ks{font-size:12.5px;color:#14653b;font-weight:700;margin:2px 0 10px}.kit .ks small{display:block;color:#3d6a53;font-weight:600;margin-top:2px}
-.kit button{border:0;background:var(--green-d,#217a4b);color:#fff;font-weight:800;font-size:14px;padding:12px;border-radius:10px;cursor:pointer;font-family:inherit}.kit button:hover{filter:brightness(1.1)}
 .trustp{display:flex;flex-wrap:wrap;gap:6px 8px;margin:12px 0 2px}.trustp span{background:#eaf2ff;color:#1f3a5f;border-radius:18px;padding:5px 11px;font-size:12px;font-weight:700}
 .sv{background:#f1faf5;border:1px solid #bfe5cc;border-radius:10px;padding:10px 11px;margin:10px 0;font-size:12.5px;color:#14653b;line-height:1.35}
 .sv b{font-weight:800}.sv .svr{display:flex;gap:6px;margin-top:7px}.sv input{flex:1;min-width:0;padding:9px 10px;border:1px solid #b9d9c6;border-radius:8px;font-size:14px;font-family:inherit}.sv button{border:0;background:#1f7d4c;color:#fff;font-weight:800;font-size:12.5px;padding:9px 12px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
@@ -1572,49 +1563,7 @@ try{montarCatTiles();}catch(e){}
 
 <script id="growthJs">
 (function(){
-/* ===== Kits promocionais (desconto extra de 5% só nas unidades do kit) ===== */
-var KIT_DESC=0.05;
-var KITS=[
- {id:'coleta-basica',nome:'Coleta de sangue — básico',para:'Laboratório pequeno e posto de coleta: o essencial para começar.',itens:[['454036',1,'Tubo EDTA 4 mL (roxo) rack c/ 50'],['454092',1,'Tubo soro 4 mL (vermelho) rack c/ 50'],['450071',1,'Agulha múltipla 22G cx c/ 100'],['GRL36',1,'Garrote descartável cx c/ 25'],['PRD00003',1,'Curativo stopper slim cx c/ 500']]},
- {id:'coleta-completa',nome:'Coleta de sangue — kit 100 coletas',d:0.15285,para:'Rotina completa para 100 coletas: 300 tubos, 100 agulhas, 100 garrotes e curativos adulto e infantil. Frete não incluso.',itens:[['454036',1,'Tubo EDTA K3 4 mL (roxo) rack c/ 50'],['454087',1,'Tubo EDTA K3 2 mL (roxo) rack c/ 50'],['456071',1,'Tubo soro com gel 5 mL rack c/ 50'],['455071',1,'Tubo soro com gel 8 mL rack c/ 50'],['454327',1,'Tubo citrato 3,5 mL (azul) rack c/ 50'],['454085',1,'Tubo glicose/lactato 2 mL (cinza) rack c/ 50'],['450071',1,'Agulha múltipla Vacuette 22G cx c/ 100'],['GRL36',4,'Garrote descartável cx c/ 25 (4 cx = 100 un)'],['PRD00003',1,'Curativo stopper adulto cx c/ 500'],['PRD00005',1,'Curativo stopper infantil cx c/ 500']]},
-{id:'coleta-completa-canal',oculto:true,nome:'Coleta de sangue — kit 100 coletas (oferta do canal)',d:0.21129,para:'Rotina completa para 100 coletas: 300 tubos, 100 agulhas, 100 garrotes e curativos adulto e infantil. Frete não incluso.',itens:[['454036',1,'Tubo EDTA K3 4 mL (roxo) rack c/ 50'],['454087',1,'Tubo EDTA K3 2 mL (roxo) rack c/ 50'],['456071',1,'Tubo soro com gel 5 mL rack c/ 50'],['455071',1,'Tubo soro com gel 8 mL rack c/ 50'],['454327',1,'Tubo citrato 3,5 mL (azul) rack c/ 50'],['454085',1,'Tubo glicose/lactato 2 mL (cinza) rack c/ 50'],['450071',1,'Agulha múltipla Vacuette 22G cx c/ 100'],['GRL36',4,'Garrote descartável cx c/ 25 (4 cx = 100 un)'],['PRD00003',1,'Curativo stopper adulto cx c/ 500'],['PRD00005',1,'Curativo stopper infantil cx c/ 500']]},
- {id:'triagem-ist',nome:'Triagem de IST',para:'HIV, sífilis e hepatite B com lanceta para a coleta de ponta de dedo.',itens:[['TR 007 IST',1,'Teste rápido HIV 1/2 cx c/ 50'],['TR 008-1 IST',1,'Teste rápido Sífilis cx c/ 25'],['TR 009-1 IST',1,'Teste rápido HBsAg (tira) cx c/ 50'],['25492',1,'Lanceta de segurança 28G cx c/ 100']]},
- {id:'dengue-covid',nome:'Dengue e COVID — balcão',para:'Os três testes mais pedidos na alta temporada, mais swab para coleta.',itens:[['TR 008-1 DT',1,'Teste rápido Dengue NS1 cx c/ 50'],['TR 009-1 DT',1,'Teste rápido Dengue IgG/IgM cx c/ 50'],['TR 017-1 RP',1,'Teste rápido COVID-19 Ag cx c/ 25'],['23007',1,'Swab estéril cx c/ 100']]},
- {id:'hematologia',nome:'Hematologia e microscopia',para:'Lâminas, corantes e pipetas de VHS para o setor de hematologia.',itens:[['7105',1,'Lâmina 26×76 mm cx c/ 50'],['P22X22',1,'Lamínula 22×22 mm cx c/ 100'],['PA285',1,'Óleo de imersão 100 mL'],['PA220',1,'May Grunwald 500 mL'],['PA210',1,'Leishmann 500 mL'],['VHS-P',1,'Pipeta plástica para VHS c/ 25']]},
-{id:'tubos-edta-100',nome:'100 tubos EDTA + itens de coleta',para:'Hemograma: 2 racks de tubo EDTA 4 mL (100 tubos), 100 agulhas, 100 garrotes e 500 curativos. Frete não incluso.',itens:[['454036',2,'Tubo EDTA K3 4 mL (roxo) rack c/ 50 (2 racks = 100 tubos)'],['450071',1,'Agulha múltipla Vacuette 22G cx c/ 100'],['GRL36',1,'Garrote descartável cx c/ 25'],['PRD00003',1,'Curativo stopper adulto cx c/ 500']]},
- {id:'tubos-soro-100',nome:'100 tubos soro com gel + itens de coleta',para:'Bioquímica e sorologia: 2 racks de tubo soro com gel 5 mL (100 tubos), 100 agulhas, 100 garrotes e 500 curativos. Frete não incluso.',itens:[['456071',2,'Tubo soro com gel 5 mL rack c/ 50 (2 racks = 100 tubos)'],['450071',1,'Agulha múltipla Vacuette 22G cx c/ 100'],['GRL36',1,'Garrote descartável cx c/ 25'],['PRD00003',1,'Curativo stopper adulto cx c/ 500']]},
- {id:'panotico-completo',nome:'Panótico rápido + lâminas, lamínulas e óleo',para:'Esfregaço sanguíneo: Instant Prov (Panótico rápido 3×500 mL), 100 lâminas, 100 lamínulas e óleo de imersão.',itens:[['PA205',1,'Instant Prov — Panótico rápido 3×500 mL'],['7105-1',2,'Lâmina 26×76 mm cx c/ 50 (2 cx = 100)'],['P22X22',1,'Lamínula 22×22 mm cx c/ 100'],['PA285',1,'Óleo de imersão 100 mL']]},
- {id:'gram-completo',nome:'Coloração de Gram completa',para:'Bacterioscopia: conjunto Gram 4×500 mL, 100 lâminas, 100 lamínulas e óleo de imersão.',itens:[['PA185',1,'Conjunto de coloração Gram 4×500 mL'],['7105-1',2,'Lâmina 26×76 mm cx c/ 50 (2 cx = 100)'],['P22X22',1,'Lamínula 22×22 mm cx c/ 100'],['PA285',1,'Óleo de imersão 100 mL']]},
- {id:'baar-ziehl',nome:'BAAR — Ziehl-Neelsen com lâminas',para:'Pesquisa de BAAR: conjunto Ziehl-Neelsen 3×500 mL, 100 lâminas e óleo de imersão.',itens:[['PA188',1,'Conjunto de coloração Ziehl-Neelsen 3×500 mL'],['7105-1',2,'Lâmina 26×76 mm cx c/ 50 (2 cx = 100)'],['PA285',1,'Óleo de imersão 100 mL']]},
- {id:'laminas-laminulas',nome:'100 lâminas + 100 lamínulas',para:'Reposição básica de microscopia: 100 lâminas fosca 26×76 mm e 100 lamínulas 22×22 mm.',itens:[['7105-1',2,'Lâmina 26×76 mm cx c/ 50 (2 cx = 100)'],['P22X22',1,'Lamínula 22×22 mm cx c/ 100']]},
- {id:'tipagem-abo-rh',nome:'Tipagem sanguínea ABO/Rh',para:'Soros anti-A, anti-B e anti-D (10 mL cada), 50 lâminas e 100 lancetas de segurança.',itens:[['100',1,'Soro anti-A monoclonal 10 mL'],['101',1,'Soro anti-B monoclonal 10 mL'],['103',1,'Soro anti-D (Rh) 10 mL'],['7105-1',1,'Lâmina 26×76 mm cx c/ 50'],['25492',1,'Lanceta de segurança 28G cx c/ 100']]},
- {id:'urina-coletas',nome:'Urina e coletas',para:'Coletores e swab para uroanálise e material biológico.',itens:[['CLT80ES-RGM',1,'Coletor de urina 80 mL pc c/ 100'],['CLT24H2LT',2,'Coletor de urina 24 h 2 L'],['S350RAZPA',1,'Coletor universal com pá pc c/ 100'],['23007',1,'Swab estéril cx c/ 100']]}
-];
-window.KITS=KITS;
-function pr(c){var r=(window.PRECOS||{})[c];return r&&r[1]?r[1]:0;}
-function kitTotal(k){return k.itens.reduce(function(s,i){return s+pr(i[0])*i[1];},0);}
-function kitOk(k){return k.itens.every(function(i){return pr(i[0])>0&&CATALOG.some(function(p){return p.c===i[0];});});}
-window.montarKits=function(){
-  try{var sec=document.getElementById('kitSec'),g=document.getElementById('kitGrid');if(!sec||!g)return;
-  var L=KITS.filter(function(k){return !k.oculto&&kitOk(k);});if(!L.length){sec.style.display='none';return;}
-  g.innerHTML=L.map(function(k){var dd=k.d||KIT_DESC,t=kitTotal(k),v=Math.round(t*(1-dd)*100)/100,e=Math.round((t-v)*100)/100,px=Math.round(v*95)/100,pc=Math.round(dd*1000)/10;
-   return '<div class="kit"><div class="kt">'+k.nome+'</div><div class="kw">'+k.para+'</div><ul>'+k.itens.map(function(i){return '<li><b>'+i[1]+'×</b><span>'+i[2]+'</span></li>';}).join('')+'</ul><div class="kp"><s>'+brl(t)+'</s><strong>'+brl(v)+'</strong></div><div class="ks">Você economiza '+brl(e)+' ('+String(pc).replace('.',',')+'%) · no Pix '+brl(px)+'<small>Frete não incluso, calculado pelo CEP. Desconto do kit vale para as unidades do kit.</small></div><button onclick="addKit(\''+k.id+'\')">Adicionar kit ao carrinho</button></div>';}).join('');
-  sec.style.display='';}catch(e){}
-};
-window.addKit=function(id,silent){
-  var k=KITS.filter(function(x){return x.id===id;})[0];if(!k)return;
-  k.itens.forEach(function(i){var p=CATALOG.filter(function(x){return x.c===i[0];})[0];if(!p)return;
-    var ex=CART.filter(function(x){return x.c===i[0];})[0];
-    if(ex){ex.qty+=i[1];ex.kq=(ex.kq||0)+i[1];ex.kd=Math.max(ex.kd||0,k.d||KIT_DESC);}
-    else CART.push({c:p.c,n:p.n,m:p.m,img:p.img,pub:p.pub,cnpj:p.cnpj,qty:i[1],kq:i[1],kd:(k.d||KIT_DESC)});});
-  salvarCart();atualizarCart();try{sullabEvent('kit_add',{kit:id});}catch(e){}
-  if(!silent)abrirCarrinho();
-};
-window.addEventListener('load',function(){setTimeout(function(){try{montarKits();}catch(e){}},250);});
-var _bt=window.boot;
-if(typeof _bt==='function'){window.boot=function(){_bt.apply(this,arguments);montarKits();};}
-
-/* ===== Referência (indique e ganhe), link de carrinho e kit por URL ===== */
+/* ===== Referência (indique e ganhe) e link de carrinho ===== */
 try{var q=new URLSearchParams(location.search);
  var ref=(q.get('ref')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,24);if(ref){localStorage.setItem('sullab_ref',ref);localStorage.setItem('sullab_ref_ts',String(Date.now()));}
  var rts=parseInt(localStorage.getItem('sullab_ref_ts')||'0',10);if(rts&&Date.now()-rts>5184000000){localStorage.removeItem('sullab_ref');localStorage.removeItem('sullab_ref_ts');}
@@ -1622,9 +1571,8 @@ try{var q=new URLSearchParams(location.search);
 var _se=window.sullabEvent;
 window.sullabEvent=function(t,e){e=e||{};try{var r=localStorage.getItem('sullab_ref');if(r&&!e.ref)e.ref=r;}catch(_){}return _se.call(this,t,e);};
 function aplicarUrl(){
-  try{var q=new URLSearchParams(location.search),c=q.get('carrinho'),kit=q.get('kit'),did=false;
+  try{var q=new URLSearchParams(location.search),c=q.get('carrinho'),did=false;
    if(c){c.split(',').forEach(function(par){var a=par.split(':'),cod=decodeURIComponent(a[0]||''),n=Math.max(1,Math.min(9999,parseInt(a[1])||1));if(cod&&CATALOG.some(function(p){return p.c===cod;})){addCodigo(cod,n);did=true;}});}
-   if(kit){addKit(kit,true);did=true;}
    if(did){history.replaceState(null,'',location.pathname);abrirCarrinho();try{sullabEvent('carrinho_por_link',{});}catch(e){}}
   }catch(e){}
 }
