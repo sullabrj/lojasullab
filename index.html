@@ -296,7 +296,7 @@
   /* MOBILE BOTTOM BAR */
   .mbar{display:none}
   @media(max-width:920px){
-    .head{flex-wrap:wrap;height:auto;padding:12px 0;gap:12px}
+    .head{flex-wrap:wrap;height:auto;padding:12px 18px;gap:12px}
     .search{order:3;flex-basis:100%;max-width:100%}
     .hact .hbtn span:not(.ic){display:none}
     .hero{grid-template-columns:1fr}.hside{grid-template-rows:none;grid-template-columns:1fr 1fr}
@@ -378,6 +378,52 @@
   .deskCard .deskSmall{font-size:12.5px;color:var(--muted);margin-bottom:2px}
   .deskOk{display:block;width:100%;background:var(--navy);color:#fff;border:0;border-radius:12px;padding:15px;font-size:15.5px;font-weight:800;cursor:pointer;margin-top:14px}
   .deskWa{display:block;width:100%;background:var(--green-soft);color:var(--green-d);border:0;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:9px}
+
+  /* ===== AJUSTES CELULAR v2 (22/10/2026): cabeçalho compacto, botões sem sobreposição, CEP sem estourar ===== */
+  @media(max-width:600px){
+    .util .ul{display:none}
+    .util .wrap{height:auto;padding:7px 14px;gap:6px}
+    .util .ur{display:flex;width:100%;justify-content:space-between;gap:6px}
+    .util .ur span{margin:0;font-size:12px;white-space:nowrap}
+    .head{padding:8px 14px;gap:8px;justify-content:space-between;flex-wrap:wrap}
+    .brand img{height:36px}
+    .hact{gap:6px}
+    .hbtn{width:42px;height:42px;padding:0;justify-content:center;border-radius:10px}
+    .hbtn .ic{font-size:18px}
+    .search{border-width:1.5px;border-radius:10px}
+    .search select{display:none}
+    .search input{padding:11px 12px;min-width:0}
+    .search button{padding:0 15px;font-size:17px}
+    .trust .wrap{flex-wrap:nowrap;justify-content:flex-start;gap:16px;overflow-x:auto;scrollbar-width:none;padding:7px 14px;font-size:12px}
+    .trust .wrap::-webkit-scrollbar{display:none}
+    .trust .ti{flex-shrink:0}
+    .dept{padding:9px 13px;font-size:14px}
+    .deptbar .wrap{height:46px}
+    .bsel{display:flex;flex-wrap:wrap;gap:6px}
+    .bsel span{font-size:12px;padding:6px 10px;white-space:normal}
+    .fgx{padding:12px;gap:8px}
+    .fgx .fgt{flex:1 1 100%;font-size:13.5px}
+    .fgx .fgin{flex:1 1 100%;width:100%;min-width:0}
+    .fgx input{width:0;min-width:0}
+    .fgx button{flex-shrink:0;padding:10px 12px;font-size:13px}
+    .prod .pf{flex-direction:column;gap:8px}
+    .prod .stepper{width:100%;justify-content:space-between}
+    .prod .stepper button{flex:1;min-width:0;height:38px}
+    .prod .stepper span{min-width:30px}
+    .prod .add{flex:none;width:100%;padding:12px 10px}
+    .pmodal{padding:8px}
+    .pm{max-height:94vh;border-radius:14px}
+    .pm .pmimg{padding:14px}
+    .pm .pmstage img,.pm .pmimg img{max-height:210px}
+    .pm .pmstage img.art{max-height:260px}
+    .pm .pmb{padding:18px 16px 22px}
+    .pm .pmb h3{font-size:18px;padding-right:34px}
+    .pmodal.on .pm .pmx{position:fixed;top:16px;right:16px;width:38px;height:38px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;z-index:3;font-size:22px;line-height:1}
+    .cko{padding:0;align-items:flex-end}
+    .ckb{max-height:94vh;border-radius:16px 16px 0 0;padding:18px 16px 22px}
+    .frow.c2,.frow.c3{grid-template-columns:1fr 1fr}
+    .fld input,.fld textarea{font-size:16px}
+  }
 </style>
 <!-- Google Analytics GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RK2PX868MS"></script>
