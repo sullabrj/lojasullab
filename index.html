@@ -1735,7 +1735,7 @@ window.registrarPedidoEquipe=function(f,origem){
     var bak=CART;if(origem==='equipe'){CART=[];}
     try{dispararPedido('pedido_wa',origem||'site',f,pid);}finally{CART=bak;}
     try{fecharContatoWA();}catch(e){}try{fecharCheckout();}catch(e){}
-    var txt=origem==='cpf'?'Vamos conferir o pedido e mandar o <b>link de pagamento</b> com o frete.'
+    var txt=origem==='refrigerado'?'Vamos verificar uma entrega rápida para o produto refrigerado e mandar o <b>link de pagamento</b>.':origem==='cpf'?'Vamos conferir o pedido e mandar o <b>link de pagamento</b> com o frete.'
       :(origem==='equipe'?'Vamos procurar os itens e mandar o <b>link do carrinho pronto para pagar</b>.'
       :'Vamos confirmar os itens sob consulta e mandar o <b>link de pagamento</b> com o frete.');
     confirmacao(pid,f,txt);
@@ -1809,6 +1809,84 @@ window._cartBuscarGo=function(){_cb.apply(this,arguments);
     n.innerHTML='Nenhum produto encontrado para “'+_esc(q)+'”.<br><a class="lk" style="color:var(--navy-l,#1f5fa8);cursor:pointer;font-weight:700" onclick="abrirContatoWA(\'equipe\','+JSON.stringify(q).replace(/"/g,'&quot;')+')">Avisar a equipe que preciso</a>';}}catch(x){}},400);
 };
 try{render();atualizarCart();}catch(e){}
+})();
+</script>
+
+<script id="freteRefrigerado">
+/* ===== Refrigerados (22/10/2026, regra do Eduardo) =====
+   Placas, tubos e frascos de meio pronto, cromoágares, cepas e plasma vão sempre pela opção MAIS RÁPIDA,
+   com entrega em até 5 dias úteis depois da postagem (o prazo da API já soma 1 dia de postagem: limite 6).
+   Sem opção nesse prazo: não deixa pagar; o pedido vai para a equipe (e-mail), sem WhatsApp. */
+(function(){
+var PRAZO_MAX=6;
+var RX_SIM=/placa|biplaca|Ø\s?\d|cromo|caldo|[aá]gar|meio de|newp \d|plasma/i, RX_NAO=/cult pack|stuart|swab|colora|corante|gram|ziehl|papanicolau|lugol|tamp[aã]o|reativo|al[cç]a|agulha/i;
+var EXTRA={'052000':1};
+function refrigCod(c){
+  if(EXTRA[c])return true;
+  var p=null;for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===c){p=CATALOG[i];break;}}
+  if(!p)return false;
+  return /newprov/i.test(p.m||'')&&RX_SIM.test(p.n)&&!RX_NAO.test(p.n);
+}
+window.itemRefrigerado=refrigCod;
+window.cartRefrigerado=function(){return CART.some(function(x){return refrigCod(String(x.c));});};
+window._refrigSemOpcao=false;
+var _f=window.fetch;
+window.fetch=function(u,o){
+  try{
+    if(String(u).indexOf('/frete2')>=0&&o&&o.body){
+      var b=JSON.parse(o.body),its=(b&&b.itens)||[];
+      if(its.some(function(i){return refrigCod(String(i.c));})){
+        return _f.apply(this,arguments).then(function(r){return r.json().then(function(d){
+          d=d||{};var ops=(d.opcoes||[]).filter(function(x){return (parseInt(x.prazo)||99)<=PRAZO_MAX;});
+          ops.sort(function(a,c){return (a.prazo-c.prazo)||(a.preco-c.preco);});
+          d.opcoes=ops.slice(0,1);d.refrigerado=true;
+          window._refrigSemOpcao=!d.opcoes.length;
+          if(!d.opcoes.length&&d.gratis){d.gratis.ativo=false;d.gratis.falta=null;}
+          return new Response(JSON.stringify(d),{status:200,headers:{'Content-Type':'application/json'}});
+        });});
+      }
+    }
+  }catch(e){}
+  return _f.apply(this,arguments);
+};
+var AVISO='<div id="refrigAviso" style="background:#eef6ff;border:1px solid #c9ddf5;color:#1f3c73;border-radius:9px;padding:8px 10px;font-size:12px;margin:6px 0;line-height:1.4">❄️ <b>Produto refrigerado:</b> vai pela transportadora mais rápida, com entrega em até 5 dias úteis, e é postado no início da semana para não ficar parado no fim de semana.</div>';
+var SEM='<div id="refrigSem" style="background:#fff6e5;border:1px solid #f1d7a6;color:#7a5a12;border-radius:9px;padding:8px 10px;font-size:12px;margin:6px 0;line-height:1.4">❄️ Para este CEP nenhuma transportadora entrega produto refrigerado em até 5 dias úteis. Toque em <b>Enviar pedido</b>: a equipe verifica uma alternativa (outro endereço de entrega, por exemplo) e manda o link de pagamento.</div>';
+function marcar(){
+  try{
+    var box=document.getElementById('freteBox');if(!box)return;
+    var a=document.getElementById('refrigAviso'),s=document.getElementById('refrigSem');
+    if(!cartRefrigerado()){if(a)a.remove();if(s)s.remove();return;}
+    if(!a)box.insertAdjacentHTML('afterbegin',AVISO);
+    var opt=document.getElementById('freteOpts'),calc=opt&&/Informe o CEP|Calculando/.test(opt.innerText||'');
+    var sem=window._refrigSemOpcao&&!calc&&!(opt&&opt.querySelector('label'));
+    if(sem&&!s)box.insertAdjacentHTML('beforeend',SEM);else if(!sem&&s)s.remove();
+    if(sem&&opt){[].slice.call(opt.querySelectorAll('div')).forEach(function(d){if(/confirmado no checkout/.test(d.textContent))d.remove();});}
+    var btn=document.getElementById('ckPayBtn');
+    if(btn){if(sem){btn.textContent='Enviar pedido →';btn.setAttribute('onclick','enviarPedidoRefrig()');}
+      else if(btn.getAttribute('onclick')==='enviarPedidoRefrig()'){btn.textContent='Pagar agora →';btn.setAttribute('onclick','pagarMP()');}}
+  }catch(e){}
+}
+setInterval(function(){var c=document.getElementById('cko');if(c&&c.classList.contains('on'))marcar();},600);
+window.enviarPedidoRefrig=function(){
+  var f=coletarFicha();
+  if(soDig(f.doc).length<11)return ckErro('Informe o '+(DOCT==='cnpj'?'CNPJ':'CPF')+'.');
+  if(!f.nome)return ckErro('Informe o nome.');
+  if(!/.+@.+\..+/.test(f.email))return ckErro('Informe um e-mail válido.');
+  if(soDig(f.tel).length<10)return ckErro('Informe um WhatsApp com DDD.');
+  if(soDig(f.cep).length!==8||!f.num)return ckErro('Informe CEP e número do endereço.');
+  try{localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}
+  f.lista='[Refrigerado sem frete em até 5 dias úteis para este CEP]';
+  registrarPedidoEquipe(f,'refrigerado');
+};
+/* pagamento: carrinho refrigerado só paga com o frete rápido escolhido */
+var _pg=window.pagarMP;
+window.pagarMP=function(){
+  if(cartRefrigerado()){
+    if(window._refrigSemOpcao)return enviarPedidoRefrig();
+    if(!freteSelLoja&&!(freteMeta&&freteMeta.gratis))return ckErro('Produto refrigerado: calcule o frete pelo CEP antes de pagar.');
+  }
+  return _pg.apply(this,arguments);
+};
 })();
 </script>
 
