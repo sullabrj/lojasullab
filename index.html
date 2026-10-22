@@ -660,10 +660,6 @@
     <div class="fld"><label>UF</label><input id="ckUf" maxlength="2"></div>
   </div>
   <div id="freteBox" style="margin:2px 0 12px"></div>
-  <div class="fld"><label>Cupom de desconto</label>
-    <div style="display:flex;gap:8px"><input id="ckCupom" placeholder="Ex.: BEMVINDO5" style="flex:1;text-transform:uppercase"><button class="ckpay" style="width:auto;padding:11px 14px;margin:0;white-space:nowrap" onclick="aplicarCupom()">Aplicar</button></div>
-    <div id="cupomMsg" style="font-size:11.5px;margin-top:5px"></div>
-  </div>
   <label id="paysLb" style="font-size:11.5px;font-weight:700;color:var(--ink);display:block;margin:4px 0 6px">Forma de pagamento</label>
   <div class="pays" id="pays">
     <label class="pay1 on"><input type="radio" name="pg" value="pix" checked onchange="setPg('pix')"><span><span class="pn">Pix</span> <span class="pd">&middot; aprovação na hora</span></span><span class="ptag">&minus;5%</span></label>
@@ -1250,7 +1246,7 @@ function dispararPedido(type,pgto,ficha,pedido){
 }
 var DOCT='cnpj', PG='pix';
 var ORIGEM_CEP='27323450';
-var CUPONS={BEMVINDO5:0.05},cupomPct=0,cupomCod='',freteSelLoja=0,freteLabelLoja='';
+var CUPONS={},cupomPct=0,cupomCod='',freteSelLoja=0,freteLabelLoja='';
 function val(id){return (document.getElementById(id).value||'').trim();}
 function soDig(s){return (s||'').replace(/\D/g,'');}
 function setDoc(d){DOCT=d;document.querySelectorAll('#docTab button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-d')===d);});document.getElementById('lbDoc').textContent=d==='cnpj'?'CNPJ':'CPF';document.getElementById('lbNome').textContent=d==='cnpj'?'Nome fantasia':'Nome completo';document.getElementById('ckDoc').placeholder=d==='cnpj'?'00.000.000/0000-00':'000.000.000-00';try{ckModo();}catch(e){}}
