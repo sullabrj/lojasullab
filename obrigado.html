@@ -34,7 +34,7 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RK2PX868MS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RK2PX868MS');</script>
-<script defer src="/rastreio.js?v=1"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"></head>
+<script defer src="/rastreio.js?v=2"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"></head>
 <body>
 <div class="wrap">
   <div class="top">
@@ -88,7 +88,29 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
     vSta.textContent=staLabel; vSta.style.color=staColor;
   }
 
-  if(/approv|success|paid/.test(status)){try{var _v=parseFloat((qp('transaction_amount')||qp('total')||'').replace(',','.'))||undefined;if(!_v){try{var _lp=JSON.parse(localStorage.getItem('sullab_last_purchase')||'null');if(_lp&&_lp.v&&(Date.now()-_lp.ts)<86400000){_v=_lp.v;}}catch(e){}}if(typeof gtag==='function'){gtag('event','purchase',{transaction_id:(extRef||payId||('SLB-'+Date.now())),value:_v,currency:'BRL'});}}catch(e){}
+  /* 26/10/2026: dados da compra guardados no checkout (valor com desconto do Pix + frete, itens, telefone) */
+  var _lp=null;try{_lp=JSON.parse(localStorage.getItem('sullab_last_purchase')||'null');if(_lp&&(Date.now()-_lp.ts)>3*86400000)_lp=null;}catch(e){}
+  /* pago ou Pix/boleto em processamento: cancela o lembrete de carrinho abandonado no WhatsApp */
+  if(/approv|success|paid|pend|process|in_process|authorized/.test(status)&&_lp&&_lp.tel){
+    try{var _b=JSON.stringify({tel:_lp.tel,pedido:extRef||_lp.ped||''});var _u='https://whatsapp-sullab-production.up.railway.app/site/pedido-pago';
+      if(!(navigator.sendBeacon&&navigator.sendBeacon(_u,new Blob([_b],{type:'text/plain'}))))fetch(_u,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain'},body:_b});}catch(e){}
+  }
+  if(/approv|success|paid/.test(status)){try{
+    var _tid=extRef||(_lp&&_lp.ped)||payId||('SLB-'+Date.now());
+    var _v=parseFloat((qp('transaction_amount')||qp('total')||'').replace(',','.'))||0;
+    if(!_v&&_lp&&_lp.v&&(!extRef||_lp.ped===extRef))_v=_lp.v;
+    /* uma conversão por pedido, mesmo se a página for recarregada */
+    var _env={};try{_env=JSON.parse(localStorage.getItem('sullab_purchase_enviadas')||'{}');}catch(e){}
+    if(!_env[_tid]&&typeof gtag==='function'){
+      var _p={transaction_id:_tid,value:_v||undefined,currency:'BRL'};
+      if(_lp&&_lp.items&&(!extRef||_lp.ped===extRef)){_p.items=_lp.items;if(_lp.frete)_p.shipping=_lp.frete;}
+      gtag('event','purchase',_p);
+      try{if(window.clarity)clarity('event','purchase');}catch(e){}
+      _env[_tid]=Date.now();try{localStorage.setItem('sullab_purchase_enviadas',JSON.stringify(_env));}catch(e){}
+    }
+    /* pedido pago: esvazia o carrinho para não aparecer o aviso "você deixou itens no carrinho" */
+    try{if(!extRef||!_lp||_lp.ped===extRef)localStorage.removeItem('sullab_cart');}catch(e){}
+  }catch(e){}
     set('ok','✓','Pagamento aprovado!','Recebemos seu pagamento. Seu pedido já está sendo processado — você vai receber a confirmação e a nota fiscal por e-mail.','Aprovado','#1f8a4c');
   }else if(/pend|process|in_process|authorized/.test(status)){
     set('pend','⏳','Pagamento em processamento','Seu pagamento está sendo confirmado pelo banco/Pix. Assim que cair, seu pedido segue automaticamente. Pode levar alguns minutos.','Aguardando confirmação','#e8731c');

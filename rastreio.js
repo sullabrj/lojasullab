@@ -9,7 +9,9 @@
   /* v2 22/10/2026: páginas sem a tag do GA4 no HTML (categorias, guias, blog, ofertas, indique, institucionais) carregam o gtag.js aqui */
   if(typeof window.gtag!=='function'){try{window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};window.gtag('js',new Date());window.gtag('config','G-RK2PX868MS');var gs=document.createElement('script');gs.async=1;gs.src='https://www.googletagmanager.com/gtag/js?id=G-RK2PX868MS';document.head.appendChild(gs);}catch(e){}}
   function G(){try{window.dataLayer=window.dataLayer||[];if(typeof window.gtag==='function')window.gtag.apply(null,arguments);}catch(e){}}
-  function ev(n,p){G('event',n,p||{});}
+  /* 26/10/2026: os passos do checkout também viram eventos do Clarity, para filtrar as gravações de quem desistiu */
+  var CLARITY_EVS={begin_checkout:1,add_payment_info:1,pagar_clique:1,view_cart:1,add_to_cart:1,whatsapp_click:1,sullab_frete_gratis_consulta:1};
+  function ev(n,p){G('event',n,p||{});try{if(CLARITY_EVS[n]&&window.clarity)window.clarity('event',n);}catch(e){}}
   var isProd=/^\/p\//.test(location.pathname);
   var $=function(id){return document.getElementById(id);};
 
