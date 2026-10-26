@@ -1995,5 +1995,11 @@ setInterval(function(){try{var c=document.getElementById('cko');if(!c||!c.classL
 </script>
 
 <script>try{if(window.__aplicarCarrinhoUrl)window.__aplicarCarrinhoUrl();}catch(e){}</script>
+<script>/* link direto do rastreio: /?pedido=SLB-123  (opcional &email=) abre "Rastrear pedido" já preenchido */
+(function(){try{var q=new URLSearchParams(location.search),n=(q.get('pedido')||'').replace(/[^A-Za-z0-9-]/g,'').slice(0,40);if(!n)return;var em=(q.get('email')||'').trim().slice(0,120);
+ try{history.replaceState(null,'',location.pathname);}catch(e){}
+ abrirRastreio();var a=document.getElementById('rastNum');if(a)a.value=n;var b=document.getElementById('rastChave');if(b&&em)b.value=em;
+ if(b&&b.value){lookupRastreio();}else if(b){setTimeout(function(){try{b.focus();}catch(e){}},300);}
+}catch(e){}})();</script>
 </body>
 </html>
