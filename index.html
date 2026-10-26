@@ -1532,7 +1532,7 @@ function maybeDeskNote(){
 }
 function boot(){montarDeptNav();montarCatTiles();montarOfertas();montarBrands();montarFiltros();render();atualizarCart();maybeDeskNote();}
 boot();
-carregarLive();
+/* carregarLive() desligado: baixava de novo a página inteira (~390 KB) a cada visita e atrasava o carrinho no celular */
 /* Deep-link: aplica ?q= (busca) e ?dept=/?cat= (categoria) vindos da URL — ex.: anúncios do Google e redirects do 404.html */
 (function(){
   try{
@@ -1658,11 +1658,15 @@ var _se=window.sullabEvent;
 window.sullabEvent=function(t,e){e=e||{};try{var r=localStorage.getItem('sullab_ref');if(r&&!e.ref)e.ref=r;}catch(_){}return _se.call(this,t,e);};
 function aplicarUrl(){
   try{var q=new URLSearchParams(location.search),c=q.get('carrinho'),did=false;
-   if(c){c.split(',').forEach(function(par){var a=par.split(':'),cod=decodeURIComponent(a[0]||''),n=Math.max(1,Math.min(9999,parseInt(a[1])||1));if(cod&&CATALOG.some(function(p){return p.c===cod;})){addCodigo(cod,n);did=true;}});}
+   if(c){/* link de carrinho SUBSTITUI o carrinho: abrir o link 2x não dobra a quantidade nem mistura com itens antigos */
+    var novos=[];c.split(',').forEach(function(par){var a=par.split(':'),cod=decodeURIComponent(a[0]||'').trim(),n=Math.max(1,Math.min(9999,parseInt(a[1])||1));var p=null;for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===cod){p=CATALOG[i];break;}}if(p){var ex=novos.find(function(x){return x.c===cod;});if(ex)ex.qty+=n;else novos.push({c:p.c,n:p.n,m:p.m,img:p.img,pub:p.pub,cnpj:p.cnpj,qty:n});}});
+    if(novos.length){CART.length=0;novos.forEach(function(x){CART.push(x);});salvarCart();atualizarCart();did=true;}}
    if(did){history.replaceState(null,'',location.pathname);abrirCarrinho();try{sullabEvent('carrinho_por_link',{});}catch(e){}}
   }catch(e){}
 }
-if(document.readyState==='complete')setTimeout(aplicarUrl,300);else window.addEventListener('load',function(){setTimeout(aplicarUrl,500);});
+window.__aplicarCarrinhoUrl=function(){if(window.__carrinhoUrlFeito)return;window.__carrinhoUrlFeito=true;aplicarUrl();};
+/* roda no fim do <body> (antes de imagens, Firebase e Analytics); o load fica só de reserva */
+window.addEventListener('load',function(){window.__aplicarCarrinhoUrl();});
 
 /* ===== Carrinho: salvar por WhatsApp, copiar link, selos ===== */
 var _ac2=window.atualizarCart;
@@ -1990,5 +1994,6 @@ setInterval(function(){try{var c=document.getElementById('cko');if(!c||!c.classL
 })();
 </script>
 
+<script>try{if(window.__aplicarCarrinhoUrl)window.__aplicarCarrinhoUrl();}catch(e){}</script>
 </body>
 </html>
