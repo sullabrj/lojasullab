@@ -92,6 +92,8 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
   var _lp=null;try{_lp=JSON.parse(localStorage.getItem('sullab_last_purchase')||'null');if(_lp&&(Date.now()-_lp.ts)>3*86400000)_lp=null;}catch(e){}
   /* pago ou Pix/boleto em processamento: cancela o lembrete de carrinho abandonado no WhatsApp */
   if(/approv|success|paid|pend|process|in_process|authorized/.test(status)&&_lp&&_lp.tel){
+    /* Pix/boleto pendente também esvazia o carrinho: o pedido já foi feito (26/10/2026) */
+    try{if(!extRef||_lp.ped===extRef)localStorage.removeItem('sullab_cart');}catch(e){}
     try{var _b=JSON.stringify({tel:_lp.tel,pedido:extRef||_lp.ped||''});var _u='https://whatsapp-sullab-production.up.railway.app/site/pedido-pago';
       if(!(navigator.sendBeacon&&navigator.sendBeacon(_u,new Blob([_b],{type:'text/plain'}))))fetch(_u,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain'},body:_b});}catch(e){}
   }
