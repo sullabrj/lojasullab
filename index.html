@@ -743,8 +743,20 @@
     <h3 id="accNome" style="margin:6px 0">Minha conta</h3>
     <div class="sub" id="accEmail" style="margin-bottom:6px"></div>
     <div style="background:var(--green-soft);color:var(--green-d);font-weight:700;font-size:12.5px;padding:9px;border-radius:9px;margin:8px 0 14px">✓ Preço CNPJ liberado na sua conta</div>
+    <div style="text-align:left;margin:4px 0 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b style="font-size:14px;color:var(--navy)">📦 Meus pedidos</b><span class="rm" style="font-size:12px;color:var(--navy-l);font-weight:700;cursor:pointer" onclick="carregarMeusPedidos(true)">Atualizar</span></div>
+      <div id="mpList"></div>
+    </div>
     <button class="ckpay" onclick="fecharConta();abrirListaOrcamento()">📋 Colar lista e receber orçamento</button>
     <button class="ckpay" style="background:var(--navy)" onclick="fbLogout()">Sair da conta</button>
+  </div>
+  <div id="accSenha" style="display:none">
+    <h3>Crie sua senha</h3>
+    <div class="sub">Escolha a senha da sua área do cliente SULLAB. Depois é só entrar com o e-mail ou o CPF/CNPJ e esta senha.</div>
+    <div class="ckerr" id="dsErr"></div>
+    <div class="fld"><label>Nova senha</label><input id="dsPass" type="password" autocomplete="new-password" placeholder="mín. 6 caracteres"></div>
+    <div class="fld"><label>Repita a senha</label><input id="dsPass2" type="password" autocomplete="new-password" placeholder="repita a senha"></div>
+    <button class="ckpay" id="dsBtn" onclick="definirSenhaSite()">Salvar senha e entrar</button>
   </div>
   <div id="accOut">
     <h3>Sua conta SULLAB</h3>
@@ -755,8 +767,8 @@
       <button type="button" id="tabReg" onclick="setAccTab('reg')">Criar conta CNPJ</button>
     </div>
     <div id="paneLogin">
-      <div class="fld"><label>E-mail</label><input id="liEmail" type="email" placeholder="voce@empresa.com.br"></div>
-      <div class="fld"><label>Senha</label><input id="liPass" type="password" placeholder="sua senha"></div>
+      <div class="fld"><label>E-mail ou CPF/CNPJ</label><input id="liEmail" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="voce@empresa.com.br ou 00.000.000/0000-00"></div>
+      <div class="fld"><label>Senha</label><input id="liPass" type="password" autocomplete="current-password" placeholder="sua senha" onkeydown="if(event.key==='Enter')fbLogin()"></div>
       <button class="ckpay" onclick="fbLogin()">Entrar</button>
       <button class="ckwa" onclick="fbReset()">Esqueci minha senha</button>
     </div>
@@ -1329,18 +1341,25 @@ var AUTH=null,DB=null,ACCDOC='cnpj';window.__user=null;window.__profile=null;
 window.addEventListener('DOMContentLoaded',function(){try{if(typeof firebase==='undefined')return;firebase.initializeApp(FBCFG);AUTH=firebase.auth();DB=firebase.firestore();AUTH.onAuthStateChanged(function(u){window.__user=u||null;if(u){CNPJ=true;DB.collection('clientes').doc(u.uid).get().then(function(d){if(d.exists){window.__profile=d.data();perfilParaFicha(d.data());}atualizarConta();}).catch(function(){});}else{window.__profile=null;}atualizarConta();try{render();atualizarCart();}catch(e){}});}catch(e){}});
 function fbErr(e){var c=((e&&e.code)||'')+'';if(c.indexOf('email-already')>=0)return 'Este e-mail já tem conta. Tente entrar.';if(c.indexOf('wrong-password')>=0||c.indexOf('invalid-credential')>=0)return 'E-mail ou senha incorretos.';if(c.indexOf('user-not-found')>=0)return 'Não encontramos uma conta com esse e-mail.';if(c.indexOf('weak-password')>=0)return 'A senha precisa de ao menos 6 caracteres.';if(c.indexOf('invalid-email')>=0)return 'E-mail inválido.';if(c.indexOf('too-many')>=0)return 'Muitas tentativas. Aguarde um pouco.';if(c.indexOf('unauthorized-domain')>=0||c.indexOf('network')>=0)return 'Login só funciona na loja publicada — no preview local o Firebase bloqueia o domínio.';return (e&&e.message)||'Não foi possível concluir agora.';}
 function perfilParaFicha(p){try{var f=fichaSalva();f.nome=p.razao||f.nome;f.doc=p.cnpj||f.doc;f.doct=p.docTipo||f.doct;f.tel=p.telefone||f.tel;f.email=p.email||f.email;localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}}
-function abrirConta(tab){atualizarConta();setAccTab(tab==='reg'?'reg':'login');document.getElementById('accErr').style.display='none';document.getElementById('acc').classList.add('on');}
+function abrirConta(tab){var s=document.getElementById('accSenha');if(s)s.style.display='none';atualizarConta();setAccTab(tab==='reg'?'reg':'login');document.getElementById('accErr').style.display='none';document.getElementById('acc').classList.add('on');if(window.__user)carregarMeusPedidos(false);}
 function fecharConta(){document.getElementById('acc').classList.remove('on');}
 function setAccTab(t){document.getElementById('tabLogin').classList.toggle('on',t==='login');document.getElementById('tabReg').classList.toggle('on',t==='reg');document.getElementById('paneLogin').style.display=t==='login'?'':'none';document.getElementById('paneReg').style.display=t==='reg'?'':'none';}
 function setAccDoc(d){ACCDOC=d;document.getElementById('rgCnpj').classList.toggle('on',d==='cnpj');document.getElementById('rgCpf').classList.toggle('on',d==='cpf');document.getElementById('rgLbDoc').textContent=d==='cnpj'?'CNPJ':'CPF';document.getElementById('rgLbNome').textContent=d==='cnpj'?'Nome fantasia':'Nome completo';document.getElementById('rgDoc').placeholder=d==='cnpj'?'00.000.000/0000-00':'000.000.000-00';}
 function accErro(m){var e=document.getElementById('accErr');e.textContent=m;e.style.display='block';}
 function _primeiroNome(){return (window.__profile&&window.__profile.razao)?String(window.__profile.razao).split(' ')[0]:'minha conta';}
-function atualizarConta(){var u=window.__user;var inb=document.getElementById('accIn'),outb=document.getElementById('accOut');if(inb&&outb){if(u){inb.style.display='';outb.style.display='none';document.getElementById('accNome').textContent='Olá, '+((window.__profile&&window.__profile.razao)||(u.email||'').split('@')[0])+'!';document.getElementById('accEmail').textContent=u.email||'';}else{inb.style.display='none';outb.style.display='';}}
+function atualizarConta(){var u=window.__user;var inb=document.getElementById('accIn'),outb=document.getElementById('accOut');var _ds=document.getElementById('accSenha');if(_ds&&_ds.style.display!=='none'){if(inb)inb.style.display='none';if(outb)outb.style.display='none';}else if(inb&&outb){if(u){inb.style.display='';outb.style.display='none';document.getElementById('accNome').textContent='Olá, '+((window.__profile&&window.__profile.razao)||(u.email||'').split('@')[0])+'!';document.getElementById('accEmail').textContent=u.email||'';}else{inb.style.display='none';outb.style.display='';}}
   var l=document.getElementById('accLbl');if(l)l.textContent=u?'conectado':'CNPJ';
   var ut=document.getElementById('accUtil');if(ut)ut.textContent=u?('Olá, '+_primeiroNome()):'Entrar / Cadastrar CNPJ';}
-function fbLogin(){var email=val('liEmail'),pass=document.getElementById('liPass').value;if(!email||!pass)return accErro('Informe e-mail e senha.');if(!AUTH)return accErro('Login disponível na loja publicada.');AUTH.signInWithEmailAndPassword(email,pass).then(function(){fecharConta();}).catch(function(e){accErro(fbErr(e));});}
-function fbReset(){var email=val('liEmail');if(!/.+@.+\..+/.test(email))return accErro('Digite seu e-mail no campo acima para enviar o link.');if(!AUTH)return accErro('Disponível na loja publicada.');AUTH.sendPasswordResetEmail(email).then(function(){accErro('Enviamos um link de redefinição para '+email+'.');}).catch(function(e){accErro(fbErr(e));});}
-function fbLogout(){if(AUTH)AUTH.signOut().then(function(){atualizarConta();fecharConta();});}
+function _acPost(body){return fetch(SHEET_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(function(r){return r.json();});}
+function _acH(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function fbLogin(){var id=val('liEmail'),pass=document.getElementById('liPass').value;if(!id||!pass)return accErro('Informe e-mail (ou CPF/CNPJ) e senha.');if(!AUTH)return accErro('Login disponível na loja publicada.');
+  var entrar=function(email){return AUTH.signInWithEmailAndPassword(email,pass).then(function(){document.getElementById('accErr').style.display='none';atualizarConta();carregarMeusPedidos(true);}).catch(function(e){accErro(fbErr(e));});};
+  if(id.indexOf('@')>=0)return entrar(id);
+  var dig=soDig(id);if(dig.length!==11&&dig.length!==14)return accErro('Digite um e-mail ou um CPF/CNPJ válido.');
+  accErro('Entrando…');
+  _acPost({action:'loginDoc',doc:dig,senha:pass}).then(function(d){if(d&&d.ok&&d.email)return entrar(d.email);accErro((d&&d.erro)||'CPF/CNPJ ou senha incorretos.');}).catch(function(){accErro('Não foi possível entrar agora. Tente com o e-mail.');});}
+function fbReset(){var email=val('liEmail');if(!/.+@.+\..+/.test(email))return accErro('Para receber o link, digite o seu e-mail (não o CPF/CNPJ) no campo acima.');if(!AUTH)return accErro('Disponível na loja publicada.');AUTH.sendPasswordResetEmail(email).then(function(){accErro('Enviamos um link de redefinição para '+email+'.');}).catch(function(e){accErro(fbErr(e));});}
+function fbLogout(){_MP=null;if(AUTH)AUTH.signOut().then(function(){atualizarConta();fecharConta();});}
 function fbCadastro(){var razao=val('rgNome'),docv=val('rgDoc'),email=val('rgEmail'),tel=val('rgTel'),pass=document.getElementById('rgPass').value;
   if(!razao)return accErro('Informe o '+(ACCDOC==='cnpj'?'nome fantasia':'nome')+'.');
   if(soDig(docv).length<11)return accErro('Informe um '+(ACCDOC==='cnpj'?'CNPJ':'CPF')+' válido.');
@@ -1349,6 +1368,48 @@ function fbCadastro(){var razao=val('rgNome'),docv=val('rgDoc'),email=val('rgEma
   if(pass.length<6)return accErro('A senha precisa de ao menos 6 caracteres.');
   if(!AUTH||!DB)return accErro('Cadastro disponível na loja publicada (o preview local não conecta o Firebase).');
   AUTH.createUserWithEmailAndPassword(email,pass).then(function(cred){var u=cred.user;var prof={razao:razao,cnpj:docv,docTipo:ACCDOC,telefone:tel,email:email,criadoEm:Date.now()};window.__profile=prof;try{sullabEvent('conta_cadastro',{razao:razao,doc:docv,docTipo:ACCDOC,telefone:tel,email:email});}catch(_e){}perfilParaFicha(prof);return DB.collection('clientes').doc(u.uid).set(prof,{merge:true});}).then(function(){fecharConta();}).catch(function(e){accErro(fbErr(e));});}
+
+/* ====== ÁREA DO CLIENTE: meus pedidos (servidor), DANFE, definir senha ====== */
+var _MP=null;
+function _etapaTxt(e,pago){e=String(e||'').toLowerCase();if(e.indexOf('entreg')>=0)return statusLabel('entregue');if(e.indexOf('post')>=0)return statusLabel('postado');if(e.indexOf('fatur')>=0)return statusLabel('faturado');if(e.indexOf('separ')>=0)return statusLabel('separado');if(e.indexOf('pago')>=0||pago)return statusLabel('pago');return statusLabel('recebido');}
+function _rastLinha(p){if(!p.rastreio)return '';var u=String(p.rastreioUrl||'');if(!/^https:\/\//.test(u))u='https://www.melhorrastreio.com.br/rastreio/'+encodeURIComponent(p.rastreio);return '<div style="font-size:12.5px;margin-top:5px">🚚 '+(p.transportadora?_acH(p.transportadora)+' · ':'')+'Rastreio <b>'+_acH(p.rastreio)+'</b> · <a href="'+_acH(u)+'" target="_blank" rel="noopener" style="color:var(--navy-l);font-weight:700">acompanhar entrega →</a></div>';}
+function _mpCard(p){var its=(p.itens||[]).slice(0,4).map(_acH).join('<br>')+((p.itens||[]).length>4?'<br>…':'');
+  return '<div style="border:1px solid var(--line);border-radius:11px;padding:11px 12px;margin-bottom:9px">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font-size:13.5px;color:var(--navy)">'+_acH(p.pedido)+'</b><span style="font-size:11.5px;color:var(--muted)">'+_acH(p.data)+'</span></div>'+
+    '<div style="font-size:12px;color:var(--muted);margin:4px 0 6px;line-height:1.45">'+its+(p.total?'<br><b style="color:var(--ink)">Total pago: '+_acH(p.total)+'</b>':'')+'</div>'+
+    '<div style="font-size:12.5px;font-weight:800;color:var(--ink)">'+_etapaTxt(p.etapa,p.pago)+'</div>'+
+    (p.nf?'<div style="font-size:12.5px;margin-top:5px">🧾 NF-e <b>'+_acH(p.nf)+'</b>'+(p.chave?'<div style="font-size:10.5px;color:var(--muted);word-break:break-all;margin-top:2px">Chave: '+_acH(p.chave)+'</div>':'')+'</div>':'')+
+    (p.danfe?'<button class="ckpay" style="background:var(--navy);padding:10px;font-size:13px;margin-top:8px" onclick="baixarDanfe(\''+_acH(p.pedido)+'\',this)">Baixar nota fiscal (PDF)</button>':'')+
+    _rastLinha(p)+'</div>';}
+function carregarMeusPedidos(forcar){var el=document.getElementById('mpList');if(!el)return;var u=window.__user;if(!u){el.innerHTML='';return;}
+  if(_MP&&!forcar){renderMP();return;}
+  el.innerHTML='<div style="font-size:12.5px;color:var(--muted);padding:8px 2px">Carregando seus pedidos…</div>';
+  u.getIdToken(true).then(function(tk){return _acPost({action:'meuspedidos',idToken:tk});}).then(function(d){_MP=d||{ok:false};renderMP();}).catch(function(){_MP=null;el.innerHTML='<div style="font-size:12.5px;color:var(--muted);padding:8px 2px">Não foi possível carregar agora. Toque em “Atualizar”.</div>';});}
+function renderMP(){var el=document.getElementById('mpList');if(!el)return;var d=_MP||{};
+  if(!d.ok){el.innerHTML='<div style="font-size:12.5px;color:var(--muted);padding:8px 2px">Não foi possível carregar agora. Toque em “Atualizar”.</div>';return;}
+  if(d.verificar){el.innerHTML='<div style="font-size:12.5px;color:var(--muted);background:var(--bg);border-radius:10px;padding:12px;line-height:1.5">Para ver seus pedidos, confirme o seu e-mail.<br><span class="rm" style="color:var(--navy-l);font-weight:800;cursor:pointer" onclick="enviarVerificacao(this)">Enviar e-mail de confirmação →</span></div>';return;}
+  var a=d.pedidos||[];if(!a.length){el.innerHTML='<div style="font-size:12.5px;color:var(--muted);background:var(--bg);border-radius:10px;padding:14px;text-align:center;line-height:1.5">Nenhum pedido pago encontrado para este e-mail ainda.<br>Os pedidos pagos no site aparecem aqui com nota fiscal e rastreio.</div>';return;}
+  el.innerHTML=a.map(_mpCard).join('');}
+function enviarVerificacao(b){var u=window.__user;if(!u)return;u.sendEmailVerification().then(function(){if(b)b.textContent='Enviado! Confira sua caixa de entrada e depois toque em “Atualizar”.';}).catch(function(){if(b)b.textContent='Não foi possível enviar agora. Tente mais tarde.';});}
+function baixarDanfe(ped,btn){var u=window.__user;if(!u)return;var t=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent='Baixando…';}
+  u.getIdToken().then(function(tk){return _acPost({action:'danfe',idToken:tk,pedido:ped});}).then(function(d){
+    if(!d||!d.ok||!d.b64)throw 0;var bin=atob(d.b64),n=bin.length,arr=new Uint8Array(n);for(var i=0;i<n;i++)arr[i]=bin.charCodeAt(i);
+    var url=URL.createObjectURL(new Blob([arr],{type:'application/pdf'}));var a=document.createElement('a');a.href=url;a.download=String(d.nome||('DANFE-'+ped+'.pdf')).replace(/[^\w.\- ]/g,'');document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},4000);
+    if(btn){btn.disabled=false;btn.textContent=t;}
+  }).catch(function(){if(btn){btn.disabled=false;btn.textContent='Não foi possível baixar agora — tente de novo';}});}
+var _DS_TOKEN='';
+function abrirDefinirSenha(tok){_DS_TOKEN=tok;document.getElementById('accIn').style.display='none';document.getElementById('accOut').style.display='none';document.getElementById('accSenha').style.display='';document.getElementById('dsErr').style.display='none';document.getElementById('acc').classList.add('on');}
+function definirSenhaSite(){var p1=document.getElementById('dsPass').value,p2=document.getElementById('dsPass2').value,er=document.getElementById('dsErr');var msg=function(m){er.textContent=m;er.style.display='block';};
+  if(p1.length<6)return msg('A senha precisa de ao menos 6 caracteres.');if(p1!==p2)return msg('As duas senhas não são iguais.');
+  var b=document.getElementById('dsBtn');b.disabled=true;b.textContent='Salvando…';
+  _acPost({action:'definirSenha',token:_DS_TOKEN,senha:p1}).then(function(d){
+    if(!d||!d.ok){b.disabled=false;b.textContent='Salvar senha e entrar';return msg((d&&d.erro)||'Não foi possível salvar agora.');}
+    try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+    if(!AUTH){b.disabled=false;b.textContent='Salvar senha e entrar';return msg('Senha criada! Entre com seu e-mail e a nova senha.');}
+    return AUTH.signInWithEmailAndPassword(d.email,p1).then(function(){document.getElementById('accSenha').style.display='none';b.disabled=false;b.textContent='Salvar senha e entrar';atualizarConta();carregarMeusPedidos(true);});
+  }).catch(function(){b.disabled=false;b.textContent='Salvar senha e entrar';msg('Erro de conexão. Tente de novo.');});}
+(function(){function h(){var m=/^#definir-senha=([a-f0-9]{40,80})$/i.exec(location.hash||'');if(m){abrirDefinirSenha(m[1]);return;}if(location.hash==='#conta'){try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}setTimeout(function(){abrirConta();},600);}}
+  window.addEventListener('DOMContentLoaded',h);window.addEventListener('hashchange',h);})();
 
 /* ====== RASTREIO DE PEDIDO ====== */
 function meusPedidos(){try{return JSON.parse(localStorage.getItem('sullab_meus_pedidos')||'[]');}catch(e){return [];}}
@@ -1382,7 +1443,9 @@ function lookupRastreio(){var n=(document.getElementById('rastNum').value||'').t
       '<div style="display:flex;justify-content:space-between;align-items:center"><b style="color:var(--navy)">'+d.pedido+'</b><span style="font-size:11.5px;color:var(--muted)">'+(d.data||'')+'</span></div>'+
       ((d.canal||tot)?'<div style="font-size:12px;color:var(--muted);margin:3px 0 5px">'+[d.canal,tot].filter(Boolean).join(' · ')+'</div>':'')+
       '<div style="font-size:13px;font-weight:800;color:var(--ink)">'+rastStatusTexto(d)+'</div>'+
-      '<span class="rm" style="display:inline-block;margin-top:7px;color:var(--green-d);font-weight:700;cursor:pointer" onclick="acompanharWhats(\''+d.pedido+'\')">💬 Falar com a equipe →</span>'+
+      (d.nf?'<div style="font-size:12.5px;margin-top:5px">🧾 NF-e <b>'+_acH(d.nf)+'</b> · a nota fiscal (PDF) fica na sua <span class="rm" style="color:var(--navy-l);font-weight:700;cursor:pointer" onclick="fecharRastreio();abrirConta()">área do cliente</span></div>':'')+
+      _rastLinha(d)+
+      '<span class="rm" style="display:inline-block;margin-top:7px;color:var(--green-d);font-weight:700;cursor:pointer" onclick="acompanharWhats(\''+_acH(d.pedido)+'\')">💬 Falar com a equipe →</span>'+
     '</div>';
   });}
 function renderRastreio(){var a=meusPedidos();var el=document.getElementById('rastList');
