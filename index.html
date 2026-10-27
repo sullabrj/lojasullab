@@ -470,7 +470,76 @@
 .secdiv:before,.secdiv:after{content:"";flex:1;height:2px;background:linear-gradient(90deg,transparent,#9db4d8,transparent)}
 @media(max-width:900px){.ofgrid{grid-template-columns:repeat(2,1fr);gap:10px}#ofSec,#catPanel{padding:14px 12px 16px;border-radius:14px}}
 </style>
-<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"></head>
+<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><style id="celularCss">
+/* ===== CELULAR MAIS FÁCIL (26/10/2026) — 70% das visitas vêm do celular ===== */
+.fcalc{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:var(--navy);padding:10px 2px}
+.spn{width:18px;height:18px;border:3px solid #cfdcef;border-top-color:var(--navy);border-radius:50%;animation:spnR .8s linear infinite;flex:none}
+@keyframes spnR{to{transform:rotate(360deg)}}
+.btnBusy{opacity:.7;pointer-events:none}
+@media(max-width:700px){
+  body{font-size:15px}
+  .util{font-size:13px}.util .wrap{height:auto;min-height:34px;padding-top:4px;padding-bottom:4px}
+  .util .ur span,.util .ur a{padding:6px 2px;display:inline-block}
+  #searchInput,.search input,input,select,textarea{font-size:16px!important}
+  .search input{padding:14px 12px}
+  .search button{min-width:56px;font-size:20px}
+  .trust .wrap{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;gap:16px;padding:8px 14px;scrollbar-width:none;font-size:13px;white-space:nowrap}
+  .trust .wrap::-webkit-scrollbar{display:none}
+  /* buscas populares: uma linha que rola, botões grandes */
+  .popq{flex-wrap:nowrap;overflow-x:auto;margin:12px -16px 4px;padding:2px 16px 6px;scrollbar-width:none;font-size:14px}
+  .popq::-webkit-scrollbar{display:none}
+  .popq b{white-space:nowrap}
+  .popq span{white-space:nowrap;min-height:40px;display:inline-flex!important;align-items:center;padding:0 14px!important;font-size:14px!important}
+  /* banner institucional vai para depois das ofertas e categorias; botões duplicados somem */
+  .bannerHome .bact{display:none!important}
+  .bsel{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto;gap:8px;scrollbar-width:none}
+  .bsel::-webkit-scrollbar{display:none}
+  .bsel span{white-space:nowrap;flex:none;font-size:13px!important}
+  #ofSec{margin-top:10px}
+  .ofh h2,.sec h2{font-size:20px}
+  .ofn{font-size:14px!important;line-height:1.3}
+  .ofd{font-size:12.5px!important}
+  .ofp{font-size:19px!important}
+  .ofb{min-height:44px;font-size:14px!important}
+  /* cards do catálogo */
+  .pt{-webkit-line-clamp:3!important;font-size:15px!important;line-height:1.32!important;min-height:0!important}
+  .bc{font-size:12.5px!important}
+  .unl,.pixl{font-size:13px!important}
+  .pf{gap:8px}
+  .stepper button{min-width:40px;min-height:44px;font-size:20px}
+  .stepper span{min-width:28px;font-size:16px;text-align:center}
+  .add{min-height:44px;font-size:14px!important}
+  /* categorias compactas: 3 por linha */
+  .cats{grid-template-columns:repeat(3,1fr)!important;gap:8px!important}
+  .ctile .cimg{height:auto!important;aspect-ratio:4/3}
+  .ctile .cimg img{width:100%;height:100%;object-fit:cover}
+  .ctile .cb{padding:7px 8px 9px!important}
+  .ctile .cb b{font-size:13.5px!important;line-height:1.2;display:block}
+  .ctile .cb small{font-size:12px!important}
+  /* cabeçalho mais baixo: sobra tela para os produtos */
+  .head{padding:6px 14px!important;gap:6px!important}
+  .search input{padding:11px 12px!important}
+  .deptbar .wrap a,.deptbar .wrap button,.deptbar .wrap span{min-height:40px}
+  #sortSel{min-height:44px}
+  .fgin button,.fgin input{min-height:48px}
+  /* ofertas em carrossel: desliza para o lado e chega rápido nas categorias */
+  .ofgrid{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px!important;padding-bottom:8px;scrollbar-width:none;grid-template-columns:none!important}
+  .ofgrid::-webkit-scrollbar{display:none}
+  .ofgrid .ofc{flex:0 0 46%;scroll-snap-align:start}
+  .ofh small:after{content:" · deslize →";font-weight:800}
+}
+</style>
+<script>
+/* celular: ofertas e categorias primeiro (o banner institucional desce) */
+document.addEventListener('DOMContentLoaded',function(){try{
+  if(!matchMedia('(max-width:700px)').matches)return;
+  var b=document.getElementById('bannerHome');if(!b)return;
+  var pq=document.querySelector('.popq'),of=document.getElementById('ofSec'),cp=document.getElementById('catPanel');
+  var p=b.parentNode;[pq,of,cp].forEach(function(el){if(el)p.insertBefore(el,b);});
+  var si=document.getElementById('searchInput');if(si)si.placeholder='Buscar produto, marca ou código';
+}catch(e){}});
+</script>
+</head>
 <body>
 
 
@@ -921,6 +990,8 @@ function buscaCasa(hay,termo){
     return false;
   });
 }
+/* itens que mais vendem/mais são vistos no site (pedidos, GA4 e Clarity, out/2026) */
+var TOP_VENDA=['25492','454087','454036','456001','454921','PA03','PA36','PA31','PA186','743','PRD00003','450072','410','CLT24H2LT','18260NM','18248A','PA26','PA384','PA85','PA14','PA187','PA406','454482','454235','456211','454071','455071','CLT80SNM','CLT50SM','S240RB'];
 function filtrados(){
   var arr=CATALOG.filter(function(p){
     if(FILTRO.dept && deptOf(p.k)!==FILTRO.dept) return false;
@@ -936,7 +1007,10 @@ function filtrados(){
   if(s==='menor')arr.sort((a,b)=>(precoDe(a)||9e9)-(precoDe(b)||9e9));
   else if(s==='maior')arr.sort((a,b)=>(precoDe(b)||0)-(precoDe(a)||0));
   else if(s==='az')arr.sort((a,b)=>a.n.localeCompare(b.n));
-  else arr.sort((a,b)=>(b.selo?1:0)-(a.selo?1:0));
+  else{ /* 26/10/2026: "Mais procurados" = mais vendidos/mais vistos primeiro, depois quem tem preço e foto; sob consulta por último */
+    var _sc=function(p){var t=TOP_VENDA.indexOf(String(p.c));var v=(t>=0?1000-t:0)+(p.selo?300:0);var pr=(window.PRECOS||{})[p.c];if(pr&&pr[1])v+=100;if(p.img&&!/logo-sullab/.test(p.img))v+=20;return v;};
+    arr=arr.map(function(p,ix){return [p,_sc(p),ix];}).sort(function(a,b){return (b[1]-a[1])||(a[2]-b[2]);}).map(function(x){return x[0];});
+  }
   return arr;
 }
 function render(){
@@ -1300,10 +1374,10 @@ var _freteOk=null;
 function chaveFrete(){return soDig(val('ckCep'))+'|'+CART.map(function(x){return x.c+':'+x.qty;}).join(',');}
 function freteValido(){return !!(_freteOk&&_freteOk.key===chaveFrete()&&(freteSelLoja>0||_freteOk.gratis));}
 function zerarFrete(){freteSelLoja=0;freteLabelLoja='';freteSelPrazo=0;freteSelId='';freteMeta=null;_freteOk=null;}
-function cotarFreteLoja(){var cep=soDig(val('ckCep'));var opt=document.getElementById('freteOpts');if(!opt)return;if(cep.length!==8){opt.innerHTML='<div style="font-size:11.5px;color:var(--muted);padding:5px 0">Informe o CEP no campo acima.</div>';return;}opt.innerHTML='<div style="font-size:11.5px;color:var(--muted);padding:6px 0">Calculando…</div>';
+function cotarFreteLoja(){if(window._fBusy)return;var cep=soDig(val('ckCep'));var opt=document.getElementById('freteOpts');if(!opt)return;if(cep.length!==8){opt.innerHTML='<div style="font-size:13.5px;color:var(--muted);padding:5px 0">Informe o CEP no campo acima.</div>';return;}opt.innerHTML='<div class="fcalc"><span class="spn"></span>Calculando o frete para o seu CEP…</div>';window._fBusy=1;try{var _fb=document.querySelectorAll('#freteBox .ckwa');for(var _i=0;_i<_fb.length;_i++){_fb[_i].disabled=true;_fb[_i].style.opacity=.55;}}catch(e){}var _fim=function(){window._fBusy=0;try{var _fb=document.querySelectorAll('#freteBox .ckwa');for(var _i=0;_i<_fb.length;_i++){_fb[_i].disabled=false;_fb[_i].style.opacity=1;}}catch(e){}};
   zerarFrete();try{ckTotais();}catch(e){}var _kq=chaveFrete();
   var itens=CART.map(function(x){return {c:String(x.c),q:x.qty,v:precoItem(x)};});
-  fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){var ok=(d&&d.opcoes)||[];if(!ok.length){freteMeta=null;opt.innerHTML=_gratisHtml(d)+'<div style="font-size:11.5px;color:var(--muted);padding:5px 0">'+((d&&(d.consulta||d.bloqueado))?'Frete será confirmado no checkout / WhatsApp.':'<b>Frete não encontrado para este CEP.</b> Confira se o CEP está correto ou fale com a gente no WhatsApp.')+'</div>';return;}if(_kq!==chaveFrete())return;freteMeta={pesoKg:d.peso,pacotes:d.pacotes,gratis:!!(d.gratis&&d.gratis.ativo)};opt.innerHTML=_gratisHtml(d)+ok.map(function(o,ix){var nm=String(o.nome||'Transportadora').replace(/\x27/g,'');return '<label class="pay1'+(ix===0?' on':'')+'" style="margin-top:6px"><input type="radio" name="frt" value="'+o.preco+'" '+(ix===0?'checked':'')+' onchange="selFreteLoja('+o.preco+',\''+nm+'\','+(o.prazo||0)+',\''+String(o.id||'')+'\')"><span><span class="pn">'+nm+'</span> <span class="pd">'+(o.prazo?('· '+o.prazo+' dias úteis'):'')+'</span></span><span class="ptag" style="color:var(--navy)">'+(o.gratis?'Grátis':brl(o.preco))+'</span></label>';}).join('');selFreteLoja(ok[0].preco,String(ok[0].nome||'Transportadora').replace(/\x27/g,''),ok[0].prazo||0,String(ok[0].id||''));_freteOk={key:_kq,gratis:!!(d.gratis&&d.gratis.ativo)};}).catch(function(){zerarFrete();try{ckTotais();}catch(e){}opt.innerHTML='<div style="font-size:11.5px;color:var(--muted);padding:5px 0">Não foi possível calcular agora — o frete será confirmado pelo WhatsApp.</div>';});}
+  fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){_fim();var ok=(d&&d.opcoes)||[];if(!ok.length){freteMeta=null;opt.innerHTML=_gratisHtml(d)+'<div style="font-size:13.5px;color:var(--muted);padding:5px 0">'+((d&&(d.consulta||d.bloqueado))?'Frete será confirmado no checkout / WhatsApp.':'<b>Frete não encontrado para este CEP.</b> Confira se o CEP está correto ou fale com a gente no WhatsApp.')+'</div>';return;}if(_kq!==chaveFrete())return;freteMeta={pesoKg:d.peso,pacotes:d.pacotes,gratis:!!(d.gratis&&d.gratis.ativo)};opt.innerHTML=_gratisHtml(d)+ok.map(function(o,ix){var nm=String(o.nome||'Transportadora').replace(/\x27/g,'');return '<label class="pay1'+(ix===0?' on':'')+'" style="margin-top:6px"><input type="radio" name="frt" value="'+o.preco+'" '+(ix===0?'checked':'')+' onchange="selFreteLoja('+o.preco+',\''+nm+'\','+(o.prazo||0)+',\''+String(o.id||'')+'\')"><span><span class="pn">'+nm+'</span> <span class="pd">'+(o.prazo?('· '+o.prazo+' dias úteis'):'')+'</span></span><span class="ptag" style="color:var(--navy)">'+(o.gratis?'Grátis':brl(o.preco))+'</span></label>';}).join('');selFreteLoja(ok[0].preco,String(ok[0].nome||'Transportadora').replace(/\x27/g,''),ok[0].prazo||0,String(ok[0].id||''));_freteOk={key:_kq,gratis:!!(d.gratis&&d.gratis.ativo)};}).catch(function(){_fim();zerarFrete();try{ckTotais();}catch(e){}opt.innerHTML='<div style="font-size:13.5px;color:var(--muted);padding:5px 0">Não foi possível calcular agora — o frete será confirmado pelo WhatsApp.</div>';});}
 function aplicarCupom(){var c=(val('ckCupom')||'').toUpperCase().replace(/\s/g,'');var msg=document.getElementById('cupomMsg');if(!c){cupomPct=0;cupomCod='';if(msg)msg.textContent='';ckTotais();return;}if(CUPONS[c]){cupomPct=CUPONS[c];cupomCod=c;if(msg){msg.style.color='var(--green-d)';msg.innerHTML='✓ Cupom '+c+' aplicado — '+Math.round(cupomPct*100)+'% OFF.';}}else{cupomPct=0;cupomCod='';if(msg){msg.style.color='#b3261e';msg.textContent='Cupom inválido.';}}ckTotais();}
 function _freteBarCart(){return '';}
 function ckTotais(){var base=totalCart();var t=base*fatorPg()*(1-cupomPct)+(freteSelLoja||0);var n=CART.reduce(function(s,x){return s+x.qty;},0);document.getElementById('ckTot').textContent=brl(t);document.getElementById('ckQt').textContent='('+n+' '+(n===1?'item':'itens')+(PG==='pix'?' · −5% Pix':'')+(cupomPct?(' · −'+Math.round(cupomPct*100)+'%'):'')+(freteSelLoja?(' · frete '+brl(freteSelLoja)):'')+')';}
