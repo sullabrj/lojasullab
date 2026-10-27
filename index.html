@@ -1409,6 +1409,15 @@ function pagarMP(){
     localStorage.setItem('sullab_last_purchase',JSON.stringify({v:Math.round(vtot*100)/100,ped:pedido,ts:Date.now(),tel:f.tel||'',frete:freteSelLoja||0,
       items:CART.map(function(x){return {item_id:x.c,item_name:x.n,item_brand:x.m||'',quantity:x.qty,price:Math.round(precoItem(x)*fatorPg()*100)/100};})}));
   }catch(e){}
+  /* 26/10/2026: Pix pago no app do banco não volta para a página "obrigado", então a compra não era medida.
+     Guarda no servidor o ID do GA4, a sessão e o gclid; quando o Mercado Pago aprova, o servidor envia a compra ao GA4/Ads. */
+  try{var _o=window.SULLAB_ORIGEM||{};var _cm={action:'conv_meta',pedido:pedido,v:(function(){try{return JSON.parse(localStorage.getItem('sullab_last_purchase')||'{}').v||0;}catch(e){return 0;}})(),
+      gclid:_o.gclid||'',gbraid:_o.gbraid||'',wbraid:_o.wbraid||'',utm_source:_o.utm_source||'',utm_campaign:_o.utm_campaign||'',cid:'',sid:''};
+    var _ga=(document.cookie.match(/(?:^|;\s*)_ga=GA\d\.\d\.(\d+\.\d+)/)||[])[1];if(_ga)_cm.cid=_ga;
+    var _gs=(document.cookie.match(/(?:^|;\s*)_ga_RK2PX868MS=GS\d\.\d\.s?(\d+)/)||[])[1];if(_gs)_cm.sid=_gs;
+    var _cmb=JSON.stringify(_cm);
+    if(!(navigator.sendBeacon&&navigator.sendBeacon(SHEET_ENDPOINT,new Blob([_cmb],{type:'text/plain;charset=utf-8'}))))fetch(SHEET_ENDPOINT,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:_cmb});
+  }catch(e){}
   dispararPedido('pedido_mp',PG,f,pedido);
   var endereco={cep:f.cep,logradouro:f.log,numero:f.num,complemento:f.compl,bairro:f.bairro,cidade:f.cidade,uf:f.uf};
   var btn=document.getElementById('ckPayBtn');var orig=btn.textContent;btn.disabled=true;btn.textContent='Abrindo Mercado Pago…';
