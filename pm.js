@@ -26,3 +26,22 @@
       var pp=bar.querySelector('.pmP b');if(v>0&&pp)pp.textContent=brl(Math.round(v*q*100)/100);var sm=bar.querySelector('.pmP small');if(sm)sm.textContent=q>1?(q+' × '+precoTxt):'Preço (NF-e)';};
     bs[0].onclick=function(){if(q>1){q--;up();}};bs[1].onclick=function(){if(q<999){q++;up();}};}
 }catch(e){}})();
+
+/* 27/10/2026: clique na foto (era o clique "morto" mais comum no Clarity) abre a foto grande; toque fora ou ✕ fecha */
+(function(){try{
+  var ph=document.getElementById('ph');if(!ph)return;
+  ph.style.cursor='zoom-in';ph.setAttribute('role','button');ph.setAttribute('aria-label','Ampliar foto');ph.tabIndex=0;
+  var abrir=function(){
+    var m=(ph.style.backgroundImage||'').match(/url\(["']?([^"')]+)["']?\)/);if(!m)return;
+    var o=document.createElement('div');o.id='pmZoom';
+    o.setAttribute('style','position:fixed;inset:0;z-index:100001;background:rgba(10,20,35,.92);display:flex;align-items:center;justify-content:center;padding:16px;cursor:zoom-out');
+    o.innerHTML='<img alt="Foto do produto ampliada" style="max-width:100%;max-height:100%;object-fit:contain;background:#fff;border-radius:12px;touch-action:pinch-zoom"><button type="button" aria-label="Fechar" style="position:absolute;top:12px;right:12px;width:46px;height:46px;border:0;border-radius:50%;background:#fff;font-size:22px;font-weight:800;color:#1f3a5f;cursor:pointer">✕</button>';
+    o.querySelector('img').src=m[1];
+    var fechar=function(){o.remove();document.removeEventListener('keydown',esc);};
+    var esc=function(e){if(e.key==='Escape')fechar();};
+    o.addEventListener('click',function(e){if(e.target.tagName!=='IMG')fechar();});
+    document.addEventListener('keydown',esc);document.body.appendChild(o);
+  };
+  ph.addEventListener('click',abrir);
+  ph.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();abrir();}});
+}catch(e){}})();
