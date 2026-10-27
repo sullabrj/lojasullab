@@ -7,7 +7,7 @@
   var CLARITY_ID='z0ww8oyptt'; /* opcional: colar aqui o ID do projeto do Microsoft Clarity (mapa de calor e gravação de tela) */
   var AW_ID='AW-11390766577';
   /* v2 22/10/2026: páginas sem a tag do GA4 no HTML (categorias, guias, blog, ofertas, indique, institucionais) carregam o gtag.js aqui */
-  if(typeof window.gtag!=='function'){try{window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};window.gtag('js',new Date());window.gtag('config','G-RK2PX868MS');var gs=document.createElement('script');gs.async=1;gs.src='https://www.googletagmanager.com/gtag/js?id=G-RK2PX868MS';document.head.appendChild(gs);}catch(e){}}
+  if(typeof window.gtag!=='function'){try{window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};(function(){var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}var g=c==='sim'?'granted':'denied';window.gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:'granted',wait_for_update:500});window.gtag('set','ads_data_redaction',g==='denied');})();window.gtag('js',new Date());window.gtag('config','G-RK2PX868MS');var gs=document.createElement('script');gs.async=1;gs.src='https://www.googletagmanager.com/gtag/js?id=G-RK2PX868MS';document.head.appendChild(gs);}catch(e){}}
   function G(){try{window.dataLayer=window.dataLayer||[];if(typeof window.gtag==='function')window.gtag.apply(null,arguments);}catch(e){}}
   /* 26/10/2026: os passos do checkout também viram eventos do Clarity, para filtrar as gravações de quem desistiu */
   var CLARITY_EVS={begin_checkout:1,add_payment_info:1,pagar_clique:1,view_cart:1,add_to_cart:1,whatsapp_click:1,sullab_frete_gratis_consulta:1};
@@ -32,6 +32,28 @@
 
   /* ---- Microsoft Clarity (só carrega se houver ID) ---- */
   if(CLARITY_ID){(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments);};t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,'clarity','script',CLARITY_ID);}
+
+
+  /* ---- 26/10/2026: aviso de cookies (LGPD) + Consent Mode do Google. Analytics sempre; anúncios personalizados só com "Aceitar" ---- */
+  (function(){try{
+    var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}
+    if(c)return;
+    var mk=function(){if(document.getElementById('slCk'))return;
+      var st=document.createElement('style');st.textContent='#slCk{position:fixed;left:12px;right:12px;bottom:12px;z-index:100000;max-width:720px;margin:0 auto;background:#fff;color:#1a2433;border:1px solid #dbe4f0;border-radius:14px;box-shadow:0 10px 34px rgba(20,40,70,.22);padding:14px 16px;font:14px/1.45 -apple-system,Segoe UI,Roboto,Arial,sans-serif;display:flex;gap:12px;align-items:center;flex-wrap:wrap}#slCk p{margin:0;flex:1 1 260px}#slCk a{color:#1f4e79;font-weight:700}#slCk .b{display:flex;gap:8px;flex:0 0 auto}#slCk button{border:0;border-radius:10px;font-weight:800;font-size:15px;min-height:44px;padding:0 18px;cursor:pointer}#slCk .ok{background:#2f9e63;color:#fff}#slCk .no{background:#eef3fb;color:#1f3a5f}@media(max-width:700px){#slCk{left:8px;right:8px;bottom:8px}#slCk .b{width:100%}#slCk button{flex:1}body.slCkBar #slCk{bottom:84px}}';
+      document.head.appendChild(st);
+      var d=document.createElement('div');d.id='slCk';d.setAttribute('role','dialog');d.setAttribute('aria-label','Aviso de cookies');
+      d.innerHTML='<p>Usamos cookies para melhorar sua experiência e mostrar ofertas relevantes. Veja a <a href="/privacidade.html">Política de Privacidade</a>.</p><div class="b"><button type="button" class="no">Recusar</button><button type="button" class="ok">Aceitar</button></div>';
+      if(document.getElementById('pmBar'))document.body.classList.add('slCkBar');
+      document.body.appendChild(d);
+      var fim=function(v){try{localStorage.setItem('sl_consent',v);}catch(e){}
+        var g=v==='sim'?'granted':'denied';G('consent','update',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:'granted'});
+        try{if(window.clarity)window.clarity('consent',v==='sim');}catch(e){}
+        ev('cookies_'+(v==='sim'?'aceitou':'recusou'),{});d.remove();};
+      d.querySelector('.ok').onclick=function(){fim('sim');};
+      d.querySelector('.no').onclick=function(){fim('nao');};
+    };
+    if(document.body)setTimeout(mk,1200);else document.addEventListener('DOMContentLoaded',function(){setTimeout(mk,1200);});
+  }catch(e){}})();
 
   function wrap(name,fn){
     var o=window[name];if(typeof o!=='function'||o.__w)return;
