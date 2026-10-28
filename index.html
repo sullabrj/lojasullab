@@ -2007,10 +2007,15 @@ try{render();atualizarCart();}catch(e){}
 <script id="freteRefrigerado">
 /* ===== Refrigerados (22/10/2026, regra do Eduardo) =====
    Placas, tubos e frascos de meio pronto, cromoágares, cepas e plasma vão sempre pela opção MAIS RÁPIDA,
-   com entrega em até 5 dias úteis depois da postagem (o prazo da API já soma 1 dia de postagem: limite 6).
+   com entrega em até 3 dias úteis depois da postagem (o prazo da API já soma 1 dia de postagem: limite 4).
    Sem opção nesse prazo (ou sem conseguir cotar o CEP): não deixa pagar e não gera pedido. */
 (function(){
-var PRAZO_MAX=6;
+var PRAZO_MAX=4; /* 28/10/2026: até 3 dias úteis após a postagem (48–72 h com gelo) + 1 dia de postagem da API */
+/* 28/10/2026 (estudo de 97 envios reais): estados sem entrega refrigerada segura e JeT só dentro do RJ */
+var UF_BLOQ=/^(AC|AL|AM|AP|MT|PA|PB|PI|RO|RR|SE|TO)$/;
+function ufDoCep(c){c=parseInt(String(c||'').replace(/\D/g,'').slice(0,5),10);if(!c)return '';
+  var T=[[1000,19999,'SP'],[20000,28999,'RJ'],[29000,29999,'ES'],[30000,39999,'MG'],[40000,48999,'BA'],[49000,49999,'SE'],[50000,56999,'PE'],[57000,57999,'AL'],[58000,58999,'PB'],[59000,59999,'RN'],[60000,63999,'CE'],[64000,64999,'PI'],[65000,65999,'MA'],[66000,68899,'PA'],[68900,68999,'AP'],[69000,69299,'AM'],[69300,69399,'RR'],[69400,69899,'AM'],[69900,69999,'AC'],[70000,72799,'DF'],[72800,72999,'GO'],[73000,73699,'DF'],[73700,76799,'GO'],[76800,76999,'RO'],[77000,77999,'TO'],[78000,78899,'MT'],[79000,79999,'MS'],[80000,87999,'PR'],[88000,89999,'SC'],[90000,99999,'RS']];
+  for(var i=0;i<T.length;i++)if(c>=T[i][0]&&c<=T[i][1])return T[i][2];return '';}
 var RX_SIM=/placa|biplaca|Ø\s?\d|cromo|caldo|[aá]gar|meio de|newp \d|plasma/i, RX_NAO=/cult pack|stuart|swab|colora|corante|gram|ziehl|papanicolau|lugol|tamp[aã]o|reativo|al[cç]a|agulha/i;
 var EXTRA={'052000':1};
 function refrigCod(c){
@@ -2026,10 +2031,10 @@ var _f=window.fetch;
 window.fetch=function(u,o){
   try{
     if(String(u).indexOf('/frete2')>=0&&o&&o.body){
-      var b=JSON.parse(o.body),its=(b&&b.itens)||[];
+      var b=JSON.parse(o.body),its=(b&&b.itens)||[],uf=ufDoCep(b&&b.cep);
       if(its.some(function(i){return refrigCod(String(i.c));})){
         return _f.apply(this,arguments).then(function(r){return r.json().then(function(d){
-          d=d||{};var ops=(d.opcoes||[]).filter(function(x){return (parseInt(x.prazo)||99)<=PRAZO_MAX;});
+          d=d||{};var ops=UF_BLOQ.test(uf)?[]:(d.opcoes||[]).filter(function(x){return (parseInt(x.prazo)||99)<=PRAZO_MAX&&(uf==='RJ'||!/jet|j&t/i.test(String(x.nome||'')));});
           ops.sort(function(a,c){return (a.prazo-c.prazo)||(a.preco-c.preco);});
           d.opcoes=ops.slice(0,1);d.refrigerado=true;
           window._refrigSemOpcao=!d.opcoes.length;
@@ -2041,8 +2046,8 @@ window.fetch=function(u,o){
   }catch(e){}
   return _f.apply(this,arguments);
 };
-var AVISO='<div id="refrigAviso" style="background:#eef6ff;border:1px solid #c9ddf5;color:#1f3c73;border-radius:9px;padding:8px 10px;font-size:12px;margin:6px 0;line-height:1.4">❄️ <b>Produto refrigerado:</b> vai pela transportadora mais rápida, com entrega em até 5 dias úteis, e é postado no início da semana para não ficar parado no fim de semana.</div>';
-var SEM='<div id="refrigSem" style="background:#fff6e5;border:1px solid #f1d7a6;color:#7a5a12;border-radius:9px;padding:8px 10px;font-size:12px;margin:6px 0;line-height:1.4">❄️ Para este CEP nenhuma transportadora entrega produto refrigerado em até 5 dias úteis, então não conseguimos enviar com segurança. Para seguir com o restante do pedido, remova do carrinho os itens refrigerados (placas, tubos e frascos de meio pronto, cepas e plasma).</div>';
+var AVISO='<div id="refrigAviso" style="background:#eef6ff;border:1px solid #c9ddf5;color:#1f3c73;border-radius:9px;padding:8px 10px;font-size:12px;margin:6px 0;line-height:1.4">❄️ <b>Produto refrigerado:</b> vai pela transportadora mais rápida, com entrega em até 3 dias úteis, e é postado no início da semana para não ficar parado no fim de semana.</div>';
+var SEM='<div id="refrigSem" style="background:#fff6e5;border:1px solid #f1d7a6;color:#7a5a12;border-radius:9px;padding:8px 10px;font-size:12px;margin:6px 0;line-height:1.4">❄️ Para este CEP nenhuma transportadora entrega produto refrigerado em até 3 dias úteis, então não conseguimos enviar com segurança. Para seguir com o restante do pedido, remova do carrinho os itens refrigerados (placas, tubos e frascos de meio pronto, cepas e plasma).</div>';
 function marcar(){
   try{
     var box=document.getElementById('freteBox');if(!box)return;
@@ -2064,7 +2069,7 @@ setInterval(function(){var c=document.getElementById('cko');if(c&&c.classList.co
 var _pg=window.pagarMP;
 window.pagarMP=function(){
   if(cartRefrigerado()){
-    if(window._refrigSemOpcao)return ckErro('Para este CEP não há entrega refrigerada em até 5 dias úteis. Remova os itens refrigerados para seguir.');
+    if(window._refrigSemOpcao)return ckErro('Para este CEP não há entrega refrigerada em até 3 dias úteis. Remova os itens refrigerados para seguir.');
     if(!freteSelLoja&&!(freteMeta&&freteMeta.gratis))return ckErro('Produto refrigerado: calcule o frete pelo CEP antes de pagar.');
   }
   return _pg.apply(this,arguments);
