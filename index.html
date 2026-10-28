@@ -1329,7 +1329,7 @@ var ROBO_URL='https://whatsapp-sullab-production.up.railway.app';
 function roboPost(rota,dados){try{var b=JSON.stringify(dados);if(navigator.sendBeacon&&navigator.sendBeacon(ROBO_URL+rota,new Blob([b],{type:'text/plain'})))return;fetch(ROBO_URL+rota,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain'},body:b});}catch(e){}}
 /* 26/10/2026: dúvida no carrinho/checkout -> WhatsApp com o carrinho junto (o robô avisa o vendedor na hora) */
 function duvidaCheckout(onde){
-  var l=CART.length?linkCarrinho():location.origin;
+  var l=CART.length?(location.origin+'/?carrinho='+CART.map(function(x){return encodeURIComponent(x.c)+':'+x.qty;}).join(',')):location.origin;
   var msg='Olá! Estou finalizando um pedido no site da SULLAB e tenho uma dúvida antes de pagar.\nMeu carrinho: '+l;
   try{if(typeof gtag==='function')gtag('event','whatsapp_click',{origem:onde||'checkout',page:location.pathname,value:totalCart()||0,currency:'BRL'});}catch(e){}
   try{if(window.clarity)clarity('event','duvida_checkout');}catch(e){}
