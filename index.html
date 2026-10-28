@@ -2019,7 +2019,7 @@ function ufDoCep(c){c=parseInt(String(c||'').replace(/\D/g,'').slice(0,5),10);if
 var RX_SIM=/placa|biplaca|Ø\s?\d|cromo|caldo|[aá]gar|meio de|newp \d|plasma/i, RX_NAO=/cult pack|stuart|swab|colora|corante|gram|ziehl|papanicolau|lugol|tamp[aã]o|reativo|al[cç]a|agulha/i;
 var EXTRA={'052000':1};
 /* 28/10/2026 (Eduardo): reagentes Ebram também são refrigerados (2–8 °C), exceto a linha de hematologia e as soluções de lavagem */
-var EBRAM_AMB=/^(21910|23920|23930|23940|22805|740|741|742)$/;
+var EBRAM_AMB=/^(21910|21805|23805|23920|23930|23940|22805|740|741|742|EBIO.*|EB\d{4}|EBCOAG.*)$/; /* hematologia, soluções e equipamentos não são refrigerados */
 var ISOPOR=15; /* isopor + gelo por envio refrigerado (premissa 28/10/2026) */
 function refrigCod(c){
   if(EXTRA[c])return true;
@@ -2040,8 +2040,8 @@ window.fetch=function(u,o){
         return _f.apply(this,arguments).then(function(r){return r.json().then(function(d){
           d=d||{};var ops=UF_BLOQ.test(uf)?[]:(d.opcoes||[]).filter(function(x){return (parseInt(x.prazo)||99)<=PRAZO_MAX&&(uf==='RJ'||!/jet|j&t/i.test(String(x.nome||'')));});
           /* 28/10/2026: refrigerado sem frete grátis automático (o cálculo do grátis não inclui isopor/gelo nem o envio rápido); soma isopor+gelo */
-          ops=ops.map(function(x){var y=Object.assign({},x);if(y.gratis){y.preco=y.economia||0;delete y.gratis;delete y.economia;}y.preco=Math.round(((+y.preco||0)+ISOPOR)*100)/100;return y;});
-          if(d.gratis){d.gratis={ativo:false,falta:null,sugestoes:[]};}
+          if(!d.refrigSrv)ops=ops.map(function(x){var y=Object.assign({},x);if(y.gratis){y.preco=y.economia||0;delete y.gratis;delete y.economia;}y.preco=Math.round(((+y.preco||0)+ISOPOR)*100)/100;return y;});
+          if(d.gratis&&!d.refrigSrv){d.gratis={ativo:false,falta:null,sugestoes:[]};}
           ops.sort(function(a,c){return (a.prazo-c.prazo)||(a.preco-c.preco);});
           d.opcoes=ops.slice(0,1);d.refrigerado=true;
           window._refrigSemOpcao=!d.opcoes.length;
