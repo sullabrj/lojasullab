@@ -1,0 +1,22 @@
+name: Preços Biolog pelo dólar do dia
+on:
+  schedule:
+    - cron: '7 11 * * 1-5'   # 08:07 em Brasília, dias úteis (PTAX de venda do dia útil anterior)
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Atualiza preços Biolog (PTAX venda × US$ da lista, arredondado, × 1,70)
+        run: python3 _ferramentas/atualiza_biolog.py
+      - name: Publica se mudou
+        run: |
+          git config user.name "sullab-biolog-dolar"
+          git config user.email "comercial@sullabrj.com.br"
+          git add -A
+          if git diff --cached --quiet; then echo "sem mudança"; exit 0; fi
+          git commit -m "Biolog: preços pelo dólar PTAX $(python3 -c "import json;d=json.load(open('biolog_precos.json'));print(d['data_ptax'], d['ptax_venda'])")"
+          git push
