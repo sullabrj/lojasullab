@@ -107,6 +107,8 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
       var _p={transaction_id:_tid,value:_v||undefined,currency:'BRL'};
       if(_lp&&_lp.items&&(!extRef||_lp.ped===extRef)){_p.items=_lp.items;if(_lp.frete)_p.shipping=_lp.frete;}
       gtag('event','purchase',_p);
+      /* 28/10/2026: conversão nativa do Google Ads (Compra no site — tag do Google), principal para lances */
+      try{gtag('config','AW-11390766577');gtag('event','conversion',{send_to:'AW-11390766577/zT6SCKz-1KwdEPGbxbcq',value:_v||1,currency:'BRL',transaction_id:_tid});}catch(e){}
       try{if(window.clarity)clarity('event','purchase');}catch(e){}
       _env[_tid]=Date.now();try{localStorage.setItem('sullab_purchase_enviadas',JSON.stringify(_env));}catch(e){}
     }
