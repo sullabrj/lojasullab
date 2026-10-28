@@ -1178,7 +1178,7 @@ function cotarFreteCarrinho(auto){
   msg.innerHTML='Calculando frete…';
   fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){
     var m2=document.getElementById('gmsg'),b2=document.getElementById('gbox');if(!m2)return;
-    if((!d||!d.opcoes||!d.opcoes.length)&&!(d&&d.gratis&&(d.gratis.ativo||d.gratis.falta))){m2.innerHTML=(d&&(d.consulta||d.bloqueado))?'🚚 Frete será confirmado no atendimento.':'⚠️ <b>Frete não encontrado para o CEP '+cep.replace(/^(\d{5})(\d{3})$/,'$1-$2')+'.</b> Confira se o CEP está correto ou fale com a gente no WhatsApp.';return;}
+    if((!d||!d.opcoes||!d.opcoes.length)&&!(d&&d.gratis&&(d.gratis.ativo||d.gratis.falta))){m2.innerHTML=(d&&(d.consulta||d.bloqueado))?'🚚 Frete será confirmado no atendimento.':(window.refrigSemMsg&&window.cartRefrigerado&&cartRefrigerado()&&window._refrigSemOpcao)?refrigSemMsg():'⚠️ <b>Frete não encontrado para o CEP '+cep.replace(/^(\d{5})(\d{3})$/,'$1-$2')+'.</b> Confira se o CEP está correto ou fale com a gente no WhatsApp.';return;}
     _gKey=key;_gRes=d;m2.innerHTML=_gratisHtml(d);if(b2)b2.className='gbox'+((d.gratis&&d.gratis.ativo)?' ok':'');
   }).catch(function(){var m3=document.getElementById('gmsg');if(m3)m3.innerHTML='Não foi possível calcular o frete agora — confirmamos no atendimento.';});
 }
@@ -2052,7 +2052,11 @@ window.fetch=function(u,o){
   return _f.apply(this,arguments);
 };
 var AVISO='<div id="refrigAviso" style="background:#eef6ff;border:1px solid #c9ddf5;color:#1f3c73;border-radius:9px;padding:8px 10px;font-size:12px;margin:6px 0;line-height:1.4">❄️ <b>Produto refrigerado:</b> vai pela transportadora mais rápida, com entrega em até 3 dias úteis, e é postado no início da semana para não ficar parado no fim de semana.</div>';
-var SEM='<div id="refrigSem" style="background:#fff6e5;border:1px solid #f1d7a6;color:#7a5a12;border-radius:9px;padding:8px 10px;font-size:12px;margin:6px 0;line-height:1.4">❄️ Para este CEP nenhuma transportadora entrega produto refrigerado em até 3 dias úteis, então não conseguimos enviar com segurança. Para seguir com o restante do pedido, remova do carrinho os itens refrigerados (placas, tubos e frascos de meio pronto, cepas e plasma).</div>';
+/* 28/10/2026 (Eduardo, caso Angélica/Teresina): o cliente tem de entender na hora por que não dá para pagar */
+function nomesRefrig(){return CART.filter(function(x){return refrigCod(String(x.c));}).map(function(x){return String(x.n||x.c).slice(0,60);});}
+window.refrigSemMsg=function(){var n=nomesRefrig();
+  return '<div style="background:#fff6e5;border:1px solid #f1d7a6;color:#7a5a12;border-radius:9px;padding:8px 10px;font-size:12px;line-height:1.45">❄️ <b>Não entregamos produto refrigerado neste CEP.</b><br>Placas e meios prontos precisam chegar refrigerados em até 3 dias úteis, e para a sua região o prazo de entrega passa disso.'+(n.length?'<br>Item refrigerado no carrinho: <b>'+n.join('</b>, <b>')+'</b>.':'')+'<br>Os demais produtos (não refrigerados) podemos enviar normalmente: é só remover o item refrigerado do carrinho.</div>';};
+var SEM='<div id="refrigSem" style="margin:6px 0">'+'</div>';
 function marcar(){
   try{
     var box=document.getElementById('freteBox');if(!box)return;
@@ -2062,7 +2066,7 @@ function marcar(){
     if(!a)box.insertAdjacentHTML('afterbegin',AVISO);
     var opt=document.getElementById('freteOpts'),calc=opt&&/Informe o CEP|Calculando/.test(opt.innerText||'');
     var sem=window._refrigSemOpcao&&!calc&&!(opt&&opt.querySelector('label'));
-    if(sem&&!s)box.insertAdjacentHTML('beforeend',SEM);else if(!sem&&s)s.remove();
+    if(sem&&!s){box.insertAdjacentHTML('beforeend',SEM);s=document.getElementById('refrigSem');if(s)s.innerHTML=refrigSemMsg();}else if(!sem&&s)s.remove();
     if(sem&&opt){[].slice.call(opt.querySelectorAll('div')).forEach(function(d){if(/confirmado no checkout/.test(d.textContent))d.remove();});}
     var btn=document.getElementById('ckPayBtn');
     if(btn){if(sem){btn.disabled=true;btn.style.opacity='.5';btn.textContent='Sem entrega refrigerada para este CEP';}
@@ -2074,7 +2078,7 @@ setInterval(function(){var c=document.getElementById('cko');if(c&&c.classList.co
 var _pg=window.pagarMP;
 window.pagarMP=function(){
   if(cartRefrigerado()){
-    if(window._refrigSemOpcao)return ckErro('Para este CEP não há entrega refrigerada em até 3 dias úteis. Remova os itens refrigerados para seguir.');
+    if(window._refrigSemOpcao)return ckErro('Não entregamos produto refrigerado neste CEP: ele precisa chegar em até 3 dias úteis e, para a sua região, o prazo passa disso. Remova o item refrigerado para seguir com os demais.');
     if(!freteSelLoja&&!(freteMeta&&freteMeta.gratis))return ckErro('Produto refrigerado: calcule o frete pelo CEP antes de pagar.');
   }
   return _pg.apply(this,arguments);
