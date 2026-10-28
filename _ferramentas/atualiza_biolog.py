@@ -8,7 +8,8 @@ Custo = round(US$ × PTAX)   ·   Preço de venda = custo × MARKUP (1,70, o mes
 Fonte do US$: data/biolog_usd.json (código do site → US$ da lista Setembro-15/2026). Itens fora dessa base não mudam.
 Saída: index.html (window.PRECOS), páginas de produto/categoria/catálogo, feed do Google e biolog_precos.json
 (lido pelo robô do WhatsApp). Sem cotação nova (BCB fora do ar, feriado) = nada muda.
-Uso: python3 _ferramentas/atualiza_biolog.py [--ptax 5.3346] [--dry]
+Gatilho: só muda os preços quando a PTAX varia 3% ou mais em relação à última aplicada (biolog_precos.json).
+Uso: python3 _ferramentas/atualiza_biolog.py [--ptax 5.3346] [--dry] [--forcar]
 """
 import datetime as dt
 import glob
@@ -19,6 +20,7 @@ import sys
 import urllib.request
 
 MARKUP = 1.70
+LIMITE_VARIACAO = 0.03   # só reprecifica se o dólar mudar 3% ou mais desde o último aplicado
 R = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + '/'
 DRY = '--dry' in sys.argv
 
@@ -46,6 +48,16 @@ def main():
         data_ptax, ptax = 'manual', float(sys.argv[sys.argv.index('--ptax') + 1])
     else:
         data_ptax, ptax = ptax_venda(dt.date.today())
+    # 28/10/2026 (Eduardo): só reprecificar quando o dólar variar 3% ou mais em relação ao último dólar aplicado
+    # (evita trocar preço todo dia no site/Google). --forcar aplica mesmo assim.
+    try:
+        ant = json.load(open(R + 'biolog_precos.json', encoding='utf-8')).get('ptax_venda')
+    except Exception:
+        ant = None
+    if ant and '--forcar' not in sys.argv and abs(ptax / float(ant) - 1) < LIMITE_VARIACAO:
+        print(f'PTAX {data_ptax} = {ptax} · variação {abs(ptax / float(ant) - 1):.2%} sobre o aplicado ({ant}) '
+              f'< {LIMITE_VARIACAO:.0%}: preços mantidos')
+        return
     usd = json.load(open(R + 'data/biolog_usd.json'))
     idx = open(R + 'index.html', encoding='utf-8').read()
     j = idx.find('window.PRECOS=') + len('window.PRECOS=')
