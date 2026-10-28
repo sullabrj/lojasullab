@@ -574,7 +574,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
 <div class="trust"><div class="wrap">
   <span class="ti">🧾 <b>NF-e</b> em todo pedido</span>
   <span class="ti">🚚 <b>Envio</b> para todo o Brasil</span>
-  <span class="ti">💚 <b>Pix</b> com 5% de desconto</span>
+  <span class="ti">💚 <b>Pix</b> com até 5% de desconto</span>
   <span class="ti">📦 Envio em <b>24h</b></span>
 </div></div>
 
@@ -730,9 +730,12 @@ document.addEventListener('DOMContentLoaded',function(){try{
   <div id="freteBox" style="margin:2px 0 12px"></div>
   <label id="paysLb" style="font-size:11.5px;font-weight:700;color:var(--ink);display:block;margin:4px 0 6px">Forma de pagamento</label>
   <div class="pays" id="pays">
-    <label class="pay1 on"><input type="radio" name="pg" value="pix" checked onchange="setPg('pix')"><span><span class="pn">Pix</span> <span class="pd">&middot; aprovação na hora</span></span><span class="ptag">&minus;5%</span></label>
-    <label class="pay1"><input type="radio" name="pg" value="cartao" onchange="setPg('cartao')"><span><span class="pn">Cartão de crédito</span> <span class="pd">&middot; parcelamento no Mercado Pago</span></span></label>
+    <label class="pay1 on"><input type="radio" name="pg" value="pix" checked onchange="setPg('pix')"><span><span class="pn">Pix</span> <span class="pd">&middot; aprovação na hora</span></span><span class="ptag">até &minus;5%</span></label>
+    <label class="pay1"><input type="radio" name="pg" value="cartao" onchange="setPg('cartao')"><span><span class="pn">Cartão de crédito</span> <span class="pd">&middot; até 2x sem juros no Mercado Pago</span></span></label>
+    <label class="pay1" id="pgBoleto"><input type="radio" name="pg" value="boleto" onchange="setPg('boleto')"><span><span class="pn">Boleto bancário</span> <span class="pd" id="pgBoletoTx">&middot; à vista, compensa em até 3 dias úteis &middot; pedidos a partir de R$ 400</span></span></label>
   </div>
+  <div id="boletoInfo" style="display:none;font-size:12px;color:#5f6b7c;margin:-2px 0 10px;line-height:1.45">Depois de pagar o boleto, envie o comprovante pelo WhatsApp: liberamos o seu pedido mais rápido, sem esperar a compensação.</div>
+  <button class="ckwa" id="btnFaturado" onclick="boletoFaturado()" style="margin-bottom:8px">🧾 Empresa (CNPJ)? Peça <b>boleto faturado 28 ou 45 dias</b> — pedidos a partir de R$ 400</button>
   <div class="cktot"><span>Total <span id="ckQt" style="color:var(--muted);font-size:12px"></span></span><b id="ckTot">R$ 0,00</b></div>
   <button class="ckpay" id="ckPayBtn" onclick="pagarMP()">Pagar agora &rarr;</button>
   <button class="ckwa ckduv" onclick="duvidaCheckout('checkout')">💬 Dúvida antes de pagar? Falar com um vendedor no WhatsApp</button>
@@ -1033,7 +1036,7 @@ function render(){
   _CUR=arr;_SHOWN=Math.min(arr.length,_PAGE);_card=function(p){
     var i=CATALOG.indexOf(p);
     var selo=p.selo==='hot'?'<span class="selo hot">🔥 Mais procurado</span>':(p.selo==='top'?'<span class="selo">⭐ Mais vendido</span>':'');
-    var precoBloco='';var _pr=(window.PRECOS||{})[p.c];if(_pr&&_pr[1]){precoBloco='<div style="margin:6px 0 2px;line-height:1.32"><div style="font-size:19px;font-weight:800;color:#2f9e63">'+brl(_pr[1])+'</div>'+unitLn(p.c,_pr[1])+'<div class="pixl">💚 <b>'+brl(Math.round(_pr[1]*95)/100)+'</b> no Pix <span>5% off</span></div></div>';}
+    var precoBloco='';var _pr=(window.PRECOS||{})[p.c];if(_pr&&_pr[1]){precoBloco='<div style="margin:6px 0 2px;line-height:1.32"><div style="font-size:19px;font-weight:800;color:#2f9e63">'+brl(_pr[1])+'</div>'+unitLn(p.c,_pr[1])+'<div class="pixl">💚 <b>'+brl(Math.round(_pr[1]*(100-pixPct(p.c)*100))/100)+'</b> no Pix <span>'+Math.round(pixPct(p.c)*100)+'% off</span></div></div>';}
     var btns='<div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="add" onclick="addCart('+i+',this)">+ Carrinho</button>';
     return '<div class="prod">'+selo+
       '<div class="ph" onclick="abrirProd('+i+')"><img src="'+p.img+'" loading="lazy" decoding="async" alt="'+p.n+'" onerror="this.src=\'/img/logo-sullab.png\';this.style.opacity=.35"></div>'+
@@ -1090,7 +1093,7 @@ function atualizarCart(){
   document.getElementById('df').innerHTML=
     '<div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px">Resumo do pedido</div>'+
     '<div class="row"><span>'+CART.length+(CART.length===1?' produto':' produtos')+' · '+n+(n===1?' unidade':' unidades')+'</span></div>'+
-    (sub>0?'<div class="row"><span>Subtotal</span><b class="tot">'+brl(sub)+'</b></div><div class="pixbox">💚 <span>Pague no <b>Pix</b> e ganhe <b>5% de desconto</b><small>Total no Pix: <b>'+brl(Math.round(sub*95)/100)+'</b> · NF-e em todo pedido</small></span></div>':'')+
+    (sub>0?'<div class="row"><span>Subtotal</span><b class="tot">'+brl(sub)+'</b></div><div class="pixbox">💚 <span>Pague no <b>Pix</b> e ganhe <b>'+(CART.every(function(x){return window.PIX3[x.c];})?'3% de desconto':(CART.some(function(x){return window.PIX3[x.c];})?'desconto (5%; tubos e agulhas Vacuette 3%)':'5% de desconto'))+'</b><small>Total no Pix: <b>'+brl(Math.round(CART.reduce(function(s2,x){return s2+precoItem(x)*x.qty*(1-pixPct(x.c));},0)*100)/100)+'</b> · NF-e em todo pedido</small></span></div>':'')+
     '<div class="gbox" id="gbox"></div>'+
     (semPreco?'<div class="note">Alguns itens são sob consulta: peça o orçamento pelo WhatsApp.</div>':'')+
     (!semPreco&&sub>0?'<a class="wbtn" style="background:var(--green-d)" onclick="abrirCheckout()">🛒 Finalizar compra</a>':'')+
@@ -1340,6 +1343,20 @@ function duvidaCheckout(onde){
   window.open('https://wa.me/5524988383100?text='+encodeURIComponent(msg),'_blank','noopener');
 }
 
+/* 28/10/2026: boleto à vista (Mercado Pago, R$ 3,49) e boleto faturado 28/45 dias (CNPJ, pelo WhatsApp/Tiny) só a partir de R$ 400 */
+var BOLETO_MIN=400;
+function totalPedidoBruto(){return totalCart()+(freteSelLoja||0);}
+function boletoOk(){return totalPedidoBruto()>=BOLETO_MIN;}
+function boletoFaturado(){
+  if(!CART.length)return;
+  if(totalPedidoBruto()<BOLETO_MIN)return ckErro('Boleto faturado disponível para pedidos a partir de R$ 400,00.');
+  var f={};try{f=coletarFicha();}catch(e){}
+  var l=location.origin+'/?carrinho='+CART.map(function(x){return encodeURIComponent(x.c)+':'+x.qty;}).join(',');
+  var msg='Olá! Quero fechar este pedido no site da SULLAB com *boleto faturado* (28 ou 45 dias) para empresa.'+(f.nome?('\nEmpresa: '+f.nome):'')+(f.doc?('\nCNPJ: '+f.doc):'')+(f.cep?('\nCEP de entrega: '+f.cep):'')+'\nMeu carrinho: '+l;
+  try{sullabEvent('checkout_faturado',{tel:f.tel||'',cliente:f.nome||'',total:totalCart(),link:l});}catch(e){}
+  try{sessionStorage.setItem('abSent','1');}catch(e){}
+  window.open('https://wa.me/5524988383100?text='+encodeURIComponent(msg),'_blank','noopener');
+}
 /* ====== CHECKOUT / PAGAMENTO (Mercado Pago) ====== */
 var MP_WORKER='https://sullab-mp.comercial-0a2.workers.dev/';
 var SHEET_ENDPOINT='https://script.google.com/macros/s/AKfycbyPKW71fCDUcjZiID5AicTox1a_inSgYqd-4fXHxzsV9ynX1xrIx5mwf4YIGx5lDpL_Lw/exec';
@@ -1362,8 +1379,11 @@ var CUPONS={},cupomPct=0,cupomCod='',freteSelLoja=0,freteLabelLoja='';
 function val(id){return (document.getElementById(id).value||'').trim();}
 function soDig(s){return (s||'').replace(/\D/g,'');}
 function setDoc(d){DOCT=d;document.querySelectorAll('#docTab button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-d')===d);});document.getElementById('lbDoc').textContent=d==='cnpj'?'CNPJ':'CPF';document.getElementById('lbNome').textContent=d==='cnpj'?'Nome fantasia':'Nome completo';document.getElementById('ckDoc').placeholder=d==='cnpj'?'00.000.000/0000-00':'000.000.000-00';try{ckModo();}catch(e){}}
-function setPg(p){PG=p;document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value===p);});ckTotais();}
-function fatorPg(){return PG==='pix'?0.95:1;}
+function setPg(p){if(p==='boleto'&&!boletoOk()){p='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;ckErro('Boleto disponível para pedidos a partir de R$ 400,00.');}PG=p;var _bi=document.getElementById('boletoInfo');if(_bi)_bi.style.display=(p==='boleto')?'block':'none';document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value===p);});ckTotais();}
+/* 28/10/2026: Pix 5% de desconto; tubos e agulhas Vacuette (margem menor) com 3% */
+window.PIX3={"450071":1,"450072":1,"454036":1,"454087":1,"454921":1,"454235":1,"456211":1,"454071":1,"454482":1,"456071":1,"455071":1,"454092":1,"455092":1,"456001":1,"454327":1,"454085":1,"454091":1,"454030":1,"456080":1,"450539":1};
+function pixPct(c){return (c&&window.PIX3[c])?0.03:0.05;}
+function fatorPg(c){return PG==='pix'?(1-pixPct(c)):1;}
 function _catOf(c){for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===c)return CATALOG[i].k;}return '';}
 function cartTodosTeste(){return CART.length>0&&CART.every(function(x){return _catOf(x.c)==='tr';});}
 function freteInfo(uf,total){uf=(uf||'').toUpperCase();var rjsp=(uf==='RJ'||uf==='SP');var se=['SP','RJ','MG','ES'].indexOf(uf)>=0;
@@ -1387,7 +1407,7 @@ function cotarFreteLoja(){if(window._fBusy)return;var cep=soDig(val('ckCep'));va
   fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){_fim();var ok=(d&&d.opcoes)||[];if(!ok.length){freteMeta=null;opt.innerHTML=_gratisHtml(d)+'<div style="font-size:13.5px;color:var(--muted);padding:5px 0">'+((d&&(d.consulta||d.bloqueado))?'Frete será confirmado no checkout / WhatsApp.':'<b>Frete não encontrado para este CEP.</b> Confira se o CEP está correto ou fale com a gente no WhatsApp.')+'</div>';return;}if(_kq!==chaveFrete())return;freteMeta={pesoKg:d.peso,pacotes:d.pacotes,gratis:!!(d.gratis&&d.gratis.ativo)};opt.innerHTML=_gratisHtml(d)+ok.map(function(o,ix){var nm=String(o.nome||'Transportadora').replace(/\x27/g,'');return '<label class="pay1'+(ix===0?' on':'')+'" style="margin-top:6px"><input type="radio" name="frt" value="'+o.preco+'" '+(ix===0?'checked':'')+' onchange="selFreteLoja('+o.preco+',\''+nm+'\','+(o.prazo||0)+',\''+String(o.id||'')+'\')"><span><span class="pn">'+nm+'</span> <span class="pd">'+(o.prazo?('· '+o.prazo+' dias úteis'):'')+'</span></span><span class="ptag" style="color:var(--navy)">'+(o.gratis?'Grátis':brl(o.preco))+'</span></label>';}).join('');selFreteLoja(ok[0].preco,String(ok[0].nome||'Transportadora').replace(/\x27/g,''),ok[0].prazo||0,String(ok[0].id||''));_freteOk={key:_kq,gratis:!!(d.gratis&&d.gratis.ativo)};}).catch(function(){_fim();zerarFrete();try{ckTotais();}catch(e){}opt.innerHTML='<div style="font-size:13.5px;color:var(--muted);padding:5px 0">Não foi possível calcular agora — o frete será confirmado pelo WhatsApp.</div>';});}
 function aplicarCupom(){var c=(val('ckCupom')||'').toUpperCase().replace(/\s/g,'');var msg=document.getElementById('cupomMsg');if(!c){cupomPct=0;cupomCod='';if(msg)msg.textContent='';ckTotais();return;}if(CUPONS[c]){cupomPct=CUPONS[c];cupomCod=c;if(msg){msg.style.color='var(--green-d)';msg.innerHTML='✓ Cupom '+c+' aplicado — '+Math.round(cupomPct*100)+'% OFF.';}}else{cupomPct=0;cupomCod='';if(msg){msg.style.color='#b3261e';msg.textContent='Cupom inválido.';}}ckTotais();}
 function _freteBarCart(){return '';}
-function ckTotais(){var base=totalCart();var t=base*fatorPg()*(1-cupomPct)+(freteSelLoja||0);var n=CART.reduce(function(s,x){return s+x.qty;},0);document.getElementById('ckTot').textContent=brl(t);document.getElementById('ckQt').textContent='('+n+' '+(n===1?'item':'itens')+(PG==='pix'?' · −5% Pix':'')+(cupomPct?(' · −'+Math.round(cupomPct*100)+'%'):'')+(freteSelLoja?(' · frete '+brl(freteSelLoja)):'')+')';}
+function ckTotais(){try{var _ok=boletoOk();var _pb=document.getElementById('pgBoleto');if(_pb){_pb.style.opacity=_ok?'1':'.5';_pb.querySelector('input').disabled=!_ok;}if(!_ok&&PG==='boleto'){PG='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value==='pix');});}}catch(e){}var t=CART.reduce(function(s,x){return s+precoItem(x)*x.qty*fatorPg(x.c);},0)*(1-cupomPct)+(freteSelLoja||0);var n=CART.reduce(function(s,x){return s+x.qty;},0);document.getElementById('ckTot').textContent=brl(t);document.getElementById('ckQt').textContent='('+n+' '+(n===1?'item':'itens')+(PG==='pix'?' · desconto Pix':'')+(cupomPct?(' · −'+Math.round(cupomPct*100)+'%'):'')+(freteSelLoja?(' · frete '+brl(freteSelLoja)):'')+')';}
 function abrirCheckout(){if(!CART.length){return;}fecharCarrinho();preencherFicha();ckModo();setPg(PG);cupomPct=0;cupomCod='';zerarFrete();try{window._freteReset&&window._freteReset();}catch(e){}var cc=document.getElementById('ckCupom');if(cc)cc.value='';var cm=document.getElementById('cupomMsg');if(cm)cm.textContent='';renderFrete();ckTotais();document.getElementById('ckErr').style.display='none';document.getElementById('cko').classList.add('on');}
 function fecharCheckout(){document.getElementById('cko').classList.remove('on');}
 function fichaSalva(){try{return JSON.parse(localStorage.getItem('sullab_ficha')||'{}');}catch(e){return {};}}
@@ -1406,15 +1426,16 @@ function pagarMP(){
   if(soDig(f.cep).length!==8||!f.num)return ckErro('Informe CEP e número do endereço.');
   localStorage.setItem('sullab_ficha',JSON.stringify(f));
   if(!freteValido()){try{cotarFreteLoja();}catch(e){}return ckErro('Calcule o frete pelo CEP e escolha a transportadora antes de pagar.');}
-  var fator=fatorPg()*(1-cupomPct);var items=[];
-  CART.forEach(function(x){var b=precoBase(x);if(b<=0)return;var q=(x.kq&&x.kd)?Math.min(x.kq,x.qty):0;if(q)items.push({title:('KIT -'+Math.round(x.kd*100)+'% '+x.c+' '+x.n).slice(0,120),quantity:q,unit_price:Math.round(b*(1-x.kd)*fator*100)/100});if(x.qty-q>0)items.push({title:(x.c+' '+x.n).slice(0,120),quantity:x.qty-q,unit_price:Math.round(b*fator*100)/100});});
+  var items=[];
+  CART.forEach(function(x){var fator=fatorPg(x.c)*(1-cupomPct);var b=precoBase(x);if(b<=0)return;var q=(x.kq&&x.kd)?Math.min(x.kq,x.qty):0;if(q)items.push({title:('KIT -'+Math.round(x.kd*100)+'% '+x.c+' '+x.n).slice(0,120),quantity:q,unit_price:Math.round(b*(1-x.kd)*fator*100)/100});if(x.qty-q>0)items.push({title:(x.c+' '+x.n).slice(0,120),quantity:x.qty-q,unit_price:Math.round(b*fator*100)/100});});
   if(freteSelLoja>0)items.push({id:'FRETE',title:'Frete'+(freteLabelLoja?(' ('+freteLabelLoja+')'):''),quantity:1,unit_price:Math.round(freteSelLoja*100)/100});
+  if(PG==='boleto'&&!boletoOk())return ckErro('Boleto disponível para pedidos a partir de R$ 400,00.');
   if(!items.length)return ckErro('Nenhum item com preço para pagar online. Equipamentos são sob consulta — use o WhatsApp.');
   var pedido='SLB-'+Date.now();window._pedAtual=pedido;
   /* 26/10/2026: valor real da compra (itens com desconto do Pix + frete) para a conversão do Google Ads na página obrigado */
   try{var vtot=items.reduce(function(s,i){return s+i.unit_price*i.quantity;},0);
     localStorage.setItem('sullab_last_purchase',JSON.stringify({v:Math.round(vtot*100)/100,ped:pedido,ts:Date.now(),tel:f.tel||'',frete:freteSelLoja||0,
-      items:CART.map(function(x){return {item_id:x.c,item_name:x.n,item_brand:x.m||'',quantity:x.qty,price:Math.round(precoItem(x)*fatorPg()*100)/100};})}));
+      items:CART.map(function(x){return {item_id:x.c,item_name:x.n,item_brand:x.m||'',quantity:x.qty,price:Math.round(precoItem(x)*fatorPg(x.c)*100)/100};})}));
   }catch(e){}
   /* 26/10/2026: Pix pago no app do banco não volta para a página "obrigado", então a compra não era medida.
      Guarda no servidor o ID do GA4, a sessão e o gclid; quando o Mercado Pago aprova, o servidor envia a compra ao GA4/Ads. */
@@ -1572,7 +1593,7 @@ document.addEventListener('keydown',function(e){var m=document.getElementById('p
 function abrirProd(i){
   var p=CATALOG[i];
   var catNome=(DEPTS.find(function(d){return d.key===deptOf(p.k);})||{}).nome||'';
-  var _prm=(window.PRECOS||{})[p.c];var precoHtml=(_prm&&_prm[1])?('<div style="margin-top:10px;line-height:1.45"><div style="font-size:26px;font-weight:800;color:#2f9e63">'+brl(_prm[1])+'</div>'+unitLn(p.c,_prm[1])+'<div style="font-size:13px;color:#3a4a63;font-weight:700">'+brl(Math.round(_prm[1]*95)/100)+' no Pix</div><div class="pixl big">💚 Pague no Pix e ganhe <b>5% de desconto</b></div><div style="font-size:12px;color:#5f6b7c;margin-top:6px">Preço único · NF-e em todo pedido · frete calculado pelo CEP</div></div>'):('<div class="b2bsob" style="font-size:14px;margin-top:8px">Preço sob consulta — solicite o orçamento (NF-e · atacado)</div>');
+  var _prm=(window.PRECOS||{})[p.c];var precoHtml=(_prm&&_prm[1])?('<div style="margin-top:10px;line-height:1.45"><div style="font-size:26px;font-weight:800;color:#2f9e63">'+brl(_prm[1])+'</div>'+unitLn(p.c,_prm[1])+'<div style="font-size:13px;color:#3a4a63;font-weight:700">'+brl(Math.round(_prm[1]*95)/100)+' no Pix</div><div class="pixl big">💚 Pague no Pix e ganhe <b>'+Math.round(pixPct(p.c)*100)+'% de desconto</b></div><div style="font-size:12px;color:#5f6b7c;margin-top:6px">Preço único · NF-e em todo pedido · frete calculado pelo CEP</div></div>'):('<div class="b2bsob" style="font-size:14px;margin-top:8px">Preço sob consulta — solicite o orçamento (NF-e · atacado)</div>');
   var acao='<div style="display:flex;gap:10px;align-items:center;margin-top:16px"><div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="btn navy" style="flex:1" onclick="addCart('+i+',this)">🛒 Adicionar ao carrinho</button></div>';
   __pmL=pmLista(p);__pmI=0;
   document.getElementById('pmInner').innerHTML=
@@ -1795,7 +1816,7 @@ function retorno(){try{
   if(!CART.length)return;var last=PREV_VISIT,now=Date.now();
   if(last&&now-last>1800000&&!sessionStorage.getItem('retShown')){
     var n=CART.reduce(function(s,x){return s+x.qty;},0);var b=document.createElement('div');b.id='retBar';b.className='on';
-    b.innerHTML='<span>Você deixou <b>'+n+(n===1?' item':' itens')+'</b> no carrinho. Finalize com <b>Pix 5% de desconto</b>.</span><button class="go" onclick="abrirCarrinho();this.parentNode.remove()">Ver carrinho</button><button class="x" onclick="this.parentNode.remove()" aria-label="Fechar">×</button>';
+    b.innerHTML='<span>Você deixou <b>'+n+(n===1?' item':' itens')+'</b> no carrinho. Finalize com <b>desconto no Pix</b>.</span><button class="go" onclick="abrirCarrinho();this.parentNode.remove()">Ver carrinho</button><button class="x" onclick="this.parentNode.remove()" aria-label="Fechar">×</button>';
     document.body.appendChild(b);sessionStorage.setItem('retShown','1');try{sullabEvent('carrinho_retorno',{});}catch(e){}}
  }catch(e){}}
 window.addEventListener('load',function(){setTimeout(retorno,1200);});
