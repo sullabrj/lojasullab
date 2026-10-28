@@ -708,16 +708,14 @@ document.addEventListener('DOMContentLoaded',function(){try{
   <h3 id="ckTit">Finalizar pedido</h3>
   <div class="sub" id="ckSub">Pagamento seguro pelo Mercado Pago &middot; NF-e em todo pedido</div>
   <div class="ckerr" id="ckErr"></div>
+  <div class="fld"><label>Seu WhatsApp (com DDD)</label><input id="ckTel" inputmode="tel" autocomplete="tel" placeholder="(24) 90000-0000"><small style="display:block;margin-top:3px;color:#5b6b7f">Para enviarmos a nota fiscal, o rastreio e tirar dúvidas do pedido.</small></div>
   <div class="doctab" id="docTab">
     <button type="button" data-d="cnpj" class="on" onclick="setDoc('cnpj')">CNPJ (empresa)</button>
     <button type="button" data-d="cpf" onclick="setDoc('cpf')">CPF</button>
   </div>
   <div class="fld"><label id="lbDoc">CNPJ</label><input id="ckDoc" inputmode="numeric" placeholder="00.000.000/0000-00" oninput="if(DOCT=='cnpj')cnpjAuto()"></div>
   <div class="fld"><label id="lbNome">Nome fantasia</label><input id="ckNome" placeholder="Nome popular da empresa"></div>
-  <div class="frow c2">
-    <div class="fld"><label>E-mail</label><input id="ckEmail" type="email" placeholder="voce@empresa.com.br"></div>
-    <div class="fld"><label>WhatsApp / Telefone</label><input id="ckTel" inputmode="tel" placeholder="(24) 90000-0000"></div>
-  </div>
+  <div class="fld"><label>E-mail</label><input id="ckEmail" type="email" placeholder="voce@empresa.com.br"></div>
   <div class="frow c3">
     <div class="fld"><label>CEP</label><input id="ckCep" inputmode="numeric" placeholder="00000-000" oninput="cepAuto()"></div>
     <div class="fld"><label>Número</label><input id="ckNum" placeholder="nº"></div>
