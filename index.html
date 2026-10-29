@@ -2218,7 +2218,7 @@ window.fetch=function(u,o){
       var b=JSON.parse(o.body),its=(b&&b.itens)||[],uf=ufDoCep(b&&b.cep);
       if(its.some(function(i){return refrigCod(String(i.c));})){
         return _f.apply(this,arguments).then(function(r){return r.json().then(function(d){
-          d=d||{};var ops=UF_BLOQ.test(uf)?[]:(d.opcoes||[]).filter(function(x){return (parseInt(x.prazo)||99)<=PRAZO_MAX&&(uf==='RJ'||!/jet|j&t/i.test(String(x.nome||'')));});
+          d=d||{};var ops=UF_BLOQ.test(uf)?[]:(d.opcoes||[]).filter(function(x){return (parseInt(x.prazo)||99)<=PRAZO_MAX&&(uf==='RJ'||!/jet|j&t/i.test(String(x.nome||'')))&&!/latam/i.test(String(x.nome||''));/* 29/10/2026: LATAM fora só para refrigerado (cargas paradas) */});
           /* 28/10/2026: refrigerado sem frete grátis automático (o cálculo do grátis não inclui isopor/gelo nem o envio rápido); soma isopor+gelo */
           if(!d.refrigSrv)ops=ops.map(function(x){var y=Object.assign({},x);if(y.gratis){y.preco=y.economia||0;delete y.gratis;delete y.economia;}y.preco=Math.round(((+y.preco||0)+ISOPOR)*100)/100;return y;});
           if(d.gratis&&!d.refrigSrv){d.gratis={ativo:false,falta:null,sugestoes:[]};}
