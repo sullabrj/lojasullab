@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
   <div class="popq"><b>Buscas populares:</b><span onclick="buscarTermo('tubo EDTA')">tubo EDTA</span><span onclick="buscarTermo('teste COVID')">teste COVID</span><span onclick="buscarTermo('ágar')">ágar</span><span onclick="buscarTermo('agulha')">agulha</span><span onclick="buscarTermo('luva nitrílica')">luva nitrílica</span><span onclick="buscarTermo('lâmina')">lâmina</span><span onclick="buscarTermo('seringa')">seringa</span></div>
   <!-- OFERTAS / QUEIMA DE ESTOQUE: edite a lista window.OFERTAS (código do produto, selo, texto e, se quiser, preço "de") -->
   <section id="grSec" style="display:none"><div class="ofh"><h2>🏆 Tubos e agulhas Greiner Vacuette — o menor preço do mercado</h2><small>Comparamos com as principais lojas online do setor: ninguém vende Vacuette mais barato · NF-e em todo pedido · pedido mínimo R$ 400</small></div><div class="ofgrid" id="grGrid"></div><div style="text-align:center;margin-top:10px"><a class="lk" style="cursor:pointer;font-weight:700;color:#1F4E79" onclick="verTodosGreiner()">Ver todos os 20 itens Vacuette →</a></div></section>
-  <section id="ofSec" style="display:none"><div class="ofh"><h2 id="ofTitulo">🏆 Testes rápidos — o menor preço do mercado</h2><small>Preço por teste abaixo das principais lojas online do setor · registro ANVISA · NF-e · pronta entrega</small></div><div class="ofgrid" id="ofGrid"></div></section>
+  <section id="ofSec" style="display:none"><div class="ofh"><h2 id="ofTitulo">🏆 Testes rápidos — o menor preço do mercado</h2><small>Preço por teste abaixo das principais lojas online do setor · registro ANVISA · NF-e · pedido mínimo R$ 400</small></div><div class="ofgrid" id="ofGrid"></div></section>
   <!-- CATEGORY TILES -->
   <div id="catPanel"><div class="sec" id="catSec"><h2>Compre por categoria</h2><span class="lk" onclick="irProdutos()">Ver tudo →</span></div>
   <div class="cats" id="catTiles"></div></div>
@@ -756,7 +756,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
   <label id="paysLb" style="font-size:11.5px;font-weight:700;color:var(--ink);display:block;margin:4px 0 6px">Forma de pagamento</label>
   <div class="pays" id="pays">
     <label class="pay1 on"><input type="radio" name="pg" value="pix" checked onchange="setPg('pix')"><span><span class="pn">Pix</span> <span class="pd">&middot; aprovação na hora</span></span><span class="ptag">até &minus;5%</span></label>
-    <label class="pay1"><input type="radio" name="pg" value="cartao" onchange="setPg('cartao')"><span><span class="pn">Cartão de crédito</span> <span class="pd">&middot; até 2x sem juros no Mercado Pago</span></span></label>
+    <label class="pay1"><input type="radio" name="pg" value="cartao" onchange="setPg('cartao')"><span><span class="pn">Cartão de crédito</span> <span class="pd">&middot; 2x sem juros a partir de R$ 800 · Mercado Pago</span></span></label>
     <label class="pay1" id="pgBoleto"><input type="radio" name="pg" value="boleto" onchange="setPg('boleto')"><span><span class="pn">Boleto bancário</span> <span class="pd" id="pgBoletoTx">&middot; à vista, compensa em até 3 dias úteis &middot; pedidos a partir de R$ 400</span></span></label>
   </div>
   <div id="boletoInfo" style="display:none;font-size:12px;color:#5f6b7c;margin:-2px 0 10px;line-height:1.45">Depois de pagar o boleto, envie o comprovante pelo WhatsApp: liberamos o seu pedido mais rápido, sem esperar a compensação.</div>
@@ -1137,7 +1137,7 @@ function atualizarCart(){
     '<div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px">Resumo do pedido</div>'+
     '<div class="row"><span>'+CART.length+(CART.length===1?' produto':' produtos')+' · '+n+(n===1?' unidade':' unidades')+'</span></div>'+
     (sub>0?'<div class="row"><span>Subtotal</span><b class="tot">'+brl(sub)+'</b></div><div class="pixbox">💚 <span>Pague no <b>Pix</b> e ganhe <b>'+(CART.every(function(x){return window.PIX3[x.c];})?'3% de desconto':(CART.some(function(x){return window.PIX3[x.c];})?'desconto (5%; tubos e agulhas Vacuette 3%)':'5% de desconto'))+'</b><small>Total no Pix: <b>'+brl(Math.round(CART.reduce(function(s2,x){return s2+precoItem(x)*x.qty*(1-pixPct(x.c));},0)*100)/100)+'</b> · NF-e em todo pedido</small></span></div>':'')+
-    (faltaTubo()>0?'<div class="note" style="background:#fff4e5;border:1px solid #f0b35a;color:#7a4b00;border-radius:8px;padding:9px 11px;margin:8px 0">📦 <b>Pedido mínimo para itens Greiner Vacuette (tubos e agulhas): R$ 400,00.</b><br>Faltam <b>'+brl(faltaTubo())+'</b> em produtos para finalizar.</div>':'')+
+    (faltaTubo()>0?'<div class="note" style="background:#fff4e5;border:1px solid #f0b35a;color:#7a4b00;border-radius:8px;padding:9px 11px;margin:8px 0">📦 <b>Pedido mínimo para tubos, agulhas Vacuette e testes rápidos: R$ 400,00.</b><br>Faltam <b>'+brl(faltaTubo())+'</b> em produtos para finalizar.</div>':'')+
     '<div class="gbox" id="gbox"></div>'+
     (semPreco?'<div class="note">Alguns itens são sob consulta: peça o orçamento pelo WhatsApp.</div>':'')+
     (!semPreco&&sub>0?'<a class="wbtn" style="background:var(--green-d)'+(faltaTubo()>0?';opacity:.5':'')+'" onclick="abrirCheckout()">🛒 Finalizar compra</a>':'')+
@@ -1391,7 +1391,7 @@ function duvidaCheckout(onde){
 var BOLETO_MIN=400;
 /* 28/10/2026: tubos e agulhas Vacuette só com pedido mínimo de R$ 400 em produtos (o carrinho todo conta) */
 var TUBO_MIN=400;
-function temTubo(){return CART.some(function(x){return window.PIX3&&window.PIX3[x.c];});}
+function temTubo(){return CART.some(function(x){return (window.PIX3&&window.PIX3[x.c])||(window.TR_TOP&&window.TR_TOP[x.c]);});} /* 28/10/2026: testes rápidos DeepBlue também com mínimo de R$ 400 */
 function faltaTubo(){return temTubo()?Math.max(0,TUBO_MIN-totalCart()):0;}
 function totalPedidoBruto(){return totalCart()+(freteSelLoja||0);}
 function boletoOk(){return totalPedidoBruto()>=BOLETO_MIN;}
@@ -1477,7 +1477,7 @@ function pagarMP(){
   var items=[];
   CART.forEach(function(x){var fator=fatorPg(x.c)*(1-cupomPct);var b=precoBase(x);if(b<=0)return;var q=(x.kq&&x.kd)?Math.min(x.kq,x.qty):0;if(q)items.push({title:('KIT -'+Math.round(x.kd*100)+'% '+x.c+' '+x.n).slice(0,120),quantity:q,unit_price:Math.round(b*(1-x.kd)*fator*100)/100});if(x.qty-q>0)items.push({title:(x.c+' '+x.n).slice(0,120),quantity:x.qty-q,unit_price:Math.round(b*fator*100)/100});});
   if(freteSelLoja>0)items.push({id:'FRETE',title:'Frete'+(freteLabelLoja?(' ('+freteLabelLoja+')'):''),quantity:1,unit_price:Math.round(freteSelLoja*100)/100});
-  if(faltaTubo()>0)return ckErro('Pedido mínimo para itens Greiner Vacuette (tubos e agulhas): R$ 400,00. Faltam '+brl(faltaTubo())+' em produtos.');
+  if(faltaTubo()>0)return ckErro('Pedido mínimo para tubos, agulhas Vacuette e testes rápidos: R$ 400,00. Faltam '+brl(faltaTubo())+' em produtos.');
   if(PG==='boleto'&&!boletoOk())return ckErro('Boleto disponível para pedidos a partir de R$ 400,00.');
   if(!items.length)return ckErro('Nenhum item com preço para pagar online. Equipamentos são sob consulta — use o WhatsApp.');
   var pedido='SLB-'+Date.now();window._pedAtual=pedido;
