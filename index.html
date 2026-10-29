@@ -2190,7 +2190,8 @@ var UF_BLOQ=/^(AC|AL|AM|AP|MT|PA|PB|PI|RO|RR|SE|TO)$/;
 function ufDoCep(c){c=parseInt(String(c||'').replace(/\D/g,'').slice(0,5),10);if(!c)return '';
   var T=[[1000,19999,'SP'],[20000,28999,'RJ'],[29000,29999,'ES'],[30000,39999,'MG'],[40000,48999,'BA'],[49000,49999,'SE'],[50000,56999,'PE'],[57000,57999,'AL'],[58000,58999,'PB'],[59000,59999,'RN'],[60000,63999,'CE'],[64000,64999,'PI'],[65000,65999,'MA'],[66000,68899,'PA'],[68900,68999,'AP'],[69000,69299,'AM'],[69300,69399,'RR'],[69400,69899,'AM'],[69900,69999,'AC'],[70000,72799,'DF'],[72800,72999,'GO'],[73000,73699,'DF'],[73700,76799,'GO'],[76800,76999,'RO'],[77000,77999,'TO'],[78000,78899,'MT'],[79000,79999,'MS'],[80000,87999,'PR'],[88000,89999,'SC'],[90000,99999,'RS']];
   for(var i=0;i<T.length;i++)if(c>=T[i][0]&&c<=T[i][1])return T[i][2];return '';}
-var RX_SIM=/placa|biplaca|Ø\s?\d|cromo|caldo|[aá]gar|meio de|newp \d|plasma/i, RX_NAO=/cult pack|stuart|swab|colora|corante|gram|ziehl|papanicolau|lugol|tamp[aã]o|reativo|al[cç]a|agulha/i;
+/* 29/10/2026: PA155 (Egg yolk) passou sem regra de refrigerado — incluídos biológicos e meios prontos em tubo/kit */
+var RX_SIM=/placa|biplaca|Ø\s?\d|cromo|caldo|[aá]gar|meio de|newp \d|plasma|egg yolk|gema|sangue de carneiro|suplemento vx|rugai|meio sim|urease|epm|mili|kit para (enterob|micob|confirma)|mini kit/i, RX_NAO=/cult pack|stuart|swab|colora|corante|gram|ziehl|papanicolau|lugol|tamp[aã]o|reativo|al[cç]a|agulha/i;
 var EXTRA={'052000':1};
 /* 28/10/2026 (Eduardo): reagentes Ebram também são refrigerados (2–8 °C), exceto a linha de hematologia e as soluções de lavagem */
 var EBRAM_AMB=/^(21910|21805|23805|23920|23930|23940|22805|740|741|742|EBIO.*|EB\d{4}|EBCOAG.*)$/; /* hematologia, soluções e equipamentos não são refrigerados */
