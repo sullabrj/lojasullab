@@ -597,8 +597,8 @@ document.addEventListener('DOMContentLoaded',function(){try{
 </style>
 <style>/* 28/10 noite: ajustes celular — setas nos carrosséis, cards, carrinho com resumo em cima, aviso de carrinho */
 .hsw{position:relative}
-.hsA{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:rgba(15,42,71,.55);color:#fff;font-size:22px;line-height:34px;text-align:center;padding:0;z-index:6;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);font-family:inherit;display:flex;align-items:center;justify-content:center}
-.hsA.r{right:2px}.hsA.l{left:2px}.hsA.off{opacity:0;pointer-events:none}
+.hsA{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:0;background:rgba(15,42,71,.38);transition:opacity .35s;color:#fff;font-size:22px;line-height:34px;text-align:center;padding:0;z-index:6;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);font-family:inherit;display:flex;align-items:center;justify-content:center}
+.hsA.r{right:2px}.hsA.l{left:2px}.hsA.off,.hsw.used .hsA{opacity:0;pointer-events:none}
 .hsA.sm{width:26px;height:26px;font-size:17px}
 .hsA.r.hint{animation:hsHint 1.4s ease-in-out 3}
 @keyframes hsHint{0%,100%{transform:translateY(-50%)}50%{transform:translate(5px,-50%)}}
@@ -621,6 +621,26 @@ document.addEventListener('DOMContentLoaded',function(){try{
  #retBar span{flex:1}
  #retBar .go{padding:11px 14px!important;font-size:14px!important;white-space:nowrap}
  #retBar .x{color:#6b7a90!important}
+}
+</style>
+<style>
+.mRows{display:none}
+@media(max-width:700px){
+ .mRows{display:block;width:100%;min-width:0;max-width:100%}
+ .shop>*{min-width:0}
+ .mRowS{max-width:100%}
+ .mRow{margin:6px 0 18px}
+ .mRowH{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 2px 8px}
+ .mRowH h3{font-size:18px;font-weight:800;color:var(--navy,#0f2a47);margin:0;line-height:1.25}
+ .mRowH a{font-size:14px;font-weight:800;color:#1F4E79;white-space:nowrap;cursor:pointer}
+ .mRowS{display:flex;overflow-x:auto;gap:10px;scroll-snap-type:x mandatory;padding:2px 2px 8px;scrollbar-width:none}
+ .mRowS::-webkit-scrollbar{display:none}
+ .mRowS>.prod{flex:0 0 64%;scroll-snap-align:start;content-visibility:visible}
+ .mRowS .pt{font-size:14.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:57px}
+ .mRowS .bc{font-size:12px}
+ .mAll{flex:0 0 44%;scroll-snap-align:start;border:2px dashed #9db8d8;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#1F4E79;font-weight:800;font-size:15px;padding:14px;cursor:pointer;background:#f3f7fd}
+ .mAll b{font-size:30px;line-height:1;margin-bottom:6px}
+ body.mHome #grid,body.mHome #moreWrap{display:none!important}
 }
 </style>
 </head>
@@ -1857,7 +1877,7 @@ window.fgConsulta=function(auto){
   try{var f=fichaSalva();f.cep=cep;localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}try{document.getElementById('utilCep').innerHTML='📍 Entregar no CEP <b>'+cep.slice(0,5)+'-'+cep.slice(5)+'</b> · alterar';document.getElementById('fgx').classList.add('ok');}catch(e){}
   fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:[{c:code,q:1,v:v}]})}).then(function(r){return r.json();}).then(function(d){
     var g=d&&d.gratis,c=cep.slice(0,5)+'-'+cep.slice(5);
-    if(g&&g.falta>0){var lim=Math.round((v+g.falta)*100)/100;out.innerHTML='✅ Para o CEP <b>'+c+'</b>: <b>frete grátis a partir de '+brl(lim)+'</b> em produtos.<small>Adicione os itens ao carrinho e acompanhe quanto falta.</small>';}
+    if(g&&g.falta>0){out.innerHTML='✅ CEP <b>'+c+'</b> salvo: <b>frete grátis disponível para a sua região</b>.<small>Adicione os produtos e veja no carrinho quanto falta para o frete grátis.</small>';}
     else if(g&&g.ativo){out.innerHTML='✅ Para o CEP <b>'+c+'</b>: o <b>frete é grátis</b> já nos pedidos pequenos.';}
     else{out.innerHTML='Para o CEP <b>'+c+'</b> o frete é calculado no carrinho ou confirmado no atendimento.';}
     try{sullabEvent&&sullabEvent('frete_gratis_consulta',{cep3:cep.slice(0,3)});}catch(e){}
@@ -2298,6 +2318,9 @@ setInterval(function(){try{var c=document.getElementById('cko');if(!c||!c.classL
   w.appendChild(l);w.appendChild(r);
   function upd(){var x=el.scrollLeft,max=el.scrollWidth-el.clientWidth-4;l.classList.toggle('off',x<4);r.classList.toggle('off',x>=max);}
   el.addEventListener('scroll',upd,{passive:true});upd();
+  function pos(){var im=el.querySelector('.ofi,.ph');if(!im)return;var a=im.getBoundingClientRect(),b=w.getBoundingClientRect();if(!a.height)return;var t=Math.round(a.top-b.top+a.height/2);if(t>10){l.style.top=r.style.top=t+'px';}}
+  pos();setTimeout(pos,800);
+  el.addEventListener('touchstart',function(){w.classList.add('used');},{passive:true});
  }
  function scan(){try{document.querySelectorAll('body *').forEach(function(el){if(el.children.length&&el.scrollWidth>el.clientWidth+8)setup(el);});}catch(e){}}
  window.hsScan=scan;
@@ -2312,6 +2335,50 @@ setInterval(function(){try{var c=document.getElementById('cko');if(!c||!c.classL
  }catch(e){}};})();
 /* aviso "você deixou itens no carrinho": some sozinho depois de 12 s */
 setInterval(function(){var b=document.getElementById('retBar');if(b&&!b.__t){b.__t=setTimeout(function(){if(b.parentNode)b.remove();},12000);}},1000);
+</script>
+<script>
+/* celular: catálogo em fileiras por categoria, deslizando para o lado */
+(function(){
+ var ROWS=[
+  ['Tubos de coleta a vácuo',['tubo'],'tubo'],
+  ['Agulhas, lancetas e coleta',['agulha','lanceta','scalp','seringa'],'agulha'],
+  ['Meios de cultura prontos em placa',['meio'],'meio',function(p){return /placa/i.test(p.n);}],
+  ['Meios de cultura em frasco e tubo',['meio'],'meio',function(p){return !/placa/i.test(p.n);}],
+  ['Microbiologia: discos e corantes',['micro'],'micro'],
+  ['Coletores de amostra',['coletoram'],'coletoram'],
+  ['Reagentes de bioquímica',['bioq'],'bioq'],
+  ['Hematologia e coagulação',['hemat'],'hemat'],
+  ['Sorologia, controles e calibradores',['sorol','controle'],'sorol'],
+  ['Curativos, gaze e algodão',['curativo'],'curativo'],
+  ['Luvas e EPI',['luva','epi'],'luva'],
+  ['Lâminas, cubetas e pipetas',['lamina','cubeta','pipeta'],'lamina'],
+  ['Descartáveis e plásticos',['plast','hosp'],'plast'],
+  ['Equipamentos e acessórios',['equip'],'equip']
+ ];
+ var MAX=12;
+ function mob(){return matchMedia('(max-width:700px)').matches;}
+ function semFiltro(){return !FILTRO.busca&&!FILTRO.dept&&!FILTRO.marca;}
+ function build(){
+  var g=document.getElementById('grid');if(!g)return;
+  var box=document.getElementById('mRows');
+  if(!box){box=document.createElement('div');box.id='mRows';box.className='mRows';g.parentNode.insertBefore(box,g);}
+  if(!mob()||!semFiltro()||typeof _card!=='function'){document.body.classList.remove('mHome');box.innerHTML='';return;}
+  var P=window.PRECOS||{},h='';
+  ROWS.forEach(function(r){
+   var arr=CATALOG.filter(function(p){return r[1].indexOf(deptOf(p.k))>-1&&(!r[3]||r[3](p));});
+   if(!arr.length)return;
+   arr=arr.slice().sort(function(a,b){var pa=(P[a.c]&&P[a.c][1])?1:0,pb=(P[b.c]&&P[b.c][1])?1:0;var sa=(window.PIX3&&window.PIX3[a.c])?1:0,sb=(window.PIX3&&window.PIX3[b.c])?1:0;return (pb-pa)||(sb-sa);});
+   var mostra=arr.slice(0,MAX).map(_card).join('');
+   var all='onclick="setDept(\''+r[2]+'\')"';
+   h+='<section class="mRow"><div class="mRowH"><h3>'+r[0]+'</h3><a '+all+'>Ver todos ('+arr.length+') →</a></div><div class="mRowS">'+mostra+(arr.length>MAX?'<div class="mAll" '+all+'><b>→</b>Ver todos os '+arr.length+' produtos</div>':'')+'</div></section>';
+  });
+  box.innerHTML=h;document.body.classList.add('mHome');
+  setTimeout(function(){window.hsScan&&hsScan();},60);
+ }
+ var _r=window.render;window.render=function(){_r.apply(this,arguments);try{build();}catch(e){}};
+ window.addEventListener('load',function(){try{build();}catch(e){}});
+ var _w=innerWidth;window.addEventListener('resize',function(){if(Math.abs(innerWidth-_w)>80){_w=innerWidth;try{build();}catch(e){}}});
+})();
 </script>
 </body>
 </html>
