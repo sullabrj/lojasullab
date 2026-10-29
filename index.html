@@ -760,7 +760,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
     <label class="pay1" id="pgBoleto"><input type="radio" name="pg" value="boleto" onchange="setPg('boleto')"><span><span class="pn">Boleto bancário</span> <span class="pd" id="pgBoletoTx">&middot; à vista, compensa em até 3 dias úteis &middot; pedidos a partir de R$ 400</span></span></label>
   </div>
   <div id="boletoInfo" style="display:none;font-size:12px;color:#5f6b7c;margin:-2px 0 10px;line-height:1.45">Depois de pagar o boleto, envie o comprovante pelo WhatsApp: liberamos o seu pedido mais rápido, sem esperar a compensação.</div>
-  <button class="ckwa" id="btnFaturado" onclick="boletoFaturado()" style="margin-bottom:8px">🧾 Empresa (CNPJ)? Peça <b>boleto faturado 28 ou 45 dias</b> — pedidos a partir de R$ 400</button>
+  <button class="ckwa" id="btnFaturado" onclick="boletoFaturado()" style="margin-bottom:8px">🧾 Empresa (CNPJ)? Peça <b>boleto faturado 28/45 dias</b> — pedidos a partir de R$ 400, mediante análise de crédito</button>
   <div class="cktot"><span>Total <span id="ckQt" style="color:var(--muted);font-size:12px"></span></span><b id="ckTot">R$ 0,00</b></div>
   <button class="ckpay" id="ckPayBtn" onclick="pagarMP()">Pagar agora &rarr;</button>
   <button class="ckwa ckduv" onclick="duvidaCheckout('checkout')">💬 Dúvida antes de pagar? Falar com um vendedor no WhatsApp</button>
@@ -1400,7 +1400,7 @@ function boletoFaturado(){
   if(totalPedidoBruto()<BOLETO_MIN)return ckErro('Boleto faturado disponível para pedidos a partir de R$ 400,00.');
   var f={};try{f=coletarFicha();}catch(e){}
   var l=location.origin+'/?carrinho='+CART.map(function(x){return encodeURIComponent(x.c)+':'+x.qty;}).join(',');
-  var msg='Olá! Quero fechar este pedido no site da SULLAB com *boleto faturado* (28 ou 45 dias) para empresa.'+(f.nome?('\nEmpresa: '+f.nome):'')+(f.doc?('\nCNPJ: '+f.doc):'')+(f.cep?('\nCEP de entrega: '+f.cep):'')+'\nMeu carrinho: '+l;
+  var msg='Olá! Quero fechar este pedido no site da SULLAB com *boleto faturado* (28/45 dias) para empresa.'+(f.nome?('\nEmpresa: '+f.nome):'')+(f.doc?('\nCNPJ: '+f.doc):'')+(f.cep?('\nCEP de entrega: '+f.cep):'')+'\nMeu carrinho: '+l;
   try{sullabEvent('checkout_faturado',{tel:f.tel||'',cliente:f.nome||'',total:totalCart(),link:l});}catch(e){}
   try{sessionStorage.setItem('abSent','1');}catch(e){}
   window.open('https://wa.me/5524988383100?text='+encodeURIComponent(msg),'_blank','noopener');
