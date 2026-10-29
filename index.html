@@ -572,10 +572,29 @@ document.addEventListener('DOMContentLoaded',function(){try{
   if(!matchMedia('(max-width:700px)').matches)return;
   var b=document.getElementById('bannerHome');if(!b)return;
   var pq=document.querySelector('.popq'),of=document.getElementById('ofSec'),cp=document.getElementById('catPanel');
-  var p=b.parentNode;[pq,of,cp].forEach(function(el){if(el)p.insertBefore(el,b);});
+  
   var si=document.getElementById('searchInput');if(si)si.placeholder='Buscar produto, marca ou código';
 }catch(e){}});
 </script>
+<style>/* 28/10: CEP no topo, categorias em destaque, campanha compacta */
+.cepTop{margin:14px 0 10px!important;padding:14px 18px!important;border:2px solid #1F4E79!important;background:linear-gradient(135deg,#eef5ff,#dbe8fb)!important;border-radius:16px!important;box-shadow:0 4px 14px rgba(31,78,121,.12)}
+.cepTop .fgt{display:flex;align-items:center;gap:12px;color:#0f2a47!important;font-size:18px!important;flex:1 1 380px!important}
+.cepTop .fgt b{display:block;font-size:19px;font-weight:900;color:#0f2a47}.cepTop .fgt span{display:block;font-size:13.5px!important;color:#3b4f66!important;font-weight:600;margin-top:2px}
+.cepTop .cepIc{font-size:30px!important;line-height:1;display:inline!important;margin:0!important}
+@media(min-width:901px){#catTiles.cats{grid-template-columns:repeat(8,1fr)!important;gap:10px!important}#catTiles .cimg{height:110px!important;aspect-ratio:auto!important}#catTiles .cimg img{height:110px!important;width:100%;object-fit:cover}#catTiles .cb{padding:8px 10px!important}#catTiles .cb b{font-size:13px!important;line-height:1.25}#catTiles .cb small{font-size:11.5px!important}}
+.cepTop .fgin{flex:0 1 380px!important}.cepTop input{font-size:18px!important;padding:12px 14px!important;border:2px solid #1F4E79!important;border-radius:10px!important;font-weight:700;letter-spacing:.5px}
+.cepTop button{background:#1F4E79!important;font-size:15px!important;padding:12px 18px!important;border-radius:10px!important}
+.cepTop .fgr{color:#0f2a47!important;font-size:15px!important}.cepTop .fgr small{color:#3b4f66!important}
+.cepTop.ok{border-color:#15803d!important;background:linear-gradient(135deg,#f0fbf4,#dcf3e5)!important}
+#catPanel{margin:10px 0 12px!important}
+.mpBox{padding:14px 18px!important;margin:12px 0 6px!important}
+.mpTit{font-size:19px!important}.mpSub{font-size:13px!important;margin:4px 0 10px!important}
+.mpC{padding:10px 14px!important;display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}
+.mpK{font-size:14px!important;flex:1 1 100%}.mpV{margin:0!important;font-size:15px!important}.mpV b{font-size:20px!important}
+.mpD{display:none}.mpB{margin-left:auto;padding:6px 11px!important;font-size:12.5px!important}
+.mpDocs{margin-top:8px!important}
+@media(max-width:700px){.cepTop{padding:12px!important}.cepTop .fgt b{font-size:17px}.cepTop .fgt span{font-size:12.5px!important}.cepTop .fgin{flex:1 1 100%!important}.cepTop input{width:0;min-width:0}.mpTit{font-size:17px!important}.mpSub{display:none}.mpB{margin-left:0}}
+</style>
 </head>
 <body>
 
@@ -583,7 +602,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
 <!-- TOP UTILITY -->
 <div class="util"><div class="wrap">
   <div class="ul">
-    <span>📍 <b>Rio de Janeiro</b> · entrega para todo o Brasil</span>
+    <span id="utilCep" style="cursor:pointer" onclick="var e=document.getElementById('fgCep');if(e){e.scrollIntoView({behavior:'smooth',block:'center'});e.focus();}">📍 <b>Informe seu CEP</b> · entrega para todo o Brasil</span>
   </div>
   <div class="ur">
     <span onclick="abrirRastreio()">📦 Rastrear pedido</span>
@@ -621,6 +640,11 @@ document.addEventListener('DOMContentLoaded',function(){try{
 
 <div class="wrap" role="main" id="conteudo">
 
+<!-- CEP primeiro: o CEP fica salvo e vale para todos os carrinhos -->
+  <section class="fgx cepTop" id="fgx"><div class="fgt"><span class="cepIc">📍</span><div><b>Informe seu CEP</b><span>Calculamos o frete e o frete grátis da sua região. O CEP fica salvo para todos os seus carrinhos.</span></div></div><div class="fgin"><input id="fgCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" aria-label="Seu CEP" onkeydown="if(event.key==='Enter')fgConsulta()"><button type="button" onclick="fgConsulta()">Calcular frete</button></div><div class="fgr" id="fgRes" aria-live="polite"></div></section>
+  <!-- CATEGORY TILES -->
+  <div id="catPanel"><div class="sec" id="catSec"><h2>Compre por categoria</h2><span class="lk" onclick="irProdutos()">Ver tudo →</span></div>
+  <div class="cats" id="catTiles"></div></div>
 <!-- 28/10/2026: campanha "o menor preço do mercado" (Greiner Vacuette e testes rápidos) -->
   <section class="mpBox" id="mpBox">
     <div class="mpTit">🏆 O menor preço do mercado em <span>tubos Vacuette</span> e <span>testes rápidos</span></div>
@@ -632,22 +656,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
     <div class="mpDocs">📄 <a href="/docs/Catalogo_SULLAB_Vacuette_e_Testes_Rapidos.pdf" target="_blank" rel="noopener">Baixar catálogo com ficha técnica (PDF)</a> · <a href="/docs/Tabela_de_Precos_SULLAB.pdf" target="_blank" rel="noopener">Baixar tabela de preços (PDF)</a></div>
   </section>
 
-<!-- BANNER HOME -->
-  <section class="bannerHome" id="bannerHome">
-    <a class="bnr" role="button" onclick="irProdutos()" aria-label="SULLAB: 40 anos abastecendo laboratórios e hospitais. Ver catálogo">
-      <picture>
-        <source media="(max-width:700px)" srcset="/img/banner-sullab-m.jpg" width="700" height="545">
-        <source media="(max-width:1200px)" srcset="/img/banner-sullab-1100.jpg" width="1100" height="312">
-        <img src="/img/banner-sullab-1920.jpg" width="1920" height="545" alt="SULLAB, distribuidora de produtos hospitalares e laboratoriais: centro de distribuição, frota e assistência técnica próprios" fetchpriority="high">
-      </picture>
-    </a>
-    <div class="bsel"><span>✔ <b>Direto da distribuidora autorizada</b></span><span>✔ <b>Sem taxa de marketplace</b></span><span>✔ Produtos com <b>registro ANVISA</b></span><span>✔ <b>NF-e</b> em todo pedido</span></div>
-    <div class="fgx" id="fgx"><div class="fgt">🚚 <b>Frete grátis</b> <span>a partir de um valor que muda conforme a sua região</span></div><div class="fgin"><input id="fgCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="Digite seu CEP" aria-label="CEP para consultar frete grátis" onkeydown="if(event.key===\'Enter\')fgConsulta()"><button type="button" onclick="fgConsulta()">Ver o valor para mim</button></div><div class="fgr" id="fgRes" aria-live="polite"></div></div>
-  <div class="bact">
-      <button class="btn green" onclick="irProdutos()">Ver catálogo completo →</button>
-      <button class="btn navy" onclick="abrirListaOrcamento()">📋 Colar lista e receber orçamento</button>
-    </div>
-  </section>
+
 
   <!-- HERO -->
   <section class="hero" id="heroBlock">
@@ -676,13 +685,26 @@ document.addEventListener('DOMContentLoaded',function(){try{
   <!-- OFERTAS / QUEIMA DE ESTOQUE: edite a lista window.OFERTAS (código do produto, selo, texto e, se quiser, preço "de") -->
   <section id="grSec" style="display:none"><div class="ofh"><h2>🏆 Tubos e agulhas Greiner Vacuette — o menor preço do mercado</h2><small>Comparamos com as principais lojas online do setor: ninguém vende Vacuette mais barato · NF-e em todo pedido · pedido mínimo R$ 400</small></div><div class="ofgrid" id="grGrid"></div><div style="text-align:center;margin-top:10px"><a class="lk" style="cursor:pointer;font-weight:700;color:#1F4E79" onclick="verTodosGreiner()">Ver todos os 20 itens Vacuette →</a></div></section>
   <section id="ofSec" style="display:none"><div class="ofh"><h2 id="ofTitulo">🏆 Testes rápidos — o menor preço do mercado</h2><small>Preço por teste abaixo das principais lojas online do setor · registro ANVISA · NF-e · pedido mínimo R$ 400</small></div><div class="ofgrid" id="ofGrid"></div></section>
-  <!-- CATEGORY TILES -->
-  <div id="catPanel"><div class="sec" id="catSec"><h2>Compre por categoria</h2><span class="lk" onclick="irProdutos()">Ver tudo →</span></div>
-  <div class="cats" id="catTiles"></div></div>
+
   <div class="secdiv" role="separator"><span>Catálogo completo</span></div>
 
   <!-- (seção de marcas removida — loja organizada por categoria de produto) -->
 
+  <!-- BANNER HOME -->
+  <section class="bannerHome" id="bannerHome">
+    <a class="bnr" role="button" onclick="irProdutos()" aria-label="SULLAB: 40 anos abastecendo laboratórios e hospitais. Ver catálogo">
+      <picture>
+        <source media="(max-width:700px)" srcset="/img/banner-sullab-m.jpg" width="700" height="545">
+        <source media="(max-width:1200px)" srcset="/img/banner-sullab-1100.jpg" width="1100" height="312">
+        <img src="/img/banner-sullab-1920.jpg" width="1920" height="545" alt="SULLAB, distribuidora de produtos hospitalares e laboratoriais: centro de distribuição, frota e assistência técnica próprios" fetchpriority="high">
+      </picture>
+    </a>
+    <div class="bsel"><span>✔ <b>Direto da distribuidora autorizada</b></span><span>✔ <b>Sem taxa de marketplace</b></span><span>✔ Produtos com <b>registro ANVISA</b></span><span>✔ <b>NF-e</b> em todo pedido</span></div>
+  <div class="bact">
+      <button class="btn green" onclick="irProdutos()">Ver catálogo completo →</button>
+      <button class="btn navy" onclick="abrirListaOrcamento()">📋 Colar lista e receber orçamento</button>
+    </div>
+  </section>
   <!-- SHOP -->
   <div class="sec" id="shopAnchor"><h2 id="shopTitle">Catálogo</h2>
     <span class="mfilt mfilt-toggle lk" onclick="document.querySelector('.filters').classList.toggle('on')">⚙ Filtros</span>
@@ -725,7 +747,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
 </div>
 <div class="ft2-dir"><div class="wrap"><div class="ft2-dh">Departamentos</div><div class="ft2-chips"><a href="/categoria/agulhas.html">Agulhas</a><a href="/categoria/coletores-de-amostra.html">Coletores de amostra</a><a href="/categoria/controles-e-calibradores.html">Controles e calibradores</a><a href="/categoria/cubetas.html">Cubetas</a><a href="/categoria/curativos-gaze-e-algodao.html">Curativos, gaze e algodão</a><a href="/categoria/descartaveis-e-plasticos.html">Descartáveis e plásticos</a><a href="/categoria/equipamentos-e-acessorios.html">Equipamentos e acessórios</a><a href="/categoria/laminas-e-bisturis.html">Lâminas e bisturis</a><a href="/categoria/lancetas.html">Lancetas</a><a href="/categoria/meios-de-cultura.html">Meios de cultura</a><a href="/categoria/microbiologia.html">Microbiologia</a><a href="/categoria/pipetas-e-ponteiras.html">Pipetas e ponteiras</a><a href="/categoria/reagentes-de-bioquimica.html">Reagentes de bioquímica</a><a href="/categoria/reagentes-de-hematologia-e-coagulacao.html">Reagentes de hematologia e coagulação</a><a href="/categoria/reagentes-de-sorologia-e-imunologia.html">Reagentes de sorologia e imunologia</a><a href="/categoria/testes-rapidos.html">Testes rápidos</a><a href="/categoria/tubos-a-vacuo.html">Tubos a vácuo</a></div><div class="ft2-dh" style="margin-top:16px">Marcas</div><div class="ft2-chips"><a href="/marca/biolog.html">Biolog</a><a href="/marca/biomass.html">Biomass</a><a href="/marca/cecon.html">Cecon</a><a href="/marca/clot.html">Clot</a><a href="/marca/cral.html">CRAL</a><a href="/marca/deepblue.html">DeepBlue</a><a href="/marca/dme.html">DME</a><a href="/marca/ebram.html">Ebram</a><a href="/marca/newprov.html">Newprov</a><a href="/marca/proinlab.html">Proinlab</a><a href="/marca/vacuette.html">Vacuette</a></div></div></div>
 <div class="ft2-bar"><div class="wrap"><span>© 2026 SULLAB Comércio de Produtos Hospitalares · CNPJ 32.198.434/0001-34</span><span>Barra Mansa/RJ · comercial@sullabrj.com.br</span></div></div>
-<!-- crédito MOVA Films --><div class="mova-band" style="background:repeating-linear-gradient(90deg,#3a3f47 0 14px,transparent 14px 26px) top 7px left 0/100% 6px no-repeat,repeating-linear-gradient(90deg,#3a3f47 0 14px,transparent 14px 26px) bottom 7px left 0/100% 6px no-repeat,radial-gradient(ellipse 50% 120% at 30% 50%,rgba(0,209,230,.20) 0%,rgba(0,209,230,0) 70%),#000;border-top:3px solid #FF7A1A;border-bottom:3px solid #FF7A1A;margin-top:0;grid-column:1/-1;flex-basis:100%;width:100%;box-sizing:border-box"><a href="https://www.instagram.com/movafilms_/" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:16px 26px;flex-wrap:wrap;padding:30px 16px;color:#F5F7FA;text-decoration:none;line-height:1.35;max-width:1260px;margin:0 auto"><span style="display:flex;align-items:center;gap:16px"><span style="color:#A7B0BA;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px">Site criado por</span><img src="/img/mova-logo-2026.png" alt="MOVA Films" width="170" height="56" loading="lazy" style="height:56px;width:auto;display:block"></span><span style="display:flex;flex-direction:column;gap:3px;text-align:center"><span style="font-size:12.5px;font-weight:800;color:#00D1E6;text-transform:uppercase;letter-spacing:2px">Audiovisual em movimento</span><span style="font-size:15px;font-weight:700;color:#F5F7FA">Sites · Fotografia · Drone · Marketing · Movimento</span></span><span style="background:#00D1E6;color:#0B1E2B;font-weight:900;font-size:14.5px;border-radius:999px;padding:11px 20px;box-shadow:0 0 0 3px rgba(0,209,230,.28),0 6px 20px rgba(0,209,230,.35)">Quer um site assim? Fale com a MOVA →</span></a></div>
+<!-- crédito MOVA Films --><div class="mova-band" style="background:repeating-linear-gradient(90deg,#3a3f47 0 14px,transparent 14px 26px) top 7px left 0/100% 6px no-repeat,repeating-linear-gradient(90deg,#3a3f47 0 14px,transparent 14px 26px) bottom 7px left 0/100% 6px no-repeat,radial-gradient(ellipse 50% 120% at 30% 50%,rgba(0,209,230,.20) 0%,rgba(0,209,230,0) 70%),#000;border-top:3px solid #FF7A1A;border-bottom:3px solid #FF7A1A;margin-top:0;grid-column:1/-1;flex-basis:100%;width:100%;box-sizing:border-box"><a href="https://www.instagram.com/movafilms_/" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:16px 26px;flex-wrap:wrap;padding:30px 16px;color:#F5F7FA;text-decoration:none;line-height:1.35;max-width:1260px;margin:0 auto"><span style="display:flex;align-items:center;gap:16px"><span style="color:#A7B0BA;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px">Site criado por</span><img src="/img/mova-logo-2026.png" alt="MOVA Films" width="170" height="56" loading="lazy" style="height:56px;width:auto;display:block"></span><span style="display:flex;flex-direction:column;gap:3px;text-align:center"><span style="font-size:12.5px;font-weight:800;color:#00D1E6;text-transform:uppercase;letter-spacing:2px">Audiovisual em movimento</span><span style="font-size:15px;font-weight:700;color:#F5F7FA">Sites · Fotografia · Drone · Marketing · Movimento</span></span><span style="background:#FF7A1A;color:#111;font-weight:900;font-size:14.5px;border-radius:999px;padding:11px 20px;box-shadow:0 0 0 3px rgba(255,122,26,.28),0 6px 20px rgba(255,122,26,.35)">Quer um site assim? Fale com a MOVA →</span></a></div>
 </footer>
 
 <!-- CART DRAWER -->
@@ -1252,7 +1274,7 @@ function cotarFreteCarrinho(auto){
   var el=document.getElementById('cartCep');var cep=soDig(el?el.value:(fichaSalva().cep||''));
   var msg=document.getElementById('gmsg');var b=document.getElementById('gbox');
   if(cep.length!==8){if(b)b.querySelector('div:last-child').innerHTML='Informe um CEP com 8 números.';return;}
-  try{var f=fichaSalva();f.cep=cep;localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}
+  try{var f=fichaSalva();f.cep=cep;localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}try{document.getElementById('utilCep').innerHTML='📍 Entregar no CEP <b>'+cep.slice(0,5)+'-'+cep.slice(5)+'</b> · alterar';document.getElementById('fgx').classList.add('ok');}catch(e){}
   if(!msg){var d0=document.createElement('div');d0.id='gmsg';b.appendChild(d0);msg=d0;}
   var itens=CART.filter(function(x){return precoItem(x)>0;}).map(function(x){return {c:String(x.c),q:x.qty,v:precoItem(x)};});
   if(!itens.length||itens.length!==CART.length){msg.innerHTML='🚚 Frete confirmado no atendimento (item sob consulta).';return;}
@@ -1804,7 +1826,7 @@ window.fgConsulta=function(auto){
   if(cep.length!==8){if(!auto){out.className='fgr on';out.innerHTML='Informe o CEP com 8 números.';}return;}
   var code='18288-10',v=precoItem({c:code})||1.64;
   out.className='fgr on';out.innerHTML='Consultando…';
-  try{var f=fichaSalva();f.cep=cep;localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}
+  try{var f=fichaSalva();f.cep=cep;localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}try{document.getElementById('utilCep').innerHTML='📍 Entregar no CEP <b>'+cep.slice(0,5)+'-'+cep.slice(5)+'</b> · alterar';document.getElementById('fgx').classList.add('ok');}catch(e){}
   fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:[{c:code,q:1,v:v}]})}).then(function(r){return r.json();}).then(function(d){
     var g=d&&d.gratis,c=cep.slice(0,5)+'-'+cep.slice(5);
     if(g&&g.falta>0){var lim=Math.round((v+g.falta)*100)/100;out.innerHTML='✅ Para o CEP <b>'+c+'</b>: <b>frete grátis a partir de '+brl(lim)+'</b> em produtos.<small>Adicione os itens ao carrinho e acompanhe quanto falta.</small>';}
