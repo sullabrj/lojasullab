@@ -438,6 +438,30 @@
     .frow.c2,.frow.c3{grid-template-columns:1fr 1fr}
     .fld input,.fld textarea{font-size:16px}
   }
+.ft2{background:#0f2a47;color:#b9cde3;margin-top:10px;font-size:13px;padding:0}
+.ft2 .fh{color:#fff;font-size:14px;margin:0 0 14px;font-weight:800;position:relative;padding-bottom:9px}
+.ft2 .fh:after{content:'';position:absolute;left:0;bottom:0;width:30px;height:3px;border-radius:2px;background:#4ea3ff}
+.ft2 a{display:block;color:#b9cde3;padding:6px 0;cursor:pointer;text-decoration:none}.ft2 a:hover{color:#fff}
+.ft2-trust{background:#1F4E79;border-bottom:1px solid rgba(255,255,255,.08)}
+.ft2-trust .wrap{display:flex;flex-wrap:wrap;justify-content:space-around;gap:10px;padding-top:14px;padding-bottom:14px;color:#fff;font-weight:700;font-size:13px}
+.ft2-main{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.1fr;gap:0;padding-top:34px;padding-bottom:30px}
+.ft2-main>div{padding:0 22px;border-left:1px solid rgba(255,255,255,.09)}.ft2-main>div:first-child{border-left:0;padding-left:0}
+.ft2-brand p{max-width:290px;line-height:1.55;margin:12px 0 14px}
+.ft2 .ft2-wa{display:inline-block;background:#2f9e63;color:#fff;font-weight:800;border-radius:9px;padding:9px 14px}
+.ft2-dir{background:#0b2138;border-top:1px solid rgba(255,255,255,.08);padding:22px 0}
+.ft2-dh{color:#fff;font-weight:800;font-size:13px;margin-bottom:10px;text-transform:uppercase;letter-spacing:.6px}
+.ft2-chips{display:flex;flex-wrap:wrap;gap:7px}
+.ft2 .ft2-chips a{display:inline-block;padding:5px 11px;border:1px solid rgba(255,255,255,.14);border-radius:999px;font-size:12px;background:rgba(255,255,255,.03)}
+.ft2 .ft2-chips a:hover{border-color:#4ea3ff;background:rgba(78,163,255,.12)}
+.ft2-bar{background:#071a2c;border-top:1px solid rgba(255,255,255,.06)}
+.ft2-bar .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:14px;padding-bottom:14px;color:#7e9bbd;font-size:12px}
+.ft2-mova{background:#000;border-top:3px solid #fff}
+.ft2 .ft2-mova a{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;padding:18px 16px;color:#cfcfcf;font-size:13px}
+.ft2-mova img{height:32px;width:auto;display:block}
+.ft2-mova .mv-l{color:#9a9a9a;font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.ft2-mova .mv-b{background:#fff;color:#000;font-weight:800;border-radius:999px;padding:8px 16px}
+.ft2 .ft2-mova a:hover .mv-b{background:#4ea3ff;color:#fff}
+@media(max-width:700px){.ft2-main{grid-template-columns:1fr 1fr;row-gap:24px}.ft2-main>div{border-left:0;padding:0 8px 0 0}.ft2-brand{grid-column:1/-1}.ft2-trust .wrap{justify-content:flex-start;font-size:12px}}
 </style>
 <!-- Google Analytics GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RK2PX868MS"></script>
@@ -687,22 +711,22 @@ document.addEventListener('DOMContentLoaded',function(){try{
 </div>
 
 <!-- FOOTER -->
-<footer><div class="wrap">
-  <div class="fcols">
-    <div>
-      <img src="/img/logo-sullab.webp" style="height:46px;background:#fff;padding:6px 10px;border-radius:9px" alt="SULLAB">
-      <p style="max-width:280px;line-height:1.5;margin-top:12px">Distribuidora de produtos para laboratório e diagnóstico clínico. Preço para CNPJ, nota fiscal e entrega para todo o Brasil.</p>
-      <div class="pay"><span>NF-e</span><span>Pix e cartão</span><span>Entrega Brasil</span></div>
-    </div>
-    <div><h2 class="fh">Categorias</h2><div id="footCats"></div></div>
-    <div><h2 class="fh">Comprar</h2><a href="#orcamento" onclick="abrirListaOrcamento();return false">Colar lista (orçamento)</a><a href="#conta" onclick="abrirConta();return false">Minha conta CNPJ</a><a href="#rastreio" onclick="abrirRastreio();return false">Rastrear pedido</a><a href="#catalogo" onclick="irProdutos();return false">Catálogo completo</a></div>
-    <div><h2 class="fh">Atendimento</h2><a href="/?orcar=duvida" onclick="abrirContatoWA('duvida');return false">💬 Dúvidas</a><a href="mailto:comercial@sullabrj.com.br">✉️ comercial@sullabrj.com.br</a><a href="/indique.html">🤝 Indique e ganhe comissão</a><a href="/devolucao.html">Trocas e devoluções</a></div>
+<footer class="ft2">
+<div class="ft2-trust"><div class="wrap"><span>🧾 NF-e em todo pedido</span><span>📦 Envio em 24h para todo o Brasil</span><span>💚 Pix com desconto</span><span>🏆 40 anos de mercado</span></div></div>
+<div class="wrap ft2-main">
+  <div class="ft2-brand">
+    <img src="/img/logo-sullab.webp" alt="SULLAB" style="height:46px;background:#fff;padding:6px 10px;border-radius:9px">
+    <p>Distribuidora de produtos para laboratório e diagnóstico clínico. Preço para CNPJ, nota fiscal e entrega para todo o Brasil.</p>
+    <a class="ft2-wa" href="/?orcar=duvida" onclick="abrirContatoWA('duvida');return false">💬 Fale no WhatsApp</a>
   </div>
-  <div class="fbar">
-    <span>© 2026 SULLAB Comércio de Produtos Hospitalares · CNPJ 32.198.434/0001-34</span>
-    <span>🏆 Desde 1988 · 40 anos de mercado</span>
-  </div>
-</div><div class="wrap" style="border-top:1px solid rgba(255,255,255,.12);margin-top:22px;padding-top:18px"><div style="color:#fff;font-size:13px;font-weight:700;margin:0 0 10px">Departamentos</div><a href="/categoria/agulhas.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Agulhas</a><a href="/categoria/coletores-de-amostra.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Coletores de amostra</a><a href="/categoria/controles-e-calibradores.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Controles e calibradores</a><a href="/categoria/cubetas.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Cubetas</a><a href="/categoria/curativos-gaze-e-algodao.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Curativos, gaze e algodão</a><a href="/categoria/descartaveis-e-plasticos.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Descartáveis e plásticos</a><a href="/categoria/equipamentos-e-acessorios.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Equipamentos e acessórios</a><a href="/categoria/laminas-e-bisturis.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Lâminas e bisturis</a><a href="/categoria/lancetas.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Lancetas</a><a href="/categoria/meios-de-cultura.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Meios de cultura</a><a href="/categoria/microbiologia.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Microbiologia</a><a href="/categoria/pipetas-e-ponteiras.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Pipetas e ponteiras</a><a href="/categoria/reagentes-de-bioquimica.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Reagentes de bioquímica</a><a href="/categoria/reagentes-de-hematologia-e-coagulacao.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Reagentes de hematologia e coagulação</a><a href="/categoria/reagentes-de-sorologia-e-imunologia.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Reagentes de sorologia e imunologia</a><a href="/categoria/testes-rapidos.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Testes rápidos</a><a href="/categoria/tubos-a-vacuo.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Tubos a vácuo</a><div style="color:#fff;font-size:13px;font-weight:700;margin:16px 0 10px">Marcas</div><a href="/marca/biolog.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Biolog</a><a href="/marca/biomass.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Biomass</a><a href="/marca/cecon.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Cecon</a><a href="/marca/clot.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Clot</a><a href="/marca/cral.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">CRAL</a><a href="/marca/deepblue.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">DeepBlue</a><a href="/marca/dme.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">DME</a><a href="/marca/ebram.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Ebram</a><a href="/marca/newprov.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Newprov</a><a href="/marca/proinlab.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Proinlab</a><a href="/marca/vacuette.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Vacuette</a></div><!-- crédito MOVA Films --><div style="border-top:1px solid rgba(255,255,255,.12);margin-top:18px;padding:16px 16px 0;text-align:center"><a href="https://www.instagram.com/movafilms_/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;color:#aec6e0;text-decoration:none;font-size:12.5px;line-height:1.5"><span>Site criado por</span><img src="/img/mova-logo-branco.png" alt="MOVA Films" width="94" height="26" loading="lazy" style="height:26px;width:auto;display:block"><span>Sites, vídeo com drone, fotografia e marketing digital · <b style="color:#fff">Quer um site assim? Fale com a MOVA →</b></span></a></div></footer>
+  <div><h2 class="fh">Categorias</h2><div id="footCats"></div></div>
+  <div><h2 class="fh">Comprar</h2><a href="#orcamento" onclick="abrirListaOrcamento();return false">Colar lista (orçamento)</a><a href="#conta" onclick="abrirConta();return false">Minha conta CNPJ</a><a href="#rastreio" onclick="abrirRastreio();return false">Rastrear pedido</a><a href="#catalogo" onclick="irProdutos();return false">Catálogo completo</a><a href="/docs/Catalogo_SULLAB_Vacuette_e_Testes_Rapidos.pdf" target="_blank" rel="noopener">Catálogo em PDF</a></div>
+  <div><h2 class="fh">Atendimento</h2><a href="/?orcar=duvida" onclick="abrirContatoWA('duvida');return false">💬 Dúvidas</a><a href="mailto:comercial@sullabrj.com.br">✉️ comercial@sullabrj.com.br</a><a href="/indique.html">🤝 Indique e ganhe 3% de comissão</a><a href="/devolucao.html">Trocas e devoluções</a></div>
+</div>
+<div class="ft2-dir"><div class="wrap"><div class="ft2-dh">Departamentos</div><div class="ft2-chips"><a href="/categoria/agulhas.html">Agulhas</a><a href="/categoria/coletores-de-amostra.html">Coletores de amostra</a><a href="/categoria/controles-e-calibradores.html">Controles e calibradores</a><a href="/categoria/cubetas.html">Cubetas</a><a href="/categoria/curativos-gaze-e-algodao.html">Curativos, gaze e algodão</a><a href="/categoria/descartaveis-e-plasticos.html">Descartáveis e plásticos</a><a href="/categoria/equipamentos-e-acessorios.html">Equipamentos e acessórios</a><a href="/categoria/laminas-e-bisturis.html">Lâminas e bisturis</a><a href="/categoria/lancetas.html">Lancetas</a><a href="/categoria/meios-de-cultura.html">Meios de cultura</a><a href="/categoria/microbiologia.html">Microbiologia</a><a href="/categoria/pipetas-e-ponteiras.html">Pipetas e ponteiras</a><a href="/categoria/reagentes-de-bioquimica.html">Reagentes de bioquímica</a><a href="/categoria/reagentes-de-hematologia-e-coagulacao.html">Reagentes de hematologia e coagulação</a><a href="/categoria/reagentes-de-sorologia-e-imunologia.html">Reagentes de sorologia e imunologia</a><a href="/categoria/testes-rapidos.html">Testes rápidos</a><a href="/categoria/tubos-a-vacuo.html">Tubos a vácuo</a></div><div class="ft2-dh" style="margin-top:16px">Marcas</div><div class="ft2-chips"><a href="/marca/biolog.html">Biolog</a><a href="/marca/biomass.html">Biomass</a><a href="/marca/cecon.html">Cecon</a><a href="/marca/clot.html">Clot</a><a href="/marca/cral.html">CRAL</a><a href="/marca/deepblue.html">DeepBlue</a><a href="/marca/dme.html">DME</a><a href="/marca/ebram.html">Ebram</a><a href="/marca/newprov.html">Newprov</a><a href="/marca/proinlab.html">Proinlab</a><a href="/marca/vacuette.html">Vacuette</a></div></div></div>
+<div class="ft2-bar"><div class="wrap"><span>© 2026 SULLAB Comércio de Produtos Hospitalares · CNPJ 32.198.434/0001-34</span><span>Barra Mansa/RJ · comercial@sullabrj.com.br</span></div></div>
+<!-- crédito MOVA Films --><div class="ft2-mova"><a href="https://www.instagram.com/movafilms_/" target="_blank" rel="noopener"><span class="mv-l">Site criado por</span><img src="/img/mova-logo-branco.png" alt="MOVA Films" width="117" height="32" loading="lazy"><span class="mv-t">Sites, vídeo com drone, fotografia e marketing digital</span><span class="mv-b">Quer um site assim? Fale com a MOVA →</span></a></div>
+</footer>
 
 <!-- CART DRAWER -->
 <div class="ov" id="ov" onclick="if(window.__mdT===this)fecharCarrinho()"></div>
