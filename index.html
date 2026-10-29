@@ -595,6 +595,34 @@ document.addEventListener('DOMContentLoaded',function(){try{
 .mpDocs{margin-top:8px!important}
 @media(max-width:700px){.cepTop{padding:12px!important}.cepTop .fgt b{font-size:17px}.cepTop .fgt span{font-size:12.5px!important}.cepTop .fgin{flex:1 1 100%!important}.cepTop input{width:0;min-width:0}.mpTit{font-size:17px!important}.mpSub{display:none}.mpB{margin-left:0}}
 </style>
+<style>/* 28/10 noite: ajustes celular — setas nos carrosséis, cards, carrinho com resumo em cima, aviso de carrinho */
+.hsw{position:relative}
+.hsA{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:rgba(15,42,71,.55);color:#fff;font-size:22px;line-height:34px;text-align:center;padding:0;z-index:6;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);font-family:inherit;display:flex;align-items:center;justify-content:center}
+.hsA.r{right:2px}.hsA.l{left:2px}.hsA.off{opacity:0;pointer-events:none}
+.hsA.sm{width:26px;height:26px;font-size:17px}
+.hsA.r.hint{animation:hsHint 1.4s ease-in-out 3}
+@keyframes hsHint{0%,100%{transform:translateY(-50%)}50%{transform:translate(5px,-50%)}}
+@media(max-width:700px){
+ .ofgrid .ofc{flex:0 0 66%!important}
+ .ofc .ofn{font-size:14.5px!important;line-height:1.3;min-height:57px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+ .ofc .ofd{font-size:12.5px!important;line-height:1.35}
+ .ofc .ofp{font-size:22px!important;white-space:nowrap}
+ .ofc .ofp s{display:block;font-size:12.5px!important;margin:0}
+ .ofc .ofu{font-size:13px!important}
+ .ofc .ofb{font-size:14px!important;padding:10px!important}
+ .ofc .ofi{height:110px}
+ .ofh small:after{content:""!important}
+ /* carrinho: resumo, frete e finalizar em cima; produtos embaixo */
+ .drawer .dbody{display:flex!important;flex-direction:column}
+ .drawer .dright{order:-1;border-top:0!important;border-bottom:1px solid var(--line)}
+ .drawer .dright .df{padding:12px 14px!important}
+ .drawer .dleft .sv,.drawer .dleft .trustp{margin:14px 0 0}
+ #retBar{left:0!important;right:0!important;bottom:0!important;transform:none!important;max-width:none!important;border-radius:16px 16px 0 0!important;padding:12px 14px calc(12px + env(safe-area-inset-bottom))!important;background:#fff!important;color:#1b2a44!important;border-top:3px solid #1f7d4c;font-size:14px!important;box-shadow:0 -8px 24px rgba(16,32,60,.22)!important}
+ #retBar span{flex:1}
+ #retBar .go{padding:11px 14px!important;font-size:14px!important;white-space:nowrap}
+ #retBar .x{color:#6b7a90!important}
+}
+</style>
 </head>
 <body>
 
@@ -2253,5 +2281,37 @@ setInterval(function(){try{var c=document.getElementById('cko');if(!c||!c.classL
  abrirRastreio();var a=document.getElementById('rastNum');if(a)a.value=n;var b=document.getElementById('rastChave');if(b&&em)b.value=em;
  if(b&&b.value){lookupRastreio();}else if(b){setTimeout(function(){try{b.focus();}catch(e){}},300);}
 }catch(e){}})();</script>
+<script>
+/* setas de rolagem lateral em tudo que desliza para o lado */
+(function(){
+ function setup(el){if(el.__hs)return;if(el.closest('.drawer,.pmodal,.cko,#retBar'))return;
+  var cs=getComputedStyle(el);if(!/(auto|scroll)/.test(cs.overflowX))return;if(el.scrollWidth<=el.clientWidth+8)return;
+  el.__hs=1;var w=document.createElement('div');w.className='hsw';
+  var m=cs.marginTop+' '+cs.marginRight+' '+cs.marginBottom+' '+cs.marginLeft;w.style.margin=m;el.style.margin='0';
+  el.parentNode.insertBefore(w,el);w.appendChild(el);
+  var sm=el.clientHeight<60;
+  var l=document.createElement('button'),r=document.createElement('button');
+  l.type=r.type='button';l.className='hsA l off'+(sm?' sm':'');r.className='hsA r hint'+(sm?' sm':'');l.innerHTML='‹';r.innerHTML='›';
+  l.setAttribute('aria-label','Rolar para a esquerda');r.setAttribute('aria-label','Rolar para a direita');
+  l.onclick=function(){el.scrollBy({left:-el.clientWidth*.8,behavior:'smooth'});};
+  r.onclick=function(){el.scrollBy({left:el.clientWidth*.8,behavior:'smooth'});};
+  w.appendChild(l);w.appendChild(r);
+  function upd(){var x=el.scrollLeft,max=el.scrollWidth-el.clientWidth-4;l.classList.toggle('off',x<4);r.classList.toggle('off',x>=max);}
+  el.addEventListener('scroll',upd,{passive:true});upd();
+ }
+ function scan(){try{document.querySelectorAll('body *').forEach(function(el){if(el.children.length&&el.scrollWidth>el.clientWidth+8)setup(el);});}catch(e){}}
+ window.hsScan=scan;
+ window.addEventListener('load',function(){scan();setTimeout(scan,1200);setTimeout(scan,3500);});
+ window.addEventListener('resize',function(){clearTimeout(window.__hst);window.__hst=setTimeout(scan,300);});
+})();
+/* celular: no carrinho, "guardar carrinho" e selos vão para baixo dos produtos */
+(function(){var _ac=window.atualizarCart;window.atualizarCart=function(){_ac.apply(this,arguments);
+ try{if(!matchMedia('(max-width:700px)').matches)return;var dl=document.querySelector('.drawer .dleft'),df=document.getElementById('df');if(!dl||!df)return;
+  [].slice.call(dl.children).forEach(function(n){if(n.classList.contains('sv')||n.classList.contains('trustp'))n.remove();});
+  df.querySelectorAll('.sv,.trustp').forEach(function(n){dl.appendChild(n);});
+ }catch(e){}};})();
+/* aviso "você deixou itens no carrinho": some sozinho depois de 12 s */
+setInterval(function(){var b=document.getElementById('retBar');if(b&&!b.__t){b.__t=setTimeout(function(){if(b.parentNode)b.remove();},12000);}},1000);
+</script>
 </body>
 </html>
