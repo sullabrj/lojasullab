@@ -169,7 +169,16 @@
   .prod{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:.14s;position:relative;content-visibility:auto;contain-intrinsic-size:auto 300px}
   .prod:hover{transform:translateY(-3px);box-shadow:var(--shadow-h);border-color:var(--navy-l)}
   .prod .selo{position:absolute;top:9px;left:9px;z-index:2;background:#fff;border:1px solid var(--line);border-radius:999px;font-size:10px;font-weight:800;padding:3px 8px;color:var(--navy);box-shadow:var(--shadow)}
-  .prod .selo.best{background:#c2410c;border-color:#c2410c;color:#fff}
+  .mpBox{background:linear-gradient(135deg,#7c2d12,#c2410c);color:#fff;border-radius:18px;padding:20px 22px;margin:14px 0 6px;box-shadow:0 6px 18px rgba(124,45,18,.25)}
+.mpTit{font-size:24px;font-weight:900;line-height:1.2}.mpTit span{color:#fde68a}
+.mpSub{font-size:14px;opacity:.95;margin:6px 0 14px;line-height:1.45}
+.mpCards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mpC{background:#fff;color:#1f2937;border-radius:14px;padding:14px 16px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.mpC:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.18)}
+.mpK{font-weight:800;color:#7c2d12;font-size:15px}.mpV{font-size:17px;margin:4px 0}.mpV b{font-size:24px;color:#15803d}
+.mpD{font-size:12.5px;color:#5f6b7c;margin-bottom:8px}.mpB{display:inline-block;background:#c2410c;color:#fff;font-weight:800;font-size:13px;padding:7px 12px;border-radius:999px}
+@media(max-width:700px){.mpTit{font-size:19px}.mpCards{grid-template-columns:1fr}.mpBox{padding:16px}}
+.selo.best{background:#c2410c;border-color:#c2410c;color:#fff}
 #grSec{margin:18px 0 6px}#grSec .ofh h2{color:#c2410c}
 .selo.hot{background:#fff4e6;border-color:#e0a93a;color:#8a5a00}
   .prod .ph{height:142px;background:#fff;display:flex;align-items:center;justify-content:center;padding:12px;border-bottom:1px solid var(--line);cursor:pointer}
@@ -576,6 +585,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
 <div class="trust"><div class="wrap">
   <span class="ti">🧾 <b>NF-e</b> em todo pedido</span>
   <span class="ti">🚚 <b>Envio</b> para todo o Brasil</span>
+  <span class="ti">🏆 <b>Menor preço</b> em tubos e testes rápidos</span>
   <span class="ti">💚 <b>Pix</b> com até 5% de desconto</span>
   <span class="ti">📦 Envio em <b>24h</b></span>
 </div></div>
@@ -585,9 +595,19 @@ document.addEventListener('DOMContentLoaded',function(){try{
 
 <div class="wrap" role="main" id="conteudo">
 
+<!-- 28/10/2026: campanha "o menor preço do mercado" (Greiner Vacuette e testes rápidos) -->
+  <section class="mpBox" id="mpBox">
+    <div class="mpTit">🏆 O menor preço do mercado em <span>tubos Vacuette</span> e <span>testes rápidos</span></div>
+    <div class="mpSub">Comparamos com as principais lojas online do setor: <b>ninguém vende mais barato</b>. 40 anos de mercado · direto da distribuidora · NF-e em todo pedido · envio em 24h.</div>
+    <div class="mpCards">
+      <div class="mpC" onclick="irSecao('grSec')"><div class="mpK">🩸 Tubos e agulhas Greiner Vacuette</div><div class="mpV">a partir de <b>R$ 0,46</b> por tubo</div><div class="mpD">EDTA, soro com gel, citrato, glicose, heparina e agulhas</div><span class="mpB">Ver tubos e agulhas →</span></div>
+      <div class="mpC" onclick="irSecao('ofSec')"><div class="mpK">🧪 Testes rápidos</div><div class="mpV">a partir de <b>R$ 1,68</b> por teste</div><div class="mpD">COVID R$ 4,00 · Dengue R$ 4,99 · HBsAg R$ 1,68 · HIV, sífilis e VSR</div><span class="mpB">Ver testes rápidos →</span></div>
+    </div>
+  </section>
+
 <!-- BANNER HOME -->
   <section class="bannerHome" id="bannerHome">
-    <a class="bnr" role="button" onclick="irProdutos()" aria-label="SULLAB: 38 anos abastecendo laboratórios e hospitais. Ver catálogo">
+    <a class="bnr" role="button" onclick="irProdutos()" aria-label="SULLAB: 40 anos abastecendo laboratórios e hospitais. Ver catálogo">
       <picture>
         <source media="(max-width:700px)" srcset="/img/banner-sullab-m.jpg" width="700" height="545">
         <source media="(max-width:1200px)" srcset="/img/banner-sullab-1100.jpg" width="1100" height="312">
@@ -613,7 +633,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
         <button class="btn ghost" onclick="abrirListaOrcamento()">📋 Colar lista e receber orçamento</button>
       </div>
       <div class="hstats">
-        <div><b>+38 anos</b><span>de mercado (desde 1988)</span></div>
+        <div><b>40 anos</b><span>de mercado</span></div>
         <div><b>NF-e</b><span>em todo pedido</span></div>
         <div><b id="statProdutos">229</b><span>produtos em catálogo</span></div>
         <div><b>24h</b><span>despacho do pedido</span></div>
@@ -628,7 +648,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
   <div class="popq"><b>Buscas populares:</b><span onclick="buscarTermo('tubo EDTA')">tubo EDTA</span><span onclick="buscarTermo('teste COVID')">teste COVID</span><span onclick="buscarTermo('ágar')">ágar</span><span onclick="buscarTermo('agulha')">agulha</span><span onclick="buscarTermo('luva nitrílica')">luva nitrílica</span><span onclick="buscarTermo('lâmina')">lâmina</span><span onclick="buscarTermo('seringa')">seringa</span></div>
   <!-- OFERTAS / QUEIMA DE ESTOQUE: edite a lista window.OFERTAS (código do produto, selo, texto e, se quiser, preço "de") -->
   <section id="grSec" style="display:none"><div class="ofh"><h2>🏆 Tubos e agulhas Greiner Vacuette — o menor preço do mercado</h2><small>Comparamos com as principais lojas online do setor: ninguém vende Vacuette mais barato · NF-e em todo pedido · pedido mínimo R$ 400</small></div><div class="ofgrid" id="grGrid"></div><div style="text-align:center;margin-top:10px"><a class="lk" style="cursor:pointer;font-weight:700;color:#c2410c" onclick="verTodosGreiner()">Ver todos os 20 itens Vacuette →</a></div></section>
-  <section id="ofSec" style="display:none"><div class="ofh"><h2 id="ofTitulo">🏆 Melhor preço em testes rápidos</h2><small>Comparamos com as principais lojas online do setor: ninguém vende mais barato · pronta entrega</small></div><div class="ofgrid" id="ofGrid"></div></section>
+  <section id="ofSec" style="display:none"><div class="ofh"><h2 id="ofTitulo">🏆 Testes rápidos — o menor preço do mercado</h2><small>Preço por teste abaixo das principais lojas online do setor · registro ANVISA · NF-e · pronta entrega</small></div><div class="ofgrid" id="ofGrid"></div></section>
   <!-- CATEGORY TILES -->
   <div id="catPanel"><div class="sec" id="catSec"><h2>Compre por categoria</h2><span class="lk" onclick="irProdutos()">Ver tudo →</span></div>
   <div class="cats" id="catTiles"></div></div>
@@ -677,7 +697,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
   </div>
   <div class="fbar">
     <span>© 2026 SULLAB Comércio de Produtos Hospitalares · CNPJ 32.198.434/0001-34</span>
-    <span>🏆 Desde 1988 · mais de 38 anos de mercado</span>
+    <span>🏆 Desde 1988 · 40 anos de mercado</span>
   </div>
 </div><div class="wrap" style="border-top:1px solid rgba(255,255,255,.12);margin-top:22px;padding-top:18px"><div style="color:#fff;font-size:13px;font-weight:700;margin:0 0 10px">Departamentos</div><a href="/categoria/agulhas.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Agulhas</a><a href="/categoria/coletores-de-amostra.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Coletores de amostra</a><a href="/categoria/controles-e-calibradores.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Controles e calibradores</a><a href="/categoria/cubetas.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Cubetas</a><a href="/categoria/curativos-gaze-e-algodao.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Curativos, gaze e algodão</a><a href="/categoria/descartaveis-e-plasticos.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Descartáveis e plásticos</a><a href="/categoria/equipamentos-e-acessorios.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Equipamentos e acessórios</a><a href="/categoria/laminas-e-bisturis.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Lâminas e bisturis</a><a href="/categoria/lancetas.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Lancetas</a><a href="/categoria/meios-de-cultura.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Meios de cultura</a><a href="/categoria/microbiologia.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Microbiologia</a><a href="/categoria/pipetas-e-ponteiras.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Pipetas e ponteiras</a><a href="/categoria/reagentes-de-bioquimica.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Reagentes de bioquímica</a><a href="/categoria/reagentes-de-hematologia-e-coagulacao.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Reagentes de hematologia e coagulação</a><a href="/categoria/reagentes-de-sorologia-e-imunologia.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Reagentes de sorologia e imunologia</a><a href="/categoria/testes-rapidos.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Testes rápidos</a><a href="/categoria/tubos-a-vacuo.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Tubos a vácuo</a><div style="color:#fff;font-size:13px;font-weight:700;margin:16px 0 10px">Marcas</div><a href="/marca/biolog.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Biolog</a><a href="/marca/biomass.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Biomass</a><a href="/marca/cecon.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Cecon</a><a href="/marca/clot.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Clot</a><a href="/marca/cral.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">CRAL</a><a href="/marca/deepblue.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">DeepBlue</a><a href="/marca/dme.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">DME</a><a href="/marca/ebram.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Ebram</a><a href="/marca/newprov.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Newprov</a><a href="/marca/proinlab.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Proinlab</a><a href="/marca/vacuette.html" style="display:inline-block;color:#aec6e0;margin:0 14px 7px 0;font-size:12px">Vacuette</a></div></footer>
 
@@ -868,14 +888,20 @@ document.addEventListener('DOMContentLoaded',function(){try{
 /* ====== OFERTAS / QUEIMA DE ESTOQUE — edite aqui ======
    c = código do produto (como no catálogo) · tag = selo · txt = linha de apoio · de = preço antigo (opcional, só se for real) */
 window.OFERTAS=[
-  {c:'TR 017-1 RP',tag:'🏆 Melhor preço',txt:'R$ 4,00 por teste · DeepBlue · pronta entrega',de:146.62},
-  {c:'TR 008-1 DT',tag:'🏆 Melhor preço',txt:'R$ 4,99 por teste · DeepBlue · pronta entrega',de:273.12},
-  {c:'TR 007 IST',tag:'🏆 Melhor preço',txt:'DeepBlue · pronta entrega · NF-e'},
-  {c:'TR 008-1 IST',tag:'🏆 Melhor preço',txt:'DeepBlue · pronta entrega · NF-e'}
+  {c:'TR 017-1 RP',tag:'🏆 Menor preço',txt:'R$ 4,00 por teste · COVID-19 antígeno · pronta entrega',de:146.62},
+  {c:'TR 009 IST',tag:'🏆 Menor preço',txt:'R$ 1,68 por teste · HBsAg (hepatite B) · pronta entrega',de:95.47},
+  {c:'TR 009-1 DT',tag:'🏆 Menor preço',txt:'R$ 4,99 por teste · Dengue IgG/IgM · pronta entrega',de:287.5},
+  {c:'TR 010 DT',tag:'🏆 Menor preço',txt:'R$ 10,84 por teste · Dengue NS1 + IgG/IgM · pronta entrega',de:568.67},
+  {c:'TR 008-1 IST',tag:'🏆 Menor preço',txt:'R$ 2,35 por teste · Sífilis · pronta entrega'},
+  {c:'TR 007 IST',tag:'🏆 Menor preço',txt:'R$ 2,22 por teste · HIV 1/2 · pronta entrega'},
+  {c:'TR 008-1 DT',tag:'🔥 Oferta',txt:'R$ 4,99 por teste · Dengue NS1 · pronta entrega',de:273.12},
+  {c:'TR 016-1 RP',tag:'🔥 Oferta',txt:'R$ 14,90 por teste · VSR · pronta entrega',de:431.25}
 ];
 /* 28/10/2026: destaque dos itens Greiner Vacuette (menor preço do mercado; "de" = preço até 28/10) */
+window.TR_TOP={'TR 017-1 RP':1,'TR 009 IST':1,'TR 009-1 IST':1,'TR 009-1 DT':1,'TR 010 DT':1,'TR 008-1 IST':1,'TR 007 IST':1};
 window.GREINER_DE={"450071": 67.73, "450072": 68.44, "454921": 31.61, "456211": 58.09, "454030": 37.01, "454482": 47.49, "450539": 100.56, "456080": 41.9, "454327": 44.69, "454036": 23.74, "454087": 25.14, "454085": 43.37, "454091": 43.99, "454092": 26.54, "454071": 37.01, "456071": 37.01, "455071": 52.37, "455092": 37.01, "456001": 27.93, "454235": 56.1};
 window.GREINER_ORDEM=["454036", "454071", "456071", "454327", "450071", "450072", "454087", "455071", "456001", "455092", "454921", "454092", "454482", "454030", "456211", "454235", "454085", "454091", "456080", "450539"];
+function irSecao(id){try{var e=document.getElementById(id);if(e)e.scrollIntoView({behavior:'smooth',block:'start'});}catch(x){}}
 function verTodosGreiner(){try{FILTRO.busca='Vacuette';var b=document.getElementById('busca')||document.querySelector('input[type=search]');if(b)b.value='Vacuette';render();var a=document.getElementById('shopAnchor');if(a)a.scrollIntoView({behavior:'smooth'});}catch(e){}}
 function montarGreiner(){
   try{
@@ -894,7 +920,7 @@ function montarOfertas(){
     var L=(window.OFERTAS||[]).map(function(o){var i=CATALOG.findIndex(function(p){return p.c===o.c;});return i<0?null:{o:o,i:i,p:CATALOG[i]};}).filter(Boolean);
     var sec=document.getElementById('ofSec'),g=document.getElementById('ofGrid');
     if(!sec||!g||!L.length){if(sec)sec.style.display='none';return;}
-    g.innerHTML=L.slice(0,4).map(function(x){
+    g.innerHTML=L.slice(0,8).map(function(x){
       var pr=(window.PRECOS||{})[x.p.c],v=pr&&pr[1]?pr[1]:0;
       var preco=v?'<div class="ofp">'+(x.o.de?'<s>'+brl(x.o.de)+'</s>':'')+brl(v)+'</div>'+(typeof unitLn==='function'?'<div class="ofu">'+unitLn(x.p.c,v)+'</div>':''):'<div class="ofp" style="font-size:14px;color:#1f3c73">Sob consulta</div>';
       return '<div class="ofc" onclick="abrirProd('+x.i+')"><span class="oft">'+(x.o.tag||'Oferta')+'</span><div class="ofi"><img src="'+x.p.img+'" width="120" height="120" loading="lazy" alt="'+x.p.n.replace(/"/g,'&quot;')+'"></div><div class="ofn">'+x.p.n+'</div><div class="ofd">'+(x.o.txt||x.p.m)+'</div>'+preco+'<button class="ofb" onclick="event.stopPropagation();abrirProd('+x.i+')">Ver oferta</button></div>';
@@ -1050,7 +1076,7 @@ function render(){
   if(!arr.length){if(FILTRO.busca)_logBuscaVazia(FILTRO.busca);g.innerHTML='<div class="empty">Nenhum produto encontrado.<br>Tente outro termo ou <a class="lk" onclick="abrirContatoWA(\'duvida\',(FILTRO&&FILTRO.busca?(\'Procuro: \'+FILTRO.busca):\'\'))" style="color:var(--navy-l);cursor:pointer">peça pelo WhatsApp</a>.</div>';_CUR=[];_SHOWN=0;var _mw=document.getElementById('moreWrap');if(_mw)_mw.innerHTML='';return;}
   _CUR=arr;_SHOWN=Math.min(arr.length,_PAGE);_card=function(p){
     var i=CATALOG.indexOf(p);
-    var selo=(window.PIX3&&window.PIX3[p.c])?'<span class="selo best">🏆 Menor preço do mercado</span>':p.selo==='hot'?'<span class="selo hot">🔥 Mais procurado</span>':(p.selo==='top'?'<span class="selo">⭐ Mais vendido</span>':'');
+    var selo=((window.PIX3&&window.PIX3[p.c])||(window.TR_TOP&&window.TR_TOP[p.c]))?'<span class="selo best">🏆 Menor preço do mercado</span>':p.selo==='hot'?'<span class="selo hot">🔥 Mais procurado</span>':(p.selo==='top'?'<span class="selo">⭐ Mais vendido</span>':'');
     var precoBloco='';var _pr=(window.PRECOS||{})[p.c];if(_pr&&_pr[1]){precoBloco='<div style="margin:6px 0 2px;line-height:1.32"><div style="font-size:19px;font-weight:800;color:#2f9e63">'+brl(_pr[1])+'</div>'+unitLn(p.c,_pr[1])+'<div class="pixl">💚 <b>'+brl(Math.round(_pr[1]*(100-pixPct(p.c)*100))/100)+'</b> no Pix <span>'+Math.round(pixPct(p.c)*100)+'% off</span></div></div>';}
     var btns='<div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="add" onclick="addCart('+i+',this)">+ Carrinho</button>';
     return '<div class="prod">'+selo+
@@ -1817,7 +1843,7 @@ window.atualizarCart=function(){_ac2.apply(this,arguments);
    var box=document.createElement('div');box.className='sv';box.id='svBox';
    box.innerHTML='<b>Não vai fechar agora?</b> Guardamos seu carrinho e avisamos se o preço mudar ou o estoque estiver acabando.'+(tel?'<div style="margin-top:6px">Aviso no WhatsApp ativo: <b>'+tel+'</b></div>':'<div class="svr"><input id="svTel" inputmode="tel" placeholder="Seu WhatsApp com DDD"><button onclick="salvarCarrinhoTel()">Guardar</button></div>')+'<span class="svlk" onclick="copiarLinkCarrinho()">🔗 Copiar link deste carrinho</span><span id="svMsg" style="display:block;margin-top:5px;font-weight:700"></span>';
    df.appendChild(box);
-   var tp=document.createElement('div');tp.className='trustp';tp.innerHTML='<span>🧾 NF-e em todo pedido</span><span>🛡️ Registro ANVISA quando exigido</span><span>🏆 38 anos de mercado</span><span>🚚 Frota própria no RJ</span>';df.appendChild(tp);
+   var tp=document.createElement('div');tp.className='trustp';tp.innerHTML='<span>🧾 NF-e em todo pedido</span><span>🛡️ Registro ANVISA quando exigido</span><span>🏆 40 anos de mercado</span><span>🚚 Frota própria no RJ</span>';df.appendChild(tp);
   }catch(e){}
 };
 window.salvarCarrinhoTel=function(){var el=document.getElementById('svTel'),m=document.getElementById('svMsg');if(!el)return;var t=el.value.replace(/\D/g,'');
@@ -1853,7 +1879,7 @@ document.addEventListener('visibilitychange',function(){
 
 /* ===== Selos de confiança no produto ===== */
 var _ap3=window.abrirProd;
-window.abrirProd=function(i){_ap3.apply(this,arguments);try{var b=document.querySelector('#pmInner .pmb');if(b&&!b.querySelector('.trustp'))b.insertAdjacentHTML('beforeend','<div class="trustp"><span>🧾 NF-e em todo pedido</span><span>🛡️ Registro ANVISA quando exigido</span><span>🏆 Distribuidora há 38 anos</span><span>🚚 Entrega com frota própria no RJ</span></div>');}catch(e){}};
+window.abrirProd=function(i){_ap3.apply(this,arguments);try{var b=document.querySelector('#pmInner .pmb');if(b&&!b.querySelector('.trustp'))b.insertAdjacentHTML('beforeend','<div class="trustp"><span>🧾 NF-e em todo pedido</span><span>🛡️ Registro ANVISA quando exigido</span><span>🏆 Distribuidora há 40 anos</span><span>🚚 Entrega com frota própria no RJ</span></div>');}catch(e){}};
 })();
 </script>
 <style id="pedidoDiretoCss">
