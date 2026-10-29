@@ -2134,9 +2134,9 @@ var _ac=window.atualizarCart;
 window.atualizarCart=function(){_ac.apply(this,arguments);
   try{var a=document.querySelector('#df a.wbtn[onclick="enviarOrcamento()"]');if(!a)return;
     var semPreco=CART.some(function(x){return !precoItem(x);});
+    if(semPreco){[].forEach.call(document.querySelectorAll('#df .note'),function(nt){if(/sob consulta/.test(nt.textContent))nt.textContent='Alguns itens são sob consulta: envie o pedido e mandamos o link de pagamento.';});}
     if(!semPreco&&totalCart()>0)a.remove();
     else{a.textContent='📄 Enviar pedido (itens sob consulta)';a.style.cssText='background:var(--navy,#1f3c73);color:#fff';}
-    var nt=document.querySelector('#df .note');if(nt)nt.textContent='Alguns itens são sob consulta: envie o pedido e mandamos o link de pagamento.';
   }catch(e){}
 };
 /* busca sem resultado: nada de WhatsApp */
