@@ -1,4 +1,4 @@
-/* SULLAB — rastreio de visitas, cliques e leads (GA4 + Google Ads). v2 22/10/2026
+/* SULLAB — rastreio de visitas, cliques e leads (GA4 + Google Ads). v3 29/10/2026 (+ Pixel do Meta)
    Eventos (GA4): view_item, add_to_cart, view_cart, begin_checkout, add_payment_info, generate_lead,
    iniciar_orcamento, search, select_content, whatsapp_click, contact_click, clique_elemento,
    scroll_depth, tempo_na_pagina, cadastro_cnpj_tentativa, login_clique, rastrear_pedido_abrir,
@@ -11,7 +11,30 @@
   function G(){try{window.dataLayer=window.dataLayer||[];if(typeof window.gtag==='function')window.gtag.apply(null,arguments);}catch(e){}}
   /* 26/10/2026: os passos do checkout também viram eventos do Clarity, para filtrar as gravações de quem desistiu */
   var CLARITY_EVS={begin_checkout:1,add_payment_info:1,pagar_clique:1,view_cart:1,add_to_cart:1,whatsapp_click:1,sullab_frete_gratis_consulta:1};
-  function ev(n,p){G('event',n,p||{});try{if(CLARITY_EVS[n]&&window.clarity)window.clarity('event',n);}catch(e){}}
+  /* 29/10/2026: Pixel do Meta (conjunto "Pixel - SULLAB RJ") — remarketing do catálogo e anúncios de clique para o WhatsApp.
+     Só envia depois do "Aceitar" dos cookies (consent revoke/grant). content_ids = código do produto = id do catálogo do Meta. */
+  var META_PIXEL='222353024257094';
+  (function(){try{if(window.fbq)return;
+    var n=window.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments);};
+    if(!window._fbq)window._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];
+    var t=document.createElement('script');t.async=!0;t.src='https://connect.facebook.net/en_US/fbevents.js';
+    var y=document.getElementsByTagName('script')[0];y.parentNode.insertBefore(t,y);
+    var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}
+    if(c!=='sim')window.fbq('consent','revoke');
+    window.fbq('init',META_PIXEL);window.fbq('track','PageView');
+  }catch(e){}})();
+  function FB(){try{if(typeof window.fbq==='function')window.fbq.apply(null,arguments);}catch(e){}}
+  function idsDe(p){var its=(p&&p.items)||[];return its.map(function(x){return String(x.item_id||'');}).filter(Boolean);}
+  function meta(n,p){p=p||{};var ids=idsDe(p),base={currency:'BRL'};if(p.value)base.value=Math.round(p.value*100)/100;
+    if(ids.length){base.content_ids=ids;base.content_type='product';base.num_items=(p.items||[]).reduce(function(s,x){return s+(x.quantity||1);},0);}
+    if(n==='view_item'&&ids.length)FB('track','ViewContent',base);
+    else if(n==='add_to_cart')FB('track','AddToCart',base);
+    else if(n==='begin_checkout')FB('track','InitiateCheckout',base);
+    else if(n==='add_payment_info')FB('track','AddPaymentInfo',base);
+    else if(n==='generate_lead')FB('track','Lead',base);
+    else if(n==='whatsapp_click')FB('track','Contact',{content_name:p.origem||'whatsapp'});
+    else if(n==='search'&&p.search_term)FB('track','Search',{search_string:p.search_term});}
+  function ev(n,p){G('event',n,p||{});try{meta(n,p);}catch(e){}try{if(CLARITY_EVS[n]&&window.clarity)window.clarity('event',n);}catch(e){}}
   var isProd=/^\/p\//.test(location.pathname);
   var $=function(id){return document.getElementById(id);};
 
@@ -48,6 +71,7 @@
       var fim=function(v){try{localStorage.setItem('sl_consent',v);}catch(e){}
         var g=v==='sim'?'granted':'denied';G('consent','update',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:'granted'});
         try{if(window.clarity)window.clarity('consent',v==='sim');}catch(e){}
+        FB('consent',v==='sim'?'grant':'revoke');
         ev('cookies_'+(v==='sim'?'aceitou':'recusou'),{});d.remove();};
       d.querySelector('.ok').onclick=function(){fim('sim');};
       d.querySelector('.no').onclick=function(){fim('nao');};
