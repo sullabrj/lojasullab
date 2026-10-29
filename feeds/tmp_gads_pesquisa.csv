@@ -1,11 +1,5 @@
-Campaign,Campaign Type,Campaign Status,Budget,Bid Strategy Type,Networks,Languages,Location,Ad Group,Ad Group Status,Max CPC,Keyword,Criterion Type,Ad Type,Final URL,Path 1,Path 2,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Headline 12,Headline 13,Headline 14,Headline 15,Description 1,Description 2,Description 3,Description 4
-Pesquisa · Vacuette e Testes Rápidos · Labs,Search,Paused,20.00,Maximize clicks,Google search,pt,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,"Rio de Janeiro, Brazil",,,,,,,,,,,,,,,,,,,,,,,,,,,,
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,"Sao Paulo, Brazil",,,,,,,,,,,,,,,,,,,,,,,,,,,,
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,"Minas Gerais, Brazil",,,,,,,,,,,,,,,,,,,,,,,,,,,,
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,"Parana, Brazil",,,,,,,,,,,,,,,,,,,,,,,,,,,,
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,"Santa Catarina, Brazil",,,,,,,,,,,,,,,,,,,,,,,,,,,,
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,"Rio Grande do Sul, Brazil",,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Campaign,Campaign Type,Campaign Status,Budget,EU political ads,Bid Strategy Type,Networks,Languages,Ad Group,Ad Group Status,Max CPC,Keyword,Criterion Type,Ad Type,Final URL,Path 1,Path 2,Headline 1,Headline 2,Headline 3,Headline 4,Headline 5,Headline 6,Headline 7,Headline 8,Headline 9,Headline 10,Headline 11,Headline 12,Headline 13,Headline 14,Headline 15,Description 1,Description 2,Description 3,Description 4
+Pesquisa · Vacuette e Testes Rápidos · Labs,Search,Paused,20,Doesn't have EU political ads,Maximize clicks,Google search,Portuguese,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,,,,grátis,Campaign negative phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,,,,gratis,Campaign negative phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,,,,sus,Campaign negative phrase,,,,,,,,,,,,,,,,,,,,,,,
@@ -76,7 +70,7 @@ Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,,,,hemograma,Campaign nega
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,,,,glicemia,Campaign negative phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,,,,jejum,Campaign negative phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,,,,laudo,Campaign negative phrase,,,,,,,,,,,,,,,,,,,,,,,
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Tubos Vacuette,Enabled,1.60,,,,,,,,,,,,,,,,,,,,,,,,,
+Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Tubos Vacuette,Enabled,"1,60",,,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Tubos Vacuette,,,tubo vacuette,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Tubos Vacuette,,,tubos vacuette,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Tubos Vacuette,,,tubo de coleta vacuette,Phrase,,,,,,,,,,,,,,,,,,,,,,,
@@ -114,7 +108,7 @@ Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Tubos Vacuette,,,454085,Ex
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Tubos Vacuette,,,454091,Exact,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Tubos Vacuette,,,454030,Exact,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Tubos Vacuette,,,,,Responsive search ad,https://lojasullabrj.com.br/marca/vacuette.html,tubos,vacuette,Tubos Vacuette Preço Atacado,"Tubo EDTA Vacuette R$ 0,46/un",Tubos Greiner Vacuette,Rack c/ 50 Tubos Vacuette,Tampa de Rosca Exclusiva,Perfeita para Transporte,"EDTA, Soro, Citrato e Glicose",Preço Exclusivo do Site,SULLAB · 40 Anos de Mercado,NF-e em Todo Pedido,Envio em 24h p/ Todo o Brasil,Desconto no Pix,Compra Direta no Site,Distribuidor para Laboratório,,"Tubos Greiner Vacuette a partir de R$ 0,46 por tubo. Compre direto no site com NF-e.","EDTA, soro com gel, citrato, glicose e heparina. Rack com 50 tubos. Envio em 24h.","Tampa de rosca exclusiva Vacuette, que não solta no transporte. Desconto no Pix.",Distribuidora há 40 anos. Frete grátis no mix tubos + testes rápidos.
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Agulhas Vacuette,Enabled,1.40,,,,,,,,,,,,,,,,,,,,,,,,,
+Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Agulhas Vacuette,Enabled,"1,40",,,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Agulhas Vacuette,,,agulha vacuette,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Agulhas Vacuette,,,agulhas vacuette,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Agulhas Vacuette,,,agulha múltipla vacuette,Phrase,,,,,,,,,,,,,,,,,,,,,,,
@@ -128,7 +122,7 @@ Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Agulhas Vacuette,,,"agulha
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Agulhas Vacuette,,,450072,Exact,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Agulhas Vacuette,,,450071,Exact,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Agulhas Vacuette,,,,,Responsive search ad,https://lojasullabrj.com.br/categoria/agulhas.html,agulhas,vacuette,"Agulha Vacuette R$ 0,66/un",Agulha Múltipla Vacuette,Caixa c/ 100 Agulhas,21G e 22G Trifacetada,Agulha p/ Coleta a Vácuo,Preço Exclusivo do Site,SULLAB · 40 Anos de Mercado,NF-e em Todo Pedido,Envio em 24h p/ Todo o Brasil,Desconto no Pix,Compra Direta no Site,Distribuidor para Laboratório,,,,"Agulha múltipla Vacuette 21G e 22G, trifacetada e siliconada. Caixa com 100.","R$ 0,66 por agulha. Compre direto no site com NF-e e envio em 24h.",Distribuidora há 40 anos. Desconto no Pix e frete grátis no mix com testes.,"Compre direto no site: preço exclusivo, NF-e em todo pedido e envio para o Brasil."
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido Dengue,Enabled,1.50,,,,,,,,,,,,,,,,,,,,,,,,,
+Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido Dengue,Enabled,"1,50",,,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido Dengue,,,teste rápido dengue,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido Dengue,,,teste rapido dengue,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido Dengue,,,teste rápido dengue ns1,Phrase,,,,,,,,,,,,,,,,,,,,,,,
@@ -141,7 +135,7 @@ Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido Dengue,,,tes
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido Dengue,,,kit teste rápido dengue,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido Dengue,,,teste rápido dengue preço,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido Dengue,,,,,Responsive search ad,https://lojasullabrj.com.br/categoria/testes-rapidos.html,testes,dengue,"Teste Rápido Dengue R$ 4,99",Dengue NS1 e IgG/IgM,Combo NS1 + IgG/IgM,Caixa com 50 Testes,Com Registro ANVISA,Uso Profissional,SULLAB · 40 Anos de Mercado,NF-e em Todo Pedido,Envio em 24h p/ Todo o Brasil,Desconto no Pix,Compra Direta no Site,Distribuidor para Laboratório,,,,"Teste rápido dengue NS1 ou IgG/IgM por R$ 4,99 o teste. Caixa com 50, registro ANVISA.",Combo NS1 + IgG/IgM no mesmo teste. Compre no site com NF-e e envio em 24h.,Distribuidora há 40 anos. Desconto no Pix e frete grátis no mix com tubos.,"Compre direto no site: preço exclusivo, NF-e em todo pedido e envio para o Brasil."
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido COVID e VSR,Enabled,1.30,,,,,,,,,,,,,,,,,,,,,,,,,
+Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido COVID e VSR,Enabled,"1,30",,,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido COVID e VSR,,,teste rápido covid antígeno,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido COVID e VSR,,,teste rápido covid caixa,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido COVID e VSR,,,teste rápido covid atacado,Phrase,,,,,,,,,,,,,,,,,,,,,,,
@@ -151,7 +145,7 @@ Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido COVID e VSR,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido COVID e VSR,,,teste rápido vírus sincicial respiratório,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido COVID e VSR,,,teste rápido rsv,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido COVID e VSR,,,,,Responsive search ad,https://lojasullabrj.com.br/categoria/testes-rapidos.html,testes,covid-vsr,"Teste COVID R$ 4,00 o Teste",Antígeno COVID-19 Cassete,Teste Rápido VSR / RSV,Caixa com 25 Testes,Com Registro ANVISA,Uso Profissional,SULLAB · 40 Anos de Mercado,NF-e em Todo Pedido,Envio em 24h p/ Todo o Brasil,Desconto no Pix,Compra Direta no Site,Distribuidor para Laboratório,,,,"Teste rápido antígeno COVID-19 por R$ 4,00 o teste. Caixa com 25, registro ANVISA.",Teste rápido VSR (vírus sincicial respiratório). Compre no site com NF-e.,"Distribuidora há 40 anos. Envio em 24h, desconto no Pix e frete grátis no mix.","Compre direto no site: preço exclusivo, NF-e em todo pedido e envio para o Brasil."
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido HBsAg,Enabled,1.30,,,,,,,,,,,,,,,,,,,,,,,,,
+Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido HBsAg,Enabled,"1,30",,,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido HBsAg,,,teste rápido hbsag,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido HBsAg,,,teste rapido hbsag,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido HBsAg,,,teste rápido hepatite b,Phrase,,,,,,,,,,,,,,,,,,,,,,,
@@ -159,7 +153,7 @@ Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido HBsAg,,,test
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido HBsAg,,,teste hbsag tira,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido HBsAg,,,comprar teste rápido hepatite b,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Teste Rápido HBsAg,,,,,Responsive search ad,https://lojasullabrj.com.br/categoria/testes-rapidos.html,testes,hbsag,"Teste HBsAg R$ 1,68 o Teste",Teste Rápido Hepatite B,Tira ou Cassete,Caixa com 50 Testes,Com Registro ANVISA,Uso Profissional,SULLAB · 40 Anos de Mercado,NF-e em Todo Pedido,Envio em 24h p/ Todo o Brasil,Desconto no Pix,Compra Direta no Site,Distribuidor para Laboratório,,,,"Teste rápido HBsAg (hepatite B) a partir de R$ 1,68 o teste. Caixa com 50.","Tira ou cassete, registro ANVISA. Compre no site com NF-e e envio em 24h.",Distribuidora há 40 anos. Desconto no Pix e frete grátis no mix com tubos.,"Compre direto no site: preço exclusivo, NF-e em todo pedido e envio para o Brasil."
-Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Testes Rápidos Atacado,Enabled,1.20,,,,,,,,,,,,,,,,,,,,,,,,,
+Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Testes Rápidos Atacado,Enabled,"1,20",,,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Testes Rápidos Atacado,,,testes rápidos atacado,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Testes Rápidos Atacado,,,teste rápido para laboratório,Phrase,,,,,,,,,,,,,,,,,,,,,,,
 Pesquisa · Vacuette e Testes Rápidos · Labs,,,,,,,,Testes Rápidos Atacado,,,distribuidor de testes rápidos,Phrase,,,,,,,,,,,,,,,,,,,,,,,
