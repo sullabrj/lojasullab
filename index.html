@@ -11,17 +11,6 @@
 <meta name="theme-color" content="#1f3c73">
 <meta name="author" content="SULLAB Comércio de Produtos Hospitalares LTDA">
 <link rel="canonical" href="https://lojasullabrj.com.br/">
-<link rel="preconnect" href="https://medixbrasil.s3.us-west-2.amazonaws.com" crossorigin>
-<link rel="preconnect" href="https://images.tcdn.com.br" crossorigin>
-<link rel="preconnect" href="https://www.newprov.com.br" crossorigin>
-<link rel="preconnect" href="https://http2.mlstatic.com" crossorigin>
-<link rel="dns-prefetch" href="https://medixbrasil.s3.us-west-2.amazonaws.com">
-<link rel="dns-prefetch" href="https://images.tcdn.com.br">
-<link rel="dns-prefetch" href="https://www.newprov.com.br">
-<link rel="dns-prefetch" href="https://http2.mlstatic.com">
-<link rel="dns-prefetch" href="https://bemmaisclean.com.br">
-<link rel="dns-prefetch" href="https://www.cralplast.com.br">
-<link rel="dns-prefetch" href="https://ceconsp.com.br">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SULLAB">
 <meta property="og:locale" content="pt_BR">
@@ -983,9 +972,6 @@ document.addEventListener('DOMContentLoaded',function(){try{
  </div>
 </div>
 
-<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 window.OFERTAS=[
   {c:'TR 017-1 RP',tag:'🏆 Menor preço',txt:'R$ 4,00 por teste · COVID-19 antígeno · pronta entrega',de:146.62},
@@ -1537,7 +1523,7 @@ function cotarFreteLoja(){if(window._fBusy)return;var cep=soDig(val('ckCep'));va
 function aplicarCupom(){var c=(val('ckCupom')||'').toUpperCase().replace(/\s/g,'');var msg=document.getElementById('cupomMsg');if(!c){cupomPct=0;cupomCod='';if(msg)msg.textContent='';ckTotais();return;}if(CUPONS[c]){cupomPct=CUPONS[c];cupomCod=c;if(msg){msg.style.color='var(--green-d)';msg.innerHTML='✓ Cupom '+c+' aplicado — '+Math.round(cupomPct*100)+'% OFF.';}}else{cupomPct=0;cupomCod='';if(msg){msg.style.color='#b3261e';msg.textContent='Cupom inválido.';}}ckTotais();}
 function _freteBarCart(){return '';}
 function ckTotais(){try{var _ok=boletoOk();var _pb=document.getElementById('pgBoleto');if(_pb){_pb.style.opacity=_ok?'1':'.5';_pb.querySelector('input').disabled=!_ok;}if(!_ok&&PG==='boleto'){PG='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value==='pix');});}}catch(e){}var t=CART.reduce(function(s,x){return s+precoItem(x)*x.qty*fatorPg(x.c);},0)*(1-cupomPct)+(freteSelLoja||0);var n=CART.reduce(function(s,x){return s+x.qty;},0);document.getElementById('ckTot').textContent=brl(t);document.getElementById('ckQt').textContent='('+n+' '+(n===1?'item':'itens')+(PG==='pix'?' · desconto Pix':'')+(cupomPct?(' · −'+Math.round(cupomPct*100)+'%'):'')+(freteSelLoja?(' · frete '+brl(freteSelLoja)):'')+')';}
-function abrirCheckout(){if(!CART.length){return;}if(faltaTubo()>0){abrirCarrinho();return;}fecharCarrinho();preencherFicha();ckModo();setPg(PG);cupomPct=0;cupomCod='';zerarFrete();try{window._freteReset&&window._freteReset();}catch(e){}var cc=document.getElementById('ckCupom');if(cc)cc.value='';var cm=document.getElementById('cupomMsg');if(cm)cm.textContent='';renderFrete();ckTotais();document.getElementById('ckErr').style.display='none';document.getElementById('cko').classList.add('on');}
+function abrirCheckout(){try{sullabFirebase();}catch(_e){}if(!CART.length){return;}if(faltaTubo()>0){abrirCarrinho();return;}fecharCarrinho();preencherFicha();ckModo();setPg(PG);cupomPct=0;cupomCod='';zerarFrete();try{window._freteReset&&window._freteReset();}catch(e){}var cc=document.getElementById('ckCupom');if(cc)cc.value='';var cm=document.getElementById('cupomMsg');if(cm)cm.textContent='';renderFrete();ckTotais();document.getElementById('ckErr').style.display='none';document.getElementById('cko').classList.add('on');}
 function fecharCheckout(){document.getElementById('cko').classList.remove('on');}
 function fichaSalva(){try{return JSON.parse(localStorage.getItem('sullab_ficha')||'{}');}catch(e){return {};}}
 function preencherFicha(){var f=fichaSalva();var map={ckDoc:'doc',ckNome:'nome',ckEmail:'email',ckTel:'tel',ckCep:'cep',ckNum:'num',ckCompl:'compl',ckLog:'log',ckBairro:'bairro',ckCidade:'cidade',ckUf:'uf'};for(var id in map){if(f[map[id]])document.getElementById(id).value=f[map[id]];}if(f.doct)setDoc(f.doct);}
@@ -1583,10 +1569,18 @@ function pagarMP(){
 
 var FBCFG={apiKey:"AIzaSyBoIPsSsAAg0dPsd8rmwNmuXz7SQHwQw68",authDomain:"sullab.firebaseapp.com",projectId:"sullab",storageBucket:"sullab.firebasestorage.app",messagingSenderId:"882002573877",appId:"1:882002573877:web:2808e29ca74e05a5cf0f7c"};
 var AUTH=null,DB=null,ACCDOC='cnpj';window.__user=null;window.__profile=null;
-window.addEventListener('DOMContentLoaded',function(){try{if(typeof firebase==='undefined')return;firebase.initializeApp(FBCFG);AUTH=firebase.auth();DB=firebase.firestore();AUTH.onAuthStateChanged(function(u){window.__user=u||null;if(u){CNPJ=true;DB.collection('clientes').doc(u.uid).get().then(function(d){if(d.exists){window.__profile=d.data();perfilParaFicha(d.data());}atualizarConta();}).catch(function(){});}else{window.__profile=null;}atualizarConta();try{render();atualizarCart();}catch(e){}});}catch(e){}});
+var _FB={st:0,cbs:[]};
+function sullabFirebase(cb){if(cb)_FB.cbs.push(cb);if(_FB.st===2||_FB.st===3){_fbFim();return;}if(_FB.st===1)return;_FB.st=1;
+  var V='https://www.gstatic.com/firebasejs/10.12.2/firebase-',ld=function(n){return new Promise(function(ok,er){var s=document.createElement('script');s.src=V+n+'-compat.js';s.async=true;s.onload=ok;s.onerror=er;document.head.appendChild(s);});};
+  ld('app').then(function(){return Promise.all([ld('auth'),ld('firestore')]);}).then(function(){try{firebase.initializeApp(FBCFG);AUTH=firebase.auth();DB=firebase.firestore();AUTH.onAuthStateChanged(function(u){window.__user=u||null;try{if(u)localStorage.setItem('sullab_fb','1');else localStorage.removeItem('sullab_fb');}catch(_e){}if(u){CNPJ=true;DB.collection('clientes').doc(u.uid).get().then(function(d){if(d.exists){window.__profile=d.data();perfilParaFicha(d.data());}atualizarConta();}).catch(function(){});}else{window.__profile=null;}atualizarConta();try{render();atualizarCart();}catch(e){}});_FB.st=2;}catch(e){_FB.st=3;}_fbFim();}).catch(function(){_FB.st=3;_fbFim();});}
+function _fbFim(){var a=_FB.cbs;_FB.cbs=[];a.forEach(function(f){try{f();}catch(e){}});}
+function _fbTenta(fn){if(AUTH||_FB.st===3)return false;sullabFirebase(fn);return true;}
+(function(){var go=function(){setTimeout(function(){sullabFirebase();},1500);},on=false;try{on=!!localStorage.getItem('sullab_fb');}catch(e){}
+  var dep=function(){if(document.readyState==='complete')go();else window.addEventListener('load',go);};
+  if(on)return dep();try{if(indexedDB&&indexedDB.databases)indexedDB.databases().then(function(l){if((l||[]).some(function(d){return d&&d.name==='firebaseLocalStorageDb';}))dep();}).catch(function(){});}catch(e){}})();
 function fbErr(e){var c=((e&&e.code)||'')+'';if(c.indexOf('email-already')>=0)return 'Este e-mail já tem conta. Tente entrar.';if(c.indexOf('wrong-password')>=0||c.indexOf('invalid-credential')>=0)return 'E-mail ou senha incorretos.';if(c.indexOf('user-not-found')>=0)return 'Não encontramos uma conta com esse e-mail.';if(c.indexOf('weak-password')>=0)return 'A senha precisa de ao menos 6 caracteres.';if(c.indexOf('invalid-email')>=0)return 'E-mail inválido.';if(c.indexOf('too-many')>=0)return 'Muitas tentativas. Aguarde um pouco.';if(c.indexOf('unauthorized-domain')>=0||c.indexOf('network')>=0)return 'Login só funciona na loja publicada — no preview local o Firebase bloqueia o domínio.';return (e&&e.message)||'Não foi possível concluir agora.';}
 function perfilParaFicha(p){try{var f=fichaSalva();f.nome=p.razao||f.nome;f.doc=p.cnpj||f.doc;f.doct=p.docTipo||f.doct;f.tel=p.telefone||f.tel;f.email=p.email||f.email;localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}}
-function abrirConta(tab){var s=document.getElementById('accSenha');if(s)s.style.display='none';atualizarConta();setAccTab(tab==='reg'?'reg':'login');document.getElementById('accErr').style.display='none';document.getElementById('acc').classList.add('on');if(window.__user)carregarMeusPedidos(false);}
+function abrirConta(tab){sullabFirebase(function(){if(window.__user)carregarMeusPedidos(false);});var s=document.getElementById('accSenha');if(s)s.style.display='none';atualizarConta();setAccTab(tab==='reg'?'reg':'login');document.getElementById('accErr').style.display='none';document.getElementById('acc').classList.add('on');if(window.__user)carregarMeusPedidos(false);}
 function fecharConta(){document.getElementById('acc').classList.remove('on');}
 function setAccTab(t){document.getElementById('tabLogin').classList.toggle('on',t==='login');document.getElementById('tabReg').classList.toggle('on',t==='reg');document.getElementById('paneLogin').style.display=t==='login'?'':'none';document.getElementById('paneReg').style.display=t==='reg'?'':'none';}
 function setAccDoc(d){ACCDOC=d;document.getElementById('rgCnpj').classList.toggle('on',d==='cnpj');document.getElementById('rgCpf').classList.toggle('on',d==='cpf');document.getElementById('rgLbDoc').textContent=d==='cnpj'?'CNPJ':'CPF';document.getElementById('rgLbNome').textContent=d==='cnpj'?'Nome fantasia':'Nome completo';document.getElementById('rgDoc').placeholder=d==='cnpj'?'00.000.000/0000-00':'000.000.000-00';}
@@ -1597,13 +1591,13 @@ function atualizarConta(){var u=window.__user;var inb=document.getElementById('a
   var ut=document.getElementById('accUtil');if(ut)ut.textContent=u?('Olá, '+_primeiroNome()):'Entrar / Cadastrar CNPJ';}
 function _acPost(body){return fetch(SHEET_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(function(r){return r.json();});}
 function _acH(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function fbLogin(){var id=val('liEmail'),pass=document.getElementById('liPass').value;if(!id||!pass)return accErro('Informe e-mail (ou CPF/CNPJ) e senha.');if(!AUTH)return accErro('Login disponível na loja publicada.');
+function fbLogin(){var id=val('liEmail'),pass=document.getElementById('liPass').value;if(!id||!pass)return accErro('Informe e-mail (ou CPF/CNPJ) e senha.');if(!AUTH){if(_fbTenta(fbLogin))return accErro('Conectando…');return accErro('Login disponível na loja publicada.');}
   var entrar=function(email){return AUTH.signInWithEmailAndPassword(email,pass).then(function(){document.getElementById('accErr').style.display='none';atualizarConta();carregarMeusPedidos(true);}).catch(function(e){accErro(fbErr(e));});};
   if(id.indexOf('@')>=0)return entrar(id);
   var dig=soDig(id);if(dig.length!==11&&dig.length!==14)return accErro('Digite um e-mail ou um CPF/CNPJ válido.');
   accErro('Entrando…');
   _acPost({action:'loginDoc',doc:dig,senha:pass}).then(function(d){if(d&&d.ok&&d.email)return entrar(d.email);accErro((d&&d.erro)||'CPF/CNPJ ou senha incorretos.');}).catch(function(){accErro('Não foi possível entrar agora. Tente com o e-mail.');});}
-function fbReset(){var email=val('liEmail');if(!/.+@.+\..+/.test(email))return accErro('Para receber o link, digite o seu e-mail (não o CPF/CNPJ) no campo acima.');if(!AUTH)return accErro('Disponível na loja publicada.');AUTH.sendPasswordResetEmail(email).then(function(){accErro('Enviamos um link de redefinição para '+email+'.');}).catch(function(e){accErro(fbErr(e));});}
+function fbReset(){var email=val('liEmail');if(!/.+@.+\..+/.test(email))return accErro('Para receber o link, digite o seu e-mail (não o CPF/CNPJ) no campo acima.');if(!AUTH){if(_fbTenta(fbReset))return;return accErro('Disponível na loja publicada.');}AUTH.sendPasswordResetEmail(email).then(function(){accErro('Enviamos um link de redefinição para '+email+'.');}).catch(function(e){accErro(fbErr(e));});}
 function fbLogout(){_MP=null;if(AUTH)AUTH.signOut().then(function(){atualizarConta();fecharConta();});}
 function fbCadastro(){var razao=val('rgNome'),docv=val('rgDoc'),email=val('rgEmail'),tel=val('rgTel'),pass=document.getElementById('rgPass').value;
   if(!razao)return accErro('Informe o '+(ACCDOC==='cnpj'?'nome fantasia':'nome')+'.');
@@ -1611,7 +1605,7 @@ function fbCadastro(){var razao=val('rgNome'),docv=val('rgDoc'),email=val('rgEma
   if(!/.+@.+\..+/.test(email))return accErro('E-mail inválido.');
   if(soDig(tel).length<10)return accErro('Telefone com DDD.');
   if(pass.length<6)return accErro('A senha precisa de ao menos 6 caracteres.');
-  if(!AUTH||!DB)return accErro('Cadastro disponível na loja publicada (o preview local não conecta o Firebase).');
+  if(!AUTH||!DB){if(_fbTenta(fbCadastro))return accErro('Conectando…');return accErro('Cadastro disponível na loja publicada (o preview local não conecta o Firebase).');}
   AUTH.createUserWithEmailAndPassword(email,pass).then(function(cred){var u=cred.user;var prof={razao:razao,cnpj:docv,docTipo:ACCDOC,telefone:tel,email:email,criadoEm:Date.now()};window.__profile=prof;try{sullabEvent('conta_cadastro',{razao:razao,doc:docv,docTipo:ACCDOC,telefone:tel,email:email});}catch(_e){}perfilParaFicha(prof);return DB.collection('clientes').doc(u.uid).set(prof,{merge:true});}).then(function(){fecharConta();}).catch(function(e){accErro(fbErr(e));});}
 
 var _MP=null;
@@ -1642,13 +1636,14 @@ function baixarDanfe(ped,btn){var u=window.__user;if(!u)return;var t=btn?btn.tex
     if(btn){btn.disabled=false;btn.textContent=t;}
   }).catch(function(){if(btn){btn.disabled=false;btn.textContent='Não foi possível baixar agora — tente de novo';}});}
 var _DS_TOKEN='';
-function abrirDefinirSenha(tok){_DS_TOKEN=tok;document.getElementById('accIn').style.display='none';document.getElementById('accOut').style.display='none';document.getElementById('accSenha').style.display='';document.getElementById('dsErr').style.display='none';document.getElementById('acc').classList.add('on');}
+function abrirDefinirSenha(tok){sullabFirebase();_DS_TOKEN=tok;document.getElementById('accIn').style.display='none';document.getElementById('accOut').style.display='none';document.getElementById('accSenha').style.display='';document.getElementById('dsErr').style.display='none';document.getElementById('acc').classList.add('on');}
 function definirSenhaSite(){var p1=document.getElementById('dsPass').value,p2=document.getElementById('dsPass2').value,er=document.getElementById('dsErr');var msg=function(m){er.textContent=m;er.style.display='block';};
   if(p1.length<6)return msg('A senha precisa de ao menos 6 caracteres.');if(p1!==p2)return msg('As duas senhas não são iguais.');
   var b=document.getElementById('dsBtn');b.disabled=true;b.textContent='Salvando…';
   _acPost({action:'definirSenha',token:_DS_TOKEN,senha:p1}).then(function(d){
     if(!d||!d.ok){b.disabled=false;b.textContent='Salvar senha e entrar';return msg((d&&d.erro)||'Não foi possível salvar agora.');}
     try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+    if(!AUTH&&_FB.st===1){return new Promise(function(ok){sullabFirebase(ok);}).then(function(){if(!AUTH){b.disabled=false;b.textContent='Salvar senha e entrar';return msg('Senha criada! Entre com seu e-mail e a nova senha.');}return AUTH.signInWithEmailAndPassword(d.email,p1).then(function(){document.getElementById('accSenha').style.display='none';b.disabled=false;b.textContent='Salvar senha e entrar';atualizarConta();carregarMeusPedidos(true);});});}
     if(!AUTH){b.disabled=false;b.textContent='Salvar senha e entrar';return msg('Senha criada! Entre com seu e-mail e a nova senha.');}
     return AUTH.signInWithEmailAndPassword(d.email,p1).then(function(){document.getElementById('accSenha').style.display='none';b.disabled=false;b.textContent='Salvar senha e entrar';atualizarConta();carregarMeusPedidos(true);});
   }).catch(function(){b.disabled=false;b.textContent='Salvar senha e entrar';msg('Erro de conexão. Tente de novo.');});}
