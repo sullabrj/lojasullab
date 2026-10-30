@@ -32,32 +32,26 @@ a.btn{display:inline-block;background:#2f9e63;color:#fff;text-decoration:none;fo
 (function(){
   var seg = decodeURIComponent((location.pathname||'').toLowerCase()).replace(/^\/+|\/+$/g,'');
 
-  // marcas antigas que apareciam como prefixo de caminho (ex.: /descarpack/seringas/)
   var MARCAS = ['descarpack','cral','cralplast','biocon','uniqmed','kasvi','newprov','labtest','bioclin','vacuette','greiner','firstlab','olen','prolab','global','medix','bd','injex','labor import','laborimport'];
 
-  // pega o "miolo" pra virar termo de busca
   var termo = seg;
 
-  // 1) /produtos/<slug>/...  -> usa o slug do produto
   var mp = seg.match(/produtos?\/([^\/]+)/);
   if (mp) {
     termo = mp[1];
   } else {
-    // 2) /<marca>/<categoria>/  -> usa a categoria (parte mais útil pra busca)
     var parts = seg.split('/').filter(Boolean);
     if (parts.length >= 2 && MARCAS.indexOf(parts[0]) !== -1) {
       termo = parts[1];
     } else {
-      // 3) caminho simples: usa a última parte significativa
       termo = parts[parts.length - 1] || seg;
     }
   }
 
-  // limpa o termo: tira hifens, "1" no fim (coleções antigas), tamanhos/qtd e códigos
   termo = termo
     .replace(/-/g,' ')
     .replace(/\b(c\/?\d+|pacote com \d+|\d+ml|\d+un|\d+und|und|ref|cod|com \d+|\d{3,})\b/gi,' ')
-    .replace(/(\w)1$/,'$1')          // "swabs1" -> "swabs", "testes-rapidos1" -> "testes rapidos"
+    .replace(/(\w)1$/,'$1')          
     .replace(/\s+/g,' ')
     .trim();
 

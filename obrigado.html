@@ -88,11 +88,8 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
     vSta.textContent=staLabel; vSta.style.color=staColor;
   }
 
-  /* 26/10/2026: dados da compra guardados no checkout (valor com desconto do Pix + frete, itens, telefone) */
   var _lp=null;try{_lp=JSON.parse(localStorage.getItem('sullab_last_purchase')||'null');if(_lp&&(Date.now()-_lp.ts)>3*86400000)_lp=null;}catch(e){}
-  /* pago ou Pix/boleto em processamento: cancela o lembrete de carrinho abandonado no WhatsApp */
   if(/approv|success|paid|pend|process|in_process|authorized/.test(status)&&_lp&&_lp.tel){
-    /* Pix/boleto pendente também esvazia o carrinho: o pedido já foi feito (26/10/2026) */
     try{if(!extRef||_lp.ped===extRef)localStorage.removeItem('sullab_cart');}catch(e){}
     try{var _b=JSON.stringify({tel:_lp.tel,pedido:extRef||_lp.ped||''});var _u='https://whatsapp-sullab-production.up.railway.app/site/pedido-pago';
       if(!(navigator.sendBeacon&&navigator.sendBeacon(_u,new Blob([_b],{type:'text/plain'}))))fetch(_u,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain'},body:_b});}catch(e){}
@@ -101,18 +98,15 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
     var _tid=extRef||(_lp&&_lp.ped)||payId||('SLB-'+Date.now());
     var _v=parseFloat((qp('transaction_amount')||qp('total')||'').replace(',','.'))||0;
     if(!_v&&_lp&&_lp.v&&(!extRef||_lp.ped===extRef))_v=_lp.v;
-    /* uma conversão por pedido, mesmo se a página for recarregada */
     var _env={};try{_env=JSON.parse(localStorage.getItem('sullab_purchase_enviadas')||'{}');}catch(e){}
     if(!_env[_tid]&&typeof gtag==='function'){
       var _p={transaction_id:_tid,value:_v||undefined,currency:'BRL'};
       if(_lp&&_lp.items&&(!extRef||_lp.ped===extRef)){_p.items=_lp.items;if(_lp.frete)_p.shipping=_lp.frete;}
       gtag('event','purchase',_p);
-      /* 28/10/2026: conversão nativa do Google Ads (Compra no site — tag do Google), principal para lances */
       try{gtag('config','AW-11390766577');gtag('event','conversion',{send_to:'AW-11390766577/zT6SCKz-1KwdEPGbxbcq',value:_v||1,currency:'BRL',transaction_id:_tid});}catch(e){}
       try{if(window.clarity)clarity('event','purchase');}catch(e){}
       _env[_tid]=Date.now();try{localStorage.setItem('sullab_purchase_enviadas',JSON.stringify(_env));}catch(e){}
     }
-    /* pedido pago: esvazia o carrinho para não aparecer o aviso "você deixou itens no carrinho" */
     try{if(!extRef||!_lp||_lp.ped===extRef)localStorage.removeItem('sullab_cart');}catch(e){}
   }catch(e){}
     set('ok','✓','Pagamento aprovado!','Recebemos seu pagamento. Seu pedido já está sendo processado — você vai receber a confirmação e a nota fiscal por e-mail.','Aprovado','#1f8a4c');
@@ -124,20 +118,17 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
     set('ok','✓','Pedido recebido','Recebemos seu pedido. Em caso de dúvida sobre o pagamento, fale com a gente pelo WhatsApp.','Recebido','#1f3a5f');
   }
 
-  // detalhes
   var any=false, box=document.getElementById('detbox');
   if(extRef){document.getElementById('vPed').textContent=extRef;document.getElementById('rPed').style.display='flex';any=true;}
   if(payId){document.getElementById('vPay').textContent=payId;document.getElementById('rPay').style.display='flex';any=true;}
   box.style.display='block';
 
-  // WhatsApp com a mensagem certa
   var msg='Olá! Acabei de finalizar um pedido no site da SULLAB';
   if(extRef) msg+=' (pedido '+extRef+')';
   if(payId)  msg+=' — pagamento '+payId;
   msg+='. Pode confirmar pra mim?';
   document.getElementById('waBtn').href='https://wa.me/5524988383100?text='+encodeURIComponent(msg);
 
-  // === Boleto: opção de enviar comprovante para acelerar a liberação ===
   var pmId=(qp('payment_method_id')||qp('payment_type_id')||'').toLowerCase();
   var ehBoleto = /bol|ticket|bradesco|pec/.test(pmId) || /pend|process|in_process/.test(status);
   if(ehBoleto){
