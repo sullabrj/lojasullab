@@ -1,0 +1,24 @@
+name: Fotos CRAL (quadradas, no próprio site)
+on:
+  push:
+    branches: [main]
+    paths: ['_ferramentas/fotos_cral.py']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fotos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install pillow
+      - name: Baixa, enquadra e troca os links
+        run: python3 _ferramentas/fotos_cral.py
+      - name: Publica
+        run: |
+          git config user.name "sullab-fotos-cral"
+          git config user.email "comercial@sullabrj.com.br"
+          git add -A
+          if git diff --cached --quiet; then echo "sem mudança"; exit 0; fi
+          git commit -m "Fotos CRAL: vidraria e microscópios quadrados no padrão do site"
+          git pull --rebase && git push
