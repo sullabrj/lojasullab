@@ -71,12 +71,13 @@ tr:nth-child(even) td{background:#f7fafd}
 </div>
 <script>
 var EP='https://script.google.com/macros/s/AKfycbyPKW71fCDUcjZiID5AicTox1a_inSgYqd-4fXHxzsV9ynX1xrIx5mwf4YIGx5lDpL_Lw/exec';
+var SULLAB_EVT_TOKEN='sl-2d26d03b37c9301cd7f3ac49';
 function slug(t){return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'').slice(0,10);}
 var LINK='';
 function gerar(){var n=document.getElementById('nm').value.trim(),t=document.getElementById('tl').value.replace(/\D/g,''),e=document.getElementById('em').value.trim(),px=document.getElementById('px').value.trim(),er=document.getElementById('err');er.textContent='';
  if(n.length<3){er.textContent='Informe seu nome.';return;}if(t.length<10){er.textContent='Informe o WhatsApp com DDD.';return;}
  var code=slug(n.split(' ')[0])+t.slice(-4);LINK='https://lojasullabrj.com.br/?ref='+code;
- try{fetch(EP,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'indicador_cadastro',nome:n,tel:t,email:e,pix:px,codigo:code,link:LINK})});}catch(x){}
+ try{fetch(EP,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'indicador_cadastro',nome:n,tel:t,email:e,pix:px,codigo:code,link:LINK,t:SULLAB_EVT_TOKEN})});}catch(x){}
  document.getElementById('lk').textContent=LINK;document.getElementById('res').style.display='block';}
 function copiar(){try{navigator.clipboard.writeText(LINK);}catch(x){prompt('Copie o link:',LINK);}}
 function zap(){window.open('https://wa.me/?text='+encodeURIComponent('Compre material de laboratório com NF-e e Pix 5% de desconto na SULLAB: '+LINK),'_blank');}

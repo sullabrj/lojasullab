@@ -1,4 +1,49 @@
-# Notas do código (comentários retirados do HTML público em 30/10/2026)
+# Notas do código — check-up de 30/10/2026
+
+## Pendências fora do repositório (fazer à mão)
+
+### 1. Apps Script (SHEET_ENDPOINT) precisa validar o campo `t`
+Desde 30/10/2026 o site manda um campo `t` com um token fixo nos POSTs de **eventos** e **indicação** para o Apps Script
+(`https://script.google.com/macros/s/AKfycbyPK…/exec`):
+
+- `sullabEvent(type, extra)` em `index.html` — todos os eventos (carrinho, busca sem resultado, conta_cadastro, etc.);
+- `conv_meta` (sendBeacon depois do pagamento) em `index.html`;
+- `indicador_cadastro` em `indique.html`.
+
+Token atual: `sl-2d26d03b37c9301cd7f3ac49` (constante `SULLAB_EVT_TOKEN`, definida em `index.html` e em `indique.html`).
+
+O que fazer no Apps Script (não está no repositório e não foi alterado):
+```js
+var EVT_TOKEN = 'sl-2d26d03b37c9301cd7f3ac49';
+// no doPost(e), antes de gravar um evento/indicação:
+var b = JSON.parse(e.postData.contents);
+var ehEvento = b.type || b.action === 'conv_meta';
+if (ehEvento && b.t !== EVT_TOKEN) return ContentService.createTextOutput('{"ok":false}');
+```
+Não exigir o token nas ações da área do cliente (`loginDoc`, `meuspedidos`, `danfe`, `verificaremail`, `definirSenha`) nem no
+rastreio por JSONP (`?action=rastreio`): essas chamadas não mandam `t` e já têm a própria validação (idToken/chave).
+O token fica visível no código-fonte do site: ele só barra spam automático genérico, não é senha. Para trocar, mudar
+nos dois arquivos e no Apps Script ao mesmo tempo.
+
+### 2. Programa de indicação: comissão passou de 3% para 5%
+Os textos do site (`index.html`, `indique.html`, `termos.html`) já dizem 5%. O cálculo da comissão não está no
+repositório (é feito na planilha/Apps Script): ajustar lá para 5%.
+
+### 3. Catálogo JSON (SEED e window.PRECOS) — não movido nesta rodada
+Mover `var SEED=[…]` e `window.PRECOS={…}` para `data/catalogo.json` foi avaliado e **não** foi feito:
+- `_ferramentas/atualiza_biolog.py` (Action diária de preços Biolog), `build_pm.py`, `ebram_linha_menor.py` e
+  `adiciona_cral_vidraria.py` leem e reescrevem `window.PRECOS=` / `var SEED=` dentro de `index.html`; o
+  `atualiza_biolog.py` também troca o preço nas entradas `"código": [v, v, null]` do index;
+- o JS da home usa `SEED`, `CATALOG` e `window.PRECOS` de forma síncrona logo no carregamento (boot(), cartões
+  pré-montados, carrinho salvo, deep-links `?orcar=`, `?lista=`, carrinho por link), e os blocos seguintes
+  embrulham funções que dependem disso já estarem prontos.
+Para mover com segurança é preciso: (a) mudar os 4 scripts para ler/gravar `data/catalogo.json`; (b) transformar o
+boot em assíncrono (esperar o fetch) e revisar todos os pontos que leem SEED/PRECOS antes do boot. Ganho estimado:
+~370 KB a menos no HTML da home (o JSON passa a ficar em cache do navegador).
+
+---
+
+# Comentários retirados do HTML público em 30/10/2026
 
 Estes comentários estavam no HTML publicado (visíveis a qualquer visitante com "ver código-fonte"). Foram movidos para cá
 para não expor regras internas (margens, casos de clientes, decisões). O código não mudou: a árvore sintática (AST) de cada

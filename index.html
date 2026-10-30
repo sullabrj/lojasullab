@@ -1479,7 +1479,8 @@ function boletoFaturado(){
 }
 var MP_WORKER='https://sullab-mp.comercial-0a2.workers.dev/';
 var SHEET_ENDPOINT='https://script.google.com/macros/s/AKfycbyPKW71fCDUcjZiID5AicTox1a_inSgYqd-4fXHxzsV9ynX1xrIx5mwf4YIGx5lDpL_Lw/exec';
-function sullabEvent(type,extra){try{var b={type:type},k;for(k in (extra||{}))b[k]=extra[k];fetch(SHEET_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(b)});}catch(e){}}
+var SULLAB_EVT_TOKEN='sl-2d26d03b37c9301cd7f3ac49';
+function sullabEvent(type,extra){try{var b={type:type},k;for(k in (extra||{}))b[k]=extra[k];b.t=SULLAB_EVT_TOKEN;fetch(SHEET_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(b)});}catch(e){}}
 function _itensPedido(){return CART.map(function(x){return {cod:x.c,nome:x.n,q:x.qty,un:precoItem(x)};});}
 function dispararPedido(type,pgto,ficha,pedido){
   if(!CART.length&&!(ficha&&ficha.lista))return;
@@ -1556,7 +1557,7 @@ function pagarMP(){
       gclid:_o.gclid||'',gbraid:_o.gbraid||'',wbraid:_o.wbraid||'',utm_source:_o.utm_source||'',utm_campaign:_o.utm_campaign||'',cid:'',sid:''};
     var _ga=(document.cookie.match(/(?:^|;\s*)_ga=GA\d\.\d\.(\d+\.\d+)/)||[])[1];if(_ga)_cm.cid=_ga;
     var _gs=(document.cookie.match(/(?:^|;\s*)_ga_RK2PX868MS=GS\d\.\d\.s?(\d+)/)||[])[1];if(_gs)_cm.sid=_gs;
-    var _cmb=JSON.stringify(_cm);
+    _cm.t=SULLAB_EVT_TOKEN;var _cmb=JSON.stringify(_cm);
     if(!(navigator.sendBeacon&&navigator.sendBeacon(SHEET_ENDPOINT,new Blob([_cmb],{type:'text/plain;charset=utf-8'}))))fetch(SHEET_ENDPOINT,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:_cmb});
   }catch(e){}
   dispararPedido('pedido_mp',PG,f,pedido);
