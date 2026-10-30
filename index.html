@@ -614,6 +614,59 @@ document.addEventListener('DOMContentLoaded',function(){try{
  body.mHome #grid,body.mHome #moreWrap{display:none!important}
 }
 </style>
+<style id="vendaCss">
+.unl{font-size:12.5px;color:#334155;font-weight:600;margin-top:1px;line-height:1.3}.unl b{color:#0f3d6e;font-weight:800}.unl span{font-weight:500;color:#566677}.pixl{margin-top:2px;font-size:12px;color:#14653b;font-weight:600;line-height:1.3}.pixl b{font-weight:800}.pixl span{display:inline-block;margin-left:4px;background:#e8f6ee;color:#14653b;border-radius:6px;padding:1px 6px;font-size:11px;font-weight:800}
+.pixl.big{display:block;margin-top:8px;background:#e8f6ee;border:1px solid #bfe5cc;border-radius:10px;padding:8px 11px;font-size:13px}
+.pixbox{display:flex;gap:9px;align-items:flex-start;background:#e8f6ee;border:1px solid #bfe5cc;color:#14653b;border-radius:10px;padding:9px 11px;margin:6px 0 4px;font-size:13px;line-height:1.35}.pixbox small{display:block;color:#3d6a53;font-size:11.5px;margin-top:2px}
+.gnudge{border:1.5px solid #2f9e63!important;background:#f4fbf7!important}.gbar{height:9px!important;background:#dbe7df!important}.gbar i{background:linear-gradient(90deg,#f0a21a,#2f9e63)!important;transition:width .4s}
+.relbox{margin:14px 0 4px;padding:12px;border:1px solid #d9e3f1;border-radius:12px;background:#f7faff}
+.relbox .rt{font-size:13px;font-weight:800;color:var(--navy);margin:0 0 9px;display:flex;align-items:center;gap:7px}.relbox .rt i{font-style:normal;background:#fff1cf;color:#7a4b00;border-radius:6px;padding:2px 7px;font-size:10.5px;letter-spacing:.3px}
+.rrow{display:flex;gap:10px;align-items:center;padding:7px 0;border-top:1px solid #e4eaf1}.rrow:first-of-type{border-top:0}
+.rrow img{width:46px;height:46px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:3px;flex-shrink:0}
+.rrow .rn{flex:1;min-width:0;font-size:12.5px;font-weight:600;line-height:1.28;color:var(--ink)}.rrow .rn small{display:block;font-weight:800;color:var(--navy);font-size:12.5px;margin-top:2px}
+.rrow button{border:0;background:var(--navy);color:#fff;font-weight:800;font-size:12px;padding:8px 11px;border-radius:8px;cursor:pointer;white-space:nowrap;font-family:inherit}.rrow button:hover{filter:brightness(1.15)}
+.cats .ctile.cph{padding:0;overflow:hidden;flex-direction:column;align-items:stretch;gap:0}
+.cats .ctile.cph .cimg{aspect-ratio:4/3;background:linear-gradient(135deg,#eaf1fb,#dfe9f6);overflow:hidden}.cats .ctile.cph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+.cats .ctile.cph:hover img{transform:scale(1.05)}.cats .ctile.cph .cb{padding:11px 13px 13px}.cats .ctile.cph .cb b{font-size:14px;color:var(--navy)}.cats .ctile.cph .cb small{color:var(--muted)}
+@media(max-width:700px){.cats{grid-template-columns:repeat(2,1fr)}}
+.fgx{margin:12px 0 4px;padding:12px 14px;border:1.5px solid #bfe5cc;background:#f1faf5;border-radius:12px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.fgx .fgt{font-size:14px;color:#14653b;font-weight:800;flex:1 1 260px}.fgx .fgt span{font-weight:600;color:#3d6a53;font-size:13px}
+.fgx .fgin{display:flex;gap:6px;flex:0 1 320px}.fgx input{flex:1;min-width:0;padding:10px 12px;border:1px solid #b9d9c6;border-radius:9px;font-size:15px;font-family:inherit}
+.fgx button{border:0;background:#1f7d4c;color:#fff;font-weight:800;font-size:13px;padding:10px 14px;border-radius:9px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.fgx .fgr{flex:1 1 100%;font-size:14px;color:#14653b;display:none}.fgx .fgr.on{display:block}.fgx .fgr b{font-weight:800}.fgx .fgr small{display:block;color:#3d6a53;font-size:12px;margin-top:2px}
+</style>
+<style id="growthCss">
+.trustp{display:flex;flex-wrap:wrap;gap:6px 8px;margin:12px 0 2px}.trustp span{background:#eaf2ff;color:#1f3a5f;border-radius:18px;padding:5px 11px;font-size:12px;font-weight:700}
+.sv{background:#f1faf5;border:1px solid #bfe5cc;border-radius:10px;padding:10px 11px;margin:10px 0;font-size:12.5px;color:#14653b;line-height:1.35}
+.sv b{font-weight:800}.sv .svr{display:flex;gap:6px;margin-top:7px}.sv input{flex:1;min-width:0;padding:9px 10px;border:1px solid #b9d9c6;border-radius:8px;font-size:14px;font-family:inherit}.sv button{border:0;background:#1f7d4c;color:#fff;font-weight:800;font-size:12.5px;padding:9px 12px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.sv .svlk{display:inline-block;margin-top:7px;color:var(--navy-l,#1f5fa8);font-weight:800;cursor:pointer;text-decoration:underline}
+#retBar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:80;background:#1f4e79;color:#fff;border-radius:14px;padding:11px 14px;display:none;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(16,32,60,.35);max-width:min(560px,94vw);font-size:13.5px}
+#retBar.on{display:flex}#retBar b{font-weight:800}#retBar button{border:0;border-radius:9px;padding:9px 13px;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}#retBar .go{background:#25c06a;color:#fff}#retBar .x{background:transparent;color:#cfe0f3;font-size:18px;padding:4px 8px}
+</style>
+<style id="pedidoDiretoCss">
+.pdl{border:1px solid var(--line,#dfe6ef);border-radius:11px;padding:10px 11px;margin:0 0 8px}
+.pdl.ok{border-color:#bfe5cc;background:#f4fbf7}.pdl.no{border-color:#f1d7a6;background:#fffaf0}
+.pdq{font-size:11.5px;color:var(--muted,#5a6472);margin-bottom:5px}.pdq b{color:var(--ink,#1c2533)}
+.pdr{display:flex;gap:8px;align-items:center}
+.pdr select{flex:1;min-width:0;font-size:13px;padding:8px;border:1px solid var(--line,#dfe6ef);border-radius:8px;background:#fff}
+.pdr input{width:64px;font-size:13px;padding:8px;border:1px solid var(--line,#dfe6ef);border-radius:8px;text-align:center}
+.pdno{font-size:12.5px;color:#7a5a12}.pdno a{color:var(--navy-l,#1f5fa8);font-weight:700;cursor:pointer}
+.pdtot{font-size:12.5px;color:var(--navy,#1f3c73);background:var(--navy-soft,#eef3fa);border-radius:10px;padding:9px 11px;margin:6px 0 12px}
+.pdok{font-size:42px;text-align:center}
+.pdn{font-size:12px;color:#14653b;margin-top:5px;line-height:1.3}.pdl.no .pdn{color:#7a5a12}
+</style>
+<style id="clsCss">
+#grGrid:empty{min-height:500px}#ofGrid:empty{min-height:625px}
+@media(max-width:1000px){#grGrid:empty{min-height:545px}#ofGrid:empty{min-height:690px}}
+@media(max-width:900px){#grGrid:empty{min-height:970px}#ofGrid:empty{min-height:1200px}}
+@media(max-width:700px){#grGrid:empty{min-height:285px}#ofGrid:empty{min-height:340px}}
+#deptNav:empty{min-height:48px}
+.bannerHome .bnr picture{display:block;aspect-ratio:1920/545}
+@media(max-width:1200px){.bannerHome .bnr picture{aspect-ratio:1100/312}}
+@media(max-width:700px){.bannerHome .bnr picture{aspect-ratio:700/545}}
+#pmMain{width:auto;height:auto}
+.ph img{width:auto;height:auto}
+</style>
 </head>
 <body>
 
@@ -630,7 +683,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
 </div></div>
 
 <header><div class="wrap head">
-  <a class="brand" href="#"><img src="/img/logo-sullab.webp" alt="SULLAB · Materiais para laboratório"></a>
+  <a class="brand" href="#"><img src="/img/logo-sullab.webp" alt="SULLAB · Materiais para laboratório" width="240" height="213"></a>
   <div class="search">
     <select id="searchCat" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option></select>
     <input id="searchInput" placeholder="Buscar produto, marca ou código (ex.: tubo EDTA, 454036, COVID)…" onkeydown="if(event.key==='Enter')fazerBusca()">
@@ -657,7 +710,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
 
   <section class="fgx cepTop" id="fgx"><div class="fgt"><span class="cepIc">📍</span><div><b>Informe seu CEP</b><span>Calculamos o frete e o frete grátis da sua região. O CEP fica salvo para todos os seus carrinhos.</span></div></div><div class="fgin"><input id="fgCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" aria-label="Seu CEP" onkeydown="if(event.key==='Enter')fgConsulta()"><button type="button" onclick="fgConsulta()">Calcular frete</button></div><div class="fgr" id="fgRes" aria-live="polite"></div></section>
   <div id="catPanel"><div class="sec" id="catSec"><h2>Compre por categoria</h2><span class="lk" onclick="irProdutos()">Ver tudo →</span></div>
-  <div class="cats" id="catTiles"></div></div>
+  <div class="cats" id="catTiles"><div class="ctile cph" role="button" tabindex="0" onclick="setDept('tubo')" onkeydown="if(event.key==='Enter')setDept('tubo')"><div class="cimg"><img src="/img/cat/tubo.webp?v=3" loading="lazy" alt="Tubos a vácuo" width="400" height="300" onerror="this.parentNode.innerHTML='<div style=&quot;font-size:42px;display:flex;align-items:center;justify-content:center;height:100%&quot;>🩸</div>'"></div><div class="cb"><b>Tubos a vácuo</b><small>17 produtos</small></div></div><div class="ctile cph" role="button" tabindex="0" onclick="setDept('tr')" onkeydown="if(event.key==='Enter')setDept('tr')"><div class="cimg"><img src="/img/cat/tr.webp?v=3" loading="lazy" alt="Testes rápidos" width="400" height="300" onerror="this.parentNode.innerHTML='<div style=&quot;font-size:42px;display:flex;align-items:center;justify-content:center;height:100%&quot;>🧪</div>'"></div><div class="cb"><b>Testes rápidos</b><small>9 produtos</small></div></div><div class="ctile cph" role="button" tabindex="0" onclick="setDept('meio')" onkeydown="if(event.key==='Enter')setDept('meio')"><div class="cimg"><img src="/img/cat/meio.webp?v=3" loading="lazy" alt="Meios de cultura" width="400" height="300" onerror="this.parentNode.innerHTML='<div style=&quot;font-size:42px;display:flex;align-items:center;justify-content:center;height:100%&quot;>🧫</div>'"></div><div class="cb"><b>Meios de cultura</b><small>607 produtos</small></div></div><div class="ctile cph" role="button" tabindex="0" onclick="setDept('micro')" onkeydown="if(event.key==='Enter')setDept('micro')"><div class="cimg"><img src="/img/cat/micro.webp?v=3" loading="lazy" alt="Microbiologia (discos e corantes)" width="400" height="300" onerror="this.parentNode.innerHTML='<div style=&quot;font-size:42px;display:flex;align-items:center;justify-content:center;height:100%&quot;>🦠</div>'"></div><div class="cb"><b>Microbiologia (discos e corantes)</b><small>87 produtos</small></div></div><div class="ctile cph" role="button" tabindex="0" onclick="setDept('bioq')" onkeydown="if(event.key==='Enter')setDept('bioq')"><div class="cimg"><img src="/img/cat/bioq.webp?v=3" loading="lazy" alt="Reagentes de bioquímica" width="400" height="300" onerror="this.parentNode.innerHTML='<div style=&quot;font-size:42px;display:flex;align-items:center;justify-content:center;height:100%&quot;>⚗️</div>'"></div><div class="cb"><b>Reagentes de bioquímica</b><small>63 produtos</small></div></div><div class="ctile cph" role="button" tabindex="0" onclick="setDept('hemat')" onkeydown="if(event.key==='Enter')setDept('hemat')"><div class="cimg"><img src="/img/cat/hemat.webp?v=3" loading="lazy" alt="Reagentes de hematologia / coagulação" width="400" height="300" onerror="this.parentNode.innerHTML='<div style=&quot;font-size:42px;display:flex;align-items:center;justify-content:center;height:100%&quot;>🩸</div>'"></div><div class="cb"><b>Reagentes de hematologia / coagulação</b><small>16 produtos</small></div></div><div class="ctile cph" role="button" tabindex="0" onclick="setDept('curativo')" onkeydown="if(event.key==='Enter')setDept('curativo')"><div class="cimg"><img src="/img/cat/curativo.webp?v=3" loading="lazy" alt="Curativos, gaze e algodão" width="400" height="300" onerror="this.parentNode.innerHTML='<div style=&quot;font-size:42px;display:flex;align-items:center;justify-content:center;height:100%&quot;>🩹</div>'"></div><div class="cb"><b>Curativos, gaze e algodão</b><small>21 produtos</small></div></div><div class="ctile cph" role="button" tabindex="0" onclick="setDept('coletoram')" onkeydown="if(event.key==='Enter')setDept('coletoram')"><div class="cimg"><img src="/img/cat/coletoram.webp?v=3" loading="lazy" alt="Coletores de amostra" width="400" height="300" onerror="this.parentNode.innerHTML='<div style=&quot;font-size:42px;display:flex;align-items:center;justify-content:center;height:100%&quot;>🥤</div>'"></div><div class="cb"><b>Coletores de amostra</b><small>6 produtos</small></div></div></div></div>
   <section class="mpBox" id="mpBox">
     <div class="mpTit">🏆 O menor preço do mercado em <span>tubos Vacuette</span> e <span>testes rápidos</span></div>
     <div class="mpSub">Comparamos com as principais lojas online do setor: <b>ninguém vende mais barato</b>. 40 anos de mercado · direto da distribuidora · NF-e em todo pedido · envio em 24h.</div>
@@ -693,8 +746,8 @@ document.addEventListener('DOMContentLoaded',function(){try{
   </section>
 
   <div class="popq"><b>Buscas populares:</b><span onclick="buscarTermo('tubo EDTA')">tubo EDTA</span><span onclick="buscarTermo('teste COVID')">teste COVID</span><span onclick="buscarTermo('ágar')">ágar</span><span onclick="buscarTermo('agulha')">agulha</span><span onclick="buscarTermo('luva nitrílica')">luva nitrílica</span><span onclick="buscarTermo('lâmina')">lâmina</span><span onclick="buscarTermo('seringa')">seringa</span></div>
-  <section id="grSec" style="display:none"><div class="ofh"><h2>🏆 Tubos e agulhas Greiner Vacuette — o menor preço do mercado</h2><small>Comparamos com as principais lojas online do setor: ninguém vende Vacuette mais barato · NF-e em todo pedido · pedido mínimo R$ 400</small></div><div class="ofgrid" id="grGrid"></div><div style="text-align:center;margin-top:10px"><a class="lk" style="cursor:pointer;font-weight:700;color:#1F4E79" onclick="verTodosGreiner()">Ver todos os 20 itens Vacuette →</a></div></section>
-  <section id="ofSec" style="display:none"><div class="ofh"><h2 id="ofTitulo">🏆 Testes rápidos — o menor preço do mercado</h2><small>Preço por teste abaixo das principais lojas online do setor · registro ANVISA · NF-e · pedido mínimo R$ 400</small></div><div class="ofgrid" id="ofGrid"></div></section>
+  <section id="grSec"><div class="ofh"><h2>🏆 Tubos e agulhas Greiner Vacuette — o menor preço do mercado</h2><small>Comparamos com as principais lojas online do setor: ninguém vende Vacuette mais barato · NF-e em todo pedido · pedido mínimo R$ 400</small></div><div class="ofgrid" id="grGrid"></div><div style="text-align:center;margin-top:10px"><a class="lk" style="cursor:pointer;font-weight:700;color:#1F4E79" onclick="verTodosGreiner()">Ver todos os 20 itens Vacuette →</a></div></section>
+  <section id="ofSec"><div class="ofh"><h2 id="ofTitulo">🏆 Testes rápidos — o menor preço do mercado</h2><small>Preço por teste abaixo das principais lojas online do setor · registro ANVISA · NF-e · pedido mínimo R$ 400</small></div><div class="ofgrid" id="ofGrid"></div></section>
 
   <div class="secdiv" role="separator"><span>Catálogo completo</span></div>
 
@@ -742,7 +795,7 @@ document.addEventListener('DOMContentLoaded',function(){try{
 <div class="ft2-trust"><div class="wrap"><span>🧾 NF-e em todo pedido</span><span>📦 Envio em 24h para todo o Brasil</span><span>💚 Pix com desconto</span><span>🏆 40 anos de mercado</span></div></div>
 <div class="wrap ft2-main">
   <div class="ft2-brand">
-    <img src="/img/logo-sullab.webp" alt="SULLAB" style="height:46px;background:#fff;padding:6px 10px;border-radius:9px">
+    <img src="/img/logo-sullab.webp" alt="SULLAB" width="240" height="213" loading="lazy" style="height:46px;width:auto;background:#fff;padding:6px 10px;border-radius:9px">
     <p>Distribuidora de produtos para laboratório e diagnóstico clínico. Preço para CNPJ, nota fiscal e entrega para todo o Brasil.</p>
     <a class="ft2-wa" href="/?orcar=duvida" onclick="abrirContatoWA('duvida');return false">💬 Fale no WhatsApp</a>
   </div>
@@ -1031,7 +1084,7 @@ function montarCatTiles(){
     var n=CATALOG.filter(p=>deptOf(p.k)===d.key).length; if(!n)return;
     html+='<div class="ctile" onclick="setDept(\''+d.key+'\')"><div class="ci">'+d.icon+'</div><div><b>'+d.nome+'</b><small>'+n+' produto'+(n>1?'s':'')+'</small></div></div>';
   });
-  el.innerHTML=html;
+  if(!el.querySelector('.cph'))el.innerHTML=html;
   document.getElementById('footCats').innerHTML=DEPTS.filter(d=>CATALOG.some(p=>deptOf(p.k)===d.key)).slice(0,6).map(d=>'<a href="#cat-'+d.key+'" onclick="setDept(\''+d.key+'\');return false">'+d.nome+'</a>').join('');
 }
 function montarBrands(){
@@ -1116,7 +1169,7 @@ function render(){
     var precoBloco='';var _pr=(window.PRECOS||{})[p.c];if(_pr&&_pr[1]){precoBloco='<div style="margin:6px 0 2px;line-height:1.32"><div style="font-size:19px;font-weight:800;color:#2f9e63">'+brl(_pr[1])+'</div>'+unitLn(p.c,_pr[1])+'<div class="pixl">💚 <b>'+brl(Math.round(_pr[1]*(100-pixPct(p.c)*100))/100)+'</b> no Pix <span>'+Math.round(pixPct(p.c)*100)+'% off</span></div></div>';}
     var btns='<div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="add" onclick="addCart('+i+',this)">+ Carrinho</button>';
     return '<div class="prod">'+selo+
-      '<div class="ph" onclick="abrirProd('+i+')"><img src="'+p.img+'" loading="lazy" decoding="async" alt="'+p.n+'" onerror="this.src=\'/img/logo-sullab.png\';this.style.opacity=.35"></div>'+
+      '<div class="ph" onclick="abrirProd('+i+')"><img src="'+p.img+'" loading="lazy" decoding="async" width="160" height="160" alt="'+p.n+'" onerror="this.src=\'/img/logo-sullab.png\';this.style.opacity=.35"></div>'+
       '<div class="pb"><span class="bc">'+p.m+' · cód. '+p.c+'</span>'+
       '<div class="pt" onclick="abrirProd('+i+')">'+p.n+'</div>'+
       precoBloco+
@@ -1166,7 +1219,7 @@ function atualizarCart(){
   if(!CART.length){di.innerHTML='<div class="dempty">🛒 Seu carrinho está vazio.<br><span style="font-size:13px">Use a busca acima para encontrar produtos e montar seu pedido.</span></div>';document.getElementById('df').innerHTML='';if(db)db.innerHTML='';return;}
   di.innerHTML=CART.map(function(x){
     var c=String(x.c).replace(/'/g,"\\'");
-    return '<div class="citem"><img src="'+x.img+'" alt="" onerror="this.src=\'/img/logo-sullab.png\'"><div style="min-width:0"><div class="ct">'+x.n+'</div><div class="cc">'+x.m+' · cód. '+x.c+'</div></div>'+
+    return '<div class="citem"><img src="'+x.img+'" alt="" width="76" height="76" onerror="this.src=\'/img/logo-sullab.png\'"><div style="min-width:0"><div class="ct">'+x.n+'</div><div class="cc">'+x.m+' · cód. '+x.c+'</div></div>'+
       '<div class="qctl"><div class="stepper"><button onclick="qtyCart(\''+c+'\',-1)" aria-label="Diminuir">−</button><input type="text" inputmode="numeric" value="'+x.qty+'" aria-label="Quantidade" onfocus="this.select()" onchange="setQtyCart(\''+c+'\',this.value)" onkeydown="if(event.key===\'Enter\'){this.blur();}"><button onclick="qtyCart(\''+c+'\',1)" aria-label="Aumentar">+</button></div><button class="rm" onclick="rmCart(\''+c+'\')">🗑 remover</button></div>'+
       _cpLinha(x)+'</div>';
   }).join('');
@@ -1205,7 +1258,7 @@ function _cartBuscarGo(){
     box.innerHTML='<div class="rhd"><span>'+tot+(tot===1?' resultado':' resultados')+(tot>10?' · mostrando 10':'')+'</span>'+(tot>10?'<a onclick="cartVerTodos()">Ver todos no catálogo →</a>':'<a onclick="document.getElementById(\'cartSearch\').value=\'\';cartBuscar()">Limpar</a>')+'</div>'+
       list.map(function(p){
         var pr=precoDe(p),ex=CART.find(function(x){return x.c===p.c;}),c=String(p.c).replace(/"/g,'');
-        return '<div class="rr" data-c="'+c+'"><img src="'+p.img+'" alt="" loading="lazy" onerror="this.src=\'/img/logo-sullab.png\'"><div class="rn">'+p.n+'<small>'+p.m+' · cód. '+p.c+'</small>'+(ex?'<span class="incart">✓ no carrinho: '+ex.qty+'</span>':'')+'</div>'+
+        return '<div class="rr" data-c="'+c+'"><img src="'+p.img+'" alt="" loading="lazy" width="52" height="52" onerror="this.src=\'/img/logo-sullab.png\'"><div class="rn">'+p.n+'<small>'+p.m+' · cód. '+p.c+'</small>'+(ex?'<span class="incart">✓ no carrinho: '+ex.qty+'</span>':'')+'</div>'+
           (pr?'<div class="rp">'+brl(pr)+'</div><div class="stepper"><button type="button" onclick="cartStepRes(this,-1)" aria-label="Diminuir">−</button><input type="text" inputmode="numeric" value="1" aria-label="Quantidade" onfocus="this.select()"><button type="button" onclick="cartStepRes(this,1)" aria-label="Aumentar">+</button></div><button type="button" class="addb" onclick="cartAddRes(this)">+ Adicionar</button>'
               :'<div class="rp" style="font-size:12px;color:#217a4b">Sob consulta</div><button type="button" class="addb q" onclick="cartAddRes(this)">+ Orçamento</button>')+'</div>';
       }).join('');
@@ -1666,7 +1719,7 @@ function abrirProd(i){
   var acao='<div style="display:flex;gap:10px;align-items:center;margin-top:16px"><div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="btn navy" style="flex:1" onclick="addCart('+i+',this)">🛒 Adicionar ao carrinho</button></div>';
   __pmL=pmLista(p);__pmI=0;
   document.getElementById('pmInner').innerHTML=
-    '<div class="pmimg"><div class="pmstage" id="pmStage"><button class="pmar l" onclick="pmNav(-1)" aria-label="Foto anterior">&#8249;</button><img id="pmMain" src="'+__pmL[0]+'" onerror="this.src=\'/img/logo-sullab.png\';this.style.opacity=.4" alt="'+p.n+'"><button class="pmar r" onclick="pmNav(1)" aria-label="Próxima foto">&#8250;</button></div>'+(__pmL.length>1?'<div class="pmth" id="pmTh">'+__pmL.map(function(u,k){return '<img class="'+(k?'':'on')+'" src="'+u+'" onclick="pmGo('+k+')" alt="'+(k?'Informações técnicas':'Foto do produto')+'" onerror="this.remove();__pmL=__pmL.filter(function(x){return x!==this.getAttribute(\'src\')}.bind(this))">';}).join('')+'</div>':'')+'</div>'+
+    '<div class="pmimg"><div class="pmstage" id="pmStage"><button class="pmar l" onclick="pmNav(-1)" aria-label="Foto anterior">&#8249;</button><img id="pmMain" width="320" height="320" src="'+__pmL[0]+'" onerror="this.src=\'/img/logo-sullab.png\';this.style.opacity=.4" alt="'+p.n+'"><button class="pmar r" onclick="pmNav(1)" aria-label="Próxima foto">&#8250;</button></div>'+(__pmL.length>1?'<div class="pmth" id="pmTh">'+__pmL.map(function(u,k){return '<img class="'+(k?'':'on')+'" width="58" height="58" src="'+u+'" onclick="pmGo('+k+')" alt="'+(k?'Informações técnicas':'Foto do produto')+'" onerror="this.remove();__pmL=__pmL.filter(function(x){return x!==this.getAttribute(\'src\')}.bind(this))">';}).join('')+'</div>':'')+'</div>'+
     '<div class="pmb"><button class="pmx" onclick="fecharProd()">×</button>'+
     '<span class="bc">'+p.m+' · cód. '+p.c+'</span><h3>'+p.n+'</h3>'+(catNome?'<div style="display:inline-block;font-size:11.5px;background:#eef2fb;color:var(--navy);padding:3px 10px;border-radius:8px;margin:2px 0 6px">🗂️ '+catNome+'</div>':'')+'<div id="pmFicha"></div>'+
     '<div class="spec">🏷️ Direto da distribuidora autorizada, sem taxa de marketplace.<br>🧾 NF-e em todo pedido · 📦 envio em 24h · 🛡️ produto com procedência.</div>'+
@@ -1724,27 +1777,6 @@ boot();
   }catch(e){}
 })();
 </script>
-<style id="vendaCss">
-.unl{font-size:12.5px;color:#334155;font-weight:600;margin-top:1px;line-height:1.3}.unl b{color:#0f3d6e;font-weight:800}.unl span{font-weight:500;color:#566677}.pixl{margin-top:2px;font-size:12px;color:#14653b;font-weight:600;line-height:1.3}.pixl b{font-weight:800}.pixl span{display:inline-block;margin-left:4px;background:#e8f6ee;color:#14653b;border-radius:6px;padding:1px 6px;font-size:11px;font-weight:800}
-.pixl.big{display:block;margin-top:8px;background:#e8f6ee;border:1px solid #bfe5cc;border-radius:10px;padding:8px 11px;font-size:13px}
-.pixbox{display:flex;gap:9px;align-items:flex-start;background:#e8f6ee;border:1px solid #bfe5cc;color:#14653b;border-radius:10px;padding:9px 11px;margin:6px 0 4px;font-size:13px;line-height:1.35}.pixbox small{display:block;color:#3d6a53;font-size:11.5px;margin-top:2px}
-.gnudge{border:1.5px solid #2f9e63!important;background:#f4fbf7!important}.gbar{height:9px!important;background:#dbe7df!important}.gbar i{background:linear-gradient(90deg,#f0a21a,#2f9e63)!important;transition:width .4s}
-.relbox{margin:14px 0 4px;padding:12px;border:1px solid #d9e3f1;border-radius:12px;background:#f7faff}
-.relbox .rt{font-size:13px;font-weight:800;color:var(--navy);margin:0 0 9px;display:flex;align-items:center;gap:7px}.relbox .rt i{font-style:normal;background:#fff1cf;color:#7a4b00;border-radius:6px;padding:2px 7px;font-size:10.5px;letter-spacing:.3px}
-.rrow{display:flex;gap:10px;align-items:center;padding:7px 0;border-top:1px solid #e4eaf1}.rrow:first-of-type{border-top:0}
-.rrow img{width:46px;height:46px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:3px;flex-shrink:0}
-.rrow .rn{flex:1;min-width:0;font-size:12.5px;font-weight:600;line-height:1.28;color:var(--ink)}.rrow .rn small{display:block;font-weight:800;color:var(--navy);font-size:12.5px;margin-top:2px}
-.rrow button{border:0;background:var(--navy);color:#fff;font-weight:800;font-size:12px;padding:8px 11px;border-radius:8px;cursor:pointer;white-space:nowrap;font-family:inherit}.rrow button:hover{filter:brightness(1.15)}
-.cats .ctile.cph{padding:0;overflow:hidden;flex-direction:column;align-items:stretch;gap:0}
-.cats .ctile.cph .cimg{aspect-ratio:4/3;background:linear-gradient(135deg,#eaf1fb,#dfe9f6);overflow:hidden}.cats .ctile.cph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
-.cats .ctile.cph:hover img{transform:scale(1.05)}.cats .ctile.cph .cb{padding:11px 13px 13px}.cats .ctile.cph .cb b{font-size:14px;color:var(--navy)}.cats .ctile.cph .cb small{color:var(--muted)}
-@media(max-width:700px){.cats{grid-template-columns:repeat(2,1fr)}}
-.fgx{margin:12px 0 4px;padding:12px 14px;border:1.5px solid #bfe5cc;background:#f1faf5;border-radius:12px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
-.fgx .fgt{font-size:14px;color:#14653b;font-weight:800;flex:1 1 260px}.fgx .fgt span{font-weight:600;color:#3d6a53;font-size:13px}
-.fgx .fgin{display:flex;gap:6px;flex:0 1 320px}.fgx input{flex:1;min-width:0;padding:10px 12px;border:1px solid #b9d9c6;border-radius:9px;font-size:15px;font-family:inherit}
-.fgx button{border:0;background:#1f7d4c;color:#fff;font-weight:800;font-size:13px;padding:10px 14px;border-radius:9px;cursor:pointer;font-family:inherit;white-space:nowrap}
-.fgx .fgr{flex:1 1 100%;font-size:14px;color:#14653b;display:none}.fgx .fgr.on{display:block}.fgx .fgr b{font-weight:800}.fgx .fgr small{display:block;color:#3d6a53;font-size:12px;margin-top:2px}
-</style>
 <script id="vendaJs">
 (function(){
 var REL={tubo:['agulha','curativo'],agulha:['tubo','curativo'],seringa:['agulha','curativo','luva'],scalp:['tubo','curativo','luva'],lanceta:['curativo','luva','tr'],tr:['lanceta','luva','curativo'],luva:['epi','curativo','plast'],curativo:['luva','agulha','epi'],epi:['luva','curativo'],lamina:['micro','meio','luva'],cubeta:['controle','bioq'],pipeta:['plast','luva'],meio:['micro','plast','lamina'],micro:['meio','lamina','luva'],bioq:['controle','cubeta','pipeta'],hemat:['controle','tubo','pipeta'],sorol:['tubo','controle','pipeta'],controle:['bioq','hemat','cubeta'],coletoram:[],plast:[],hosp:['luva','curativo','seringa']};
@@ -1770,7 +1802,7 @@ function relatedFor(codes,max){
   for(var k=0;k<8&&out.length<max;k++)lists.forEach(function(l){if(l[k])take(l[k]);});
   return out;
 }
-function rowHtml(p){return '<div class="rrow"><img src="'+p.img+'" alt="" loading="lazy"><div class="rn">'+p.n+'<small>'+brl(priced(p))+'</small></div><button onclick="addRel(\''+p.c+'\',this)">+ Adicionar</button></div>';}
+function rowHtml(p){return '<div class="rrow"><img src="'+p.img+'" alt="" loading="lazy" width="46" height="46"><div class="rn">'+p.n+'<small>'+brl(priced(p))+'</small></div><button onclick="addRel(\''+p.c+'\',this)">+ Adicionar</button></div>';}
 function relBlock(codes,title,max){var l=relatedFor(codes,max);if(!l.length)return '';return '<div class="relbox"><div class="rt">'+title+' <i>LEVE JUNTO</i></div>'+l.map(rowHtml).join('')+'</div>';}
 window.addRel=function(c,btn){addCodigo(c,1);if(btn){btn.textContent='✓ Adicionado';}try{atualizarCart();}catch(e){}if(!document.getElementById('drawer').classList.contains('on'))abrirCarrinho();try{sullabEvent&&sullabEvent('cross_sell_add',{c:c});}catch(e){}};
 var _ac=window.atualizarCart;
@@ -1817,14 +1849,6 @@ try{montarCatTiles();}catch(e){}
 }catch(e){}})();
 </script>
 
-<style id="growthCss">
-.trustp{display:flex;flex-wrap:wrap;gap:6px 8px;margin:12px 0 2px}.trustp span{background:#eaf2ff;color:#1f3a5f;border-radius:18px;padding:5px 11px;font-size:12px;font-weight:700}
-.sv{background:#f1faf5;border:1px solid #bfe5cc;border-radius:10px;padding:10px 11px;margin:10px 0;font-size:12.5px;color:#14653b;line-height:1.35}
-.sv b{font-weight:800}.sv .svr{display:flex;gap:6px;margin-top:7px}.sv input{flex:1;min-width:0;padding:9px 10px;border:1px solid #b9d9c6;border-radius:8px;font-size:14px;font-family:inherit}.sv button{border:0;background:#1f7d4c;color:#fff;font-weight:800;font-size:12.5px;padding:9px 12px;border-radius:8px;cursor:pointer;font-family:inherit;white-space:nowrap}
-.sv .svlk{display:inline-block;margin-top:7px;color:var(--navy-l,#1f5fa8);font-weight:800;cursor:pointer;text-decoration:underline}
-#retBar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:80;background:#1f4e79;color:#fff;border-radius:14px;padding:11px 14px;display:none;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(16,32,60,.35);max-width:min(560px,94vw);font-size:13.5px}
-#retBar.on{display:flex}#retBar b{font-weight:800}#retBar button{border:0;border-radius:9px;padding:9px 13px;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}#retBar .go{background:#25c06a;color:#fff}#retBar .x{background:transparent;color:#cfe0f3;font-size:18px;padding:4px 8px}
-</style>
 
 <script id="growthJs">
 (function(){
@@ -1890,18 +1914,6 @@ var _ap3=window.abrirProd;
 window.abrirProd=function(i){_ap3.apply(this,arguments);try{var b=document.querySelector('#pmInner .pmb');if(b&&!b.querySelector('.trustp'))b.insertAdjacentHTML('beforeend','<div class="trustp"><span>🧾 NF-e em todo pedido</span><span>🛡️ Registro ANVISA quando exigido</span><span>🏆 Distribuidora há 40 anos</span><span>🚚 Entrega com frota própria no RJ</span></div>');}catch(e){}};
 })();
 </script>
-<style id="pedidoDiretoCss">
-.pdl{border:1px solid var(--line,#dfe6ef);border-radius:11px;padding:10px 11px;margin:0 0 8px}
-.pdl.ok{border-color:#bfe5cc;background:#f4fbf7}.pdl.no{border-color:#f1d7a6;background:#fffaf0}
-.pdq{font-size:11.5px;color:var(--muted,#5a6472);margin-bottom:5px}.pdq b{color:var(--ink,#1c2533)}
-.pdr{display:flex;gap:8px;align-items:center}
-.pdr select{flex:1;min-width:0;font-size:13px;padding:8px;border:1px solid var(--line,#dfe6ef);border-radius:8px;background:#fff}
-.pdr input{width:64px;font-size:13px;padding:8px;border:1px solid var(--line,#dfe6ef);border-radius:8px;text-align:center}
-.pdno{font-size:12.5px;color:#7a5a12}.pdno a{color:var(--navy-l,#1f5fa8);font-weight:700;cursor:pointer}
-.pdtot{font-size:12.5px;color:var(--navy,#1f3c73);background:var(--navy-soft,#eef3fa);border-radius:10px;padding:9px 11px;margin:6px 0 12px}
-.pdok{font-size:42px;text-align:center}
-.pdn{font-size:12px;color:#14653b;margin-top:5px;line-height:1.3}.pdl.no .pdn{color:#7a5a12}
-</style>
 <script id="pedidoDireto">
 (function(){
 var MOTIVO='';

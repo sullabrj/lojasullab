@@ -408,7 +408,7 @@ def pagina(it):
     img = it['img']
     gal = (f'<div class="gal"><div class="ph" id="ph" style="background-image:url(\'{img}\')"></div><div class="th"><button type="button" class="on" aria-label="Foto do produto" '
            f'onclick="var p=document.getElementById(\'ph\');p.style.backgroundImage=&quot;url(\'{img}\')&quot;;var b=this.parentNode.children;for(var i=0;i<b.length;i++)b[i].className=\'\';this.className=\'on\'">'
-           f'<img src="{img}" alt="Foto do produto" loading="lazy"></button></div></div>')
+           f'<img src="{img}" alt="Foto do produto" loading="lazy" width="800" height="800"></button></div></div>')
     ficha = '<br>'.join(html.escape(x.rstrip('.') + '.') for x in it['ficha'])
     irm = por_grupo[it['g']]
     fam = ''
@@ -441,7 +441,7 @@ def pagina(it):
 <script type="application/ld+json">{json.dumps(bc, ensure_ascii=False)}</script>
 {STYLE.replace('%COD%', cod)}</head><body>
 <div class="wrap">
-<div class="top"><img src="{SITE}/og-sullab.png" alt="SULLAB"><a href="{SITE}/">SULLAB</a></div>
+<div class="top"><img src="{SITE}/og-sullab.png" alt="SULLAB" width="65" height="34"><a href="{SITE}/">SULLAB</a></div>
 <div class="crumb"><a href="{SITE}/">Início</a> › <a href="{SITE}/categoria/{cats}.html">{catn}</a> › {ne}</div>
 <div class="card">
 {gal}
@@ -538,7 +538,7 @@ corpo = f'''<!DOCTYPE html><html lang="pt-BR"><head>
 <script type="application/ld+json">{json.dumps(il_ld, ensure_ascii=False)}</script>
 {head_style}</head><body>
 <div class="wrap">
-<div class="top"><img src="{SITE}/og-sullab.png" alt="SULLAB"><a href="{SITE}/">SULLAB</a></div>
+<div class="top"><img src="{SITE}/og-sullab.png" alt="SULLAB" width="65" height="34"><a href="{SITE}/">SULLAB</a></div>
 <div class="crumb"><a href="{SITE}/">Início</a> › Vidraria de laboratório</div>
 <h1>Vidraria de laboratório</h1>
 <p class="lead">Vidraria de laboratório CRAL em vidro borossilicato 3.3 e vidro neutro: béqueres, provetas, Erlenmeyer, balões volumétricos e de destilação, pipetas, buretas, funis, frascos reagente, Kitasato, dessecadores, tubos de ensaio e placas de Petri. A SULLAB é distribuidora de produtos para laboratório e diagnóstico clínico, com preço para CNPJ, nota fiscal (NF-e) e entrega para todo o Brasil. Veja abaixo os itens de <b>vidraria de laboratório</b> disponíveis.</p>
