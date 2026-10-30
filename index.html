@@ -1958,6 +1958,7 @@ window.salvarCarrinhoTel=function(){var el=document.getElementById('svTel'),m=do
   try{if(typeof gtag==='function')gtag('event','carrinho_salvo',{value:totalCart(),currency:'BRL'});}catch(e){}
   atualizarCart();var m2=document.getElementById('svMsg');if(m2)m2.textContent='Pronto! Carrinho guardado.';};
 function linkCarrinho(){return location.origin+'/?carrinho='+CART.map(function(x){return encodeURIComponent(x.c)+':'+x.qty;}).join(',');}
+window.linkCarrinho=linkCarrinho; /* 30/10/2026: exposto no window — Clarity registrou "Can't find variable: linkCarrinho" (iOS/GoogleApp) */
 window.copiarLinkCarrinho=function(){var l=linkCarrinho(),m=document.getElementById('svMsg');
   function ok(){if(m)m.textContent='Link copiado! Cole no WhatsApp ou e-mail.';}
   try{navigator.clipboard.writeText(l).then(ok,function(){prompt('Copie o link:',l);});}catch(e){prompt('Copie o link:',l);}};
