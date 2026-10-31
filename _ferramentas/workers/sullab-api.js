@@ -189,6 +189,7 @@ async function frete2(req, env) {
     rops.sort((a, b) => a.preco - b.preco || a.prazo - b.prazo);
     // refrigerado: cotação +50% (em vez de +30%) e sem isopor no frete
     rops = rops.slice(0, 1).map(o => Object.assign({}, o, { preco: Math.round((((o.preco - extraG) / (1 + MARKUP)) * (1 + REFRIG_MARKUP) + extraG + ISOPOR * np) * 100) / 100 }));
+    const dbgMap = JSON.stringify(rops);
     let g = { ativo: false, falta: null, sugestoes: [] };
     const locR = entregaLocal(cep);
     try {
@@ -201,7 +202,7 @@ async function frete2(req, env) {
     } catch (e) {}
     if (locR) rops.unshift(locR);
     const out = { opcoes: rops, uf, gratis: g, refrigerado: true, refrigSrv: true };
-    if (b.dbg) out.dbg = { prazoMax, filtro: dbgFiltro, tipos: ops.map(o => typeof o.prazo), bloq: REFRIG_UF_BLOQ.test(uf || ''), ops: ops.map(o => [o.nome, o.preco, o.prazo]), pk };
+    if (b.dbg) out.dbg = { prazoMax, filtro: dbgFiltro, mapa: dbgMap, locR, extraG, np, tipos: ops.map(o => typeof o.prazo), bloq: REFRIG_UF_BLOQ.test(uf || ''), ops: ops.map(o => [o.nome, o.preco, o.prazo]), pk };
     return out;
   }
   const sel = ops.slice(0, 3);
