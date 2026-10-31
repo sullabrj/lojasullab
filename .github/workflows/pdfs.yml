@@ -1,6 +1,6 @@
 name: PDFs comerciais (tabela e catálogos)
 # Regera docs/Tabela_de_Precos_SULLAB.pdf, docs/Catalogo_SULLAB_Vacuette_e_Testes_Rapidos.pdf e
-# docs/Catalogo_SULLAB_Completo.pdf a partir dos preços do site (index.html ou data/*.json).
+# docs/Catalogo_SULLAB_Completo.pdf a partir dos preços do site (data/catalogo.json + data/precos.json; regras em js/loja.js).
 # O gerador é determinístico: se os preços não mudaram, os PDFs saem idênticos e nada é commitado.
 on:
   push:
@@ -8,6 +8,7 @@ on:
     paths:
       - 'index.html'
       - 'data/*.json'
+      - 'js/loja.js'
       - '_ferramentas/gerar_pdfs.py'
   schedule:
     # 08:20 em Brasília, todo dia — depois do robô "Preços Biolog pelo dólar do dia" (08:07).

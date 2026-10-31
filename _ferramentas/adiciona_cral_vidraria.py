@@ -3,7 +3,8 @@
 
 Entrada: /home/claude/cral_portal_30-10-2026.txt (campos do portal da CRAL)
 Preço: microscópios = portal x 1,50; vidraria = portal x 1,40.
-Gera/atualiza: index.html (SEED, PRECOS, QTD, DEPTS, fileiras do celular, rodapé),
+Gera/atualiza: data/catalogo.json (SEED), data/precos.json (PRECOS), js/loja.js (QTD, DEPTS, fileiras do celular),
+index.html (rodapé e ?v= dos arquivos acima — desde 30/10/2026 os dados saíram do index.html),
 kw.json, ft.json, p/*.html, categoria/vidraria-de-laboratorio.html (nova),
 categoria/equipamentos-e-acessorios.html, marca/cral.html, catalogo.html,
 catalogo/index.html, sitemap-produtos.xml, sitemap-categorias.xml, feed-google.xml,
@@ -263,11 +264,14 @@ for ln in open(DADOS, encoding='utf-8'):
 print('itens lidos:', len(itens))
 
 # ---------------------------------------------------------------- checagens
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import dados_site as ds  # 30/10/2026: SEED/PRECOS em data/*.json; QTD, DEPTS e fileiras em js/loja.js
 idx_path = R + 'index.html'
 idx = open(idx_path, encoding='utf-8').read()
+loja = ds.ler_loja_js()
 dec = json.JSONDecoder()
-i0 = idx.find('var SEED=') + len('var SEED=')
-seed, fim = dec.raw_decode(idx[i0:])
+seed = ds.ler_catalogo()
 ja = {o['c'].upper() for o in seed}
 novos = [it for it in itens if it['cod'].upper() not in ja]
 pulados = [it['cod'] for it in itens if it['cod'].upper() in ja]
@@ -296,36 +300,33 @@ with open(CSV_FRETE, 'w', newline='', encoding='utf-8') as fh:
         k, a, l, c = frete(it)
         w.writerow([it['cod'], k, a, l, c, f'{it["venda"]:.2f}', f'{it["custo"]:.2f}'])
 
-# ---------------------------------------------------------------- index.html
+# ---------------------------------------------------------------- catálogo, preços e JS da loja
 seed_new = [{'c': it['cod'], 'n': it['nome'], 'm': 'CRAL', 'k': it['cat'][0], 'img': it['img']} for it in itens]
-seed_txt = idx[i0:i0 + fim]
-assert seed_txt.endswith('}]')
-novo_seed = seed_txt[:-1] + ',' + ','.join(json.dumps(o, ensure_ascii=False, separators=(',', ':')) for o in seed_new) + ']'
-idx = idx[:i0] + novo_seed + idx[i0 + fim:]
+ds.gravar_catalogo(seed + seed_new)
 
-j0 = idx.find('window.PRECOS=') + len('window.PRECOS=')
-pre, pfim = dec.raw_decode(idx[j0:])
-ptxt = idx[j0:j0 + pfim]
-assert ptxt.endswith('}')
-adic = ', '.join(f'"{it["cod"]}": [{it["venda"]:.2f}, {it["venda"]:.2f}, null]' for it in itens)
-idx = idx[:j0] + ptxt[:-1] + ', ' + adic + '}' + idx[j0 + pfim:]
+pre = ds.ler_precos()
+for it in itens:
+    pre[it['cod']] = [round(it['venda'], 2), round(it['venda'], 2), None]
+ds.gravar_precos(pre)
 
-q0 = idx.find('window.QTD=') + len('window.QTD=')
-qd, qfim = dec.raw_decode(idx[q0:])
-qtxt = idx[q0:q0 + qfim]
+q0 = loja.find('window.QTD=') + len('window.QTD=')
+qd, qfim = dec.raw_decode(loja[q0:])
+qtxt = loja[q0:q0 + qfim]
 adq = ','.join(f'"{it["cod"]}":[{it["qtd"]},"unidade","caixa"]' for it in itens if it['qtd'])
-idx = idx[:q0] + qtxt[:-1] + ',' + adq + '}' + idx[q0 + qfim:]
+if adq:
+    loja = loja[:q0] + qtxt[:-1] + ',' + adq + '}' + loja[q0 + qfim:]
 
 dep_old = "  {key:'equip', nome:'Equipamentos e acessórios', icon:'🖥️', cats:['equip']}\n];"
-assert dep_old in idx
-idx = idx.replace(dep_old, "  {key:'equip', nome:'Equipamentos e acessórios', icon:'🖥️', cats:['equip']},\n  {key:'vidraria', nome:'Vidraria de laboratório', icon:'⚗️', cats:['vidraria']}\n];", 1)
+if dep_old in loja:
+    loja = loja.replace(dep_old, "  {key:'equip', nome:'Equipamentos e acessórios', icon:'🖥️', cats:['equip']},\n  {key:'vidraria', nome:'Vidraria de laboratório', icon:'⚗️', cats:['vidraria']}\n];", 1)
 row_old = "  ['Equipamentos e acessórios',['equip'],'equip']\n ];"
-assert row_old in idx
-idx = idx.replace(row_old, "  ['Equipamentos e acessórios',['equip'],'equip'],\n  ['Vidraria de laboratório',['vidraria'],'vidraria']\n ];", 1)
+if row_old in loja:
+    loja = loja.replace(row_old, "  ['Equipamentos e acessórios',['equip'],'equip'],\n  ['Vidraria de laboratório',['vidraria'],'vidraria']\n ];", 1)
 tub = '<a href="/categoria/tubos-a-vacuo.html">Tubos a vácuo</a>'
-assert idx.count(tub) == 1
-idx = idx.replace(tub, tub + '<a href="/categoria/vidraria-de-laboratorio.html">Vidraria de laboratório</a>', 1)
+if 'categoria/vidraria-de-laboratorio.html' not in idx and idx.count(tub) == 1:
+    idx = idx.replace(tub, tub + '<a href="/categoria/vidraria-de-laboratorio.html">Vidraria de laboratório</a>', 1)
 open(idx_path, 'w', encoding='utf-8').write(idx)
+ds.gravar_loja_js(loja)  # grava o JS e o ?v= novo no index.html
 
 # ---------------------------------------------------------------- kw.json / ft.json
 STOP = {'de', 'do', 'da', 'com', 'e', 'para', 'p', 'c', 'un', 'em', 'o', 'a', 'mm', 'ml'}

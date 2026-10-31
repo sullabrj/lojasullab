@@ -19,9 +19,7 @@ PARES = [("13000","3000",170.11,77.23),("13001","3001",43.39,22.73),("13002","30
  ("13029","3029",72.13,50.35)]
 
 def main():
-    idx = open(ab.R + 'index.html', encoding='utf-8').read()
-    j = idx.find('window.PRECOS=') + len('window.PRECOS=')
-    PRE, _ = json.JSONDecoder().raw_decode(idx[j:])
+    PRE = ab.ds.ler_precos()  # data/precos.json (30/10/2026)
     OLD, NEW = {}, {}
     for b, m, cb, cm in PARES:
         if b not in PRE or m not in PRE:

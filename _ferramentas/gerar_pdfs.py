@@ -153,6 +153,10 @@ def _normaliza_catalogo(cat):
 def carregar(fonte):
     html_path = os.path.join(RAIZ, 'index.html')
     html = open(html_path, encoding='utf-8').read() if os.path.exists(html_path) else ''
+    # 30/10/2026: o JS da loja (QTD, DEPTS, PIX3, TR_TOP, GREINER_ORDEM, regras de pagamento) saiu do index.html
+    loja_js = os.path.join(RAIZ, 'js', 'loja.js')
+    if os.path.exists(loja_js):
+        html += '\n<script>\n' + open(loja_js, encoding='utf-8').read() + '\n</script>\n'
     jcat, jpre = os.path.join(RAIZ, 'data', 'catalogo.json'), os.path.join(RAIZ, 'data', 'precos.json')
     tem_json = os.path.exists(jcat) and os.path.exists(jpre)
     if fonte == 'json' and not tem_json:
