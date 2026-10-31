@@ -8,6 +8,9 @@ Gerador: `_ferramentas/gerar_pdfs.py` · Workflow: `.github/workflows/pdfs.yml`
 |---|---|
 | `Tabela_de_Precos_SULLAB.pdf` | Tubos e agulhas Greiner Vacuette e testes rápidos: código, produto, embalagem, preço da embalagem e preço por unidade/teste. Cada linha tem link "Comprar" que abre o carrinho do site com o item. QR Code na capa. Regras comerciais no fim e resumo no rodapé de toda página. |
 | `Catalogo_SULLAB_Vacuette_e_Testes_Rapidos.pdf` | O mesmo conteúdo com foto pequena (JPEG q70, máx. 360 px), descrição curta, código, embalagem, preço e link. Fica abaixo de 1 MB. |
+| `Tabela_SULLAB_Tubos_Vacuette.pdf` / `Catalogo_SULLAB_Tubos_Vacuette.pdf` | Só tubos e agulhas Vacuette (catálogo com guia de uso). Anúncio "Tubos de coleta a vácuo Vacuette". |
+| `Tabela_SULLAB_Testes_Rapidos.pdf` / `Catalogo_SULLAB_Testes_Rapidos.pdf` | Só testes rápidos. Anúncio de testes rápidos. |
+| `Tabela_SULLAB_Meios_de_Cultura_NewProv.pdf` / `Catalogo_SULLAB_Meios_de_Cultura_NewProv.pdf` | Placas prontas, tubos e frascos NewProv (`k=meio`, marca Newprov, com preço). Anúncio "Microbiologia de alimentos e água" / placas. |
 | `Catalogo_SULLAB_Completo.pdf` | Todas as categorias do site (mesmas de `DEPTS` no index.html), sem fotos, em tabela, com índice clicável e botão "Comprar" por item (itens sem preço: "Sob consulta" e botão "Consultar", que abre a busca do site). Substitui `pdf/SULLAB_Catalogo_Precos_CNPJ.pdf`. |
 
 Links dos produtos: `https://lojasullabrj.com.br/?carrinho=COD:1&add=1&utm_source=pdf&utm_medium=<tabela|catalogo|catalogo_completo>`

@@ -1,5 +1,5 @@
 name: PDFs comerciais (tabela e catálogos)
-# Regera docs/Tabela_de_Precos_SULLAB.pdf, docs/Catalogo_SULLAB_Vacuette_e_Testes_Rapidos.pdf e
+# Regera docs/Tabela_de_Precos_SULLAB.pdf, docs/Catalogo_SULLAB_Vacuette_e_Testes_Rapidos.pdf, os PDFs por linha (tubos, testes rápidos, meios NewProv) e
 # docs/Catalogo_SULLAB_Completo.pdf a partir dos preços do site (data/catalogo.json + data/precos.json; regras em js/loja.js).
 # O gerador é determinístico: se os preços não mudaram, os PDFs saem idênticos e nada é commitado.
 on:

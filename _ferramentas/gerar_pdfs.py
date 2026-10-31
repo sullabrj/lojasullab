@@ -418,6 +418,44 @@ def secoes_destaque(d):
             ('Testes rápidos', trs, 'Pix 5% de desconto')]
 
 
+def secoes_meios(d):
+    """Meios de cultura NewProv (placas prontas, tubos e frascos) — anúncio 'Microbiologia de alimentos e água'."""
+    itens = [p for p in d['catalogo'] if p['k'] == 'meio' and p['m'].lower() == 'newprov' and d['precos'].get(p['c'])]
+    def grupo(p):
+        n = p['n'].lower()
+        return 'placa' if 'placa' in n else 'tubo' if 'tubo' in n else 'frasco' if 'frasco' in n else 'outro'
+    g = {k: sorted([p for p in itens if grupo(p) == k], key=lambda p: p['n'].lower())
+         for k in ('placa', 'tubo', 'frasco', 'outro')}
+    return [('Placas prontas (meios de cultura preparados) NewProv', g['placa'], 'Pix 5% de desconto'),
+            ('Meios de cultura em tubo NewProv', g['tubo'], 'Pix 5% de desconto'),
+            ('Meios de cultura em frasco NewProv', g['frasco'], 'Pix 5% de desconto'),
+            ('Outros itens de microbiologia NewProv', g['outro'], 'Pix 5% de desconto')]
+
+
+# 31/10/2026 (Eduardo, lead Ângela Cristina): cada anúncio manda o PDF da linha anunciada.
+# LINHAS: chave -> (título curto, subtítulo, função que devolve as seções, utm, guia de uso dos tubos?)
+def _sec_tubos(d):
+    return [s for s in secoes_destaque(d) if 'Vacuette' in s[0]]
+
+
+def _sec_tr(d):
+    return [s for s in secoes_destaque(d) if s[0] == 'Testes rápidos']
+
+
+LINHAS = {
+    'tubos': ('Tubos e agulhas Vacuette®',
+              'Tubos e agulhas para coleta a vácuo Greiner Vacuette®. Preços exclusivos para compra no site '
+              '— toque em <b>Comprar</b> para abrir o carrinho.', _sec_tubos, 'tubos', True),
+    'testes': ('Testes rápidos',
+               'Testes rápidos com registro ANVISA, preço por teste. Preços exclusivos para compra no site '
+               '— toque em <b>Comprar</b> para abrir o carrinho.', _sec_tr, 'testes', False),
+    'meios': ('Meios de cultura e placas prontas NewProv',
+              'Placas prontas, tubos e frascos de meios de cultura para microbiologia clínica, de alimentos e água. '
+              'Preços exclusivos para compra no site — toque em <b>Comprar</b> para abrir o carrinho.',
+              secoes_meios, 'meios', False),
+}
+
+
 # ---------------------------------------------------------------- documento base
 class Doc(BaseDocTemplate):
     def __init__(self, destino, titulo, versao, rodape_regras=False, **kw):
@@ -501,15 +539,21 @@ def estilo_tabela(n_linhas, col_botao=None):
 
 
 # ---------------------------------------------------------------- a) tabela de preços
-def gerar_tabela(d, destino, versao):
-    doc = Doc(destino, 'Tabela de preços SULLAB — Vacuette e testes rápidos', versao, rodape_regras=True)
+def gerar_tabela(d, destino, versao, linha=None):
+    if linha:
+        tit, sub, secs, utm, _ = LINHAS[linha]
+        doc = Doc(destino, f'Tabela de preços SULLAB — {tit}', versao, rodape_regras=True)
+        titulo_cab, sub_cab, utm_cab, secoes = f'Tabela de preços — {tit}', sub, f'tabela_{utm}', secs(d)
+    else:
+        doc = Doc(destino, 'Tabela de preços SULLAB — Vacuette e testes rápidos', versao, rodape_regras=True)
+        titulo_cab, utm_cab, secoes = 'Tabela de preços do site', 'tabela', secoes_destaque(d)
+        sub_cab = ('Tubos e agulhas Greiner Vacuette® e testes rápidos. Preços exclusivos para compra no site '
+                   '— toque em <b>Comprar</b> para abrir o carrinho.')
     W = doc.width
-    meio = 'tabela'
-    hist = cabecalho('Tabela de preços do site',
-                     'Tubos e agulhas Greiner Vacuette® e testes rápidos. Preços exclusivos para compra no site '
-                     '— toque em <b>Comprar</b> para abrir o carrinho.', 'tabela', W)
+    meio = utm_cab
+    hist = cabecalho(titulo_cab, sub_cab, utm_cab, W)
     cw = [24 * mm, W - 24 * mm - 30 * mm - 38 * mm - 22 * mm, 30 * mm, 38 * mm, 22 * mm]
-    for titulo, itens, pix in secoes_destaque(d):
+    for titulo, itens, pix in secoes:
         if not itens:
             continue
         linhas = [[Paragraph('Código', S_CAB), Paragraph('Produto', S_CAB), Paragraph('Embalagem', S_CAB),
@@ -533,18 +577,25 @@ def gerar_tabela(d, destino, versao):
 
 
 # ---------------------------------------------------------------- b) catálogo com fotos
-def gerar_catalogo(d, destino, versao):
-    doc = Doc(destino, 'Catálogo SULLAB — Vacuette e testes rápidos', versao)
+def gerar_catalogo(d, destino, versao, linha=None):
+    if linha:
+        tit, sub, secs, utm, guia = LINHAS[linha]
+        doc = Doc(destino, f'Catálogo SULLAB — {tit}', versao)
+        titulo_cab, sub_cab, utm_cab, secoes = f'Catálogo — {tit}', sub, f'catalogo_{utm}', secs(d)
+    else:
+        doc = Doc(destino, 'Catálogo SULLAB — Vacuette e testes rápidos', versao)
+        titulo_cab, utm_cab, secoes, guia = 'Catálogo Vacuette® e testes rápidos', 'catalogo', secoes_destaque(d), True
+        sub_cab = ('Tubos e agulhas Greiner Vacuette® e testes rápidos com registro ANVISA. '
+                   'Preços exclusivos do site — toque em <b>Comprar</b> para abrir o carrinho.')
     W = doc.width
-    meio = 'catalogo'
-    hist = cabecalho('Catálogo Vacuette® e testes rápidos',
-                     'Tubos e agulhas Greiner Vacuette® e testes rápidos com registro ANVISA. '
-                     'Preços exclusivos do site — toque em <b>Comprar</b> para abrir o carrinho.', 'catalogo', W)
+    meio = utm_cab
+    hist = cabecalho(titulo_cab, sub_cab, utm_cab, W)
     hist += [caixa_regras(W), Spacer(1, 4 * mm)]
-    hist += guia_uso(d, W)  # 30/10/2026: o robô promete "catálogo com guia de uso dos tubos"
+    if guia:
+        hist += guia_uso(d, W)  # 30/10/2026: o robô promete "catálogo com guia de uso dos tubos"
     FOTO = 22 * mm
     cw = [FOTO + 4, W - FOTO - 4 - 36 * mm - 24 * mm, 36 * mm, 24 * mm]
-    for titulo, itens, pix in secoes_destaque(d):
+    for titulo, itens, pix in secoes:
         if not itens:
             continue
         linhas = []
@@ -618,9 +669,17 @@ def gerar_completo(d, destino, versao):
 
 
 # ---------------------------------------------------------------- principal
+from functools import partial
 PDFS = [('Tabela_de_Precos_SULLAB.pdf', gerar_tabela),
         ('Catalogo_SULLAB_Vacuette_e_Testes_Rapidos.pdf', gerar_catalogo),
-        ('Catalogo_SULLAB_Completo.pdf', gerar_completo)]
+        ('Catalogo_SULLAB_Completo.pdf', gerar_completo),
+        # por linha (31/10/2026): o robô manda o PDF do anúncio que o cliente clicou
+        ('Tabela_SULLAB_Tubos_Vacuette.pdf', partial(gerar_tabela, linha='tubos')),
+        ('Catalogo_SULLAB_Tubos_Vacuette.pdf', partial(gerar_catalogo, linha='tubos')),
+        ('Tabela_SULLAB_Testes_Rapidos.pdf', partial(gerar_tabela, linha='testes')),
+        ('Catalogo_SULLAB_Testes_Rapidos.pdf', partial(gerar_catalogo, linha='testes')),
+        ('Tabela_SULLAB_Meios_de_Cultura_NewProv.pdf', partial(gerar_tabela, linha='meios')),
+        ('Catalogo_SULLAB_Meios_de_Cultura_NewProv.pdf', partial(gerar_catalogo, linha='meios'))]
 
 
 def main():
