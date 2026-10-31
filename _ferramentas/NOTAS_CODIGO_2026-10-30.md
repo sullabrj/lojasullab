@@ -29,17 +29,18 @@ nos dois arquivos e no Apps Script ao mesmo tempo.
 Os textos do site (`index.html`, `indique.html`, `termos.html`) já dizem 5%. O cálculo da comissão não está no
 repositório (é feito na planilha/Apps Script): ajustar lá para 5%.
 
-### 3. Catálogo JSON (SEED e window.PRECOS) — não movido nesta rodada
-Mover `var SEED=[…]` e `window.PRECOS={…}` para `data/catalogo.json` foi avaliado e **não** foi feito:
-- `_ferramentas/atualiza_biolog.py` (Action diária de preços Biolog), `build_pm.py`, `ebram_linha_menor.py` e
-  `adiciona_cral_vidraria.py` leem e reescrevem `window.PRECOS=` / `var SEED=` dentro de `index.html`; o
-  `atualiza_biolog.py` também troca o preço nas entradas `"código": [v, v, null]` do index;
-- o JS da home usa `SEED`, `CATALOG` e `window.PRECOS` de forma síncrona logo no carregamento (boot(), cartões
-  pré-montados, carrinho salvo, deep-links `?orcar=`, `?lista=`, carrinho por link), e os blocos seguintes
-  embrulham funções que dependem disso já estarem prontos.
-Para mover com segurança é preciso: (a) mudar os 4 scripts para ler/gravar `data/catalogo.json`; (b) transformar o
-boot em assíncrono (esperar o fetch) e revisar todos os pontos que leem SEED/PRECOS antes do boot. Ganho estimado:
-~370 KB a menos no HTML da home (o JSON passa a ficar em cache do navegador).
+### 3. Catálogo JSON (SEED e window.PRECOS) — movido na rodada 2 (30/10/2026, branch otimizacao-celular-2026-10-30)
+- `var SEED` → `data/catalogo.json`; `window.PRECOS` → `data/precos.json`; todos os `<script>` da loja → `js/loja.js`
+  (mesma ordem; cada antigo `<script>` num `try` próprio, exceto os dois que declaram funções globais).
+- O `index.html` busca os dois JSON logo no `<head>` (fetch com `?v=<hash>`; se falhar, tenta de novo sem cache) e,
+  quando chegam, insere `js/loja.js`. O HTML da home já desenha cabeçalho, CEP, categorias, faixas e espaço reservado.
+- Clique antes do JS chegar: os 42 nomes usados em `onclick`/`onkeydown` do HTML têm um "substituto" que guarda a
+  chamada e repete quando a loja fica pronta (evento `sullab:loja`). O `rastreio.js` instala os eventos do GA4/Meta nesse
+  mesmo evento.
+- Scripts que liam/gravavam o index.html foram trocados para `_ferramentas/dados_site.py` (atualiza o hash sozinho).
+- Pendência fora deste repositório: o robô do WhatsApp lia SEED/PRECOS do HTML da home (`whatsapp-sullab`,
+  `app/site_catalogo.py`). Branch local `catalogo-json-site-2026-10-30` daquele repositório lê os JSON (e ainda aceita o
+  formato antigo); publicar o robô **antes** de publicar o site.
 
 ---
 
