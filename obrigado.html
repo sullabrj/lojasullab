@@ -34,7 +34,7 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RK2PX868MS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}(function(){var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}var g=c==='sim'?'granted':'denied';gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:'granted',wait_for_update:500});gtag('set','ads_data_redaction',g==='denied');})();gtag('js',new Date());gtag('config','G-RK2PX868MS');</script>
-<script defer src="/rastreio.js?v=4"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"></head>
+<script defer src="/rastreio.js?v=7"></script><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png"><link rel="icon" type="image/png" sizes="192x192" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"></head>
 <body>
 <div class="wrap">
   <div class="top">
@@ -78,7 +78,8 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
   var status=(qp('collection_status')||qp('status')||'approved').toLowerCase();
   var payId = qp('payment_id')||qp('collection_id')||'';
   var pref  = qp('preference_id')||'';
-  var extRef= qp('external_reference')||'';
+  var extRef= qp('external_reference')||qp('pedido')||'';
+  var metodo=(qp('metodo')||'').toLowerCase();
   var ic=document.getElementById('ic'), ttl=document.getElementById('ttl'), sub=document.getElementById('sub');
   var vSta=document.getElementById('vSta');
 
@@ -99,14 +100,27 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
     var _v=parseFloat((qp('transaction_amount')||qp('total')||'').replace(',','.'))||0;
     if(!_v&&_lp&&_lp.v&&(!extRef||_lp.ped===extRef))_v=_lp.v;
     var _env={};try{_env=JSON.parse(localStorage.getItem('sullab_purchase_enviadas')||'{}');}catch(e){}
-    if(!_env[_tid]&&typeof gtag==='function'){
-      var _p={transaction_id:_tid,value:_v||undefined,currency:'BRL'};
-      if(_lp&&_lp.items&&(!extRef||_lp.ped===extRef)){_p.items=_lp.items;if(_lp.frete)_p.shipping=_lp.frete;}
-      gtag('event','purchase',_p);
-      try{gtag('config','AW-11390766577');gtag('event','conversion',{send_to:'AW-11390766577/zT6SCKz-1KwdEPGbxbcq',value:_v||1,currency:'BRL',transaction_id:_tid});}catch(e){}
+    /* 31/10/2026: compra paga → GA4 purchase + Google Ads (Compra no site) + Meta Purchase, uma vez por pedido.
+       Pix pago na própria página já envia tudo lá (e marca sullab_purchase_enviadas); aqui só chega se faltou. */
+    var _fire=function(){
+      if(_env[_tid])return;
+      var _its=(_lp&&_lp.items&&(!extRef||_lp.ped===extRef))?_lp.items:[];
+      if(typeof gtag==='function'){
+        var _p={transaction_id:_tid,value:_v||undefined,currency:'BRL'};if(metodo)_p.payment_type=metodo;
+        if(_its.length){_p.items=_its;if(_lp.frete)_p.shipping=_lp.frete;}
+        gtag('event','purchase',_p);
+        try{gtag('config','AW-11390766577');gtag('event','conversion',{send_to:'AW-11390766577/zT6SCKz-1KwdEPGbxbcq',value:_v||1,currency:'BRL',transaction_id:_tid});}catch(e){}
+      }
+      var _fb=function(){try{if(typeof fbq==='function')fbq('track','Purchase',{value:Math.round((_v||0)*100)/100,currency:'BRL',content_type:'product',content_ids:_its.map(function(x){return String(x.item_id);}),contents:_its.map(function(x){return {id:String(x.item_id),quantity:x.quantity,item_price:x.price};}),num_items:_its.reduce(function(s,x){return s+(x.quantity||1);},0)},{eventID:_tid});}catch(e){}};
+      /* o rastreio.js (que cria o fbq) é defer: roda antes do DOMContentLoaded */
+      if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_fb);else _fb();
       try{if(window.clarity)clarity('event','purchase');}catch(e){}
       _env[_tid]=Date.now();try{localStorage.setItem('sullab_purchase_enviadas',JSON.stringify(_env));}catch(e){}
-    }
+    };
+    /* Pix: confere no Worker que o pagamento está mesmo aprovado antes de contar a conversão */
+    if(metodo==='pix'&&payId&&!_env[_tid]){
+      fetch('https://sullab-mp.comercial-0a2.workers.dev/pix/status?id='+encodeURIComponent(payId),{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){if(d&&d.status==='approved')_fire();}).catch(function(){});
+    }else _fire();
     try{if(!extRef||!_lp||_lp.ped===extRef)localStorage.removeItem('sullab_cart');}catch(e){}
   }catch(e){}
     set('ok','✓','Pagamento aprovado!','Recebemos seu pagamento. Seu pedido já está sendo processado — você vai receber a confirmação e a nota fiscal por e-mail.','Aprovado','#1f8a4c');
