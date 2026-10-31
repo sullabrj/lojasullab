@@ -96,8 +96,11 @@ def selo_min_html(c, grande=False):
     m = minimo(c)
     if not m:
         return ''
-    txt = ('Pedido mínimo: R$ 400 (tubos e agulhas Vacuette e testes rápidos)' if m == 400
-           else 'Pedido mínimo: R$ 150 (produto refrigerado)') if grande else f'Pedido mín. R$ {m}' + (' (refrigerado)' if m == 150 else '')
+    # 31/10/2026 (dono): selo curto nos cards confundia (parecia mínimo do item). Só a versão longa, na página do produto.
+    if not grande:
+        return ''
+    txt = ('Pedido mínimo de R$ 400 somando tubos, agulhas Vacuette e testes rápidos — pode misturar itens dessas categorias' if m == 400
+           else 'Pedido mínimo de R$ 150 em pedidos com produto refrigerado — vale o total do pedido')
     est = ('display:inline-block;margin:2px 0 6px;background:#fff7e8;border:1px solid #f1d3a1;color:#7a4b00;border-radius:8px;'
            'padding:4px 10px;font-size:13px;font-weight:700') if grande else ''
     return f'<div class="pmin"{" style=" + chr(34) + est + chr(34) if est else ""}>📦 {txt}</div>'

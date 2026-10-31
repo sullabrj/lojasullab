@@ -400,7 +400,7 @@ function _gratisHtml(d){
   if(g&&g.ativo)return '<div style="font-weight:800;color:var(--green-d);font-size:13.5px">✅ Frete GRÁTIS neste pedido!</div>'+(o&&o.economia?'<div style="margin-top:2px">Você economizou <b>'+brl(o.economia)+'</b> de frete'+pz+'.</div>':'<div style="margin-top:2px">Opção econômica'+pz+'. Outras transportadoras continuam disponíveis.</div>');
   if(g&&g.sobConsulta)return (o?'<div>🚚 Frete a partir de <b>'+brl(o.preco)+'</b>'+pz+'.</div>':'')+'<div style="font-size:11.5px">Frete grátis não se aplica a um ou mais itens deste pedido.</div>';
   var h='';
-  if(o)h+='<div>🚚 Frete: <b>'+brl(o.preco)+'</b> · '+String(o.nome||'').slice(0,28)+pz+'</div>';
+  if(o)h+='<div>🚚 Frete: <b>'+brl(o.preco)+'</b> · '+(o.retirada?'por conta do cliente (retirada na SULLAB)':String(o.nome||'').slice(0,28))+pz+'</div>';
   if(g&&g.falta){
     var V=0;try{V=totalCart();}catch(e){}
     var pct=V>0?Math.max(6,Math.min(96,Math.round(V/(V+g.falta)*100))):6;
@@ -587,7 +587,7 @@ var TUBO_MIN=400;
 function temTubo(){return CART.some(function(x){return (window.PIX3&&window.PIX3[x.c])||(window.TR_TOP&&window.TR_TOP[x.c]);});}  
 var PED_MIN_GERAL=100,PED_MIN_REFRIG=150;
 function pedMin(){return temTubo()?TUBO_MIN:((window.cartRefrigerado&&window.cartRefrigerado())?PED_MIN_REFRIG:PED_MIN_GERAL);}
-function msgMin(){return temTubo()?'Pedido mínimo para tubos, agulhas Vacuette e testes rápidos: R$ 400,00.':((window.cartRefrigerado&&window.cartRefrigerado())?'Pedido mínimo com produtos refrigerados: R$ 150,00.':'Pedido mínimo no site: R$ 100,00.');}
+function msgMin(){return temTubo()?'Pedido mínimo de R$ 400,00 somando tubos, agulhas Vacuette e testes rápidos — pode misturar itens dessas categorias no mesmo pedido.':((window.cartRefrigerado&&window.cartRefrigerado())?'Pedido mínimo de R$ 150,00 para pedidos com produto refrigerado — vale o total do pedido, não o item.':'Pedido mínimo no site: R$ 100,00 no total do pedido.');}
 function faltaTubo(){return Math.max(0,Math.round((pedMin()-totalCart())*100)/100);}
 /* 31/10/2026: barra única de progresso no carrinho — primeiro o pedido mínimo, depois o frete grátis (quando o CEP já foi cotado) */
 function _gratisAtual(){try{if(!_gRes||!_gKey)return null;var cep=soDig((fichaSalva().cep)||''),its=CART.filter(function(x){return precoItem(x)>0;});var k=cep+'|'+its.map(function(x){return String(x.c)+'x'+x.qty;}).join(',');return k===_gKey?(_gRes.gratis||null):null;}catch(e){return null;}}
@@ -668,7 +668,8 @@ window.PIX3={"450071":1,"450072":1,"454036":1,"454087":1,"454921":1,"454235":1,"
 function pixPct(c){return (c&&window.PIX3[c])?0.03:0.05;}
 /* 31/10/2026: pedido mínimo visível no card, no modal e na página do produto (R$ 400 tubos/agulhas Vacuette e testes rápidos; R$ 150 refrigerados) */
 function minItem(c){c=String(c);if((window.PIX3&&window.PIX3[c])||(window.TR_TOP&&window.TR_TOP[c]))return 400;if(window.itemRefrigerado&&window.itemRefrigerado(c))return 150;return 0;}
-function seloMinHtml(c){var m=minItem(c);return m?'<div class="pmin" title="Valor mínimo do pedido com este item">📦 Pedido mín. R$ '+m+(m===150?' (refrigerado)':'')+'</div>':'';}
+/* 31/10/2026 (dono): o selo por item confundia (parecia mínimo DAQUELE item). O mínimo é por categoria e vale o total do pedido: fica só no carrinho (msgMin) e na página do produto, com o texto completo. */
+function seloMinHtml(c){return '';}
 function cardClick(ev,i){try{var t=ev&&ev.target;if(t&&t.closest&&t.closest('.pf,button,input,select,a'))return;}catch(e){}abrirProd(i);}
 function fatorPg(c){return PG==='pix'?(1-pixPct(c)):1;}
 function _catOf(c){for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===c)return CATALOG[i].k;}return '';}
