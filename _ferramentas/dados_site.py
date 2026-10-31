@@ -20,7 +20,7 @@ CATALOGO = R + 'data/catalogo.json'
 PRECOS = R + 'data/precos.json'
 LOJA_JS = R + 'js/loja.js'
 INDEX = R + 'index.html'
-VERSIONADOS = ['data/catalogo.json', 'data/precos.json', 'js/loja.js']
+VERSIONADOS = ['data/catalogo.json', 'data/precos.json', 'data/ficha.json', 'js/loja.js']
 
 
 def ler_catalogo():

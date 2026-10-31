@@ -470,6 +470,9 @@ def main():
     print(f'/p/: {len(pags)} páginas, {mud_p} alteradas · reagentes químicos movidos: {len(quimicos)} · categorias alteradas: {mud_c}')
     # 31/10/2026 (check-up de SEO): migalhas, JSON-LD, Open Graph, rodapé e títulos — sempre por último, para nada ser desfeito
     seo_paginas.main()
+    # 31/10/2026: ficha técnica em tabela (data/ficha.json) e galeria sem a arte, em todas as /p/
+    import subprocess, sys
+    subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ficha_paginas.py')], check=True)
 
 
 if __name__ == '__main__':

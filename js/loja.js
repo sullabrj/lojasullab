@@ -158,6 +158,9 @@ function montarFiltros(){
 var KWMAP=null,_kwLoading=false;
 function ensureKw(cb){if(KWMAP){return cb&&cb();}if(_kwLoading){return setTimeout(function(){ensureKw(cb);},120);}_kwLoading=true;fetch('kw.json').then(function(r){return r.json();}).then(function(d){KWMAP=d;cb&&cb();}).catch(function(){KWMAP={};cb&&cb();});}
 var FTMAP=null,_ftLoading=false;
+var FICHA=null,_fichaLoading=false;
+function esc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function ensureFicha(cb){if(FICHA){return cb&&cb();}if(_fichaLoading){return setTimeout(function(){ensureFicha(cb);},120);}_fichaLoading=true;var u=(window.__LOJA_V&&window.__LOJA_V.f)||'/data/ficha.json';fetch(u).then(function(r){return r.json();}).then(function(d){FICHA=d||{};cb&&cb();}).catch(function(){FICHA={};cb&&cb();});}
 function ensureFT(cb){if(FTMAP){return cb&&cb();}if(_ftLoading){return setTimeout(function(){ensureFT(cb);},120);}_ftLoading=true;fetch('ft.json').then(function(r){return r.json();}).then(function(d){FTMAP=d;cb&&cb();}).catch(function(){FTMAP={};cb&&cb();});}
 function semAcento(s){return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 function _nrmMed(t){return String(t).replace(/[×✕]/g,'x').replace(/ø/g,' ').replace(/(\d)\s*x\s*(\d)/g,'$1x$2').replace(/(\d)\s+(mm|ml|cm|ul)\b/g,'$1$2');}
@@ -964,7 +967,8 @@ function renderRastreio(){var a=meusPedidos();var el=document.getElementById('ra
     '</div>';}).join('');}
 
 var __pmL=[],__pmI=0;
-function pmLista(p){var l=[p.img];[p.img2,'img/a/'+p.c+'.webp'].forEach(function(u){if(u&&l.indexOf(u)<0)l.push(u);});return l;}
+/* 31/10/2026 (dono): a arte (img/a) saiu da galeria — a ficha técnica do painel passa a ter todas as informações */
+function pmLista(p){var l=[p.img];[p.img2].forEach(function(u){if(u&&l.indexOf(u)<0)l.push(u);});return l;}
 function pmGo(k){if(!__pmL.length)return;__pmI=(k+__pmL.length)%__pmL.length;var m=document.getElementById('pmMain');if(m){m.src=__pmL[__pmI];m.classList.toggle('art',__pmI>0);}
   var th=document.querySelectorAll('#pmTh img');for(var i=0;i<th.length;i++)th[i].classList.toggle('on',i===__pmI);}
 function pmNav(d){pmGo(__pmI+d);}
@@ -982,13 +986,16 @@ function abrirProd(i){
   document.getElementById('pmInner').innerHTML=
     '<div class="pmimg"><div class="pmstage" id="pmStage"><button class="pmar l" onclick="pmNav(-1)" aria-label="Foto anterior">&#8249;</button><img id="pmMain" width="320" height="320" src="'+__pmL[0]+'" onerror="this.removeAttribute(\'srcset\');this.src=\'/img/logo-sullab.png\';this.style.opacity=.4" alt="'+p.n+'"><button class="pmar r" onclick="pmNav(1)" aria-label="Próxima foto">&#8250;</button></div>'+(__pmL.length>1?'<div class="pmth" id="pmTh">'+__pmL.map(function(u,k){return '<img class="'+(k?'':'on')+'" width="58" height="58" src="'+u+'" onclick="pmGo('+k+')" alt="'+(k?'Informações técnicas':'Foto do produto')+'" onerror="this.remove();__pmL=__pmL.filter(function(x){return x!==this.getAttribute(\'src\')}.bind(this))">';}).join('')+'</div>':'')+'</div>'+
     '<div class="pmb"><button class="pmx" onclick="fecharProd()">×</button>'+
-    '<span class="bc">'+p.m+' · cód. '+p.c+'</span><h3>'+p.n+'</h3>'+(catNome?'<div style="display:inline-block;font-size:11.5px;background:#eef2fb;color:var(--navy);padding:3px 10px;border-radius:8px;margin:2px 0 6px">🗂️ '+catNome+'</div>':'')+'<div id="pmFicha"></div>'+
-    '<div class="spec">🏷️ Direto da distribuidora autorizada, sem taxa de marketplace.<br>🧾 NF-e em todo pedido · 📦 envio em 24h · 🛡️ produto com procedência.</div>'+
-    precoHtml+
+    '<span class="bc">'+p.m+' · cód. '+p.c+'</span><h3>'+p.n+'</h3>'+(catNome?'<div style="display:inline-block;font-size:11.5px;background:#eef2fb;color:var(--navy);padding:3px 10px;border-radius:8px;margin:2px 0 6px">🗂️ '+catNome+'</div>':'')+precoHtml+
     '<div style="font-size:12px;color:var(--green-d);font-weight:700;margin-top:6px">'+(precoDe(p)>0?'✓ Preço de empresa (CNPJ) já aplicado':'')+'</div>'+
-    acao+'</div>';
+    acao+
+    '<div id="pmFicha"></div>'+
+    '<div class="spec">🏷️ Direto da distribuidora autorizada, sem taxa de marketplace.<br>🧾 NF-e em todo pedido · 📦 envio em 24h · 🛡️ produto com procedência.</div>'+
+    '</div>';
   document.getElementById('pmodal').classList.add('on');pmSwipe();
-  var _fp=p;ensureFT(function(){var el=document.getElementById('pmFicha');if(el&&FTMAP&&FTMAP[_fp.c]){el.innerHTML='<div style="margin-top:10px;border:1px solid #e6ebf5;border-radius:10px;padding:10px 12px;background:#fafbff"><div style="font-weight:700;color:var(--navy);font-size:12.5px;margin-bottom:4px">🔬 Ficha técnica</div><div style="font-size:12.5px;color:#40506b;line-height:1.5">'+FTMAP[_fp.c].replace(/ · /g,'<br>')+'</div></div>';}});
+  var _fp=p;ensureFicha(function(){var el=document.getElementById('pmFicha');if(!el)return;var f=FICHA&&FICHA[_fp.c];
+    if(f&&(f.rows||[]).length){el.innerHTML='<div class="fichat"><div class="ft-t">🔬 Ficha técnica</div><table>'+f.rows.map(function(r){return '<tr><th>'+esc(r[0])+'</th><td>'+esc(r[1])+'</td></tr>';}).join('')+'</table>'+((f.why||[]).length?'<div class="ft-w"><b>Por que escolher</b><ul>'+f.why.map(function(w){return '<li>'+esc(w)+'</li>';}).join('')+'</ul></div>':'')+'</div>';return;}
+    ensureFT(function(){if(FTMAP&&FTMAP[_fp.c])el.innerHTML='<div class="fichat"><div class="ft-t">🔬 Ficha técnica</div><div style="font-size:12.5px;color:#40506b;line-height:1.5">'+FTMAP[_fp.c].replace(/ · /g,'<br>')+'</div></div>';});});
   
 }
 function fecharProd(){document.getElementById('pmodal').classList.remove('on');}
