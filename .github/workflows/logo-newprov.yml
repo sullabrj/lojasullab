@@ -8,6 +8,6 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           mkdir -p _ferramentas/marcas
-          curl -sSfL -A "Mozilla/5.0" -o _ferramentas/marcas/logo-newprov.png "https://www.newprov.com.br/img/logo-newprov.png"
+          curl -sSfL -A "Mozilla/5.0" -o _ferramentas/marcas/logo-vacuette.png "https://www.e-proficientlab.com/wp-content/uploads/2015/12/Vacuette-Logo.png"
           git config user.name "github-actions"; git config user.email "actions@github.com"
-          git add _ferramentas/marcas && git commit -m "logo newprov (uso em artes)" && git push
+          git add _ferramentas/marcas && git commit -m "logo vacuette (uso em artes)" && git push
