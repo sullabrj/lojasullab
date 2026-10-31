@@ -319,7 +319,7 @@ def processar_cat(f, itens):
     t = t.replace('disponíveis para orçamento.', 'disponíveis para compra direta no site, com Pix, NF-e e frete calculado pelo CEP.')
     t = re.sub(r'(<a class="btn" href="[^"]*">)Ver na loja e montar orçamento →(</a>)', r'\1Comprar no site →\2', t)
     t = t.replace('<span>💰 Preço CNPJ</span>', '<span>💚 Pix com desconto</span>')
-    t = t.replace('🏆 <b>Melhor preço em testes rápidos, por teste:</b>', '🏆 <b>Tabela exclusiva do site em testes rápidos, por teste:</b>')
+    t = t.replace('🏆 <b>Melhor preço em testes rápidos, por teste:</b>', '🏆 <b>Preço exclusivo do site em testes rápidos, por teste:</b>')
     # FAQ "preço único" (visível e no JSON-LD)
     if FAQ_PRECO_Q not in t and '<div class="faq">' in t:
         t = t.replace('<div class="faq">', '<div class="faq"><details><summary>' + FAQ_PRECO_Q + '</summary><p>' + FAQ_PRECO_A + '</p></details>', 1)
