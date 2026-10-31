@@ -3,6 +3,8 @@
   var buy=document.querySelector('a.btn-whats');if(!buy)return;
   var pr=document.querySelector('.preco>b');
   var href=buy.getAttribute('href')||'';
+  /* 31/10/2026: "Comprar agora" soma ao carrinho (&add=1) em vez de substituir o que o cliente já tinha */
+  if(/[?&]carrinho=/.test(href)&&!/[?&]add=1/.test(href)){href+='&add=1';buy.setAttribute('href',href);}
   var m=href.match(/carrinho=([^:&]+):(\d+)/);
   var precoTxt=pr?pr.textContent.trim():'';
   var v=precoTxt?parseFloat(precoTxt.replace(/[^\d,]/g,'').replace(',','.')):0;
