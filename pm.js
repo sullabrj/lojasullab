@@ -7,8 +7,10 @@
   var precoTxt=pr?pr.textContent.trim():'';
   var v=precoTxt?parseFloat(precoTxt.replace(/[^\d,]/g,'').replace(',','.')):0;
   var brl=function(n){return 'R$ '+n.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');};
-  /* preço no Pix (5% off, igual à loja) */
-  if(v>0&&m){var pb=document.querySelector('.preco');if(pb&&!pb.querySelector('.pmpix')){var px=document.createElement('span');px.className='pmpix';px.innerHTML='💚 '+brl(Math.round(v*95)/100)+' no Pix<span>5% off</span>';pb.appendChild(px);}}
+  /* preço no Pix: 5% off; 3% em tubos e agulhas Vacuette (mesma lista PIX3 da loja) — 31/10/2026 */
+  var PIX3={"450071":1,"450072":1,"454036":1,"454087":1,"454921":1,"454235":1,"456211":1,"454071":1,"454482":1,"456071":1,"455071":1,"454092":1,"455092":1,"456001":1,"454327":1,"454085":1,"454091":1,"454030":1,"456080":1,"450539":1};
+  var cod=m?decodeURIComponent(m[1]):'';var pct=PIX3[cod]?3:5;
+  if(v>0&&m){var pb=document.querySelector('.preco');if(pb&&!pb.querySelector('.pmpix')){var px=document.createElement('span');px.className='pmpix';px.innerHTML='💚 '+brl(Math.round(v*(100-pct))/100)+' no Pix<span>'+pct+'% off</span>';pb.appendChild(px);}}
   var mob=window.matchMedia&&matchMedia('(max-width:700px)').matches;
   /* no celular o botão de compra fica logo abaixo do preço */
   if(mob){var ref=document.querySelector('.tb')||document.querySelector('.preco');if(ref&&ref.parentNode===buy.parentNode)ref.parentNode.insertBefore(buy,ref.nextSibling);}
