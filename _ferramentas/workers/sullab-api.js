@@ -71,7 +71,15 @@ Object.assign(PROD, {"TR 017-1 RP":[100,39.329],"TR 008-1 DT":[249.5,67.917],"TR
 // 30/10/2026 CRAL: escalpe EV21, vidraria boro 3.3 e microscopios (FRETE_TAB [kg,alt,larg,comp] com folga; PROD [preco, lucro liquido])
 Object.assign(FRETE_TAB, {"EV21":[0.4,8,15,20],"19150":[1.13,8,19,25],"19230":[1.34,7,25,28],"358NAC":[0.2,2,8,10],"MICB-10":[5.75,53,26,41],"MICB-20":[10.19,55,36,41],"MICBTRI10":[5.78,53,25,40],"MICB100-INF":[5.75,53,26,41],"MIBEST":[3.34,40,19,33],"MICB200-INF":[10.19,55,36,41],"MICBTRI100-INF":[5.78,53,25,40],"BEFA50":[0.2,9,6,5],"BEFA100":[0.2,10,6,7],"BEFA150":[0.2,11,8,7],"BEFA250":[0.25,14,9,9],"BEFA300":[0.28,14,9,9],"BEFA400":[0.34,17,10,10],"BEFA500":[0.37,17,11,10],"BEFA600":[0.36,19,11,11],"BEFA1000":[0.51,22,13,12],"BEFA2000":[0.92,30,18,17],"BEFB5":[0.2,3,3,4],"BEFB10":[0.2,5,4,3],"BEFB25":[0.2,7,5,5],"BEFB150":[0.2,11,9,9],"BEFB250":[0.27,12,10,10],"BEFB400":[0.33,13,10,11],"BEFB500":[0.38,15,11,12],"BEFB600":[0.44,15,12,12],"BEFB800":[0.44,17,13,14],"BEFB1000":[0.53,15,15,14],"BEFB2000":[0.8,24,18,19],"BEFB3000":[1.25,21,26,22],"BEFB4000":[1.75,24,24,33],"BEFB5000":[1.75,33,23,24],"PROBPH10":[0.2,15,7,6],"PROBPH25":[0.21,18,7,8],"PROBPH50":[0.26,7,8,22],"PROBPH100":[0.32,28,9,8],"PROBPH250":[0.48,36,11,13],"PROBPH500":[0.63,42,14,12],"PROBPH1000":[0.88,52,15,16],"PROBPH2000":[1.6,19,23,60],"ERLBL25":[0.2,5,9,5],"ERLBL50":[0.2,10,6,6],"ERLBL100":[0.2,13,8,8],"ERLBL125":[0.2,14,8,8],"ERLBL250":[0.38,18,10,10],"ERLBL300":[0.38,11,18,11],"ERLBL2000":[0.97,33,19,19],"ERLBE25":[0.2,5,9,5],"ERLBE125":[0.21,14,8,8],"ERLBE250":[0.33,10,10,17],"ERLBE300":[0.33,18,10,10],"ERLBE500":[0.42,21,12,12],"ERLBE1000":[0.56,25,15,15],"ERLBE2000":[1.13,33,19,19],"ERLBE3000":[1.51,23,23,38],"ERLBE5000":[2.26,46,28,28],"ERLBE6000":[2.26,26,26,43],"SISERLEN1000":[2.13,34,33,21],"SISERLEN250":[2.13,34,33,21],"SISERLEN500":[2.13,34,33,21],"BLFD50":[0.22,18,15,7],"BLFD125":[0.31,26,14,7],"BLFD250":[0.4,26,21,11],"BLFD500":[0.56,32,13,23],"BLFD1000":[0.82,41,18,26],"BFC100":[0.2,13,8,8],"BFC250":[0.31,8,17,8],"BFC500":[0.4,13,21,13],"BFC1000":[0.63,17,24,17],"BFC5000":[2.13,43,27,27],"BRF100":[0.2,8,13,8],"BRF500":[0.39,14,21,14],"BRF1000":[0.62,15,15,25],"BRF3000":[1.32,23,15,21],"BRF5000":[2.17,27,43,27],"BVCA5":[0.2,10,3,3],"BVCA10":[0.2,4,4,11],"BVCA20":[0.2,5,7,5],"BVCA25":[0.2,14,6,6],"BVCA50":[0.2,5,6,19],"BVCA100":[0.22,6,7,14],"BVCA200":[0.27,7,10,25],"BVCA250":[0.29,28,9,9],"BVCA1000":[0.58,41,15,10],"BVCA2000":[0.77,19,19,46],"BVCA5000":[1.71,19,19,46],"BVAB10":[0.33,12,5,5],"BVAB25":[0.2,6,10,15],"BVAB50":[0.2,7,7,17],"BVAB100":[0.3,13,8,21],"BVAB200":[0.41,14,12,29],"BVAB250":[0.41,14,29,10],"BVAB500":[0.56,17,13,33],"FUHC60":[0.2,13,7,7],"FUHC75":[0.2,16,10,10],"FUHC100":[0.2,22,12,12],"FUHC150":[0.27,28,16,15],"FUHC180":[0.33,28,21,21],"FUHL50":[0.2,22,6,6],"FUHL60":[0.2,23,7,7],"FUHL75":[0.21,24,10,10],"FUHL100":[0.2,26,12,7],"FUHL150":[0.28,39,18,18],"FUHL180":[0.33,39,21,21],"FUTP125":[0.29,7,9,32],"FUTP250":[0.35,10,7,35],"FUTP500":[0.46,13,10,42],"FUTP1000":[0.56,14,10,50],"FUTP2000":[0.65,19,19,59],"P1275":[1.57,13,10,37],"P1075":[1.05,11,30,10],"P12120":[2.33,13,15,36],"P13100":[2.01,13,14,39],"P15100":[2.46,17,13,49],"P16150":[4.18,18,18,49],"P18150":[5.57,19,18,55],"P18180":[5.72,19,21,55],"P20150":[2.94,11,49,18],"P20200":[3.78,11,49,24],"P25150":[3.69,60,14,18],"P13100B":[3.34,15,47,13],"P15100B":[1.74,10,12,43],"P16100B":[4.7,9,13,39],"P16150B":[6.48,19,19,53],"P18180B":[5.57,19,13,52],"P20150B":[5.28,19,13,52],"P20200B":[4.7,12,18,51],"P25150B":[2.15,19,14,32],"P25200B":[4.13,14,23,32],"P1ML":[0.39,3,6,41],"P2ML":[0.36,3,6,41],"P5ML":[0.29,3,6,41],"P20ML":[0.45,9,4,52],"P25ML":[0.52,3,9,52],"FRABLRV125":[0.38,14,7,7],"FRABLRV250":[0.44,17,8,8],"FRABLRV500":[0.67,20,10,10],"PV6015":[2.83,18,17,25],"PV8015":[3.53,19,21,30],"PV10015":[5.85,21,24,36],"PV12020":[11.95,19,35,82],"PV15020":[6.36,40,26,42],"VIDRL50MM":[0.21,6,7,4],"VIDRL60MM":[0.26,8,8,4],"VIDRL200MM":[1.83,6,25,24],"KITA250":[0.46,10,17,10],"KITA500":[0.5,22,12,12],"KITA1000":[0.96,28,14,14],"KITA2000":[0.97,34,18,19],"KITA4000":[0.96,45,14,14],"FRITR250":[0.4,17,8,8],"FRITR500":[0.57,21,10,10],"FRITR1000":[0.75,28,12,12],"FRITR2000":[0.75,27,11,11],"FRITR5000":[2.31,23,40,23],"FRITR10000":[0.75,28,49,28],"BURE5":[0.62,15,10,80],"BURE10":[0.68,15,10,79],"BURE25":[0.66,15,10,79],"BURE50":[0.92,10,15,97],"PVO2ML":[0.2,4,7,41],"PVO3ML":[0.27,3,9,47],"PVO5ML":[0.29,9,3,47],"PVO10ML":[0.2,3,11,53],"PVO15ML":[0.31,11,3,55],"PVO20ML":[0.34,3,13,65],"PVO50ML":[0.42,5,15,68],"PVO100ML":[0.23,5,6,71],"FRATR100":[0.32,12,7,7],"FRATR250":[0.42,17,8,8],"FRATR500":[0.53,21,10,10],"FRATR1000":[0.82,27,12,12],"FRATR2000":[0.82,32,17,17],"FRATR5000":[2.31,46,28,28],"DV150":[3.5,21,30,30],"DV210":[5.85,37,31,36],"DV240":[5.74,40,35,40],"DV300":[11.67,48,38,48]});
 Object.assign(PROD, {"EV21":[29.23,4.001],"19150":[86.9,11.899],"19230":[92.79,12.703],"358NAC":[44.67,6.113],"MICB-10":[2219.03,409.488],"MICB-20":[9977.99,1841.275],"MICBTRI10":[3653.66,674.225],"MICB100-INF":[3977.84,734.047],"MIBEST":[1475.03,272.196],"MICB200-INF":[5470.08,1009.412],"MICBTRI100-INF":[5574.98,1028.773],"BEFA50":[4.1,0.56],"BEFA100":[4.35,0.593],"BEFA150":[4.97,0.68],"BEFA250":[6.22,0.854],"BEFA300":[7.46,1.02],"BEFA400":[8.46,1.161],"BEFA500":[9.45,1.294],"BEFA600":[11.69,1.601],"BEFA1000":[17.91,2.455],"BEFA2000":[43.51,5.956],"BEFB5":[2.74,0.372],"BEFB10":[2.74,0.372],"BEFB25":[2.74,0.372],"BEFB150":[4.97,0.68],"BEFB250":[5.47,0.746],"BEFB400":[8.22,1.127],"BEFB500":[8.75,1.198],"BEFB600":[10.95,1.501],"BEFB800":[12.94,1.775],"BEFB1000":[16.41,2.248],"BEFB2000":[37.31,5.108],"BEFB3000":[71.29,9.762],"BEFB4000":[91.49,12.526],"BEFB5000":[123.91,16.962],"PROBPH10":[8.12,1.112],"PROBPH25":[10.15,1.39],"PROBPH50":[11.89,1.631],"PROBPH100":[13.92,1.909],"PROBPH250":[26.4,3.612],"PROBPH500":[37.79,5.177],"PROBPH1000":[60.63,8.298],"PROBPH2000":[90.71,12.422],"ERLBL25":[6.27,0.857],"ERLBL50":[9.62,1.319],"ERLBL100":[10.53,1.443],"ERLBL125":[10.96,1.499],"ERLBL250":[12.98,1.779],"ERLBL300":[13.47,1.846],"ERLBL2000":[75.01,10.269],"ERLBE25":[7.39,1.01],"ERLBE125":[9.18,1.254],"ERLBE250":[10.35,1.42],"ERLBE300":[10.57,1.447],"ERLBE500":[18.33,2.512],"ERLBE1000":[30.66,4.198],"ERLBE2000":[53.87,7.374],"ERLBE3000":[94.37,12.918],"ERLBE5000":[115.72,15.841],"ERLBE6000":[139.87,19.147],"SISERLEN1000":[351.62,48.139],"SISERLEN250":[351.62,48.139],"SISERLEN500":[351.62,48.139],"BLFD50":[18.1,2.477],"BLFD125":[19.89,2.72],"BLFD250":[29.85,4.088],"BLFD500":[41.44,5.674],"BLFD1000":[72.6,9.937],"BFC100":[9.16,1.257],"BFC250":[13.33,1.826],"BFC500":[17.3,2.366],"BFC1000":[27.65,3.786],"BFC5000":[102.05,13.975],"BRF100":[9.93,1.362],"BRF500":[18.75,2.57],"BRF1000":[29.96,4.102],"BRF3000":[78.01,10.682],"BRF5000":[110.56,15.139],"BVCA5":[10.53,1.443],"BVCA10":[12.31,1.688],"BVCA20":[12.98,1.779],"BVCA25":[13.47,1.846],"BVCA50":[14.1,1.932],"BVCA100":[16.79,2.302],"BVCA200":[24.95,3.417],"BVCA250":[26.85,3.675],"BVCA1000":[49.69,6.806],"BVCA2000":[73.85,10.111],"BVCA5000":[286.82,39.271],"BVAB10":[18.9,2.588],"BVAB25":[21.28,2.914],"BVAB50":[22.68,3.105],"BVAB100":[25.86,3.542],"BVAB200":[34.82,4.769],"BVAB250":[35.81,4.901],"BVAB500":[53.72,7.356],"FUHC60":[6.09,0.834],"FUHC75":[8.99,1.232],"FUHC100":[12.91,1.769],"FUHC150":[46.06,6.306],"FUHC180":[145.04,19.858],"FUHL50":[6.2,0.847],"FUHL60":[6.92,0.95],"FUHL75":[9.04,1.235],"FUHL100":[11.61,1.592],"FUHL150":[42.92,5.874],"FUHL180":[175.08,23.968],"FUTP125":[83.83,11.476],"FUTP250":[87.92,12.038],"FUTP500":[113.01,15.474],"FUTP1000":[139.19,19.059],"FUTP2000":[254.44,34.839],"P1275":[37.9,5.19],"P1075":[35.56,4.869],"P12120":[60.91,8.337],"P13100":[57.2,7.829],"P15100":[57.19,7.83],"P16150":[90.26,12.359],"P18150":[151.42,20.729],"P18180":[151.42,20.729],"P20150":[77.83,10.659],"P20200":[77.83,10.659],"P25150":[111.89,15.321],"P13100B":[262.91,35.999],"P15100B":[140.49,19.235],"P16100B":[151.68,20.77],"P16150B":[355.56,48.683],"P18180B":[273.52,37.45],"P20150B":[261.07,35.743],"P20200B":[300.86,41.192],"P25150B":[201.4,27.572],"P25200B":[236.22,32.34],"P1ML":[32.33,4.429],"P2ML":[32.33,4.429],"P5ML":[32.33,4.429],"P20ML":[78.44,10.738],"P25ML":[81.45,11.15],"FRABLRV125":[9.52,1.303],"FRABLRV250":[10.77,1.477],"FRABLRV500":[14.21,1.946],"PV6015":[252.13,34.523],"PV8015":[323.23,44.253],"PV10015":[360.28,49.33],"PV12020":[1223.31,167.491],"PV15020":[746.14,102.154],"VIDRL50MM":[3.49,0.481],"VIDRL60MM":[3.49,0.481],"VIDRL200MM":[27.86,3.814],"KITA250":[29.62,4.053],"KITA500":[37.9,5.19],"KITA1000":[53.72,7.356],"KITA2000":[122.51,16.771],"KITA4000":[178.44,24.428],"FRITR250":[18.65,2.555],"FRITR500":[25.37,3.475],"FRITR1000":[38.54,5.275],"FRITR2000":[135.51,18.556],"FRITR5000":[223.79,30.64],"FRITR10000":[359.28,49.189],"BURE5":[88.79,12.158],"BURE10":[88.79,12.158],"BURE25":[92.2,12.621],"BURE50":[99.12,13.571],"PVO2ML":[10.57,1.447],"PVO3ML":[10.35,1.42],"PVO5ML":[10.35,1.42],"PVO10ML":[11.42,1.561],"PVO15ML":[11.42,1.561],"PVO20ML":[14.01,1.915],"PVO50ML":[20.47,2.804],"PVO100ML":[25.91,3.545],"FRATR100":[15.18,2.081],"FRATR250":[17.65,2.414],"FRATR500":[22.39,3.068],"FRATR1000":[28.35,3.882],"FRATR2000":[78.82,10.792],"FRATR5000":[387.06,52.995],"DV150":[128.8,17.635],"DV210":[224.64,30.754],"DV240":[314.45,43.05],"DV300":[445.56,61.001]});
-const SUG = ["TR 008-1 IST","TR 009-1 IST","TR 017-1 RP","TR 007 IST","TR 008-1 DT","TR 009-1 DT","3046","12024","3041","1001","3036","3044","18010","3011","PA398","3003","3002","3043","3037","18433-NAC","3008","3056","1020","1019","13044","907","13036","18266","12023","3054","CLT80SNM","18056","13043","PA158","742","900","741","3014","PA265","PA271","PA233","PA317","3007","CITO3","TR 009-1 DT","PA272","PA142","3017","3016","TR 008-1 DT","PA275","PEGUE200V","PA274","902","PA150"];
+// 31/10/2026 (estudo robô do carrinho): a lista antiga tinha 55 códigos e 30 eram refrigerados — sugerir um deles a um carrinho
+// de temperatura ambiente virava o envio em refrigerado (isopor, prazo de 3 dias, +50%). Agora: SUG = só ambiente, lucro
+// líquido >= 25% e preço R$ 45–300 (testes rápidos primeiro); SUG_REFRIG = o que pode entrar num carrinho que já vai em isopor.
+const SUG = ["TR 008-1 IST","TR 009-1 IST","TR 009 IST","TR 017-1 RP","TR 007 IST","TR 008-1 DT","TR 009-1 DT","PEGUE200V","300036","300045","18150","18153","16","18","CLN-17"];
+const SUG_REFRIG = SUG.concat(["12023","3006","3034","3001","3004","3012","3016","3017","3014","3007","3000","3002","3003","3008","3037","3043","3011","3036","3041","PA03","PA22","PA19","PA10","PA46","PA47","PA330","PA75"]);
+// Linha do teste rápido pelo sufixo do código (IST = sífilis/HBsAg/HIV, DT = dengue, RP = respiratório): o fechador prioriza a linha que já está no carrinho.
+function linhaTeste(c) { const m = /\b(IST|DT|RP)$/.exec(String(c)); return m ? m[1] : null; }
+// Teto do aviso (decisão 2 do estudo): "faltam R$ X" só quando X <= 60% do carrinho ou X <= R$ 100 (e nunca mais que o próprio carrinho); acima disso, só o frete cotado.
+const GRATIS_TETO_ABS = 100, GRATIS_TETO_PCT = 0.60;
 const UF_FAIXAS = [[1000,19999,'SP'],[20000,28999,'RJ'],[29000,29999,'ES'],[30000,39999,'MG'],[40000,48999,'BA'],[49000,49999,'SE'],[50000,56999,'PE'],[57000,57999,'AL'],[58000,58999,'PB'],[59000,59999,'RN'],[60000,63999,'CE'],[64000,64999,'PI'],[65000,65999,'MA'],[66000,68899,'PA'],[68900,68999,'AP'],[69000,69299,'AM'],[69300,69399,'RR'],[69400,69899,'AM'],[69900,69999,'AC'],[70000,72799,'DF'],[72800,72999,'GO'],[73000,73699,'DF'],[73700,76799,'GO'],[76800,76999,'RO'],[77000,77999,'TO'],[78000,78899,'MT'],[79000,79999,'MS'],[80000,87999,'PR'],[88000,89999,'SC'],[90000,99999,'RS']];
 
 function ufDoCep(cep) {
@@ -95,31 +103,37 @@ function fechaGratis(uf, itens, k) {
   for (const it of itens) { const p = PROD[it.c]; V += p[0] * it.q; N += p[1] * it.q; }
   return { ok: N - custoFrete(uf, itens) * (k || 1) >= GRATIS_SOBRA * V, V };
 }
-function gratisInfo(uf, itens, k) {
+function gratisInfo(uf, itens, k, cands, fecha) {
   if (!uf || !GRID[uf]) return null;
   if (!itens.every(it => PROD[it.c])) return { ativo: false, sobConsulta: true };
-  const base = fechaGratis(uf, itens, k);
+  const F = fecha || fechaGratis;
+  const base = F(uf, itens, k);
   if (base.ok) return { ativo: true };
   let falta = null;
   for (let s = 1.05; s <= GRATIS_MAX_ESCALA + 1e-9; s += 0.05) {
     const sc = itens.map(it => ({ c: it.c, q: it.q * s, v: it.v }));
-    if (fechaGratis(uf, sc, k).ok) { falta = Math.ceil((base.V * (s - 1)) / 5) * 5; break; }
+    if (F(uf, sc, k).ok) { falta = Math.ceil((base.V * (s - 1)) / 5) * 5; break; }
   }
+  const linhas = new Set(itens.map(it => linhaTeste(it.c)).filter(Boolean));
   const sug = [];
-  const cands = [...new Set([...itens.map(i => i.c), ...SUG])];
-  for (const cc of cands) {
-    const kk = { c: cc };
-    if (sug.length >= 6) break;
+  const lista = cands || SUG;
+  const cc0 = [...new Set([...itens.map(i => i.c), ...lista])];
+  for (const cc of cc0) {
+    if (!PROD[cc]) continue;
+    if (sug.length >= 8) break;
     for (let u = 1; u <= 12; u++) {
       const novo = itens.map(it => ({ c: it.c, q: it.q, v: it.v }));
-      const ex = novo.find(it => it.c === kk.c);
-      if (ex) ex.q += u; else novo.push({ c: kk.c, q: u, v: PROD[kk.c][0] });
-      if (fechaGratis(uf, novo, k).ok) { sug.push({ c: kk.c, q: u, valor: Math.round(u * PROD[kk.c][0] * 100) / 100 }); break; }
+      const ex = novo.find(it => it.c === cc);
+      if (ex) ex.q += u; else novo.push({ c: cc, q: u, v: PROD[cc][0] });
+      if (F(uf, novo, k).ok) { sug.push({ c: cc, q: u, valor: Math.round(u * PROD[cc][0] * 100) / 100, linha: linhaTeste(cc) }); break; }
     }
   }
-  sug.sort((a, b) => a.valor - b.valor);
-  if (sug.length) falta = Math.ceil(sug[0].valor / 5) * 5;
-  return { ativo: false, falta, sugestoes: sug.slice(0, 3) };
+  // mesma linha de teste do carrinho primeiro; depois a opção mais barata
+  sug.sort((a, b) => ((linhas.has(b.linha) ? 1 : 0) - (linhas.has(a.linha) ? 1 : 0)) || (a.valor - b.valor));
+  if (sug.length) falta = Math.ceil(Math.min(...sug.map(x => x.valor)) / 5) * 5;
+  const teto = Math.max(Math.min(GRATIS_TETO_ABS, base.V), GRATIS_TETO_PCT * base.V);
+  if (falta == null || falta > teto) return { ativo: false, falta: null, sugestoes: [], longe: true };
+  return { ativo: false, falta, sugestoes: sug.slice(0, 3).map(x => ({ c: x.c, q: x.q, valor: x.valor })) };
 }
 
 // ===== BARRA MANSA E VOLTA REDONDA (29/10/2026, Eduardo) =====
@@ -196,6 +210,18 @@ async function frete2(req, env) {
         let V = 0, N = 0; for (const it of itens) { const r = REFRIG.has(it.c); V += (PROD[it.c][0] + (r ? 8 : 0)) * it.q; N += (PROD[it.c][1] + (r ? 6.85 : 0)) * it.q; }
         const real = (rops[0].preco - extraG - ISOPOR * np) / (1 + REFRIG_MARKUP) + 8; // + R$ 8 de isopor e gelo reais por envio
         if (N - real >= GRATIS_SOBRA * V) { rops[0] = Object.assign({}, rops[0], { gratis: true, economia: rops[0].preco, preco: 0 }); g = { ativo: true }; }
+        else {
+          // 31/10/2026: sugestão também no ramo refrigerado (antes devolvia lista vazia). O custo real de um carrinho
+          // maior é estimado pela tabela por UF na mesma proporção (real cotado / tabela), como no ramo ambiente.
+          const tab0 = custoFrete(uf, itens);
+          const kR = tab0 > 0 ? real / tab0 : 1;
+          const fechaR = (u, its) => {
+            let Vr = 0, Nr = 0; for (const it of its) { const r = REFRIG.has(it.c); Vr += (PROD[it.c][0] + (r ? 8 : 0)) * it.q; Nr += (PROD[it.c][1] + (r ? 6.85 : 0)) * it.q; }
+            return { ok: Nr - custoFrete(u, its) * kR >= GRATIS_SOBRA * Vr, V: Vr };
+          };
+          const gi = gratisInfo(uf, itens, 1, SUG_REFRIG, fechaR);
+          if (gi && !gi.ativo) g = gi;
+        }
       }
     } catch (e) {}
     if (locR) rops.unshift(locR);
@@ -238,7 +264,7 @@ export default {
         const b = new TextEncoder().encode(JSON.stringify([PROD, FRETE_TAB, GRID, SUG]));
         const d = await crypto.subtle.digest('SHA-256', b);
         const hx = Array.from(new Uint8Array(d)).map(x => x.toString(16).padStart(2, '0')).join('').slice(0, 16);
-        return new Response(JSON.stringify({ v: '2026-10-20', h: hx, n: Object.keys(PROD).length }), { headers: cors(req, new Headers({ 'Content-Type': 'application/json' })) });
+        return new Response(JSON.stringify({ v: '2026-10-31b', h: hx, n: Object.keys(PROD).length }), { headers: cors(req, new Headers({ 'Content-Type': 'application/json' })) });
       } else if (p === '/evento' || p === '/rastreio') {
         const t = new URL(SHEET);
         t.search = url.search;
