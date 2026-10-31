@@ -301,21 +301,102 @@ DESC_TUBO = [
     (r'heparina', 'Bioquímica em plasma e gasometria venosa.'),
     (r'EDTA K2 com gel', 'Plasma EDTA com gel: biologia molecular e carga viral.'),
     (r'EDTA', 'Hematologia: hemograma e tipagem.'),
+    # "sem gel" antes de "gel": o 455092 (soro sem gel 9 mL) saía como "com gel separador" (erro visto em 30/10/2026)
+    (r'sorologia|sem gel', 'Soro sem gel (ativador de coágulo): bioquímica, sorologia e imunologia.'),
     (r'gel', 'Soro com gel separador: bioquímica e sorologia.'),
-    (r'sorologia|soro sem gel', 'Soro sem gel: bioquímica, sorologia e imunologia.'),
     (r'sem aditivo', 'Tubo sem aditivo para coleta e descarte.'),
     (r'Agulha', 'Agulha múltipla para coleta a vácuo, com trifacetado.'),
 ]
+
+# Guia de uso por código (fonte: catálogo SULLAB de 28/10/2026 e fichas Greiner/DeepBlue):
+# tampa, aditivo, indicação, inversões após a coleta e registro ANVISA. Código fora da lista sai sem guia.
+GUIA = {
+    '454036': ('Roxa, anel preto', 'K3EDTA', 'Hemograma completo, plaquetas, HbA1c, tipagem sanguínea', '8 a 10x', '10290310032'),
+    '454087': ('Roxa, anel branco', 'K3EDTA', 'Hemograma em pediatria e coletas de baixo volume', '8 a 10x', '10290310032'),
+    '454921': ('Roxa (tubo âmbar)', 'K3EDTA, tubo fotoprotegido', 'Exames sensíveis à luz (bilirrubina, vitaminas, porfirinas)', '8 a 10x', ''),
+    '454235': ('Roxa, anel amarelo', 'K2EDTA + gel separador', 'Carga viral e PCR em plasma (separa o plasma das células)', '8 a 10x', '10290310032'),
+    '456211': ('Branca, anel amarelo', 'K2EDTA + gel separador', 'Carga viral e PCR em plasma (separa o plasma das células)', '8 a 10x', '10290310032'),
+    '454071': ('Vermelha, anel amarelo', 'Ativador de coágulo + gel separador', 'Bioquímica, hormônios, sorologia e imunologia', '5 a 10x', '10290310034'),
+    '454482': ('Vermelha, anel amarelo (tubo âmbar)', 'Ativador de coágulo + gel, fotoprotegido', 'Bilirrubina e analitos sensíveis à luz', '5 a 10x', ''),
+    '456071': ('Vermelha, anel amarelo', 'Ativador de coágulo + gel separador', 'Bioquímica, hormônios, sorologia e imunologia', '5 a 10x', '10290310034'),
+    '455071': ('Vermelha, anel amarelo', 'Ativador de coágulo + gel separador', 'Painéis grandes de bioquímica e sorologia', '5 a 10x', '10290310034'),
+    '454092': ('Vermelha, anel preto', 'Ativador de coágulo', 'Sorologia, imunohematologia e bioquímica', '5 a 10x', '10290310034'),
+    '455092': ('Vermelha, anel preto', 'Ativador de coágulo', 'Sorologia, banco de sangue e bioquímica', '5 a 10x', '10290310034'),
+    '456001': ('Branca, anel preto', 'Sem aditivo', 'Coleta de descarte e exames sem aditivo', '', ''),
+    '454327': ('Azul clara, anel preto', 'Citrato de sódio 3,2% (9NC)', 'TP/INR, TTPA, fibrinogênio, D-dímero', '4x', '10290310032'),
+    '450539': ('Azul clara', 'Citrato de sódio 3,2% (9NC)', 'Coagulação em pediatria (acompanha carrier)', '3 a 4x', ''),
+    '454085': ('Cinza, anel branco', 'Fluoreto de sódio + K3EDTA (FE)', 'Glicemia, curva glicêmica, lactato', '5 a 10x', '10290310032'),
+    '454091': ('Cinza, anel preto', 'Fluoreto de sódio + K3EDTA (FE)', 'Glicemia, curva glicêmica, lactato', '5 a 10x', '10290310032'),
+    '454030': ('Verde, anel verde', 'Heparina de sódio', 'Bioquímica em plasma e gasometria venosa', '5 a 10x', '10290310032'),
+    '456080': ('Azul royal, anel preto', 'Heparina de sódio p/ elementos-traço', 'Dosagem de metais e oligoelementos (zinco, cobre, chumbo)', '5 a 10x', '10290310032'),
+    '450071': ('', '', 'Agulha múltipla 22G (25×0,7 mm) para coleta a vácuo, bisel trifacetado', '', '10290310013'),
+    '450072': ('', '', 'Agulha múltipla 21G (25×0,8 mm) para coleta a vácuo, bisel trifacetado', '', '10290310013'),
+}
+# Ordem de coleta recomendada (CLSI): citrato → soro (com e sem gel) → heparina → EDTA → fluoreto.
+ORDEM_COLETA = ['454327', '450539', '454092', '455092', '454071', '454482', '456071', '455071', '456001',
+                '454030', '456080', '454036', '454087', '454921', '454235', '456211', '454085', '454091']
+# Testes rápidos DeepBlue: (amostra/uso, registro ANVISA)
+GUIA_TR = {
+    'TR 017-1 RP': ('Antígeno em swab nasal, nasofaríngeo ou orofaríngeo · leitura em 15 min', '82444370140'),
+    'TR 008-1 DT': ('Antígeno NS1 da dengue (fase aguda) em soro, plasma ou sangue total', '82444370105'),
+    'TR 009-1 DT': ('Anticorpos IgG e IgM anti-dengue em soro, plasma ou sangue total', '82444370168'),
+    'TR 010 DT': ('NS1 + IgG/IgM no mesmo cassete: fase aguda e resposta imune', '82444370203'),
+    'TR 016-1 RP': ('Antígeno do vírus sincicial respiratório em swab nasofaríngeo', '82444370077'),
+    'TR 007 IST': ('Anticorpos anti-HIV 1 e 2 em soro, plasma ou sangue total', '82444370173'),
+    'TR 008-1 IST': ('Anticorpos treponêmicos (sífilis) em soro, plasma ou sangue total', '82444370197'),
+    'TR 009 IST': ('Antígeno de superfície da hepatite B em soro ou plasma · cassete', '82444370230'),
+    'TR 009-1 IST': ('Antígeno de superfície da hepatite B em soro ou plasma · tira', '82444370230'),
+}
 
 
 def descricao(p):
     n = p['n']
     if p['k'] == 'tr':
-        return 'Teste imunocromatográfico de uso profissional, com registro ANVISA. Preço por teste em destaque.'
+        g = GUIA_TR.get(p['c'])
+        base = 'Teste rápido imunocromatográfico de uso profissional (diagnóstico in vitro).'
+        if g:
+            return f'{g[0]}. {base}' + (f' ANVISA {g[1]}.' if g[1] else '')
+        return base + ' Registro ANVISA.'
+    g = GUIA.get(p['c'])
+    if g:
+        tampa, aditivo, ind, inv, anvisa = g
+        partes = []
+        if tampa:
+            partes.append(f'Tampa {tampa.lower()} · {aditivo}.')
+        partes.append(ind + '.')
+        if inv:
+            partes.append(f'Inversões: {inv} após a coleta.')
+        if anvisa:
+            partes.append(f'ANVISA {anvisa}.')
+        return ' '.join(partes) + ' Greiner Bio-One Vacuette®.'
     for rx, d in DESC_TUBO:
         if re.search(rx, n, re.I):
             return d + ' Greiner Bio-One Vacuette®.'
     return ''
+
+
+def guia_uso(d, largura):
+    """Página 'Guia rápido de uso' do catálogo: ordem de coleta, tampa, aditivo, indicação e inversões."""
+    por_cod = {p['c']: p for p in d['catalogo']}
+    cods = [c for c in ORDEM_COLETA if c in por_cod]
+    if not cods:
+        return []
+    S_G = estilo('g', fontSize=8.8, leading=11)
+    S_GB = estilo('gb', fontName='Sans-Bold', fontSize=8.8, leading=11, textColor=AZUL)
+    S_CABG = estilo('cabg', fontName='Sans-Bold', fontSize=9, leading=11, textColor=colors.white)
+    linhas = [[Paragraph(t, S_CABG) for t in ('Nº', 'Tubo · código', 'Tampa', 'Aditivo', 'Indicação', 'Inversões')]]
+    for i, c in enumerate(cods, 1):
+        tampa, aditivo, ind, inv, _ = GUIA[c]
+        linhas.append([Paragraph(str(i), S_G), Paragraph(f'{esc(nome_curto(por_cod[c]["n"]))} · <b>{c}</b>', S_GB),
+                       Paragraph(esc(tampa), S_G), Paragraph(esc(aditivo), S_G), Paragraph(esc(ind), S_G),
+                       Paragraph(esc(inv) if inv else '—', S_G)])
+    cw = [9 * mm, 44 * mm, 28 * mm, 33 * mm, largura - 9 * mm - 44 * mm - 28 * mm - 33 * mm - 21 * mm, 21 * mm]
+    t = Table(linhas, colWidths=cw, repeatRows=1)
+    t.setStyle(estilo_tabela(len(linhas)))
+    return [Paragraph('Guia rápido de uso dos tubos Vacuette®', S_H2),
+            Paragraph('Siga a ordem de coleta abaixo (citrato → soro → heparina → EDTA → fluoreto), encha o tubo até '
+                      'a marca de volume e faça as inversões suaves indicadas logo após a coleta. Nunca agite o tubo.',
+                      S_PEQ), Spacer(1, 3), t, Spacer(1, 6 * mm)]
 
 
 def secoes_destaque(d):
@@ -456,6 +537,7 @@ def gerar_catalogo(d, destino, versao):
                      'Tubos e agulhas Greiner Vacuette® e testes rápidos com registro ANVISA. '
                      'Preços exclusivos do site — toque em <b>Comprar</b> para abrir o carrinho.', 'catalogo', W)
     hist += [caixa_regras(W), Spacer(1, 4 * mm)]
+    hist += guia_uso(d, W)  # 30/10/2026: o robô promete "catálogo com guia de uso dos tubos"
     FOTO = 22 * mm
     cw = [FOTO + 4, W - FOTO - 4 - 36 * mm - 24 * mm, 36 * mm, 24 * mm]
     for titulo, itens, pix in secoes_destaque(d):
