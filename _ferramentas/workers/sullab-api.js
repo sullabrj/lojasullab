@@ -199,10 +199,11 @@ async function frete2(req, env) {
         const real = (rops[0].preco - extraG - ISOPOR * np) / (1 + REFRIG_MARKUP) + 8; // + R$ 8 de isopor e gelo reais por envio
         if (N - real >= GRATIS_SOBRA * V) { rops[0] = Object.assign({}, rops[0], { gratis: true, economia: rops[0].preco, preco: 0 }); g = { ativo: true }; }
       }
-    } catch (e) {}
+    } catch (e) { g.falhou = true; }
     if (locR) rops.unshift(locR);
+    const dbgFim = rops.length;
     const out = { opcoes: rops, uf, gratis: g, refrigerado: true, refrigSrv: true };
-    if (b.dbg) out.dbg = { prazoMax, filtro: dbgFiltro, mapa: dbgMap, locR, extraG, np, tipos: ops.map(o => typeof o.prazo), bloq: REFRIG_UF_BLOQ.test(uf || ''), ops: ops.map(o => [o.nome, o.preco, o.prazo]), pk };
+    if (b.dbg) out.dbg = { prazoMax, filtro: dbgFiltro, mapa: dbgMap, fim: dbgFim, locR, extraG, np, tipos: ops.map(o => typeof o.prazo), bloq: REFRIG_UF_BLOQ.test(uf || ''), ops: ops.map(o => [o.nome, o.preco, o.prazo]), pk };
     return out;
   }
   const sel = ops.slice(0, 3);
