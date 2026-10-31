@@ -6,12 +6,28 @@
    v7 31/10/2026: conversão do Google Ads "Pedido de orçamento (site)" (AW-11390766577/uzk3CNufh9ocEPGbxbcq) religada em todo
    pedido de orçamento (lista colada, "Pedir orçamento", pedido SLB enviado ao WhatsApp) — o disparo tinha sumido em 08/10/2026
    numa atualização de preços; add_payment_info com a forma escolhida (payment_type), uma vez por pedido.
-   Pix na página (js/loja.js): pix_qr_exibido, pix_copiado, pix_aprovado, pix_expirado, purchase + Purchase (Meta). */
+   Pix na página (js/loja.js): pix_qr_exibido, pix_copiado, pix_aprovado, pix_expirado, purchase + Purchase (Meta).
+   v8 31/10/2026: os scripts de terceiros (gtag.js, Pixel do Meta, Clarity) só são baixados na primeira interação do visitante
+   (toque, rolagem, tecla, mouse) ou 6 s depois do load — o que vier primeiro. Os stubs (dataLayer/gtag, fbq, clarity) ficam
+   na hora e guardam os eventos na fila, então nada se perde; só o tempo de bloqueio da página cai. Em /obrigado.html carrega na hora. */
 (function(){
+  /* v8: adiar scripts de terceiros até a 1ª interação ou 6 s após o load (obrigado.html: na hora) */
+  var _tpQ=[],_tpOk=false;
+  function _tpRun(){if(_tpOk)return;_tpOk=true;var q=_tpQ;_tpQ=[];q.forEach(function(f){try{f();}catch(e){}});}
+  function slDefer(f){if(_tpOk){try{f();}catch(e){}return;}_tpQ.push(f);}
+  window.slDefer=slDefer;
+  (function(){var agora=/obrigado\.html/.test(location.pathname);
+    if(agora){setTimeout(_tpRun,0);return;}
+    var evs=['pointerdown','touchstart','keydown','scroll','mousemove','wheel'];
+    function on(){evs.forEach(function(e){try{removeEventListener(e,on,{passive:true});}catch(_){}});_tpRun();}
+    evs.forEach(function(e){addEventListener(e,on,{passive:true});});
+    if(document.readyState==='complete')setTimeout(_tpRun,6000);else addEventListener('load',function(){setTimeout(_tpRun,6000);});
+  })();
   var CLARITY_ID='z0ww8oyptt'; /* opcional: colar aqui o ID do projeto do Microsoft Clarity (mapa de calor e gravação de tela) */
   var AW_ID='AW-11390766577';
   /* v2 22/10/2026: páginas sem a tag do GA4 no HTML (categorias, guias, blog, ofertas, indique, institucionais) carregam o gtag.js aqui */
-  if(typeof window.gtag!=='function'){try{window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};(function(){var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}var g=c==='sim'?'granted':'denied';window.gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:'granted',wait_for_update:500});window.gtag('set','ads_data_redaction',g==='denied');})();window.gtag('js',new Date());window.gtag('config','G-RK2PX868MS');var gs=document.createElement('script');gs.async=1;gs.src='https://www.googletagmanager.com/gtag/js?id=G-RK2PX868MS';document.head.appendChild(gs);}catch(e){}}
+  if(typeof window.gtag!=='function'){try{window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};(function(){var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}var g=c==='sim'?'granted':'denied';window.gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:'granted',wait_for_update:500});window.gtag('set','ads_data_redaction',g==='denied');})();window.gtag('js',new Date());window.gtag('config','G-RK2PX868MS');}catch(e){}}
+  slDefer(function(){try{if(document.querySelector('script[src*="googletagmanager.com/gtag/js"]'))return;var gs=document.createElement('script');gs.async=1;gs.src='https://www.googletagmanager.com/gtag/js?id=G-RK2PX868MS';document.head.appendChild(gs);}catch(e){}});
   function G(){try{window.dataLayer=window.dataLayer||[];if(typeof window.gtag==='function')window.gtag.apply(null,arguments);}catch(e){}}
   /* 26/10/2026: os passos do checkout também viram eventos do Clarity, para filtrar as gravações de quem desistiu */
   var CLARITY_EVS={begin_checkout:1,add_payment_info:1,pagar_clique:1,view_cart:1,add_to_cart:1,whatsapp_click:1,sullab_frete_gratis_consulta:1};
@@ -21,8 +37,8 @@
   (function(){try{if(window.fbq)return;
     var n=window.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments);};
     if(!window._fbq)window._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];
-    var t=document.createElement('script');t.async=!0;t.src='https://connect.facebook.net/en_US/fbevents.js';
-    var y=document.getElementsByTagName('script')[0];y.parentNode.insertBefore(t,y);
+    slDefer(function(){var t=document.createElement('script');t.async=!0;t.src='https://connect.facebook.net/en_US/fbevents.js';
+    var y=document.getElementsByTagName('script')[0];y.parentNode.insertBefore(t,y);});
     var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}
     if(c!=='sim')window.fbq('consent','revoke');
     window.fbq('init',META_PIXEL);window.fbq('track','PageView');
@@ -58,7 +74,7 @@
   if(!isProd)G('config',AW_ID);
 
   /* ---- Microsoft Clarity (só carrega se houver ID) ---- */
-  if(CLARITY_ID){(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments);};t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,'clarity','script',CLARITY_ID);}
+  if(CLARITY_ID){(function(c,l,a,r,i){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments);};slDefer(function(){var t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;var y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);});})(window,document,'clarity','script',CLARITY_ID);}
 
 
   /* ---- 26/10/2026: aviso de cookies (LGPD) + Consent Mode do Google. Analytics sempre; anúncios personalizados só com "Aceitar" ---- */

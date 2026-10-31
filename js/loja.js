@@ -1496,8 +1496,9 @@ try{
   l.onclick=function(){el.scrollBy({left:-el.clientWidth*.8,behavior:'smooth'});};
   r.onclick=function(){el.scrollBy({left:el.clientWidth*.8,behavior:'smooth'});};
   w.appendChild(l);w.appendChild(r);
-  function ler(){var x=el.scrollLeft,max=el.scrollWidth-el.clientWidth-4,t=0,im=el.querySelector('.ofi,.ph');if(im){var a=im.getBoundingClientRect(),b=w.getBoundingClientRect();if(a.height)t=Math.round(a.top-b.top+a.height/2);}
-   return function(){l.classList.toggle('off',x<4);r.classList.toggle('off',x>=max);if(t>10){l.style.top=r.style.top=t+'px';}};}
+  var _t=null;  /* altura das setas: mede uma vez só */
+  function ler(){var x=el.scrollLeft,max=el.scrollWidth-el.clientWidth-4,t=_t;if(t===null){t=0;var im=el.querySelector('.ofi,.ph');if(im){var a=im.getBoundingClientRect(),b=w.getBoundingClientRect();if(a.height)t=Math.round(a.top-b.top+a.height/2);}if(t)_t=t;}
+   return function(){l.classList.toggle('off',x<4);r.classList.toggle('off',x>=max);if(t>10&&_t!==-1){l.style.top=r.style.top=t+'px';_t=-1;}};}
   function upd(){ler()();}
   el.addEventListener('scroll',function(){requestAnimationFrame(upd);},{passive:true});
   return ler;
@@ -1505,7 +1506,11 @@ try{
  }
  var SEL='.deptbar .wrap,.trust .wrap,.popq,.bsel,.ofgrid,.mRowS';  /* os únicos com overflow-x:auto no CSS fora de carrinho/modais */
  function scan(){try{
-  var L=[].slice.call(document.querySelectorAll(SEL)).filter(function(el){return el.children.length;});
+  /* 31/10/2026 (PageSpeed: TBT): não medir fileiras longe da tela — ler scrollWidth dentro de um .mRow com content-visibility:auto
+     obriga o navegador a montar a fileira inteira (12 cards). Mede só o que está a até 600 px da tela; o resto entra quando se aproxima (IO abaixo). */
+  var vh=window.innerHeight||800;
+  var L=[].slice.call(document.querySelectorAll(SEL)).filter(function(el){if(!el.children.length||el.__hs)return false;
+    var r=el.closest('.mRow');if(!r)return true;var b=r.getBoundingClientRect();return b.bottom>-200&&b.top<vh+600;});
   var X=L.map(medir).filter(Boolean);            /* só leituras */
   var F=X.map(setup);                            /* só escritas */
   function passo(){var E=F.map(function(f){return f();});E.forEach(function(e){e();});}  /* todas as leituras, depois todas as escritas */
@@ -1513,7 +1518,11 @@ try{
  }catch(e){}}
  var _sT=null;function agenda(ms){clearTimeout(_sT);_sT=setTimeout(function(){(window.requestIdleCallback||function(f){setTimeout(f,1);})(scan,{timeout:800});},ms||0);}
  window.hsScan=function(){agenda(60);};
- window.addEventListener('load',function(){agenda(0);setTimeout(function(){agenda(0);},1200);setTimeout(function(){agenda(0);},3500);});
+ window.addEventListener('load',function(){agenda(0);setTimeout(function(){agenda(0);},3500);});
+ /* fileiras que se aproximam da tela ganham as setas na hora certa */
+ try{if('IntersectionObserver' in window){var _io=new IntersectionObserver(function(es){var any=false;es.forEach(function(e){if(e.isIntersecting){any=true;_io.unobserve(e.target);}});if(any)agenda(60);},{rootMargin:'600px 0px'});
+  var _obs=function(){[].slice.call(document.querySelectorAll('.mRow')).forEach(function(r){if(!r.__io){r.__io=1;_io.observe(r);}});};
+  window.addEventListener('load',_obs);var _hs0=window.hsScan;window.hsScan=function(){try{_obs();}catch(e){}_hs0();};}}catch(e){}
  window.addEventListener('resize',function(){agenda(300);});
 })();
 (function(){var _ac=window.atualizarCart;window.atualizarCart=function(){_ac.apply(this,arguments);
