@@ -1,0 +1,44 @@
+name: PDFs comerciais (tabela e catálogos)
+# Regera docs/Tabela_de_Precos_SULLAB.pdf, docs/Catalogo_SULLAB_Vacuette_e_Testes_Rapidos.pdf e
+# docs/Catalogo_SULLAB_Completo.pdf a partir dos preços do site (index.html ou data/*.json).
+# O gerador é determinístico: se os preços não mudaram, os PDFs saem idênticos e nada é commitado.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'data/*.json'
+      - '_ferramentas/gerar_pdfs.py'
+  schedule:
+    # 08:20 em Brasília, todo dia — depois do robô "Preços Biolog pelo dólar do dia" (08:07).
+    # Necessário porque o push feito pelo robô Biolog (GITHUB_TOKEN) não dispara outros workflows.
+    - cron: '20 11 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: pdfs-comerciais
+  cancel-in-progress: false
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50   # o rodapé usa o mês do último commit que mexeu nos preços
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Dependências
+        run: pip install reportlab==5.0.1 qrcode==8.2 pillow==12.3.0  # mesmas versões usadas localmente: PDFs idênticos
+      - name: Gera os PDFs
+        run: python3 _ferramentas/gerar_pdfs.py --fonte auto
+      - name: Publica se mudou
+        run: |
+          git config user.name "sullab-pdfs"
+          git config user.email "comercial@sullabrj.com.br"
+          git add docs/Tabela_de_Precos_SULLAB.pdf docs/Catalogo_SULLAB_Vacuette_e_Testes_Rapidos.pdf docs/Catalogo_SULLAB_Completo.pdf
+          if git diff --cached --quiet; then echo "PDFs sem mudança"; exit 0; fi
+          git commit -m "PDFs comerciais regerados a partir dos preços do site"
+          git pull --rebase origin main
+          git push
