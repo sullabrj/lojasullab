@@ -1,4 +1,4 @@
-/* SULLAB — rastreio de visitas, cliques e leads (GA4 + Google Ads). v3 29/10/2026 (+ Pixel do Meta)
+/* SULLAB — rastreio de visitas, cliques e leads (GA4 + Google Ads). v3 29/10/2026 (+ Pixel do Meta) · v5 30/10/2026: espera o js/loja.js na home
    Eventos (GA4): view_item, add_to_cart, view_cart, begin_checkout, add_payment_info, generate_lead,
    iniciar_orcamento, search, select_content, whatsapp_click, contact_click, clique_elemento,
    scroll_depth, tempo_na_pagina, cadastro_cnpj_tentativa, login_clique, rastrear_pedido_abrir,
@@ -76,7 +76,9 @@
       d.querySelector('.ok').onclick=function(){fim('sim');};
       d.querySelector('.no').onclick=function(){fim('nao');};
     };
-    if(document.body)setTimeout(mk,1200);else document.addEventListener('DOMContentLoaded',function(){setTimeout(mk,1200);});
+    /* 30/10/2026: aviso entra junto com a página (antes: 1,2 s depois). Aparecendo atrasado, ele virava o "maior elemento"
+       da tela no celular e empurrava o LCP do PageSpeed para depois de 1,2 s */
+    if(document.body)mk();else document.addEventListener('DOMContentLoaded',mk);
   }catch(e){}})();
 
   function wrap(name,fn){
@@ -163,4 +165,6 @@
 
   function iniciar(){instalarLoja();viewItemEstatico();}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',iniciar);else iniciar();
+  /* 30/10/2026: na home o JS da loja (js/loja.js) chega depois do catálogo em JSON — instala os eventos quando ele avisar */
+  if(!window.__lojaPronta)window.addEventListener('sullab:loja',instalarLoja);
 })();

@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # grava data/precos.json, as páginas estáticas e o ?v=<hash> do JSON no index.html (cache longo sem preço velho)
       - name: Atualiza preços Biolog (PTAX venda × US$ da lista, arredondado, × 1,70)
         run: python3 _ferramentas/atualiza_biolog.py
       - name: Publica se mudou

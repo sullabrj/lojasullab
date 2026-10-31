@@ -1,10 +1,9 @@
 import re,glob,json,html,sys
 import os; R=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+'/'
-idx=open(R+'index.html',encoding='utf-8').read()
-i=idx.find('var SEED=')+len('var SEED='); dec=json.JSONDecoder()
-seed,_=dec.raw_decode(idx[i:])
+sys.path.insert(0,R+'_ferramentas'); import dados_site as ds  # 30/10/2026: catálogo e preços em data/*.json
+seed=ds.ler_catalogo()
 info={str(p['c']).lower():p for p in seed}
-j=idx.find('window.PRECOS='); pre,_=dec.raw_decode(idx[j+len('window.PRECOS='):])
+pre=ds.ler_precos()
 pre={k.lower():v for k,v in pre.items()}
 def brl(v): return 'R$ '+f'{v:,.2f}'.replace(',','X').replace('.',',').replace('X','.')
 pages={}; cat={}
