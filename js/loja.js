@@ -75,19 +75,14 @@ function montarOfertas(){
 /* sem try: as function declarations daqui precisam ficar globais, como no <script> antigo */
 var DEPTS=[
   {key:'tubo', nome:'Tubos a vácuo', icon:'🩸', cats:['tubo']},
-  {key:'agulha', nome:'Agulhas', icon:'💉', cats:['agulha']},
-  {key:'seringa', nome:'Seringas', icon:'💉', cats:['seringa']},
-  {key:'scalp', nome:'Scalps e coleta', icon:'🦋', cats:['scalp']},
+  {key:'agulha', nome:'Seringas e agulhas', icon:'💉', cats:['agulha','seringa','scalp']},
   {key:'lanceta', nome:'Lancetas', icon:'🔺', cats:['lanceta']},
   {key:'coletoram', nome:'Coletores de amostra', icon:'🥤', cats:['coletoram']},
   {key:'curativo', nome:'Curativos, gaze e algodão', icon:'🩹', cats:['curativo']},
-  {key:'luva', nome:'Luvas', icon:'🧤', cats:['luva']},
-  {key:'epi', nome:'Máscaras, toucas e aventais', icon:'😷', cats:['epi']},
   {key:'lamina', nome:'Lâminas e bisturis', icon:'🔬', cats:['lamina']},
   {key:'cubeta', nome:'Cubetas', icon:'🥼', cats:['cubeta']},
   {key:'pipeta', nome:'Pipetas e ponteiras', icon:'💧', cats:['pipeta']},
   {key:'plast', nome:'Descartáveis e plásticos', icon:'🧴', cats:['plast']},
-  {key:'hosp', nome:'Sondas, equipos e cateteres', icon:'🏥', cats:['hosp']},
   {key:'meio', nome:'Meios de cultura', icon:'🧫', cats:['meio']},
   {key:'micro', nome:'Microbiologia (discos e corantes)', icon:'🦠', cats:['micro']},
   {key:'bioq', nome:'Reagentes de bioquímica', icon:'⚗️', cats:['bioq']},
@@ -162,30 +157,95 @@ function ensureKw(cb){if(KWMAP){return cb&&cb();}if(_kwLoading){return setTimeou
 var FTMAP=null,_ftLoading=false;
 function ensureFT(cb){if(FTMAP){return cb&&cb();}if(_ftLoading){return setTimeout(function(){ensureFT(cb);},120);}_ftLoading=true;fetch('ft.json').then(function(r){return r.json();}).then(function(d){FTMAP=d;cb&&cb();}).catch(function(){FTMAP={};cb&&cb();});}
 function semAcento(s){return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
-var BUSCA_STOP={de:1,do:1,da:1,dos:1,das:1,para:1,pra:1,com:1,e:1,em:1,o:1,a:1,os:1,as:1,um:1,uma:1,no:1,na:1};
 function _nrmMed(t){return String(t).replace(/[×✕]/g,'x').replace(/ø/g,' ').replace(/(\d)\s*x\s*(\d)/g,'$1x$2').replace(/(\d)\s+(mm|ml|cm|ul)\b/g,'$1$2');}
-function buscaCasa(hay,termo){
-  hay=_nrmMed(hay);
-  var q=_nrmMed(semAcento(termo));
-  if(hay.indexOf(q)>=0) return true;
-  var tk=q.split(/[^a-z0-9\-]+/).filter(function(t){return t&&!BUSCA_STOP[t];});
-  if(!tk.length) return false;
-  return tk.every(function(t){
-    if(t==='covid19'||t==='coronavirus'||t==='sarscov2'||t==='sars-cov-2') t='covid';
-    if(hay.indexOf(t)>=0) return true;
-    if(t.length>3&&/s$/.test(t)&&hay.indexOf(t.slice(0,-1))>=0) return true;
-    return false;
-  });
-}
+/* ==== busca (31/10/2026): sinônimos, plurais, código sem espaço/hífen, 1 erro de digitação e relevância ==== */
+var BUSCA_STOP={de:1,do:1,da:1,dos:1,das:1,para:1,pra:1,com:1,e:1,em:1,o:1,a:1,os:1,as:1,um:1,uma:1,no:1,na:1,ml:1,mls:1};
+/* troca: o termo vira só a alternativa (marca/apelido que não existe no catálogo) */
+var SINON_TROCA={vacutainer:['vacuette'],vacuntainer:['vacuette'],vacutaine:['vacuette'],vacutainner:['vacuette'],bd:['vacuette'],greiner:['vacuette'],eppendorf:['microtubo'],eppendorff:['microtubo'],
+  hcg:['gravidez','hcg'],covid19:['covid'],coronavirus:['covid'],sarscov2:['covid'],'sars-cov-2':['covid']};
+/* soma: o termo continua valendo e ganha alternativas (cor de tampa: "ponteira amarela" continua achando a ponteira) */
+var SINON_SOMA={roxo:['edta'],roxa:['edta'],lilas:['edta'],amarelo:['gel'],amarela:['gel'],vermelho:['soro','ativador'],vermelha:['soro','ativador'],
+  azul:['citrato'],verde:['heparina'],cinza:['fluoreto','glicose'],gravidez:['hcg']};
+/* frases que viram um termo só (antes de separar as palavras) */
+var SINON_FRASE=[[/\btampa (roxa|roxo|lilas)\b/g,'edta'],[/\btampa (amarela|amarelo)\b/g,'gel'],[/\btampa (vermelha|vermelho)\b/g,'vermelho'],[/\btampa azul\b/g,'citrato'],
+  [/\btampa verde\b/g,'heparina'],[/\btampa cinza\b/g,'cinza'],[/\bteste (de )?gravidez\b/g,'gravidez'],[/\bbeta ?hcg\b/g,'hcg']];
+function _bNorm(t){return _nrmMed(semAcento(t)).replace(/(\d)\s*mls?\b/g,'$1ml');}
+function _bComp(t){return String(t).replace(/[\s\-\.\/_]+/g,'');}
+/* plural → singular (-s, -es, -ões, -ais, -éis, -is) */
+function _bVaris(t){var v=[t];if(t.length>3&&/s$/.test(t)){v.push(t.slice(0,-1));if(/es$/.test(t)&&t.length>4)v.push(t.slice(0,-2));
+  if(/oes$/.test(t))v.push(t.slice(0,-3)+'ao');if(/ais$/.test(t))v.push(t.slice(0,-3)+'al');if(/eis$/.test(t)){v.push(t.slice(0,-3)+'el');v.push(t.slice(0,-3)+'il');}
+  if(/[^ae]is$/.test(t)&&t.length>4)v.push(t.slice(0,-2)+'il');}
+  return v;}
+/* distância de edição ≤ 1 (troca, falta, sobra ou inversão de duas letras) */
+function _bDist1(a,b){if(a===b)return true;var la=a.length,lb=b.length;if(Math.abs(la-lb)>1)return false;var i=0;while(i<la&&i<lb&&a[i]===b[i])i++;
+  if(la===lb){if(a.slice(i+1)===b.slice(i+1))return true;return a[i]===b[i+1]&&a[i+1]===b[i]&&a.slice(i+2)===b.slice(i+2);}
+  return la>lb?a.slice(i+1)===b.slice(i):a.slice(i)===b.slice(i+1);}
+var _bVoc=null,_bVocTxt='',_bVocN=-1;
+function _bVocab(){var n=CATALOG.length+(KWMAP?1e6:0);if(_bVoc&&_bVocN===n)return _bVoc;var s={};
+  CATALOG.forEach(function(p){(_bNorm(p.n+' '+p.m)+' '+_bNorm((KWMAP&&KWMAP[p.c])||'')).split(/[^a-z0-9]+/).forEach(function(w){if(w.length>=4&&!/^\d+$/.test(w))s[w]=1;});});
+  _bVoc=Object.keys(s);_bVocTxt=' '+_bVoc.join(' ')+' ';_bVocN=n;_bPrepC={};return _bVoc;}
+function _bFuzzy(t){var out=[];if(t.length<5)return out;_bVocab();
+  for(var i=0;i<_bVoc.length;i++){var w=_bVoc[i];if(Math.abs(w.length-t.length)<=1&&w!==t&&_bDist1(t,w))out.push(w);}return out;}
+var _bPrepC={};
+/* prepara o termo: lista de grupos; cada grupo = alternativas [{t, f(fator)}]; o produto precisa casar todos os grupos */
+function buscaPrep(termo){var key=String(termo||'');if(_bPrepC[key])return _bPrepC[key];
+  var q=_bNorm(key);SINON_FRASE.forEach(function(r){q=q.replace(r[0],r[1]);});
+  var tk=q.split(/[^a-z0-9\-,]+/).map(function(t){return t.replace(/^[\-,]+|[\-,]+$/g,'');}).filter(function(t){return t&&!BUSCA_STOP[t];});
+  if(tk.length>1)tk=tk.filter(function(t){return t!=='kit'&&t!=='kits';});
+  var grupos=tk.map(function(t){var alt=[],vis={};var add=function(x,f){if(x&&!vis[x]){vis[x]=1;alt.push({t:x,f:f});}};
+    if(SINON_TROCA[t]){SINON_TROCA[t].forEach(function(x){add(x,0.9);});}
+    else{_bVaris(t).forEach(function(x,i){add(x,i?0.95:1);});if(SINON_SOMA[t])SINON_SOMA[t].forEach(function(x){add(x,0.85);});}
+    return {t:t,alt:alt,c:_bComp(t)};});
+  var r={q:q,qc:_bComp(q),g:grupos};
+  /* erro de digitação: só para palavra (≥5 letras) que não aparece em nenhum produto */
+  if(CATALOG&&CATALOG.length){_bVocab();grupos.forEach(function(g){if(g.t.length<5||/\d/.test(g.t))return;
+    var acha=g.alt.some(function(a){return _bVocTxt.indexOf(a.t)>=0;});if(acha)return;
+    _bFuzzy(g.t).forEach(function(w){g.alt.push({t:w,f:0.7,fz:1});});});}
+  _bPrepC[key]=r;return r;}
+function _bTem(h,g){var best=0;for(var i=0;i<g.alt.length;i++){var a=g.alt[i];if(a.f>best&&h.indexOf(a.t)>=0)best=a.f;}return best;}
+/* campos de um produto para a busca (cache por produto) */
+var _bCache={};
+function _bCampos(p){var k=(KWMAP?'k':'s')+p.c,o=_bCache[p.c];if(o&&o.k===k)return o;
+  var kw=_bNorm((KWMAP&&KWMAP[p.c])||'');if(/covid/.test(_bNorm(p.n)+kw))kw+=' coronavirus sars-cov-2 sarscov2 covid19';
+  return (_bCache[p.c]={k:k,n:_bNorm(p.n),m:_bNorm(p.m||''),c:_bNorm(p.c),cc:_bComp(_bNorm(p.c)),kw:kw});}
+/* relevância: nome (4) > marca (3) > código (2,5) > palavras-chave (1); 0 = não casa */
+function buscaPontua(p,termo){var r=typeof termo==='string'?buscaPrep(termo):termo,F=_bCampos(p);if(!r.g.length)return 0;
+  if(r.qc.length>=3&&/\d/.test(r.qc)&&(F.cc===r.qc||F.cc.indexOf(r.qc)===0))return 100+(F.cc===r.qc?10:0);
+  var tot=0;for(var i=0;i<r.g.length;i++){var g=r.g[i],s=Math.max(4*_bTem(F.n,g),3*_bTem(F.m,g),2.5*_bTem(F.c,g),(g.c.length>=3&&/\d/.test(g.c)&&F.cc.indexOf(g.c)>=0)?2.5:0,1*_bTem(F.kw,g));
+    if(!s)return 0;tot+=s;}
+  tot=tot/r.g.length;if(r.q.length>3&&F.n.indexOf(r.q)>=0)tot+=3;return tot;}
+/* compatível com o uso antigo (busca do carrinho): hay = texto livre do produto */
+function buscaCasa(hay,termo){var r=buscaPrep(termo),h=_nrmMed(String(hay));if(!r.g.length)return false;
+  var hc=_bComp(h);if(r.qc.length>=3&&/\d/.test(r.qc)&&hc.indexOf(r.qc)>=0)return true;
+  return r.g.every(function(g){return _bTem(h,g)>0||(g.c.length>=3&&/\d/.test(g.c)&&hc.indexOf(g.c)>=0);});}
+/* "Você quis dizer…": troca cada palavra sem resultado pela mais parecida do catálogo (até 2 letras de diferença) */
+function _bDist(a,b){var m=a.length,n=b.length,d=[],i,j;for(i=0;i<=m;i++){d[i]=[i];}for(j=0;j<=n;j++)d[0][j]=j;
+  for(i=1;i<=m;i++)for(j=1;j<=n;j++){d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));}return d[m][n];}
+function buscaSugestao(termo){try{var r=buscaPrep(termo);_bVocab();var mud=false;
+  var pal=r.g.map(function(g){if(g.t.length<5||/\d/.test(g.t))return g.t;if(_bVocTxt.indexOf(g.t)>=0)return g.t;
+    var best=null,bd=3,lim=g.t.length>=8?2:1;for(var i=0;i<_bVoc.length;i++){var w=_bVoc[i];if(Math.abs(w.length-g.t.length)>2)continue;var d=_bDist(g.t,w);if(d<bd){bd=d;best=w;}}
+    if(best&&bd<=lim){mud=true;return best;}return g.t;});
+  if(!mud)return '';var s=pal.join(' ');return CATALOG.some(function(p){return buscaPontua(p,s)>0;})?s:'';}catch(e){return '';}}
+/* tela de busca sem resultado */
+var BUSCA_VAZIA_CATS=[['tr','Testes rápidos'],['tubo','Tubos a vácuo'],['agulha','Seringas e agulhas'],['meio','Meios de cultura'],['pipeta','Pipetas e ponteiras'],['plast','Descartáveis e plásticos']];
+function buscaVaziaHtml(t){var e=function(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+  var sug=buscaSugestao(t),js=function(s){return e(String(s).replace(/[\\'"]/g,''));};
+  var cats=BUSCA_VAZIA_CATS.filter(function(c){return CATALOG.some(function(p){return deptOf(p.k)===c[0];});});
+  return '<div class="empty bvz"><div style="font-size:16px;color:var(--navy);font-weight:700;margin-bottom:6px">Nenhum produto encontrado para “'+e(t)+'”.</div>'+
+    (sug?'<div style="margin:8px 0 12px">Você quis dizer <a class="lk" style="color:var(--navy-l);cursor:pointer;font-weight:700;text-decoration:underline" onclick="buscarTermo(\''+js(sug)+'\')">'+e(sug)+'</a>?</div>':'')+
+    '<div style="margin:10px 0 6px">Veja as categorias:</div><div class="popq" style="justify-content:center;margin:0 0 14px">'+
+    cats.map(function(c){return '<span onclick="setDept(\''+c[0]+'\')">'+e(c[1])+'</span>';}).join('')+'</div>'+
+    '<div style="margin-top:6px">Tem uma lista de itens? <button type="button" class="ckwa" style="display:inline-block;width:auto;margin:6px 4px;padding:8px 14px" onclick="abrirListaOrcamento()">📋 Colar lista</button></div>'+
+    '<div style="margin-top:8px;font-size:13px">Não achou? <a class="lk" onclick="abrirContatoWA(\'equipe\',\''+js(t)+'\')" style="color:var(--navy-l);cursor:pointer;font-weight:700">Avise a equipe que você precisa</a> — verificamos se temos.</div></div>';}
+/* ==== fim busca ==== */
 var TOP_VENDA=['25492','454087','454036','456001','454921','PA03','PA36','PA31','PA186','743','PRD00003','450072','410','CLT24H2LT','18260NM','18248A','PA26','PA384','PA85','PA14','PA187','PA406','454482','454235','456211','454071','455071','CLT80SNM','CLT50SM','S240RB'];
 function filtrados(){
+  var _rel={},_bq=FILTRO.busca?buscaPrep(FILTRO.busca):null;
   var arr=CATALOG.filter(function(p){
     if(FILTRO.dept && deptOf(p.k)!==FILTRO.dept) return false;
     if(FILTRO.marca && p.m!==FILTRO.marca) return false;
     if(FILTRO.busca){
-      var hay=semAcento(p.n+' '+p.m+' '+p.c+' '+((KWMAP&&KWMAP[p.c])||''));
-      if(/covid/.test(hay)) hay+=' coronavirus sars-cov-2 sarscov2 covid19';
-      if(!buscaCasa(hay,FILTRO.busca)) return false;
+      var _r=buscaPontua(p,_bq);if(!_r)return false;_rel[p.c]=_r;
     }
     return true;
   });
@@ -195,14 +255,15 @@ function filtrados(){
   else if(s==='az')arr.sort((a,b)=>a.n.localeCompare(b.n));
   else{  
     var _sc=function(p){var t=TOP_VENDA.indexOf(String(p.c));var v=(t>=0?1000-t:0)+(p.selo?300:0);var pr=(window.PRECOS||{})[p.c];if(pr&&pr[1])v+=100;if(p.img&&!/logo-sullab/.test(p.img))v+=20;return v;};
-    arr=arr.map(function(p,ix){return [p,_sc(p),ix];}).sort(function(a,b){return (b[1]-a[1])||(a[2]-b[2]);}).map(function(x){return x[0];});
+    /* com busca: relevância primeiro (nome > marca > código > palavras-chave); mais vendidos desempatam */
+    arr=arr.map(function(p,ix){return [p,_sc(p),ix,_rel[p.c]||0];}).sort(function(a,b){return (b[3]-a[3])||(b[1]-a[1])||(a[2]-b[2]);}).map(function(x){return x[0];});
   }
   return arr;
 }
 var _bvT=null,_bvSent={};
 function _logBuscaVazia(t){try{t=String(t||'').trim().slice(0,80);if(t.length<2)return;clearTimeout(_bvT);_bvT=setTimeout(function(){var k=t.toLowerCase();if(_bvSent[k])return;_bvSent[k]=1;
   sullabEvent('busca_sem_resultado',{termo:t,produto:(window.matchMedia&&matchMedia('(max-width:700px)').matches)?'celular':'computador'});
-  try{if(window.gtag)gtag('event','busca_sem_resultado',{search_term:t});}catch(e){}},1500);}catch(e){}}
+  try{if(window.gtag){gtag('event','busca_sem_resultado',{search_term:t});gtag('event','busca_vazia',{search_term:t,termo:t});}}catch(e){}},1500);}catch(e){}}
 function render(){
   var arr=filtrados();
   document.getElementById('resCount').textContent=arr.length;
@@ -212,7 +273,7 @@ function render(){
   else if(FILTRO.marca)t.textContent=FILTRO.marca;
   else t.textContent='Catálogo';
   var g=document.getElementById('grid');
-  if(!arr.length){if(FILTRO.busca)_logBuscaVazia(FILTRO.busca);g.innerHTML='<div class="empty">Nenhum produto encontrado.<br>Tente outro termo ou <a class="lk" onclick="abrirContatoWA(\'duvida\',(FILTRO&&FILTRO.busca?(\'Procuro: \'+FILTRO.busca):\'\'))" style="color:var(--navy-l);cursor:pointer">peça pelo WhatsApp</a>.</div>';_CUR=[];_SHOWN=0;var _mw=document.getElementById('moreWrap');if(_mw)_mw.innerHTML='';return;}
+  if(!arr.length){if(FILTRO.busca)_logBuscaVazia(FILTRO.busca);g.innerHTML=FILTRO.busca?buscaVaziaHtml(FILTRO.busca):'<div class="empty">Nenhum produto encontrado.<br>Tente outro termo ou <a class="lk" onclick="abrirContatoWA(\'duvida\')" style="color:var(--navy-l);cursor:pointer">peça pelo WhatsApp</a>.</div>';_CUR=[];_SHOWN=0;var _mw=document.getElementById('moreWrap');if(_mw)_mw.innerHTML='';return;}
   _CUR=arr;_PG=1;_SHOWN=Math.min(arr.length,_PAGE);_card=function(p){
     var i=CATALOG.indexOf(p);
     var selo=((window.PIX3&&window.PIX3[p.c])||(window.TR_TOP&&window.TR_TOP[p.c]))?'<span class="selo best">🏆 Tabela exclusiva do site</span>':p.selo==='hot'?'<span class="selo hot">🔥 Mais procurado</span>':(p.selo==='top'?'<span class="selo">⭐ Mais vendido</span>':'');
@@ -993,17 +1054,14 @@ function _linhas(txt){
   });
 }
 function _cands(termo){
-  var q=_nrm(termo),tk=q.split(/[^a-z0-9\-\.]+/).filter(function(t){return t&&!BUSCA_STOP[t]&&!/^(x|cx|cxs|caixa|caixas|un|und|unid|pct|pc|com|c\/)$/.test(t);});
-  if(!tk.length)return [];
+  /* 31/10/2026: mesma busca da loja (sinônimos, plurais, código sem espaço/hífen, 1 erro de digitação) */
+  var r=buscaPrep(String(termo||'').replace(/\b(x|cx|cxs|caixa|caixas|un|und|unid|pct|pc)\b|\bc\//gi,' '));
+  if(!r.g.length)return [];
   var out=[];
   CATALOG.forEach(function(p){
-    var cod=semAcento(p.c),nm=_nrm(p.n+' '+p.m+' '+p.c),kw=_nrm((KWMAP&&KWMAP[p.c])||'');
-    if(/covid/.test(nm))nm+=' coronavirus sars-cov-2 sarscov2 covid19';
-    var tem=function(h,t){return h.indexOf(t)>=0||(t.length>3&&/s$/.test(t)&&h.indexOf(t.slice(0,-1))>=0);};
-    var hit=0;
-    tk.forEach(function(t){if(tem(nm,t))hit+=1;else if(tem(kw,t))hit+=0.4;});
-    var sc=hit/tk.length;
-    if(tk.indexOf(cod)>=0||q===cod)sc=2;
+    var F=_bCampos(p),nm=F.n+' '+F.m+' '+F.c,sc;
+    if(/\d/.test(r.qc)&&r.qc.length>=3&&(F.cc===r.qc||F.cc.indexOf(r.qc)===0||r.g.some(function(g){return g.c===F.cc;})))sc=2;
+    else{var hit=0;r.g.forEach(function(g){var h=_bTem(nm,g);if(h)hit+=h;else if(_bTem(F.kw,g))hit+=0.4;});sc=hit/r.g.length;}
     if(sc>=0.5){sc+=(precoDe(p)>0?0.05:0);out.push({p:p,s:sc});}
   });
   out.sort(function(a,b){return b.s-a.s||a.p.n.length-b.p.n.length;});
@@ -1132,7 +1190,7 @@ window.atualizarCart=function(){_ac.apply(this,arguments);
 };
 var _rd=window.render;
 window.render=function(){_rd.apply(this,arguments);
-  try{var e=document.querySelector('#grid .empty');if(e&&/WhatsApp/i.test(e.innerHTML)){var q=(FILTRO&&FILTRO.busca)||'';
+  try{var e=document.querySelector('#grid .empty');if(e&&!e.classList.contains('bvz')&&/WhatsApp/i.test(e.innerHTML)){var q=(FILTRO&&FILTRO.busca)||'';
     e.innerHTML='Nenhum produto encontrado'+(q?' para “'+_esc(q)+'”':'')+'.<br>Tente outro termo ou <a class="lk" style="color:var(--navy-l);cursor:pointer" onclick="abrirContatoWA(\'equipe\','+JSON.stringify(q).replace(/"/g,'&quot;')+')">avise a equipe que você precisa</a>.';}}catch(x){}
 };
 var _cb=window._cartBuscarGo;
