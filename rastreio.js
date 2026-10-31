@@ -2,7 +2,11 @@
    Eventos (GA4): view_item, add_to_cart, view_cart, begin_checkout, add_payment_info, generate_lead,
    iniciar_orcamento, search, select_content, whatsapp_click, contact_click, clique_elemento,
    scroll_depth, tempo_na_pagina, cadastro_cnpj_tentativa, login_clique, rastrear_pedido_abrir,
-   alternar_preco_cnpj, cupom_tentativa, pagar_clique. Origem (utm/gclid) guardada em localStorage. */
+   alternar_preco_cnpj, cupom_tentativa, pagar_clique. Origem (utm/gclid) guardada em localStorage.
+   v7 31/10/2026: conversão do Google Ads "Pedido de orçamento (site)" (AW-11390766577/uzk3CNufh9ocEPGbxbcq) religada em todo
+   pedido de orçamento (lista colada, "Pedir orçamento", pedido SLB enviado ao WhatsApp) — o disparo tinha sumido em 08/10/2026
+   numa atualização de preços; add_payment_info com a forma escolhida (payment_type), uma vez por pedido.
+   Pix na página (js/loja.js): pix_qr_exibido, pix_copiado, pix_aprovado, pix_expirado, purchase + Purchase (Meta). */
 (function(){
   var CLARITY_ID='z0ww8oyptt'; /* opcional: colar aqui o ID do projeto do Microsoft Clarity (mapa de calor e gravação de tela) */
   var AW_ID='AW-11390766577';
@@ -99,12 +103,20 @@
     wrap('abrirCheckout',function(){try{if(CART.length)ev('begin_checkout',{currency:'BRL',value:total(),items:cartItens()});}catch(e){}});
     wrap('abrirContatoWA',function(){ev('iniciar_orcamento',{itens:cartItens().length});});
     wrap('pagarMP',function(){ev('pagar_clique',{currency:'BRL',value:total()});});
-    wrap('dispararPedido',function(type){
+    wrap('dispararPedido',function(type,pgto,ficha,pedido){
       window.__nowa=true;setTimeout(function(){window.__nowa=false;},4000);
-      try{if(!CART.length)return;}catch(e){}
+      var temCart=false;try{temCart=CART.length>0;}catch(e){}
+      /* Google Ads: "Pedido de orçamento (site)". Vale também para lista colada sem carrinho; transaction_id evita contagem dupla */
+      if(type==='pedido_wa'&&(temCart||(ficha&&ficha.lista))){try{
+        var f=ficha||{},u={};if(f.email)u.email=String(f.email).trim().toLowerCase();var ph=String(f.tel||'').replace(/\D/g,'');if(ph)u.phone_number='+'+(ph.indexOf('55')===0&&ph.length>=12?ph:'55'+ph);
+        if(u.email||u.phone_number)G('set','user_data',u);
+        G('event','conversion',{send_to:AW_ID+'/uzk3CNufh9ocEPGbxbcq',value:total()||1,currency:'BRL',transaction_id:pedido||''});
+      }catch(e){}}
+      if(!temCart)return;
       var o=window.SULLAB_ORIGEM||{};
       if(type==='pedido_wa')ev('generate_lead',{currency:'BRL',value:total(),lead_source:'orcamento_whatsapp',utm_source:o.utm_source||'',utm_campaign:o.utm_campaign||'',gclid_presente:o.gclid?1:0});
-      if(type==='pedido_mp')ev('add_payment_info',{currency:'BRL',value:total(),items:cartItens()});
+      /* add_payment_info só quando o cliente confirmou a forma (clique em pagar com os dados válidos), uma vez por pedido */
+      if(type==='pedido_mp'&&pedido!==window.__api){window.__api=pedido;var pt=String(pgto||'');ev('add_payment_info',{currency:'BRL',value:total(),payment_type:pt==='cartao'?'credit_card':pt,items:cartItens()});}
     });
     wrap('fazerBusca',function(){var el=$('searchInput');var t=el&&el.value.trim();if(t)ev('search',{search_term:t});});
     wrap('setDept',function(k){if(k)ev('select_content',{content_type:'categoria',content_id:k});});

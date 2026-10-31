@@ -473,7 +473,7 @@ function _waLer(arquivo){
   var nome=val('waNome'),tel=val('waTel'),cep=val('waCep'),doc=val('waDoc'),email=val('waEmail'),lista=val('waLista');
   var log=val('waLog'),num=val('waNum'),compl=val('waCompl'),bairro=val('waBairro'),cidade=val('waCidade'),uf=val('waUf').toUpperCase();
   var nd=soDig(doc).length;
-  if(WA_DOCT==='cnpj'&&nd!==14)return waqErro('Informe o CNPJ com 14 números (ou troque para CPF).'),null;
+  if(WA_DOCT==='cnpj'&&!/^[0-9A-Z]{12}[0-9]{2}$/.test(docLimpo(doc)))return waqErro('Informe o CNPJ com 14 caracteres (números, ou letras e números no CNPJ novo) — ou troque para CPF.'),null;
   if(WA_DOCT==='cpf'&&nd!==11)return waqErro('Informe o CPF com 11 números (ou troque para CNPJ).'),null;
   if(!nome)return waqErro(WA_DOCT==='cnpj'?'Informe o nome da empresa.':'Informe seu nome completo.'),null;
   if(soDig(tel).length<10)return waqErro('Informe um WhatsApp com DDD — ex.: (24) 90000-0000.'),null;
@@ -560,7 +560,24 @@ var ORIGEM_CEP='27323450';
 var CUPONS={},cupomPct=0,cupomCod='',freteSelLoja=0,freteLabelLoja='';
 function val(id){return (document.getElementById(id).value||'').trim();}
 function soDig(s){return (s||'').replace(/\D/g,'');}
-function setDoc(d){DOCT=d;document.querySelectorAll('#docTab button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-d')===d);});document.getElementById('lbDoc').textContent=d==='cnpj'?'CNPJ':'CPF';document.getElementById('lbNome').textContent=d==='cnpj'?'Nome fantasia':'Nome completo';document.getElementById('ckDoc').placeholder=d==='cnpj'?'00.000.000/0000-00':'000.000.000-00';try{ckModo();}catch(e){}}
+function setDoc(d){DOCT=d;document.querySelectorAll('#docTab button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-d')===d);});document.getElementById('lbDoc').textContent=d==='cnpj'?'CNPJ':'CPF';document.getElementById('lbNome').textContent=d==='cnpj'?'Razão social':'Nome completo';
+  /* 31/10/2026: CNPJ abre o teclado numérico; "CNPJ com letras?" troca para o teclado completo (CNPJ alfanumérico) */
+  var dc=document.getElementById('ckDoc');dc.placeholder=d==='cnpj'?'00.000.000/0000-00':'000.000.000-00';dc.maxLength=18;dc.setAttribute('inputmode',(d==='cnpj'&&(window._docLetras||docAlfa(dc.value)))?'text':'numeric');
+  var nm=document.getElementById('ckNome');if(nm){nm.setAttribute('autocomplete',d==='cnpj'?'organization':'name');nm.placeholder=d==='cnpj'?'Como está no cartão CNPJ':'Seu nome completo';}
+  var dl=document.getElementById('ckDocLetras');if(dl)dl.hidden=(d!=='cnpj'||dc.getAttribute('inputmode')==='text');
+  try{ckModo();}catch(e){}}
+function docLetras(){window._docLetras=1;var dc=document.getElementById('ckDoc');if(!dc)return false;dc.setAttribute('inputmode','text');dc.blur();setTimeout(function(){try{dc.focus();}catch(e){}},30);var dl=document.getElementById('ckDocLetras');if(dl)dl.hidden=true;return false;}
+/* 31/10/2026: CNPJ alfanumérico (Receita Federal, a partir de jul/2026): 12 posições 0-9/A-Z + 2 dígitos verificadores.
+   Cálculo oficial: valor de cada posição = código ASCII − 48 (0-9 = 0-9, A = 17 … Z = 42), pesos 5..2/9..2 e 6..2/9..2, módulo 11. */
+function docLimpo(s){return String(s||'').toUpperCase().replace(/[^0-9A-Z]/g,'');}
+function docAlfa(s){return /[A-Z]/.test(docLimpo(s));}
+function cnpjValido(s){var c=docLimpo(s);if(!/^[0-9A-Z]{12}[0-9]{2}$/.test(c)||/^(.)\1{13}$/.test(c))return false;
+  var dv=function(n){var w=n===12?[5,4,3,2,9,8,7,6,5,4,3,2]:[6,5,4,3,2,9,8,7,6,5,4,3,2],t=0;for(var i=0;i<n;i++)t+=(c.charCodeAt(i)-48)*w[i];var r=t%11;return r<2?0:11-r;};
+  return dv(12)===+c[12]&&dv(13)===+c[13];}
+function cpfValido(s){var c=soDig(s);if(c.length!==11||/^(\d)\1{10}$/.test(c))return false;for(var n=9;n<11;n++){var t=0;for(var i=0;i<n;i++)t+=(+c[i])*(n+1-i);if((t*10)%11%10!==+c[n])return false;}return true;}
+/* o Worker/Mercado Pago só entendem documento numérico (ele tira tudo que não é dígito): CNPJ com letras vai só para a planilha, não para o MP */
+function docParaMP(s){return docAlfa(s)?'':String(s||'');}
+function docInput(el){try{if(DOCT==='cnpj'&&/[a-z]/.test(el.value)){var p=el.selectionStart;el.value=el.value.toUpperCase();try{el.setSelectionRange(p,p);}catch(e){}}}catch(e){}if(DOCT==='cnpj')cnpjAuto();}
 function setPg(p){if(p==='boleto'&&!boletoOk()){p='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;ckErro('Boleto disponível para pedidos a partir de R$ 400,00.');}PG=p;var _bi=document.getElementById('boletoInfo');if(_bi)_bi.style.display=(p==='boleto')?'block':'none';document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value===p);});ckTotais();}
 window.PIX3={"450071":1,"450072":1,"454036":1,"454087":1,"454921":1,"454235":1,"456211":1,"454071":1,"454482":1,"456071":1,"455071":1,"454092":1,"455092":1,"456001":1,"454327":1,"454085":1,"454091":1,"454030":1,"456080":1,"450539":1};
 function pixPct(c){return (c&&window.PIX3[c])?0.03:0.05;}
@@ -580,29 +597,115 @@ var _freteOk=null;
 function chaveFrete(){return soDig(val('ckCep'))+'|'+CART.map(function(x){return x.c+':'+x.qty;}).join(',');}
 function freteValido(){return !!(_freteOk&&_freteOk.key===chaveFrete()&&(freteSelLoja>0||_freteOk.gratis||freteSelId==='retirada'));}
 function zerarFrete(){freteSelLoja=0;freteLabelLoja='';freteSelPrazo=0;freteSelId='';freteMeta=null;_freteOk=null;}
+function _freteOpcoes(d,opt,_kq){var ok=(d&&d.opcoes)||[];freteMeta={pesoKg:d.peso,pacotes:d.pacotes,gratis:!!(d.gratis&&d.gratis.ativo)};opt.innerHTML=_gratisHtml(d)+ok.map(function(o,ix){var nm=String(o.nome||'Transportadora').replace(/\x27/g,'');return '<label class="pay1'+(ix===0?' on':'')+'" style="margin-top:6px"><input type="radio" name="frt" value="'+o.preco+'" '+(ix===0?'checked':'')+' onchange="selFreteLoja('+o.preco+',\''+nm+'\','+(o.prazo||0)+',\''+String(o.id||'')+'\')"><span><span class="pn">'+nm+'</span> <span class="pd">'+(o.retirada?'· envie seu motoboy ou transportadora':(o.prazo?('· '+o.prazo+' dias úteis'):''))+'</span></span><span class="ptag" style="color:var(--navy)">'+(o.gratis?'Grátis':(o.retirada?'Por sua conta':brl(o.preco)))+'</span></label>';}).join('');selFreteLoja(ok[0].preco,String(ok[0].nome||'Transportadora').replace(/\x27/g,''),ok[0].prazo||0,String(ok[0].id||''));_freteOk={key:_kq,gratis:!!(d.gratis&&d.gratis.ativo)};}
+/* 31/10/2026: abre o checkout com o frete que o cliente já cotou no carrinho (mesmo CEP e mesmos itens), sem zerar e cotar de novo */
+function _freteDoCarrinho(){try{
+  if(typeof _gRes==='undefined'||!_gRes||!_gKey||!(_gRes.opcoes&&_gRes.opcoes.length))return false;
+  var cep=soDig(val('ckCep'));if(cep.length!==8)return false;
+  if(!CART.length||CART.some(function(x){return !(precoItem(x)>0);}))return false;
+  if(cep+'|'+CART.map(function(x){return String(x.c)+'x'+x.qty;}).join(',')!==_gKey)return false;
+  var opt=document.getElementById('freteOpts');if(!opt)return false;
+  _freteOpcoes(_gRes,opt,chaveFrete());return true;
+}catch(e){return false;}}
 function cotarFreteLoja(){if(window._fBusy)return;var cep=soDig(val('ckCep'));var opt=document.getElementById('freteOpts');if(!opt)return;if(cep.length!==8){opt.innerHTML='<div style="font-size:13.5px;color:var(--muted);padding:5px 0">Informe o CEP no campo acima.</div>';return;}opt.innerHTML='<div class="fcalc"><span class="spn"></span>Calculando o frete para o seu CEP…</div>';window._fBusy=1;try{var _fb=document.querySelectorAll('#freteBox .ckwa');for(var _i=0;_i<_fb.length;_i++){_fb[_i].disabled=true;_fb[_i].style.opacity=.55;}}catch(e){}var _fim=function(){window._fBusy=0;try{var _fb=document.querySelectorAll('#freteBox .ckwa');for(var _i=0;_i<_fb.length;_i++){_fb[_i].disabled=false;_fb[_i].style.opacity=1;}}catch(e){}};
   zerarFrete();try{ckTotais();}catch(e){}var _kq=chaveFrete();
   var itens=CART.map(function(x){return {c:String(x.c),q:x.qty,v:precoItem(x)};});
-  fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){_fim();var ok=(d&&d.opcoes)||[];if(!ok.length){freteMeta=null;opt.innerHTML=_gratisHtml(d)+'<div style="font-size:13.5px;color:var(--muted);padding:5px 0">'+((d&&(d.consulta||d.bloqueado))?'Frete será confirmado no checkout / WhatsApp.':'<b>Frete não encontrado para este CEP.</b> Confira se o CEP está correto ou fale com a gente no WhatsApp.')+'</div>';return;}if(_kq!==chaveFrete())return;freteMeta={pesoKg:d.peso,pacotes:d.pacotes,gratis:!!(d.gratis&&d.gratis.ativo)};opt.innerHTML=_gratisHtml(d)+ok.map(function(o,ix){var nm=String(o.nome||'Transportadora').replace(/\x27/g,'');return '<label class="pay1'+(ix===0?' on':'')+'" style="margin-top:6px"><input type="radio" name="frt" value="'+o.preco+'" '+(ix===0?'checked':'')+' onchange="selFreteLoja('+o.preco+',\''+nm+'\','+(o.prazo||0)+',\''+String(o.id||'')+'\')"><span><span class="pn">'+nm+'</span> <span class="pd">'+(o.retirada?'· envie seu motoboy ou transportadora':(o.prazo?('· '+o.prazo+' dias úteis'):''))+'</span></span><span class="ptag" style="color:var(--navy)">'+(o.gratis?'Grátis':(o.retirada?'Por sua conta':brl(o.preco)))+'</span></label>';}).join('');selFreteLoja(ok[0].preco,String(ok[0].nome||'Transportadora').replace(/\x27/g,''),ok[0].prazo||0,String(ok[0].id||''));_freteOk={key:_kq,gratis:!!(d.gratis&&d.gratis.ativo)};}).catch(function(){_fim();zerarFrete();try{ckTotais();}catch(e){}opt.innerHTML='<div style="font-size:13.5px;color:var(--muted);padding:5px 0">Não foi possível calcular agora — o frete será confirmado pelo WhatsApp.</div>';});}
+  fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){_fim();var ok=(d&&d.opcoes)||[];if(!ok.length){freteMeta=null;opt.innerHTML=_gratisHtml(d)+'<div style="font-size:13.5px;color:var(--muted);padding:5px 0">'+((d&&(d.consulta||d.bloqueado))?'Frete será confirmado no checkout / WhatsApp.':'<b>Frete não encontrado para este CEP.</b> Confira se o CEP está correto ou fale com a gente no WhatsApp.')+'</div>';return;}if(_kq!==chaveFrete())return;_freteOpcoes(d,opt,_kq);}).catch(function(){_fim();zerarFrete();try{ckTotais();}catch(e){}opt.innerHTML='<div style="font-size:13.5px;color:var(--muted);padding:5px 0">Não foi possível calcular agora — o frete será confirmado pelo WhatsApp.</div>';});}
 function aplicarCupom(){var c=(val('ckCupom')||'').toUpperCase().replace(/\s/g,'');var msg=document.getElementById('cupomMsg');if(!c){cupomPct=0;cupomCod='';if(msg)msg.textContent='';ckTotais();return;}if(CUPONS[c]){cupomPct=CUPONS[c];cupomCod=c;if(msg){msg.style.color='var(--green-d)';msg.innerHTML='✓ Cupom '+c+' aplicado — '+Math.round(cupomPct*100)+'% OFF.';}}else{cupomPct=0;cupomCod='';if(msg){msg.style.color='#b3261e';msg.textContent='Cupom inválido.';}}ckTotais();}
 function _freteBarCart(){return '';}
 function ckTotais(){try{var _ok=boletoOk();var _pb=document.getElementById('pgBoleto');if(_pb){_pb.style.opacity=_ok?'1':'.5';_pb.querySelector('input').disabled=!_ok;}if(!_ok&&PG==='boleto'){PG='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value==='pix');});}}catch(e){}var t=CART.reduce(function(s,x){return s+precoItem(x)*x.qty*fatorPg(x.c);},0)*(1-cupomPct)+(freteSelLoja||0);var n=CART.reduce(function(s,x){return s+x.qty;},0);document.getElementById('ckTot').textContent=brl(t);document.getElementById('ckQt').textContent='('+n+' '+(n===1?'item':'itens')+(PG==='pix'?' · desconto Pix':'')+(cupomPct?(' · −'+Math.round(cupomPct*100)+'%'):'')+(freteSelLoja?(' · frete '+brl(freteSelLoja)):'')+')';}
-function abrirCheckout(){try{sullabFirebase();}catch(_e){}if(!CART.length){return;}if(faltaTubo()>0){abrirCarrinho();return;}fecharCarrinho();preencherFicha();ckModo();setPg(PG);cupomPct=0;cupomCod='';zerarFrete();try{window._freteReset&&window._freteReset();}catch(e){}var cc=document.getElementById('ckCupom');if(cc)cc.value='';var cm=document.getElementById('cupomMsg');if(cm)cm.textContent='';renderFrete();ckTotais();document.getElementById('ckErr').style.display='none';document.getElementById('cko').classList.add('on');}
-function fecharCheckout(){document.getElementById('cko').classList.remove('on');}
+function abrirCheckout(){try{sullabFirebase();}catch(_e){}if(!CART.length){return;}if(faltaTubo()>0){abrirCarrinho();return;}fecharCarrinho();preencherFicha();ckModo();setPg(PG);cupomPct=0;cupomCod='';zerarFrete();try{window._freteReset&&window._freteReset();}catch(e){}var cc=document.getElementById('ckCupom');if(cc)cc.value='';var cm=document.getElementById('cupomMsg');if(cm)cm.textContent='';renderFrete();_freteDoCarrinho();ckTotais();document.getElementById('ckErr').style.display='none';pixMostrar(false);
+  if(_PX&&!_PX.fim&&_PX.chave===chaveFrete()&&Date.now()<_PX.exp){_pxRender();pixMostrar(true);_pxTick();_PX.tick=setInterval(_pxTick,1000);_pxStatus();}
+  document.getElementById('cko').classList.add('on');}
+function fecharCheckout(){document.getElementById('cko').classList.remove('on');_pxParar();}
 function fichaSalva(){try{return JSON.parse(localStorage.getItem('sullab_ficha')||'{}');}catch(e){return {};}}
 function preencherFicha(){var f=fichaSalva();var map={ckDoc:'doc',ckNome:'nome',ckEmail:'email',ckTel:'tel',ckCep:'cep',ckNum:'num',ckCompl:'compl',ckLog:'log',ckBairro:'bairro',ckCidade:'cidade',ckUf:'uf'};for(var id in map){if(f[map[id]])document.getElementById(id).value=f[map[id]];}if(f.doct)setDoc(f.doct);}
 function coletarFicha(){return {doct:DOCT,doc:val('ckDoc'),nome:val('ckNome'),email:val('ckEmail'),tel:val('ckTel'),cep:val('ckCep'),num:val('ckNum'),compl:val('ckCompl'),log:val('ckLog'),bairro:val('ckBairro'),cidade:val('ckCidade'),uf:val('ckUf')};}
 function cepAuto(){var c=soDig(val('ckCep'));if(c.length!==8)return;fetch('https://brasilapi.com.br/api/cep/v1/'+c).then(function(r){return r.json();}).then(function(d){if(d&&d.street){if(!val('ckLog'))document.getElementById('ckLog').value=d.street;if(!val('ckBairro'))document.getElementById('ckBairro').value=d.neighborhood||'';document.getElementById('ckCidade').value=d.city||'';document.getElementById('ckUf').value=d.state||'';}if(!document.querySelector('#freteOpts label'))renderFrete();}).catch(function(){});}
-function cnpjAuto(){var c=soDig(val('ckDoc'));if(c.length!==14)return;fetch('https://brasilapi.com.br/api/cnpj/v1/'+c).then(function(r){return r.json();}).then(function(d){if(d&&d.razao_social){if(!val('ckNome'))document.getElementById('ckNome').value=d.razao_social;if(!val('ckCep')&&d.cep){document.getElementById('ckCep').value=String(d.cep);cepAuto();}if(!val('ckLog')&&d.logradouro)document.getElementById('ckLog').value=(d.descricao_tipo_de_logradouro?d.descricao_tipo_de_logradouro+' ':'')+d.logradouro;if(!val('ckNum')&&d.numero)document.getElementById('ckNum').value=String(d.numero);if(!val('ckBairro')&&d.bairro)document.getElementById('ckBairro').value=d.bairro;if(!val('ckCidade')&&d.municipio)document.getElementById('ckCidade').value=d.municipio;if(!val('ckUf')&&d.uf)document.getElementById('ckUf').value=d.uf;}renderFrete();}).catch(function(){});}
+function cnpjAuto(){var c=soDig(val('ckDoc'));if(c.length!==14||docAlfa(val('ckDoc')))return;fetch('https://brasilapi.com.br/api/cnpj/v1/'+c).then(function(r){return r.json();}).then(function(d){if(d&&d.razao_social){if(!val('ckNome'))document.getElementById('ckNome').value=d.razao_social;if(!val('ckCep')&&d.cep){document.getElementById('ckCep').value=String(d.cep);cepAuto();}if(!val('ckLog')&&d.logradouro)document.getElementById('ckLog').value=(d.descricao_tipo_de_logradouro?d.descricao_tipo_de_logradouro+' ':'')+d.logradouro;if(!val('ckNum')&&d.numero)document.getElementById('ckNum').value=String(d.numero);if(!val('ckBairro')&&d.bairro)document.getElementById('ckBairro').value=d.bairro;if(!val('ckCidade')&&d.municipio)document.getElementById('ckCidade').value=d.municipio;if(!val('ckUf')&&d.uf)document.getElementById('ckUf').value=d.uf;}renderFrete();}).catch(function(){});}
 function ckErro(m){var e=document.getElementById('ckErr');e.textContent=m;e.style.display='block';e.scrollIntoView({block:'nearest'});
   try{if(typeof gtag==='function')gtag('event','checkout_erro',{motivo:String(m).slice(0,90)});if(window.clarity)clarity('event','checkout_erro');}catch(x){}}
+function ckFoco(id){try{var e=document.getElementById(id);if(e&&!_ehMobile())e.focus();if(e)e.classList.add('ckbad');setTimeout(function(){if(e)e.classList.remove('ckbad');},2500);}catch(x){}}
+/* ==== 31/10/2026: Pix transparente — QR na própria página (Worker: POST /pix e GET /pix/status a cada 4 s) ==== */
+var _PX=null;
+function _pxEv(n,p){try{if(typeof gtag==='function')gtag('event',n,p||{});}catch(e){}try{if(window.clarity)clarity('event',n);}catch(e){}}
+function _pxEl(id){return document.getElementById(id);}
+function pixMostrar(on){var a=_pxEl('ckForm'),b=_pxEl('ckPix');if(a)a.hidden=!!on;if(b)b.hidden=!on;
+  if(on){var e=_pxEl('ckErr');if(e)e.style.display='none';try{_pxEl('cko').querySelector('.ckb').scrollTop=0;}catch(x){}}}
+function _pxParar(){if(_PX){clearTimeout(_PX.timer);clearInterval(_PX.tick);_PX.timer=_PX.tick=null;}}
+function _pxStat(t,m){var s=_pxEl('pxStat');if(!s)return;s.className='pxstat '+t;
+  s.innerHTML=t==='esp'?'<span class="spn"></span><span>Aguardando o pagamento. Após o pagamento a confirmação aparece aqui em segundos.</span>'
+    :t==='ok'?'<span class="pxi">✓</span><span><b>Pagamento confirmado!</b> Abrindo o seu pedido…</span>'
+    :t==='exp'?'<span class="pxi">⏱</span><span><b>Este Pix expirou.</b> Gere um novo código para pagar. O pedido continua o mesmo.</span>'
+    :'<span class="pxi">!</span><span></span>';
+  if(t==='erro')s.lastChild.textContent=m||'Não foi possível gerar o Pix agora.';}
+function _pxRender(){if(!_PX)return;var q=_pxEl('pxQr');if(q){if(_PX.qrb64){q.src='data:image/png;base64,'+_PX.qrb64;q.hidden=false;}else{q.removeAttribute('src');q.hidden=true;}}
+  _pxEl('pxCode').value=_PX.qr;_pxEl('pxTot').textContent=brl(_PX.total);_pxEl('pxPed').textContent=_PX.pedido;
+  _pxEl('pxNovo').hidden=true;var cb=_pxEl('pxCopyBtn');cb.textContent='Copiar';cb.disabled=false;_pxEl('pxQrBox').classList.remove('exp');_pxEl('pxExp').hidden=false;_pxStat('esp');}
+function pixGerar(corpo,tent){
+  var btn=_pxEl(tent>1?'pxNovo':'ckPayBtn'),orig=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='Gerando o Pix…';}
+  var b={},k;for(k in corpo)b[k]=corpo[k];if(tent>1)b.tentativa=tent;
+  var falha=function(m,motivo){if(btn){btn.disabled=false;btn.textContent=orig;}
+    if(tent>1){_pxStat('erro',m);_pxEv('checkout_erro',{motivo:String(motivo+': '+m).slice(0,90),etapa:'pix_novo'});}
+    else{if(/e-mail/i.test(m))ckFoco('ckEmail');else if(/CPF|CNPJ/.test(m))ckFoco('ckDoc');ckErro(m);}};
+  fetch(MP_WORKER+'pix',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)})
+   .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {ok:r.ok,st:r.status,d:d||{}};});})
+   .then(function(x){var d=x.d;
+     if(!x.ok||!d.qr_code)return falha(d.error||'Não foi possível gerar o Pix agora. Tente de novo em instantes ou escolha outra forma de pagamento.','pix_'+x.st);
+     if(btn){btn.disabled=false;btn.textContent=orig;}
+     var exp=Date.parse(d.expira_em||'');if(!(exp>Date.now()))exp=Date.now()+30*60000;
+     _pxParar();
+     _PX={pedido:String(d.pedido||corpo.pedido),id:String(d.id),qr:String(d.qr_code),qrb64:d.qr_code_base64||'',total:+d.total||0,exp:exp,tent:tent,corpo:corpo,chave:chaveFrete()};
+     try{var lp=JSON.parse(localStorage.getItem('sullab_last_purchase')||'{}');if(lp.ped===_PX.pedido&&_PX.total){lp.v=_PX.total;lp.pix=_PX.id;localStorage.setItem('sullab_last_purchase',JSON.stringify(lp));}}catch(e){}
+     _pxRender();pixMostrar(true);
+     _pxEv('pix_qr_exibido',{transaction_id:_PX.pedido,value:_PX.total,currency:'BRL',tentativa:tent});
+     _pxTick();_PX.tick=setInterval(_pxTick,1000);_pxAgendar(4000);})
+   .catch(function(){falha('Erro de conexão ao gerar o Pix. Confira a internet e tente de novo.','pix_rede');});
+}
+function _pxTick(){var P=_PX;if(!P||P.fim)return;var r=Math.max(0,P.exp-Date.now()),m=Math.floor(r/60000),s=Math.floor(r%60000/1000),c=_pxEl('pxCnt');
+  if(c)c.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  if(r<=0&&!P.venceu){P.venceu=1;clearTimeout(P.timer);_pxStatus();}}
+function _pxAgendar(ms){var P=_PX;if(!P||P.fim)return;clearTimeout(P.timer);P.timer=setTimeout(function(){_pxStatus();},ms);}
+function _pxStatus(){var P=_PX;if(!P||P.fim)return;
+  fetch(MP_WORKER+'pix/status?id='+encodeURIComponent(P.id),{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
+    if(_PX!==P||P.fim)return;var st=String((d&&d.status)||'');
+    if(st==='approved')return _pxAprovado(P);
+    if(/cancel|expir|reject/.test(st)||Date.now()>=P.exp)return _pxExpirado(P,st||'tempo');
+    if(!P.tick)return;_pxAgendar(document.hidden?10000:4000);
+  }).catch(function(){if(_PX!==P||P.fim)return;if(Date.now()>=P.exp+60000)return _pxExpirado(P,'tempo');if(P.tick)_pxAgendar(6000);});}
+function _pxExpirado(P,motivo){P.fim=1;_pxParar();_pxStat('exp');_pxEl('pxNovo').hidden=false;_pxEl('pxQrBox').classList.add('exp');_pxEl('pxExp').hidden=true;_pxEl('pxCopyBtn').disabled=true;
+  _pxEv('pix_expirado',{transaction_id:P.pedido,tentativa:P.tent,motivo:motivo||''});}
+function pixNovo(){if(!_PX)return;pixGerar(_PX.corpo,(_PX.tent||1)+1);}
+function pixVoltar(){_pxParar();_PX=null;pixMostrar(false);return false;}
+function pixCopiar(){if(!_PX)return;var t=_PX.qr,b=_pxEl('pxCopyBtn'),P=_PX;
+  var ok=function(){if(b){b.textContent='Copiado ✓';setTimeout(function(){if(b&&!P.fim)b.textContent='Copiar';},2500);}_pxEv('pix_copiado',{transaction_id:P.pedido});};
+  var fb=function(){try{var i=_pxEl('pxCode');i.focus();i.select();try{i.setSelectionRange(0,t.length);}catch(e){}document.execCommand('copy');ok();}catch(e){}};
+  try{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(ok,fb);else fb();}catch(e){fb();}}
+function _pxAprovado(P){P.fim=1;_pxParar();_pxStat('ok');var cb=_pxEl('pxCopyBtn');if(cb)cb.disabled=true;
+  var lp={};try{lp=JSON.parse(localStorage.getItem('sullab_last_purchase')||'{}')||{};}catch(e){}
+  var its=(lp.ped===P.pedido&&lp.items)||[],v=Math.round((P.total||lp.v||0)*100)/100;
+  _pxEv('pix_aprovado',{transaction_id:P.pedido,value:v,currency:'BRL',tentativa:P.tent});
+  /* uma conversão por pedido: o obrigado.html não repete o que já foi enviado aqui (sullab_purchase_enviadas) */
+  var env={};try{env=JSON.parse(localStorage.getItem('sullab_purchase_enviadas')||'{}')||{};}catch(e){}
+  if(!env[P.pedido]){
+    var gp={transaction_id:P.pedido,value:v,currency:'BRL',payment_type:'pix'};if(its.length)gp.items=its;if(lp.frete)gp.shipping=lp.frete;
+    try{if(typeof gtag==='function'){gtag('event','purchase',gp);gtag('event','conversion',{send_to:'AW-11390766577/zT6SCKz-1KwdEPGbxbcq',value:v||1,currency:'BRL',transaction_id:P.pedido});}}catch(e){}
+    try{if(typeof fbq==='function')fbq('track','Purchase',{value:v,currency:'BRL',content_type:'product',content_ids:its.map(function(x){return String(x.item_id);}),contents:its.map(function(x){return {id:String(x.item_id),quantity:x.quantity,item_price:x.price};}),num_items:its.reduce(function(s,x){return s+(x.quantity||1);},0)},{eventID:P.pedido});}catch(e){}
+    try{if(window.clarity)clarity('event','purchase');}catch(e){}
+    env[P.pedido]=Date.now();try{localStorage.setItem('sullab_purchase_enviadas',JSON.stringify(env));}catch(e){}
+  }
+  var u='/obrigado.html?pedido='+encodeURIComponent(P.pedido)+'&external_reference='+encodeURIComponent(P.pedido)+'&status=approved&payment_id='+encodeURIComponent(P.id)+'&metodo=pix'+(v?('&total='+v):'');
+  setTimeout(function(){location.href=u;},900);}
+document.addEventListener('visibilitychange',function(){try{if(!document.hidden&&_PX&&!_PX.fim&&_PX.tick){clearTimeout(_PX.timer);_pxStatus();}}catch(e){}});
 function pagarMP(){
   var f=coletarFicha();
-  if(soDig(f.doc).length<11)return ckErro('Informe um '+(DOCT==='cnpj'?'CNPJ':'CPF')+' válido.');
-  if(!f.nome)return ckErro(DOCT==='cpf'?'Informe seu nome completo.':'Informe o nome fantasia.');
-  if(!/.+@.+\..+/.test(f.email))return ckErro('Informe um e-mail válido.');
-  if(soDig(f.tel).length<10)return ckErro('Informe um telefone com DDD.');
-  if(soDig(f.cep).length!==8||!f.num)return ckErro('Informe CEP e número do endereço.');
+  if(soDig(f.tel).length<10)return ckFoco('ckTel'),ckErro('Informe um WhatsApp com DDD.');
+  if(DOCT==='cnpj'?!cnpjValido(f.doc):!cpfValido(f.doc))return ckFoco('ckDoc'),ckErro(DOCT==='cnpj'?'Confira o CNPJ: são 14 caracteres (números, ou letras e números no CNPJ novo).':'Confira o CPF: são 11 números.');
+  if(!f.nome)return ckFoco('ckNome'),ckErro(DOCT==='cpf'?'Informe seu nome completo.':'Informe a razão social da empresa.');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))return ckFoco('ckEmail'),ckErro(PG==='pix'?'Informe um e-mail válido para gerar o Pix: é por ele que enviamos a confirmação e a NF-e.':'Informe um e-mail válido.');
+  if(soDig(f.cep).length!==8)return ckFoco('ckCep'),ckErro('Informe o CEP com 8 números.');
+  if(!f.log||!f.num)return ckFoco(f.log?'ckNum':'ckLog'),ckErro('Informe a rua e o número do endereço de entrega.');
   localStorage.setItem('sullab_ficha',JSON.stringify(f));
   if(!freteValido()){try{cotarFreteLoja();}catch(e){}return ckErro('Calcule o frete pelo CEP e escolha a transportadora antes de pagar.');}
   var items=[];
@@ -625,8 +728,11 @@ function pagarMP(){
   }catch(e){}
   dispararPedido('pedido_mp',PG,f,pedido);
   var endereco={cep:f.cep,logradouro:f.log,numero:f.num,complemento:f.compl,bairro:f.bairro,cidade:f.cidade,uf:f.uf};
+  var corpo={pedido:pedido,items:items,method:PG,endereco:endereco,frete:{valor:Math.round((freteSelLoja||0)*100)/100,gratis:!(freteSelLoja>0),servico:freteSelId||'',nome:freteLabelLoja||'',cep:soDig(f.cep)},cliente:{nome:f.nome,doc:docParaMP(f.doc),docTipo:DOCT,tel:f.tel,email:f.email}};
+  /* 31/10/2026: Pix transparente — o QR aparece aqui mesmo (Worker POST /pix); cartão e boleto seguem para o Mercado Pago */
+  if(PG==='pix')return pixGerar(corpo,1);
   var btn=document.getElementById('ckPayBtn');var orig=btn.textContent;btn.disabled=true;btn.textContent='Abrindo Mercado Pago…';
-  fetch(MP_WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pedido:pedido,items:items,method:PG,endereco:endereco,frete:{valor:Math.round((freteSelLoja||0)*100)/100,gratis:!(freteSelLoja>0),servico:freteSelId||'',nome:freteLabelLoja||'',cep:soDig(f.cep)},cliente:{nome:f.nome,doc:f.doc,docTipo:DOCT,tel:f.tel,email:f.email}})})
+  fetch(MP_WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo)})
    .then(function(r){return r.json();}).then(function(d){if(d&&d.init_point){window.location.href=d.init_point;}else{btn.disabled=false;btn.textContent=orig;ckErro('Não foi possível iniciar o pagamento: '+((d&&d.error)||'tente novamente.'));}})
    .catch(function(){btn.disabled=false;btn.textContent=orig;ckErro('Erro de conexão com o pagamento online. Obs.: na versão de teste local (preview) o pagamento só funciona com a loja publicada — você pode fechar pelo WhatsApp logo abaixo.');});
 }

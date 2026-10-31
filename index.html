@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=833f8cf33a",p:"/data/precos.json?v=96621b5fde",j:"/js/loja.js?v=974a670522"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
-<link rel="preload" href="/js/loja.js?v=974a670522" as="script">
+<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=833f8cf33a",p:"/data/precos.json?v=96621b5fde",j:"/js/loja.js?v=b7d9746308"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
+<link rel="preload" href="/js/loja.js?v=b7d9746308" as="script">
 <title>SULLAB · Materiais para laboratório e diagnóstico — atacado com NF-e</title>
 <meta name="description" content="Distribuidora de produtos para laboratório e diagnóstico clínico: tubos a vácuo, testes rápidos, reagentes, meios de cultura e descartáveis. Preço para CNPJ, nota fiscal e entrega para todo o Brasil.">
 
@@ -330,7 +330,39 @@
   .ckwa{display:block;width:100%;text-align:center;background:#fff;color:var(--muted);font-weight:700;font-size:12.5px;padding:9px;border:0;cursor:pointer;margin-top:6px}
   .ckwa.ckduv{color:#128c4a;border:1px solid #cfe9d9;border-radius:10px;margin-top:8px}
   .ckerr{background:#fdecec;color:#b3261e;font-size:12.5px;padding:9px 11px;border-radius:8px;margin-bottom:11px;display:none;line-height:1.4}
-  .cksafe{font-size:11px;color:var(--muted);text-align:center;margin-top:9px}
+  .cksafe{font-size:12px;color:var(--muted);text-align:center;margin-top:9px}
+  #cko .fld label,#cko .cklb{display:block;font-size:13px;font-weight:700;color:var(--ink);margin:0 0 5px}
+  #cko .cklb{margin:4px 0 6px}
+  #cko .pay1 .pn{font-size:14px}#cko .pay1 .pd{font-size:13px}
+  #cko .fld input.ckbad{border-color:#d93025;box-shadow:0 0 0 3px rgba(217,48,37,.12)}
+  .ckhint{display:block;margin-top:4px;font-size:12.5px;color:#5b6b7f}
+  .cklnk{display:block;text-align:center;font-size:13.5px;font-weight:700;color:var(--navy-l);text-decoration:none;padding:10px 4px;cursor:pointer}
+  .cklnk:hover{text-decoration:underline}
+  .fld .cklnk{text-align:left;padding:4px 0 0;font-size:12.5px}
+  .cklnk.ckduv2{color:#128c4a}
+  #boletoInfo .cklnk{text-align:left;padding:6px 0 0}
+  #cko [hidden]{display:none!important}
+  #cko .ckerr{margin-right:34px;font-size:13.5px}
+  #cko .frow.ckend{grid-template-columns:1fr 1fr 64px}
+  #ckPix h3{margin:0 0 4px;font-size:20px;color:var(--navy)}
+  .pxbox{text-align:center;border:1px solid var(--line);border-radius:14px;padding:14px 12px 12px;margin:4px 0 14px;background:#fff}
+  .pxbox img{display:block;width:232px;height:232px;max-width:100%;margin:0 auto 8px;image-rendering:pixelated}
+  .pxbox.exp img{opacity:.18;filter:grayscale(1)}
+  .pxtot{font-size:14px;color:var(--muted)}.pxtot b{display:block;font-size:24px;color:var(--navy);margin-top:2px}
+  .pxexp{font-size:13px;color:var(--muted);margin-top:6px}.pxexp b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .pxcopy{display:flex;gap:8px;margin-bottom:12px}
+  .pxcopy input{flex:1;min-width:0;padding:11px;border:1px solid var(--line);border-radius:9px;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--ink);background:var(--bg)}
+  .pxcopy button{flex:0 0 auto;border:0;border-radius:9px;background:var(--navy);color:#fff;font-weight:800;font-size:14px;padding:0 18px;min-height:44px;cursor:pointer}
+  .pxcopy button:disabled{opacity:.45;cursor:default}
+  .pxstat{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;line-height:1.45;border-radius:10px;padding:10px 12px;margin-bottom:12px;background:var(--navy-soft);color:var(--navy)}
+  .pxstat .spn{flex:0 0 auto;margin-top:2px}
+  .pxstat .pxi{flex:0 0 auto;font-weight:800}
+  .pxstat.ok{background:var(--green-soft);color:var(--green-d)}
+  .pxstat.exp{background:#fff6e5;color:#7a5a12}
+  .pxstat.erro{background:#fdecec;color:#b3261e}
+  .pxsteps{margin:0 0 6px;padding-left:20px;font-size:13px;color:var(--muted);line-height:1.6}
+  #pxNovo{margin-bottom:12px}
+  @media(max-width:600px){.pxbox img{width:208px;height:208px}#cko .fld input{font-size:16px}}
   #cnpjSwitch{display:none!important}
   .prod .b2bsob{font-size:10.5px;color:var(--navy);font-weight:700;background:var(--navy-soft);border-radius:6px;padding:4px 8px;width:max-content;margin-top:2px}
 
@@ -440,7 +472,7 @@
 
 
 <style>#heroBlock{display:none!important}#deskNote{display:none!important}</style>
-<script defer src="/rastreio.js?v=6"></script><style id="bannerCss">
+<script defer src="/rastreio.js?v=7"></script><style id="bannerCss">
 .bannerHome .bsel{display:flex;flex-wrap:wrap;gap:8px 10px;margin:14px 0 0}.bannerHome .bsel span{background:#fff;border:1px solid var(--line);color:var(--navy);padding:7px 13px;border-radius:999px;font-size:13px;box-shadow:0 2px 8px rgba(16,32,60,.06)}.bannerHome .bsel b{font-weight:800}@media(max-width:700px){.bannerHome .bsel span{font-size:12px;padding:6px 10px}}
 .bannerHome{margin:18px 0 6px}
 .bannerHome .bnr{display:block;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(16,32,60,.18);cursor:pointer;line-height:0;background:#0f2a52}
@@ -816,44 +848,63 @@
 
 <div class="cko" id="cko" onclick="if(event.target===this&&window.__mdT===this)fecharCheckout()">
  <div class="ckb">
-  <button class="ckx" onclick="fecharCheckout()">&times;</button>
+  <button class="ckx" onclick="fecharCheckout()" aria-label="Fechar">&times;</button>
+  <div class="ckerr" id="ckErr" role="alert"></div>
+  <div id="ckForm">
   <h3 id="ckTit">Finalizar pedido</h3>
   <div class="sub" id="ckSub">Pagamento seguro pelo Mercado Pago &middot; NF-e em todo pedido</div>
-  <div class="ckerr" id="ckErr"></div>
-  <div class="fld"><label>Seu WhatsApp (com DDD)</label><input id="ckTel" inputmode="tel" autocomplete="tel" placeholder="(24) 90000-0000"><small style="display:block;margin-top:3px;color:#5b6b7f">Para enviarmos a nota fiscal, o rastreio e tirar dúvidas do pedido.</small></div>
+  <div class="fld"><label for="ckTel">Seu WhatsApp (com DDD)</label><input id="ckTel" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" placeholder="(24) 90000-0000"><small class="ckhint">Para enviarmos a nota fiscal, o rastreio e tirar dúvidas do pedido.</small></div>
   <div class="doctab" id="docTab">
     <button type="button" data-d="cnpj" class="on" onclick="setDoc('cnpj')">CNPJ (empresa)</button>
     <button type="button" data-d="cpf" onclick="setDoc('cpf')">CPF</button>
   </div>
-  <div class="fld"><label id="lbDoc">CNPJ</label><input id="ckDoc" inputmode="numeric" placeholder="00.000.000/0000-00" oninput="if(DOCT=='cnpj')cnpjAuto()"></div>
-  <div class="fld"><label id="lbNome">Nome fantasia</label><input id="ckNome" placeholder="Nome popular da empresa"></div>
-  <div class="fld"><label>E-mail</label><input id="ckEmail" type="email" placeholder="voce@empresa.com.br"></div>
-  <div class="frow c3">
-    <div class="fld"><label>CEP</label><input id="ckCep" inputmode="numeric" placeholder="00000-000" oninput="cepAuto()"></div>
-    <div class="fld"><label>Número</label><input id="ckNum" placeholder="nº"></div>
-    <div class="fld"><label>Compl.</label><input id="ckCompl" placeholder="sala, bloco"></div>
+  <div class="fld"><label id="lbDoc" for="ckDoc">CNPJ</label><input id="ckDoc" inputmode="numeric" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="18" placeholder="00.000.000/0000-00" oninput="docInput(this)"><a href="#" class="ckhint cklnk" id="ckDocLetras" onclick="return docLetras()">CNPJ com letras? Toque aqui para digitar</a></div>
+  <div class="fld"><label id="lbNome" for="ckNome">Razão social</label><input id="ckNome" autocomplete="organization" placeholder="Como está no cartão CNPJ"></div>
+  <div class="fld"><label for="ckEmail">E-mail</label><input id="ckEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="voce@empresa.com.br"><small class="ckhint">Obrigatório para o Pix: enviamos a confirmação e a NF-e.</small></div>
+  <div class="frow c2">
+    <div class="fld"><label for="ckCep">CEP</label><input id="ckCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" oninput="cepAuto()"></div>
+    <div></div>
   </div>
-  <div class="fld"><label>Endereço</label><input id="ckLog" placeholder="Rua / Av."></div>
-  <div class="frow c3">
-    <div class="fld"><label>Bairro</label><input id="ckBairro"></div>
-    <div class="fld"><label>Cidade</label><input id="ckCidade"></div>
-    <div class="fld"><label>UF</label><input id="ckUf" maxlength="2"></div>
+  <div class="fld"><label for="ckLog">Endereço</label><input id="ckLog" autocomplete="address-line1" placeholder="Rua / Av."></div>
+  <div class="frow c2">
+    <div class="fld"><label for="ckNum">Número</label><input id="ckNum" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="nº"></div>
+    <div class="fld"><label for="ckCompl">Complemento</label><input id="ckCompl" autocomplete="address-line2" placeholder="sala, bloco"></div>
+  </div>
+  <div class="frow c3 ckend">
+    <div class="fld"><label for="ckBairro">Bairro</label><input id="ckBairro" autocomplete="address-level3"></div>
+    <div class="fld"><label for="ckCidade">Cidade</label><input id="ckCidade" autocomplete="address-level2"></div>
+    <div class="fld"><label for="ckUf">UF</label><input id="ckUf" maxlength="2" autocomplete="address-level1" autocapitalize="characters"></div>
   </div>
   <div id="freteBox" style="margin:2px 0 12px"></div>
-  <label id="paysLb" style="font-size:11.5px;font-weight:700;color:var(--ink);display:block;margin:4px 0 6px">Forma de pagamento</label>
+  <label id="paysLb" class="cklb">Forma de pagamento</label>
   <div class="pays" id="pays">
-    <label class="pay1 on"><input type="radio" name="pg" value="pix" checked onchange="setPg('pix')"><span><span class="pn">Pix</span> <span class="pd">&middot; aprovação na hora</span></span><span class="ptag">até &minus;5%</span></label>
+    <label class="pay1 on"><input type="radio" name="pg" value="pix" checked onchange="setPg('pix')"><span><span class="pn">Pix</span> <span class="pd">&middot; QR Code aqui na página, aprovação na hora</span></span><span class="ptag">até &minus;5%</span></label>
     <label class="pay1"><input type="radio" name="pg" value="cartao" onchange="setPg('cartao')"><span><span class="pn">Cartão de crédito</span> <span class="pd">&middot; até 2x sem juros · Mercado Pago</span></span></label>
     <label class="pay1" id="pgBoleto"><input type="radio" name="pg" value="boleto" onchange="setPg('boleto')"><span><span class="pn">Boleto bancário</span> <span class="pd" id="pgBoletoTx">&middot; à vista, compensa em até 3 dias úteis &middot; pedidos a partir de R$ 400</span></span></label>
   </div>
-  <div id="boletoInfo" style="display:none;font-size:12px;color:#5f6b7c;margin:-2px 0 10px;line-height:1.45">Depois de pagar o boleto, envie o comprovante pelo WhatsApp: liberamos o seu pedido mais rápido, sem esperar a compensação.</div>
-  <button class="ckwa" id="btnFaturado" onclick="boletoFaturado()" style="margin-bottom:8px">🧾 Empresa (CNPJ)? Peça <b>boleto faturado em 28 ou 45 dias</b> — CNPJ, pedidos a partir de R$ 400, mediante análise de crédito</button>
+  <div id="boletoInfo" style="display:none;font-size:13px;color:#5f6b7c;margin:-2px 0 10px;line-height:1.45">Depois de pagar o boleto, envie o comprovante pelo WhatsApp: liberamos o seu pedido mais rápido, sem esperar a compensação.<br><a href="#" class="cklnk" id="btnFaturado" onclick="boletoFaturado();return false">Empresa (CNPJ)? Peça boleto faturado em 28 ou 45 dias (mediante análise de crédito)</a></div>
   <div class="cktot"><span>Total <span id="ckQt" style="color:var(--muted);font-size:12px"></span></span><b id="ckTot">R$ 0,00</b></div>
   <button class="ckpay" id="ckPayBtn" onclick="pagarMP()">Pagar agora &rarr;</button>
-  <button class="ckwa ckduv" onclick="duvidaCheckout('checkout')">💬 Dúvida antes de pagar? Falar com um vendedor no WhatsApp</button>
-  <button class="ckwa" onclick="fecharCheckout()">Continuar comprando</button>
+  <a href="#" class="cklnk ckduv2" onclick="duvidaCheckout('checkout');return false">Dúvida? Fale com um vendedor</a>
   <div class="cksafe" id="ckSafe">🔒 Pagamento processado pelo Mercado Pago. Seus dados não ficam no nosso site.</div>
   <div class="cksafe" style="margin-top:4px">Se não concluir agora, guardamos o carrinho e enviamos o link no seu WhatsApp para você finalizar depois.</div>
+  </div>
+  <div id="ckPix" hidden>
+   <h3>Pague com Pix</h3>
+   <div class="sub">Pedido <b id="pxPed"></b> &middot; NF-e em todo pedido</div>
+   <div class="pxbox" id="pxQrBox">
+    <img id="pxQr" width="232" height="232" alt="QR Code do Pix para pagar o pedido">
+    <div class="pxtot">Total <b id="pxTot">R$ 0,00</b></div>
+    <div class="pxexp" id="pxExp">Válido por 30 minutos &middot; expira em <b id="pxCnt">30:00</b></div>
+   </div>
+   <label class="cklb" for="pxCode">Pix copia e cola</label>
+   <div class="pxcopy"><input id="pxCode" readonly aria-label="Código Pix copia e cola" onclick="this.select()"><button type="button" id="pxCopyBtn" onclick="pixCopiar()">Copiar</button></div>
+   <div class="pxstat esp" id="pxStat" role="status" aria-live="polite"></div>
+   <button class="ckpay" id="pxNovo" hidden onclick="pixNovo()">Gerar novo Pix</button>
+   <ol class="pxsteps"><li>Abra o app do seu banco e escolha <b>Pix</b>.</li><li>Leia o QR Code ou cole o código copia e cola.</li><li>Confira o valor e confirme. A confirmação aparece aqui.</li></ol>
+   <a href="#" class="cklnk" onclick="return pixVoltar()">&larr; Alterar dados ou forma de pagamento</a>
+   <a href="#" class="cklnk ckduv2" onclick="duvidaCheckout('pix');return false">Dúvida? Fale com um vendedor</a>
+  </div>
  </div>
 </div>
 
