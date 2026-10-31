@@ -87,7 +87,7 @@ REGRAS = [
     '<b>Cartão de crédito:</b> até 2x sem juros.',
     '<b>Boleto faturado em 28 ou 45 dias</b> para CNPJ, em pedidos a partir de R$ 400 (mediante análise de crédito).',
     '<b>Pedido mínimo:</b> R$ 100 (geral) · R$ 150 com item refrigerado · '
-    'R$ 400 com tubos/agulhas Vacuette ou testes rápidos, ou no boleto.',
+    'R$ 150 com testes rápidos · R$ 250 com tubos/agulhas Vacuette · R$ 400 no boleto.',
     '<b>Frete</b> calculado pelo CEP no carrinho do site.',
     '<b>NF-e</b> em todo pedido.',
 ]

@@ -407,6 +407,12 @@ function _gratisHtml(d){
   if(g&&g.sobConsulta)return (o?'<div>🚚 Frete a partir de <b>'+brl(o.preco)+'</b>'+pz+'.</div>':'')+'<div style="font-size:11.5px">Frete grátis não se aplica a um ou mais itens deste pedido.</div>';
   var h='';
   if(o)h+='<div>🚚 Frete: <b>'+brl(o.preco)+'</b> · '+(o.retirada?'por conta do cliente (retirada na SULLAB)':String(o.nome||'').slice(0,28))+pz+'</div>';
+  /* 31/10/2026: só tubos/agulhas Vacuette no carrinho (lucro de 11,5%): a regra nunca libera frete grátis — não prometer "faltam R$ X"; a sugestão de teste rápido vira venda adicional */
+  if(g&&g.falta&&soGreiner()){
+    var sg=g.sugestoes&&g.sugestoes[0];
+    h+='<div class="gnudge"><div style="font-weight:800">Tubos e agulhas Vacuette com o menor preço do mercado: frete calculado pelo CEP, sem frete grátis nessa linha.</div>'+(sg?'<div style="font-size:11.5px;margin-top:4px">Leve junto <b>'+sg.q+' × '+String(_nomeCat(sg.c)).split(' · caixa')[0].slice(0,60)+'</b> ('+brl(sg.valor)+') e o frete grátis libera para o pedido todo. <button onclick="addCodigo(\''+sg.c+'\','+sg.q+')" style="margin-left:6px;background:var(--green-d);color:#fff;border:0;border-radius:8px;padding:4px 10px;font-weight:800;cursor:pointer">+ Acrescentar</button></div>':'')+'</div>';
+    return h;
+  }
   if(g&&g.falta){
     var V=0;try{V=totalCart();}catch(e){}
     var pct=V>0?Math.max(6,Math.min(96,Math.round(V/(V+g.falta)*100))):6;
@@ -420,7 +426,7 @@ function gboxRender(){
   var b=document.getElementById('gbox');if(!b)return;
   var cep=soDig((fichaSalva().cep)||'');
   var base='<div class="gin"><input id="cartCep" inputmode="numeric" maxlength="9" placeholder="Seu CEP — veja o frete" value="'+(cep.length===8?cep.slice(0,5)+'-'+cep.slice(5):'')+'" onkeydown="if(event.key===\'Enter\')cotarFreteCarrinho()"><button onclick="cotarFreteCarrinho()">Calcular</button></div>';
-  if(cep.length!==8){b.className='gbox';b.innerHTML=base+'<div>🚚 Muitos pedidos ganham <b>frete grátis</b>. Informe o CEP e veja o seu.</div>';return;}
+  if(cep.length!==8){b.className='gbox';b.innerHTML=base+'<div>🚚 '+(soGreiner()?'Informe o CEP e veja o frete dos tubos Vacuette.':'Muitos pedidos ganham <b>frete grátis</b>. Informe o CEP e veja o seu.')+'</div>';return;}
   b.className='gbox';b.innerHTML=base+'<div id="gmsg">Calculando frete…</div>';
   clearTimeout(_gTimer);_gTimer=setTimeout(function(){cotarFreteCarrinho(true);},350);
 }
@@ -589,18 +595,23 @@ function duvidaCheckout(onde){
 }
 
 var BOLETO_MIN=400;
-var TUBO_MIN=400;
-function temTubo(){return CART.some(function(x){return (window.PIX3&&window.PIX3[x.c])||(window.TR_TOP&&window.TR_TOP[x.c]);});}  
+/* 31/10/2026 (estudo de frete): tubos/agulhas Vacuette R$ 250 (10 racks já deixam R$ 42 por pedido), testes rápidos R$ 150, refrigerado R$ 150, geral R$ 100; boleto segue R$ 400 */
+var TUBO_MIN=250,TESTE_MIN=150;
+function temGreiner(){return CART.some(function(x){return !!(window.PIX3&&window.PIX3[x.c]);});}
+function temTeste(){return CART.some(function(x){return !!(window.TR_TOP&&window.TR_TOP[x.c]);});}
+function temTubo(){return temGreiner()||temTeste();}  
 var PED_MIN_GERAL=100,PED_MIN_REFRIG=150;
-function pedMin(){return temTubo()?TUBO_MIN:((window.cartRefrigerado&&window.cartRefrigerado())?PED_MIN_REFRIG:PED_MIN_GERAL);}
-function msgMin(){return temTubo()?'Pedido mínimo de R$ 400,00 somando tubos, agulhas Vacuette e testes rápidos — pode misturar itens dessas categorias no mesmo pedido.':((window.cartRefrigerado&&window.cartRefrigerado())?'Pedido mínimo de R$ 150,00 para pedidos com produto refrigerado — vale o total do pedido, não o item.':'Pedido mínimo no site: R$ 100,00 no total do pedido.');}
+function pedMin(){return temGreiner()?TUBO_MIN:(temTeste()?TESTE_MIN:((window.cartRefrigerado&&window.cartRefrigerado())?PED_MIN_REFRIG:PED_MIN_GERAL));}
+function msgMin(){return temGreiner()?'Pedido mínimo de R$ 250,00 somando tubos e agulhas Vacuette (pode misturar com testes rápidos e outros itens no mesmo pedido).':(temTeste()?'Pedido mínimo de R$ 150,00 somando testes rápidos — vale o total do pedido.':((window.cartRefrigerado&&window.cartRefrigerado())?'Pedido mínimo de R$ 150,00 para pedidos com produto refrigerado — vale o total do pedido, não o item.':'Pedido mínimo no site: R$ 100,00 no total do pedido.'));}
 function faltaTubo(){return Math.max(0,Math.round((pedMin()-totalCart())*100)/100);}
 /* 31/10/2026: barra única de progresso no carrinho — primeiro o pedido mínimo, depois o frete grátis (quando o CEP já foi cotado) */
 function _gratisAtual(){try{if(!_gRes||!_gKey)return null;var cep=soDig((fichaSalva().cep)||''),its=CART.filter(function(x){return precoItem(x)>0;});var k=cep+'|'+its.map(function(x){return String(x.c)+'x'+x.qty;}).join(',');return k===_gKey?(_gRes.gratis||null):null;}catch(e){return null;}}
+function soGreiner(){var its=CART.filter(function(x){return precoItem(x)>0;});return its.length>0&&its.every(function(x){return !!(window.PIX3&&window.PIX3[x.c]);});}
 function progHtml(){var sub=totalCart();if(!(sub>0))return '';var min=pedMin(),f=faltaTubo(),pct,lab,cls='';
   if(f>0){pct=Math.max(4,Math.min(100,Math.round(sub/min*100)));lab='📦 <b>Faltam '+brl(f)+'</b> para o pedido mínimo de '+brl(min)+'<small>'+msgMin()+'</small>';cls=' falta';}
   else{var g=_gratisAtual();
     if(g&&g.ativo){pct=100;lab='✅ Pedido mínimo atingido · <b>frete grátis</b> neste pedido';cls=' ok';}
+    else if(g&&g.falta>0&&soGreiner()){pct=100;lab='✓ Pedido mínimo atingido · frete calculado pelo CEP';cls=' ok';}
     else if(g&&g.falta>0){pct=Math.max(4,Math.min(98,Math.round(sub/(sub+g.falta)*100)));lab='✓ Pedido mínimo atingido · faltam <b>'+brl(g.falta)+'</b> para o <b>frete grátis</b>';}
     else{pct=100;lab='✓ Pedido mínimo atingido'+((g&&g.sobConsulta)?'':'<small>Informe o CEP abaixo para ver o frete e o frete grátis.</small>');cls=' ok';}}
   return '<div class="pgL'+cls+'">'+lab+'</div><div class="pgB'+cls+'" role="progressbar" aria-label="Progresso do pedido" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div>';}
@@ -672,8 +683,8 @@ function docInput(el){try{if(DOCT==='cnpj'&&/[a-z]/.test(el.value)){var p=el.sel
 function setPg(p){if(p==='boleto'&&!boletoOk()){p='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;ckErro('Boleto disponível para pedidos a partir de R$ 400,00.');}PG=p;var _bi=document.getElementById('boletoInfo');if(_bi)_bi.style.display=(p==='boleto')?'block':'none';document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value===p);});ckTotais();}
 window.PIX3={"450071":1,"450072":1,"454036":1,"454087":1,"454921":1,"454235":1,"456211":1,"454071":1,"454482":1,"456071":1,"455071":1,"454092":1,"455092":1,"456001":1,"454327":1,"454085":1,"454091":1,"454030":1,"456080":1,"450539":1};
 function pixPct(c){return (c&&window.PIX3[c])?0.03:0.05;}
-/* 31/10/2026: pedido mínimo visível no card, no modal e na página do produto (R$ 400 tubos/agulhas Vacuette e testes rápidos; R$ 150 refrigerados) */
-function minItem(c){c=String(c);if((window.PIX3&&window.PIX3[c])||(window.TR_TOP&&window.TR_TOP[c]))return 400;if(window.itemRefrigerado&&window.itemRefrigerado(c))return 150;return 0;}
+/* 31/10/2026: pedido mínimo visível no card, no modal e na página do produto (R$ 250 tubos/agulhas Vacuette; R$ 150 testes rápidos e refrigerados) */
+function minItem(c){c=String(c);if(window.PIX3&&window.PIX3[c])return 250;if(window.TR_TOP&&window.TR_TOP[c])return 150;if(window.itemRefrigerado&&window.itemRefrigerado(c))return 150;return 0;}
 /* 31/10/2026 (dono): o selo por item confundia (parecia mínimo DAQUELE item). O mínimo é por categoria e vale o total do pedido: fica só no carrinho (msgMin) e na página do produto, com o texto completo. */
 function seloMinHtml(c){return '';}
 function cardClick(ev,i){try{var t=ev&&ev.target;if(t&&t.closest&&t.closest('.pf,button,input,select,a'))return;}catch(e){}abrirProd(i);}
@@ -1367,6 +1378,7 @@ try{render();atualizarCart();}catch(e){}
 try{
 (function(){
 var PRAZO_MAX=4;  
+var PRAZO_MAX_VIZ=5,UF_VIZ=/^(MG|ES|PR)$/; /* 31/10/2026 (Eduardo): MG, ES e PR aceitam 4 dias úteis + 1 — JeT/Buslog em vez do SEDEX de R$ 122 */
 var UF_BLOQ=/^(AC|AL|AM|AP|MT|PA|PB|PI|RO|RR|SE|TO)$/;
 function ufDoCep(c){c=parseInt(String(c||'').replace(/\D/g,'').slice(0,5),10);if(!c)return '';
   var T=[[1000,19999,'SP'],[20000,28999,'RJ'],[29000,29999,'ES'],[30000,39999,'MG'],[40000,48999,'BA'],[49000,49999,'SE'],[50000,56999,'PE'],[57000,57999,'AL'],[58000,58999,'PB'],[59000,59999,'RN'],[60000,63999,'CE'],[64000,64999,'PI'],[65000,65999,'MA'],[66000,68899,'PA'],[68900,68999,'AP'],[69000,69299,'AM'],[69300,69399,'RR'],[69400,69899,'AM'],[69900,69999,'AC'],[70000,72799,'DF'],[72800,72999,'GO'],[73000,73699,'DF'],[73700,76799,'GO'],[76800,76999,'RO'],[77000,77999,'TO'],[78000,78899,'MT'],[79000,79999,'MS'],[80000,87999,'PR'],[88000,89999,'SC'],[90000,99999,'RS']];
@@ -1398,10 +1410,10 @@ window.fetch=function(u,o){
       var b=JSON.parse(o.body),its=(b&&b.itens)||[],uf=ufDoCep(b&&b.cep);
       if(its.some(function(i){return refrigCod(String(i.c));})){
         return _f.apply(this,arguments).then(function(r){return r.json().then(function(d){
-          d=d||{};var ops=UF_BLOQ.test(uf)?[]:(d.opcoes||[]).filter(function(x){return (parseInt(x.prazo)||99)<=PRAZO_MAX&&(uf==='RJ'||!/jet|j&t/i.test(String(x.nome||'')))&&!/latam/i.test(String(x.nome||'')); });
+          d=d||{};var ops=UF_BLOQ.test(uf)?[]:(d.opcoes||[]).filter(function(x){return (parseInt(x.prazo)||99)<=(UF_VIZ.test(uf)?PRAZO_MAX_VIZ:PRAZO_MAX)&&(uf==='RJ'||!/jet|j&t/i.test(String(x.nome||'')))&&!/latam/i.test(String(x.nome||'')); });
           if(!d.refrigSrv)ops=ops.map(function(x){var y=Object.assign({},x);if(y.gratis){y.preco=y.economia||0;delete y.gratis;delete y.economia;}y.preco=Math.round(((+y.preco||0)+ISOPOR)*100)/100;return y;});
           if(d.gratis&&!d.refrigSrv){d.gratis={ativo:false,falta:null,sugestoes:[]};}
-          ops.sort(function(a,c){return (a.prazo-c.prazo)||(a.preco-c.preco);});
+          ops.sort(function(a,c){return (a.preco-c.preco)||(a.prazo-c.prazo);}); /* 31/10/2026: dentro do prazo, a mais barata */
           d.opcoes=ops.slice(0,1);d.refrigerado=true;
           window._refrigSemOpcao=!d.opcoes.length;
           if(!d.opcoes.length&&d.gratis){d.gratis.ativo=false;d.gratis.falta=null;}

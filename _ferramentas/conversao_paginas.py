@@ -6,7 +6,7 @@ Idempotente: pode rodar de novo depois de qualquer outro script que regere as p�
 
 O que faz:
   /p/  · "Comprar agora" soma ao carrinho (&add=1) e troca "Pedir orçamento" por "Comprar agora" quando o item tem preço;
-       · selo de pedido mínimo (R$ 400 tubos/agulhas Vacuette e testes rápidos; R$ 150 refrigerados);
+       · selo de pedido mínimo (R$ 250 tubos/agulhas Vacuette; R$ 150 testes rápidos e refrigerados);
        · meta description pró-compra ("Compre direto no site · Pix 5% · NF-e · frete por CEP");
        · FAQ curta (preço único, pedido mínimo, pagamento) · rodapé com contato e aviso do Pix · faixa da MOVA em uma linha;
        · reagentes químicos Biolog saem de "Descartáveis e plásticos" e vão para "Reagentes químicos P.A." (ficha com CAS/pureza).
@@ -77,8 +77,10 @@ def cod_catalogo(c):
 
 
 def minimo(c):
-    if c in PIX3 or c in TR_TOP:
-        return 400
+    if c in PIX3:
+        return 250
+    if c in TR_TOP:
+        return 150
     if c in REFRIG:
         return 150
     return 0
@@ -99,8 +101,9 @@ def selo_min_html(c, grande=False):
     # 31/10/2026 (dono): selo curto nos cards confundia (parecia mínimo do item). Só a versão longa, na página do produto.
     if not grande:
         return ''
-    txt = ('Pedido mínimo de R$ 400 somando tubos, agulhas Vacuette e testes rápidos — pode misturar itens dessas categorias' if m == 400
-           else 'Pedido mínimo de R$ 150 em pedidos com produto refrigerado — vale o total do pedido')
+    txt = ('Pedido mínimo de R$ 250 somando tubos e agulhas Vacuette — pode misturar com outros itens no mesmo pedido' if m == 250
+           else ('Pedido mínimo de R$ 150 somando testes rápidos — vale o total do pedido' if c in TR_TOP
+                 else 'Pedido mínimo de R$ 150 em pedidos com produto refrigerado — vale o total do pedido'))
     est = ('display:inline-block;margin:2px 0 6px;background:#fff7e8;border:1px solid #f1d3a1;color:#7a4b00;border-radius:8px;'
            'padding:4px 10px;font-size:13px;font-weight:700') if grande else ''
     return f'<div class="pmin"{" style=" + chr(34) + est + chr(34) if est else ""}>📦 {txt}</div>'
@@ -151,7 +154,7 @@ def eh_quimico(info):
 def faq_html():
     return ('<details><summary>' + FAQ_PRECO_Q + '</summary><p>' + FAQ_PRECO_A + '</p></details>'
             '<details><summary>Tem pedido mínimo?</summary><p>No site o pedido mínimo é de R$ 100. Com item refrigerado, R$ 150; '
-            'com tubos e agulhas Vacuette ou testes rápidos (e no boleto), R$ 400.</p></details>'
+            'com testes rápidos, R$ 150; com tubos e agulhas Vacuette, R$ 250; no boleto, R$ 400.</p></details>'
             '<details><summary>Como pago e recebo a nota fiscal?</summary><p>Pix com 5% de desconto (3% em tubos e agulhas Vacuette) '
             'ou cartão de crédito; boleto a partir de R$ 400. O frete é calculado pelo CEP no carrinho e todo pedido sai com NF-e. '
             + PIX_AVISO + '</p></details>')
