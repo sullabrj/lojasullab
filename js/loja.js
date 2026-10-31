@@ -93,6 +93,9 @@ var DEPTS=[
   {key:'equip', nome:'Equipamentos e acessórios', icon:'🖥️', cats:['equip']},
   {key:'vidraria', nome:'Vidraria de laboratório', icon:'⚗️', cats:['vidraria']}
 ];
+/* 31/10/2026 (SEO): cada departamento tem página estática em /categoria/ — os links da loja levam o href dela (o robô do Google segue; o clique continua filtrando na própria loja) */
+var CAT_URL={tubo:'tubos-a-vacuo',agulha:'seringas-e-agulhas',lanceta:'lancetas',coletoram:'coletores-de-amostra',curativo:'curativos-gaze-e-algodao',lamina:'laminas-e-bisturis',cubeta:'cubetas',pipeta:'pipetas-e-ponteiras',plast:'descartaveis-e-plasticos',meio:'meios-de-cultura',micro:'microbiologia',bioq:'reagentes-de-bioquimica',hemat:'reagentes-de-hematologia-e-coagulacao',sorol:'reagentes-de-sorologia-e-imunologia',controle:'controles-e-calibradores',tr:'testes-rapidos',equip:'equipamentos-e-acessorios',vidraria:'vidraria-de-laboratorio'};
+function catHref(k){return CAT_URL[k]?'/categoria/'+CAT_URL[k]+'.html':'#shopAnchor';}
 var _DEPTOF={};function deptOf(catCode){var k=String(catCode);if(_DEPTOF.hasOwnProperty(k))return _DEPTOF[k];for(var d of DEPTS){if(d.cats.indexOf(catCode)>-1)return (_DEPTOF[k]=d.key);}return (_DEPTOF[k]='outros');}
 
 var SEED=window.SEED||[];
@@ -130,7 +133,7 @@ function montarCatTiles(){
     html+='<div class="ctile" onclick="setDept(\''+d.key+'\')"><div class="ci">'+d.icon+'</div><div><b>'+d.nome+'</b><small>'+n+' produto'+(n>1?'s':'')+'</small></div></div>';
   });
   if(!el.querySelector('.cph'))el.innerHTML=html;
-  document.getElementById('footCats').innerHTML=DEPTS.filter(d=>CATALOG.some(p=>deptOf(p.k)===d.key)).slice(0,6).map(d=>'<a href="#cat-'+d.key+'" onclick="setDept(\''+d.key+'\');return false">'+d.nome+'</a>').join('');
+  document.getElementById('footCats').innerHTML=DEPTS.filter(d=>CATALOG.some(p=>deptOf(p.k)===d.key)).slice(0,6).map(d=>'<a href="'+catHref(d.key)+'" onclick="setDept(\''+d.key+'\');return false">'+d.nome+'</a>').join('');
 }
 function montarBrands(){
   var brands={};CATALOG.forEach(p=>{if(p.m)brands[p.m]=(brands[p.m]||0)+1;});
@@ -1089,7 +1092,7 @@ window.montarCatTiles=function(){
   Object.keys(CATPH).forEach(function(k){var d=DEPTS.find(function(x){return x.key===k;});if(!d)return;var n=CATALOG.filter(function(p){return deptOf(p.k)===k;}).length;if(!n)return;
     h+='<div class="ctile cph" role="button" tabindex="0" onclick="setDept(\''+k+'\')" onkeydown="if(event.key===\'Enter\')setDept(\''+k+'\')"><div class="cimg"><picture><source type="image/webp" srcset="/img/cat/'+k+'-400.webp 400w, /img/cat/'+k+'.webp 800w" sizes="(max-width:700px) 33vw, (max-width:900px) 50vw, 160px"><img src="/img/cat/'+k+'-400.jpg" srcset="/img/cat/'+k+'-400.jpg 400w, /img/cat/'+k+'.jpg 800w" sizes="(max-width:700px) 33vw, (max-width:900px) 50vw, 160px" decoding="async" alt="'+d.nome+'" width="400" height="300" onerror="this.closest(\'.cimg\').innerHTML=\'<div style=&quot;font-size:42px;display:flex;align-items:center;justify-content:center;height:100%&quot;>'+d.icon+'</div>\'"></picture></div><div class="cb"><b>'+d.nome+'</b><small>'+n+' produto'+(n>1?'s':'')+'</small></div></div>';});
   el.innerHTML=h;
-  var fc=document.getElementById('footCats');if(fc)fc.innerHTML=DEPTS.filter(function(d){return CATALOG.some(function(p){return deptOf(p.k)===d.key;});}).slice(0,6).map(function(d){return '<a href="#cat-'+d.key+'" onclick="setDept(\''+d.key+'\');return false">'+d.nome+'</a>';}).join('');
+  var fc=document.getElementById('footCats');if(fc)fc.innerHTML=DEPTS.filter(function(d){return CATALOG.some(function(p){return deptOf(p.k)===d.key;});}).slice(0,6).map(function(d){return '<a href="'+catHref(d.key)+'" onclick="setDept(\''+d.key+'\');return false">'+d.nome+'</a>';}).join('');
 };
 try{montarCatTiles();}catch(e){}
 })();
@@ -1568,8 +1571,8 @@ try{
    if(!arr.length)return;
    arr=arr.slice().sort(function(a,b){var pa=(P[a.c]&&P[a.c][1])?1:0,pb=(P[b.c]&&P[b.c][1])?1:0;var sa=(window.PIX3&&window.PIX3[a.c])?1:0,sb=(window.PIX3&&window.PIX3[b.c])?1:0;return (pb-pa)||(sb-sa);});
    var mostra=arr.slice(0,MAX).map(_card).join('');
-   var all='onclick="setDept(\''+r[2]+'\')"';
-   h='<section class="mRow"><div class="mRowH"><h3><a href="#shopAnchor" onclick="setDept(\''+r[2]+'\');return false">'+r[0]+'</a></h3><a '+all+'>Ver todos ('+arr.length+') →</a></div><div class="mRowS">'+mostra+(arr.length>MAX?'<div class="mAll" '+all+'><b>→</b>Ver todos os '+arr.length+' produtos</div>':'')+'</div></section>';H.push(h);
+   var all='onclick="setDept(\''+r[2]+'\')"',lk='href="'+catHref(r[2])+'" onclick="setDept(\''+r[2]+'\');return false"';
+   h='<section class="mRow"><div class="mRowH"><h3><a '+lk+'>'+r[0]+'</a></h3><a '+lk+'>Ver todos ('+arr.length+') →</a></div><div class="mRowS">'+mostra+(arr.length>MAX?'<div class="mAll" '+all+'><b>→</b>Ver todos os '+arr.length+' produtos</div>':'')+'</div></section>';H.push(h);
   });
   /* 30/10/2026 (PageSpeed: tarefas longas): as 3 primeiras fileiras na hora; as outras em lotes de 3 quando o navegador estiver livre */
   var gen=(build.__g=(build.__g||0)+1),ric=window.requestIdleCallback||function(f){return setTimeout(function(){f({timeRemaining:function(){return 8;}});},16);};

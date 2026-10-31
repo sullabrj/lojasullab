@@ -261,7 +261,7 @@ def item_cat(info):
     if info['code']:
         h += f'<span class="cs">cód. {html.escape(info["code"])}</span>'
     h += (f'<a class="cpr" href="{link_comprar(cc)}" rel="nofollow">🛒 Comprar agora</a>' if pr
-          else f'<a class="cpr" style="background:#1f3a5f" href="{info["url"]}">Ver produto</a>')
+          else f'<a class="cpr" style="background:#1f3a5f" href="{info["url"]}" aria-label="Ver produto: {nome}">Ver produto</a>')
     return h + '</div>'
 
 
@@ -454,6 +454,10 @@ def main():
     quimicos = {f for f, i in pags.items() if eh_quimico(i)}
     mud_p = sum(processar_p(f, i, quimicos) for f, i in pags.items())
     criar_categoria_quimicos()
+    # 31/10/2026: páginas duplicadas do mesmo produto (molde antigo) ficam fora das grades e do catálogo; o canonical vai para a principal
+    import seo_paginas
+    sec = seo_paginas.duplicados()
+    pags = {f: i for f, i in pags.items() if os.path.relpath(f, R) not in sec}
     por_cat = {}
     for f, i in pags.items():
         if i['cat']:
@@ -464,6 +468,8 @@ def main():
     sitemap_categoria()
     processar_catalogo(pags)
     print(f'/p/: {len(pags)} páginas, {mud_p} alteradas · reagentes químicos movidos: {len(quimicos)} · categorias alteradas: {mud_c}')
+    # 31/10/2026 (check-up de SEO): migalhas, JSON-LD, Open Graph, rodapé e títulos — sempre por último, para nada ser desfeito
+    seo_paginas.main()
 
 
 if __name__ == '__main__':
