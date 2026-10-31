@@ -31,14 +31,14 @@ document.addEventListener('DOMContentLoaded',function(){try{
 /* ==== ofertas e destaques Greiner ==== */
 /* sem try: as function declarations daqui precisam ficar globais, como no <script> antigo */
 window.OFERTAS=[
-  {c:'TR 017-1 RP',tag:'🏆 Preço do site',txt:'R$ 4,00 por teste · COVID-19 antígeno · pronta entrega',de:146.62},
-  {c:'TR 009-1 IST',tag:'🏆 Preço do site',txt:'R$ 1,68 por teste · HBsAg (hepatite B) em tira · pronta entrega',de:89.7},
-  {c:'TR 009-1 DT',tag:'🏆 Preço do site',txt:'R$ 4,99 por teste · Dengue IgG/IgM · pronta entrega',de:287.5},
-  {c:'TR 010 DT',tag:'🏆 Preço do site',txt:'R$ 10,84 por teste · Dengue NS1 + IgG/IgM · pronta entrega',de:568.67},
-  {c:'TR 008-1 IST',tag:'🏆 Preço do site',txt:'R$ 2,35 por teste · Sífilis · pronta entrega'},
-  {c:'TR 007 IST',tag:'🏆 Preço do site',txt:'R$ 2,22 por teste · HIV 1/2 · pronta entrega'},
-  {c:'TR 008-1 DT',tag:'🏆 Preço do site',txt:'R$ 4,99 por teste · Dengue NS1 · pronta entrega',de:273.12},
-  {c:'TR 016-1 RP',tag:'🏆 Preço do site',txt:'R$ 14,90 por teste · RSV (VSR) · pronta entrega',de:431.25}
+  {c:'TR 017-1 RP',tag:'🏆 Preço exclusivo do site',txt:'R$ 4,00 por teste · COVID-19 antígeno · pronta entrega',de:146.62},
+  {c:'TR 009-1 IST',tag:'🏆 Preço exclusivo do site',txt:'R$ 1,68 por teste · HBsAg (hepatite B) em tira · pronta entrega',de:89.7},
+  {c:'TR 009-1 DT',tag:'🏆 Preço exclusivo do site',txt:'R$ 4,99 por teste · Dengue IgG/IgM · pronta entrega',de:287.5},
+  {c:'TR 010 DT',tag:'🏆 Preço exclusivo do site',txt:'R$ 10,84 por teste · Dengue NS1 + IgG/IgM · pronta entrega',de:568.67},
+  {c:'TR 008-1 IST',tag:'🏆 Preço exclusivo do site',txt:'R$ 2,35 por teste · Sífilis · pronta entrega'},
+  {c:'TR 007 IST',tag:'🏆 Preço exclusivo do site',txt:'R$ 2,22 por teste · HIV 1/2 · pronta entrega'},
+  {c:'TR 008-1 DT',tag:'🏆 Preço exclusivo do site',txt:'R$ 4,99 por teste · Dengue NS1 · pronta entrega',de:273.12},
+  {c:'TR 016-1 RP',tag:'🏆 Preço exclusivo do site',txt:'R$ 14,90 por teste · RSV (VSR) · pronta entrega',de:431.25}
 ];
 window.TR_TOP={'TR 017-1 RP':1,'TR 009 IST':1,'TR 009-1 IST':1,'TR 009-1 DT':1,'TR 010 DT':1,'TR 008-1 IST':1,'TR 007 IST':1,'TR 008-1 DT':1,'TR 016-1 RP':1};
 window.GREINER_DE={"450071": 68.44, "450072": 68.44, "454921": 31.61, "456211": 58.09, "454030": 37.01, "454482": 47.49, "450539": 100.56, "456080": 41.9, "454327": 44.69, "454036": 23.74, "454087": 25.14, "454085": 43.37, "454091": 43.99, "454092": 26.54, "454071": 36.39, "456071": 37.01, "455071": 52.37, "455092": 37.01, "456001": 27.93, "454235": 56.1};
@@ -52,7 +52,7 @@ function montarGreiner(){
     if(!L.length){sec.style.display='none';return;}
     g.innerHTML=L.slice(0,8).map(function(x){
       var pr=(window.PRECOS||{})[x.p.c],v=pr&&pr[1]?pr[1]:0;if(!v)return '';var de=GREINER_DE[x.p.c];
-      return '<div class="ofc" onclick="abrirProd('+x.i+')"><span class="oft">🏆 Preço do site</span><div class="ofi"><img '+imgMini(x.p,'120px')+' width="120" height="120" loading="lazy" decoding="async" alt=""'+x.p.n.replace(/"/g,'&quot;')+'"></div><div class="ofn">'+x.p.n+'</div><div class="ofp">'+(de&&de>v?'<s>'+brl(de)+'</s>':'')+brl(v)+'</div>'+(typeof unitLn==='function'?'<div class="ofu">'+unitLn(x.p.c,v)+'</div>':'')+'</div>';
+      return '<div class="ofc" onclick="abrirProd('+x.i+')"><span class="oft">🏆 Preço exclusivo do site</span><div class="ofi"><img '+imgMini(x.p,'120px')+' width="120" height="120" loading="lazy" decoding="async" alt=""'+x.p.n.replace(/"/g,'&quot;')+'"></div><div class="ofn">'+x.p.n+'</div><div class="ofp">'+(de&&de>v?'<s>'+brl(de)+'</s>':'')+brl(v)+'</div>'+(typeof unitLn==='function'?'<div class="ofu">'+unitLn(x.p.c,v)+'</div>':'')+'<button class="ofb" onclick="event.stopPropagation();addCart('+x.i+',this)">🛒 + Carrinho</button></div>';
     }).join('');
     sec.style.display='';
   }catch(e){}
