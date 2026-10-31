@@ -199,7 +199,9 @@ async function frete2(req, env) {
       }
     } catch (e) {}
     if (locR) rops.unshift(locR);
-    return { opcoes: rops, uf, gratis: g, refrigerado: true, refrigSrv: true };
+    const out = { opcoes: rops, uf, gratis: g, refrigerado: true, refrigSrv: true };
+    if (b.dbg) out.dbg = { prazoMax, ops: ops.map(o => [o.nome, o.preco, o.prazo]), pk };
+    return out;
   }
   const sel = ops.slice(0, 3);
   const rapida = ops.slice().sort((a, b) => a.prazo - b.prazo || a.preco - b.preco)[0];
