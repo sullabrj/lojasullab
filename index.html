@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=63e2e6684e",p:"/data/precos.json?v=96621b5fde",f:"/data/ficha.json?v=931e30bbe1",j:"/js/loja.js?v=fc9a02f1b6"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
-<link rel="preload" href="/js/loja.js?v=fc9a02f1b6" as="script">
+<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=63e2e6684e",p:"/data/precos.json?v=96621b5fde",f:"/data/ficha.json?v=931e30bbe1",j:"/js/loja.js?v=9485319189"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
+<link rel="preload" href="/js/loja.js?v=9485319189" as="script">
 <title>SULLAB · Materiais para laboratório e diagnóstico — atacado com NF-e</title>
 <meta name="description" content="Distribuidora de produtos para laboratório: tubos a vácuo, testes rápidos, reagentes, meios de cultura e descartáveis. Compra no site, NF-e e entrega no Brasil.">
 
@@ -266,20 +266,24 @@
 
   .pmodal{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(16,32,60,.55)}
   .pmodal.on{display:flex}
-  .pm{background:#fff;border-radius:16px;max-width:760px;width:100%;max-height:90vh;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:0}
-  .pm .pmimg{padding:30px;display:flex;align-items:flex-start;justify-content:center;border-right:1px solid var(--line);background:var(--bg)}
-.pmstage{width:100%;display:flex;align-items:center;justify-content:center;min-height:240px}
+  .pm{background:#fff;border-radius:16px;max-width:980px;width:100%;max-height:92vh;overflow:auto;display:grid;grid-template-columns:1fr;gap:0}
+  /* 31/10/2026 (dono): foto no topo, painel largo; abaixo, preço/compra à esquerda e ficha técnica à direita */
+  .pmb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:28px;align-items:start}
+  .pmb .pml{min-width:0}.pmb .pmr{min-width:0}.pmb .pmr .fichat{margin-top:0}
+  @media(max-width:680px){.pmb{grid-template-columns:1fr}.pmb .pmr .fichat{margin-top:12px}}
+  .pm .pmimg{padding:18px 24px;display:flex;align-items:center;justify-content:center;border-right:0;border-bottom:1px solid var(--line);background:var(--bg)}
+.pmstage{width:100%;display:flex;align-items:center;justify-content:center;min-height:170px}
 .fichat{margin-top:10px;border:1px solid #e6ebf5;border-radius:10px;padding:10px 12px;background:#fafbff}.fichat .ft-t{font-weight:700;color:var(--navy);font-size:12.5px;margin-bottom:6px}.fichat table{width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.4}.fichat th{text-align:left;color:#5f6b7c;font-weight:600;padding:4px 8px 4px 0;vertical-align:top;white-space:nowrap;width:34%}.fichat td{color:#1f2a3d;font-weight:600;padding:4px 0;vertical-align:top}.fichat tr+tr th,.fichat tr+tr td{border-top:1px solid #eef2f8}.fichat .ft-w{margin-top:8px;font-size:12.5px;color:#40506b}.fichat .ft-w b{color:var(--navy)}.fichat .ft-w ul{margin:4px 0 0;padding-left:18px}.fichat .ft-w li{margin:2px 0}
   .pm .pmimg{flex-direction:column;gap:12px}.pm .pmth{display:flex;gap:8px}.pm .pmth img{width:58px;height:58px;max-height:none;object-fit:cover;border:1px solid var(--line);border-radius:8px;mix-blend-mode:normal;cursor:pointer;background:#fff}
-  .pm .pmimg img{max-width:100%;max-height:320px;object-fit:contain;mix-blend-mode:multiply}
+  .pm .pmimg img{max-width:100%;max-height:230px;object-fit:contain;mix-blend-mode:multiply}
   .pm .pmstage{position:relative;display:flex;align-items:center;justify-content:center;width:100%}
 .pm .pmstage img{max-height:320px}.pm .pmstage img.art{max-height:420px;mix-blend-mode:normal}
 .pm .pmar{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.92);color:var(--navy);font-size:26px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .pm .pmar.l{left:-14px}.pm .pmar.r{right:-14px}
 .pm .pmth img.on{border:2px solid var(--navy)}
 @media(max-width:920px){.pm .pmar.l{left:0}.pm .pmar.r{right:0}}
-.pm .pmb{padding:26px;position:relative}
-  .pm .pmx{position:absolute;top:14px;right:16px;font-size:24px;cursor:pointer;color:var(--muted);background:0;border:0}
+.pm .pmb{padding:22px 26px 26px;position:static}.pm{position:relative}
+  .pm .pmx{position:absolute;top:10px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.95);box-shadow:0 1px 6px rgba(0,0,0,.18);font-size:22px;line-height:1;cursor:pointer;color:var(--navy);border:0;z-index:2}
   .pm .pmb .bc{font-size:12px;color:var(--muted);font-weight:700}
   .pm .pmb h3{margin:6px 0 10px;font-size:21px;color:var(--ink)}
   .pm .pmb .spec{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:14px}

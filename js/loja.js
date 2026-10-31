@@ -985,12 +985,12 @@ function abrirProd(i){
   __pmL=pmLista(p);__pmI=0;
   document.getElementById('pmInner').innerHTML=
     '<div class="pmimg"><div class="pmstage" id="pmStage"><button class="pmar l" onclick="pmNav(-1)" aria-label="Foto anterior">&#8249;</button><img id="pmMain" width="320" height="320" src="'+__pmL[0]+'" onerror="this.removeAttribute(\'srcset\');this.src=\'/img/logo-sullab.png\';this.style.opacity=.4" alt="'+p.n+'"><button class="pmar r" onclick="pmNav(1)" aria-label="Próxima foto">&#8250;</button></div>'+(__pmL.length>1?'<div class="pmth" id="pmTh">'+__pmL.map(function(u,k){return '<img class="'+(k?'':'on')+'" width="58" height="58" src="'+u+'" onclick="pmGo('+k+')" alt="'+(k?'Informações técnicas':'Foto do produto')+'" onerror="this.remove();__pmL=__pmL.filter(function(x){return x!==this.getAttribute(\'src\')}.bind(this))">';}).join('')+'</div>':'')+'</div>'+
-    '<div class="pmb"><button class="pmx" onclick="fecharProd()">×</button>'+
+    '<div class="pmb"><button class="pmx" onclick="fecharProd()">×</button><div class="pml">'+
     '<span class="bc">'+p.m+' · cód. '+p.c+'</span><h3>'+p.n+'</h3>'+(catNome?'<div style="display:inline-block;font-size:11.5px;background:#eef2fb;color:var(--navy);padding:3px 10px;border-radius:8px;margin:2px 0 6px">🗂️ '+catNome+'</div>':'')+precoHtml+
     '<div style="font-size:12px;color:var(--green-d);font-weight:700;margin-top:6px">'+(precoDe(p)>0?'✓ Preço de empresa (CNPJ) já aplicado':'')+'</div>'+
     acao+
-    '<div id="pmFicha"></div>'+
-    '<div class="spec">🏷️ Direto da distribuidora autorizada, sem taxa de marketplace.<br>🧾 NF-e em todo pedido · 📦 envio em 24h · 🛡️ produto com procedência.</div>'+
+    '<div class="spec" style="margin-top:14px">🏷️ Direto da distribuidora autorizada, sem taxa de marketplace.<br>🧾 NF-e em todo pedido · 📦 envio em 24h · 🛡️ produto com procedência.</div></div>'+
+    '<div class="pmr"><div id="pmFicha"></div></div>'+
     '</div>';
   document.getElementById('pmodal').classList.add('on');pmSwipe();
   var _fp=p;ensureFicha(function(){var el=document.getElementById('pmFicha');if(!el)return;var f=FICHA&&FICHA[_fp.c];
