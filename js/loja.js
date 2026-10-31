@@ -130,7 +130,7 @@ function montarCatTiles(){
   var el=document.getElementById('catTiles');var html='';
   DEPTS.forEach(function(d){
     var n=CATALOG.filter(p=>deptOf(p.k)===d.key).length; if(!n)return;
-    html+='<div class="ctile" onclick="setDept(\''+d.key+'\')"><div class="ci">'+d.icon+'</div><div><b>'+d.nome+'</b><small>'+n+' produto'+(n>1?'s':'')+'</small></div></div>';
+    html+='<div class="ctile" onclick="setDept(\''+d.key+'\')"><div class="ci">'+d.icon+'</div><div><b>'+d.nome+'</b><small class="'+(n<30?'poucos':'')+'">'+n+' produto'+(n>1?'s':'')+'</small></div></div>';
   });
   if(!el.querySelector('.cph'))el.innerHTML=html;
   document.getElementById('footCats').innerHTML=DEPTS.filter(d=>CATALOG.some(p=>deptOf(p.k)===d.key)).slice(0,6).map(d=>'<a href="'+catHref(d.key)+'" onclick="setDept(\''+d.key+'\');return false">'+d.nome+'</a>').join('');
@@ -1099,7 +1099,7 @@ var CATPH={tubo:1,tr:1,meio:1,micro:1,bioq:1,hemat:1,curativo:1,coletoram:1};
 window.montarCatTiles=function(){
   var el=document.getElementById('catTiles');if(!el)return;var h='';
   Object.keys(CATPH).forEach(function(k){var d=DEPTS.find(function(x){return x.key===k;});if(!d)return;var n=CATALOG.filter(function(p){return deptOf(p.k)===k;}).length;if(!n)return;
-    h+='<div class="ctile cph" role="button" tabindex="0" onclick="setDept(\''+k+'\')" onkeydown="if(event.key===\'Enter\')setDept(\''+k+'\')"><div class="cimg"><picture><source type="image/webp" srcset="/img/cat/'+k+'-400.webp 400w, /img/cat/'+k+'.webp 800w" sizes="(max-width:700px) 33vw, (max-width:900px) 50vw, 160px"><img src="/img/cat/'+k+'-400.jpg" srcset="/img/cat/'+k+'-400.jpg 400w, /img/cat/'+k+'.jpg 800w" sizes="(max-width:700px) 33vw, (max-width:900px) 50vw, 160px" decoding="async" alt="'+d.nome+'" width="400" height="300" onerror="this.closest(\'.cimg\').innerHTML=\'<div style=&quot;font-size:42px;display:flex;align-items:center;justify-content:center;height:100%&quot;>'+d.icon+'</div>\'"></picture></div><div class="cb"><b>'+d.nome+'</b><small>'+n+' produto'+(n>1?'s':'')+'</small></div></div>';});
+    h+='<div class="ctile cph" role="button" tabindex="0" onclick="setDept(\''+k+'\')" onkeydown="if(event.key===\'Enter\')setDept(\''+k+'\')"><div class="cimg"><picture><source type="image/webp" srcset="/img/cat/'+k+'-400.webp 400w, /img/cat/'+k+'.webp 800w" sizes="(max-width:700px) 33vw, (max-width:900px) 50vw, 160px"><img src="/img/cat/'+k+'-400.jpg" srcset="/img/cat/'+k+'-400.jpg 400w, /img/cat/'+k+'.jpg 800w" sizes="(max-width:700px) 33vw, (max-width:900px) 50vw, 160px" decoding="async" alt="'+d.nome+'" width="400" height="300" onerror="this.closest(\'.cimg\').innerHTML=\'<div style=&quot;font-size:42px;display:flex;align-items:center;justify-content:center;height:100%&quot;>'+d.icon+'</div>\'"></picture></div><div class="cb"><b>'+d.nome+'</b><small class="'+(n<30?'poucos':'')+'">'+n+' produto'+(n>1?'s':'')+'</small></div></div>';});
   el.innerHTML=h;
   var fc=document.getElementById('footCats');if(fc)fc.innerHTML=DEPTS.filter(function(d){return CATALOG.some(function(p){return deptOf(p.k)===d.key;});}).slice(0,6).map(function(d){return '<a href="'+catHref(d.key)+'" onclick="setDept(\''+d.key+'\');return false">'+d.nome+'</a>';}).join('');
 };
