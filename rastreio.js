@@ -1,4 +1,4 @@
-/* SULLAB — rastreio de visitas, cliques e leads (GA4 + Google Ads). v3 29/10/2026 (+ Pixel do Meta) · v5 30/10/2026: espera o js/loja.js na home
+/* SULLAB — rastreio de visitas, cliques e leads (GA4 + Google Ads). v3 29/10/2026 (+ Pixel do Meta) · v5 30/10/2026: espera o js/loja.js na home · v7 31/10/2026: begin_checkout só acima do pedido mínimo
    Eventos (GA4): view_item, add_to_cart, view_cart, begin_checkout, add_payment_info, generate_lead,
    iniciar_orcamento, search, select_content, whatsapp_click, contact_click, clique_elemento,
    scroll_depth, tempo_na_pagina, cadastro_cnpj_tentativa, login_clique, rastrear_pedido_abrir,
@@ -96,7 +96,8 @@
     wrap('addCart',function(i,btn){var p=CATALOG[i];if(!p)return;var q=1;try{q=parseInt(btn.parentElement.querySelector('.stepper span').textContent)||1;}catch(e){}
       var pr=((window.PRECOS||{})[p.c]||[])[1]||0;ev('add_to_cart',{currency:'BRL',value:pr*q,items:[itemDe(p,q)]});});
     wrap('abrirCarrinho',function(){ev('view_cart',{currency:'BRL',value:total(),items:cartItens()});});
-    wrap('abrirCheckout',function(){try{if(CART.length)ev('begin_checkout',{currency:'BRL',value:total(),items:cartItens()});}catch(e){}});
+    /* 31/10/2026: o wrap roda ANTES da função; abrirCheckout volta ao carrinho quando falta valor para o pedido mínimo — só conta begin_checkout quando o checkout abre de fato */
+    wrap('abrirCheckout',function(){try{if(CART.length&&!(typeof faltaTubo==='function'&&faltaTubo()>0))ev('begin_checkout',{currency:'BRL',value:total(),items:cartItens()});}catch(e){}});
     wrap('abrirContatoWA',function(){ev('iniciar_orcamento',{itens:cartItens().length});});
     wrap('pagarMP',function(){ev('pagar_clique',{currency:'BRL',value:total()});});
     wrap('dispararPedido',function(type){

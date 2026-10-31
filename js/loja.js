@@ -216,12 +216,12 @@ function render(){
   _CUR=arr;_PG=1;_SHOWN=Math.min(arr.length,_PAGE);_card=function(p){
     var i=CATALOG.indexOf(p);
     var selo=((window.PIX3&&window.PIX3[p.c])||(window.TR_TOP&&window.TR_TOP[p.c]))?'<span class="selo best">🏆 Tabela exclusiva do site</span>':p.selo==='hot'?'<span class="selo hot">🔥 Mais procurado</span>':(p.selo==='top'?'<span class="selo">⭐ Mais vendido</span>':'');
-    var precoBloco='';var _pr=(window.PRECOS||{})[p.c];if(_pr&&_pr[1]){precoBloco='<div style="margin:6px 0 2px;line-height:1.32"><div style="font-size:19px;font-weight:800;color:#2f9e63">'+brl(_pr[1])+'</div>'+unitLn(p.c,_pr[1])+'<div class="pixl">💚 <b>'+brl(Math.round(_pr[1]*(100-pixPct(p.c)*100))/100)+'</b> no Pix <span>'+Math.round(pixPct(p.c)*100)+'% off</span></div></div>';}
+    var precoBloco='';var _pr=(window.PRECOS||{})[p.c];if(_pr&&_pr[1]){precoBloco='<div style="margin:6px 0 2px;line-height:1.32"><div style="font-size:19px;font-weight:800;color:#2f9e63">'+brl(_pr[1])+'</div>'+unitLn(p.c,_pr[1])+'<div class="pixl">💚 <b>'+brl(Math.round(_pr[1]*(100-pixPct(p.c)*100))/100)+'</b> no Pix <span>'+Math.round(pixPct(p.c)*100)+'% off</span></div>'+seloMinHtml(p.c)+'</div>';}
     var btns='<div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="add" onclick="addCart('+i+',this)">+ Carrinho</button>';
-    return '<div class="prod">'+selo+
-      '<div class="ph" onclick="abrirProd('+i+')"><img '+imgMini(p,'160px')+' loading="lazy" decoding="async" width="160" height="160" alt="'+p.n+'" onerror="this.removeAttribute(\'srcset\');this.src=\'/img/logo-sullab.png\';this.style.opacity=.35"></div>'+
+    return '<div class="prod" data-c="'+String(p.c).replace(/"/g,'&quot;')+'" onclick="cardClick(event,'+i+')">'+selo+
+      '<div class="ph"><img '+imgMini(p,'160px')+' loading="lazy" decoding="async" width="160" height="160" alt="'+p.n+'" onerror="this.removeAttribute(\'srcset\');this.src=\'/img/logo-sullab.png\';this.style.opacity=.35"></div>'+
       '<div class="pb"><span class="bc">'+p.m+' · cód. '+p.c+'</span>'+
-      '<div class="pt" onclick="abrirProd('+i+')">'+p.n+'</div>'+
+      '<div class="pt">'+p.n+'</div>'+
       precoBloco+
       '<div class="pf">'+btns+'</div></div></div>';
   };g.innerHTML=_CUR.slice(0,_SHOWN).map(_card).join('');_more();
@@ -278,13 +278,13 @@ function atualizarCart(){
     '<div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px">Resumo do pedido</div>'+
     '<div class="row"><span>'+CART.length+(CART.length===1?' produto':' produtos')+' · '+n+(n===1?' unidade':' unidades')+'</span></div>'+
     (sub>0?'<div class="row"><span>Subtotal</span><b class="tot">'+brl(sub)+'</b></div><div class="pixbox">💚 <span>Pague no <b>Pix</b> e ganhe <b>'+(CART.every(function(x){return window.PIX3[x.c];})?'3% de desconto':(CART.some(function(x){return window.PIX3[x.c];})?'desconto (5%; tubos e agulhas Vacuette 3%)':'5% de desconto'))+'</b><small>Total no Pix: <b>'+brl(Math.round(CART.reduce(function(s2,x){return s2+precoItem(x)*x.qty*(1-pixPct(x.c));},0)*100)/100)+'</b> · NF-e em todo pedido</small></span></div>':'')+
-    (faltaTubo()>0?'<div class="note" style="background:#fff4e5;border:1px solid #f0b35a;color:#7a4b00;border-radius:8px;padding:9px 11px;margin:8px 0">📦 <b>'+msgMin()+'</b><br>Faltam <b>'+brl(faltaTubo())+'</b> em produtos para finalizar.</div>':'')+
+    (sub>0?'<div id="progMin" class="progMin">'+progHtml()+'</div>':'')+
     '<div class="gbox" id="gbox"></div>'+
     (semPreco?'<div class="note">Alguns itens são sob consulta: peça o orçamento pelo WhatsApp.</div>':'')+
-    (!semPreco&&sub>0?'<a class="wbtn" style="background:var(--green-d)'+(faltaTubo()>0?';opacity:.5':'')+'" onclick="abrirCheckout()">🛒 Finalizar compra</a>':'')+
+    (sub>0?btnFinalizarHtml(semPreco):'')+
     '<a class="wbtn" style="background:#fff;color:#128c4a;border:1px solid #25D366" onclick="enviarOrcamento()">📄 Pedir orçamento pelo WhatsApp</a>'+
     (!semPreco&&sub>0?'<button class="ckwa ckduv" onclick="duvidaCheckout(\'carrinho\')">💬 Dúvida? Falar com um vendedor</button>':'');
-  if(db)db.innerHTML='<div class="bt">'+n+(n===1?' unidade':' unidades')+(sub>0?'<b>'+brl(sub)+'</b>':'')+'</div>'+((!semPreco&&sub>0)?'<a onclick="abrirCheckout()">Finalizar compra</a>':'<a onclick="enviarOrcamento()">Pedir orçamento</a>');
+  if(db)db.innerHTML='<div class="bt">'+n+(n===1?' unidade':' unidades')+(sub>0?'<b>'+brl(sub)+'</b>':'')+'</div>'+((!semPreco&&sub>0)?(faltaTubo()>0?'<a class="dmin" role="button" onclick="minimoBloqueado(\'barra_carrinho\')">Faltam '+brl(faltaTubo())+'</a>':'<a role="button" onclick="abrirCheckout()">Finalizar compra</a>'):'<a role="button" onclick="enviarOrcamento()">Pedir orçamento</a>');
   gboxRender();
 }
 
@@ -528,6 +528,30 @@ var PED_MIN_GERAL=100,PED_MIN_REFRIG=150;
 function pedMin(){return temTubo()?TUBO_MIN:((window.cartRefrigerado&&window.cartRefrigerado())?PED_MIN_REFRIG:PED_MIN_GERAL);}
 function msgMin(){return temTubo()?'Pedido mínimo para tubos, agulhas Vacuette e testes rápidos: R$ 400,00.':((window.cartRefrigerado&&window.cartRefrigerado())?'Pedido mínimo com produtos refrigerados: R$ 150,00.':'Pedido mínimo no site: R$ 100,00.');}
 function faltaTubo(){return Math.max(0,Math.round((pedMin()-totalCart())*100)/100);}
+/* 31/10/2026: barra única de progresso no carrinho — primeiro o pedido mínimo, depois o frete grátis (quando o CEP já foi cotado) */
+function _gratisAtual(){try{if(!_gRes||!_gKey)return null;var cep=soDig((fichaSalva().cep)||''),its=CART.filter(function(x){return precoItem(x)>0;});var k=cep+'|'+its.map(function(x){return String(x.c)+'x'+x.qty;}).join(',');return k===_gKey?(_gRes.gratis||null):null;}catch(e){return null;}}
+function progHtml(){var sub=totalCart();if(!(sub>0))return '';var min=pedMin(),f=faltaTubo(),pct,lab,cls='';
+  if(f>0){pct=Math.max(4,Math.min(100,Math.round(sub/min*100)));lab='📦 <b>Faltam '+brl(f)+'</b> para o pedido mínimo de '+brl(min)+'<small>'+msgMin()+'</small>';cls=' falta';}
+  else{var g=_gratisAtual();
+    if(g&&g.ativo){pct=100;lab='✅ Pedido mínimo atingido · <b>frete grátis</b> neste pedido';cls=' ok';}
+    else if(g&&g.falta>0){pct=Math.max(4,Math.min(98,Math.round(sub/(sub+g.falta)*100)));lab='✓ Pedido mínimo atingido · faltam <b>'+brl(g.falta)+'</b> para o <b>frete grátis</b>';}
+    else{pct=100;lab='✓ Pedido mínimo atingido'+((g&&g.sobConsulta)?'':'<small>Informe o CEP abaixo para ver o frete e o frete grátis.</small>');cls=' ok';}}
+  return '<div class="pgL'+cls+'">'+lab+'</div><div class="pgB'+cls+'" role="progressbar" aria-label="Progresso do pedido" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div>';}
+function progRefresh(){var e=document.getElementById('progMin');if(e)e.innerHTML=progHtml();}
+function btnFinalizarHtml(semPreco){
+  if(semPreco)return '<a class="wbtn" role="button" aria-disabled="true" data-motivo="Há item com preço sob consulta no carrinho: peça o orçamento pelo WhatsApp (botão abaixo) ou remova esse item para pagar no site." style="background:var(--green-d);opacity:.55">🛒 Finalizar compra</a>';
+  var f=faltaTubo();
+  if(f>0)return '<button type="button" class="wbtn wmin" onclick="minimoBloqueado(\'carrinho\')">Faltam '+brl(f)+' para o pedido mínimo<small>Toque para ver sugestões e completar o pedido</small></button>';
+  return '<a class="wbtn" role="button" style="background:var(--green-d)" onclick="abrirCheckout()">🛒 Finalizar compra</a>';}
+function slAviso(msg){try{var d=document.getElementById('slToast');if(!d){d=document.createElement('div');d.id='slToast';d.setAttribute('role','status');d.setAttribute('aria-live','polite');document.body.appendChild(d);}d.textContent=msg;d.className='on';clearTimeout(slAviso._t);slAviso._t=setTimeout(function(){d.className='';},4200);}catch(e){}}
+function minimoBloqueado(origem){
+  var f=faltaTubo(),min=pedMin();
+  try{if(typeof gtag==='function')gtag('event','minimo_bloqueado',{origem:origem||'',currency:'BRL',value:Math.round(totalCart()*100)/100,falta:f,minimo:min});}catch(e){}
+  try{if(window.clarity)clarity('event','minimo_bloqueado');}catch(e){}
+  var d=document.getElementById('drawer');if(!d||!d.classList.contains('on'))abrirCarrinho();
+  if(f>0)slAviso('Faltam '+brl(f)+' para o pedido mínimo de '+brl(min)+'. Acrescente itens abaixo para finalizar.');
+  setTimeout(function(){var cr=document.getElementById('crel'),alvo=(cr&&cr.querySelector('.relbox'))||document.getElementById('cartSearch');if(!alvo)return;try{alvo.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}alvo.classList.add('slPulse');setTimeout(function(){alvo.classList.remove('slPulse');},1800);if(alvo.id==='cartSearch'&&!_ehMobileSafe())alvo.focus();},260);}
+function _ehMobileSafe(){try{return matchMedia('(max-width:700px)').matches;}catch(e){return false;}}
 function totalPedidoBruto(){return totalCart()+(freteSelLoja||0);}
 function boletoOk(){return totalPedidoBruto()>=BOLETO_MIN;}
 function boletoFaturado(){
@@ -564,6 +588,10 @@ function setDoc(d){DOCT=d;document.querySelectorAll('#docTab button').forEach(fu
 function setPg(p){if(p==='boleto'&&!boletoOk()){p='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;ckErro('Boleto disponível para pedidos a partir de R$ 400,00.');}PG=p;var _bi=document.getElementById('boletoInfo');if(_bi)_bi.style.display=(p==='boleto')?'block':'none';document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value===p);});ckTotais();}
 window.PIX3={"450071":1,"450072":1,"454036":1,"454087":1,"454921":1,"454235":1,"456211":1,"454071":1,"454482":1,"456071":1,"455071":1,"454092":1,"455092":1,"456001":1,"454327":1,"454085":1,"454091":1,"454030":1,"456080":1,"450539":1};
 function pixPct(c){return (c&&window.PIX3[c])?0.03:0.05;}
+/* 31/10/2026: pedido mínimo visível no card, no modal e na página do produto (R$ 400 tubos/agulhas Vacuette e testes rápidos; R$ 150 refrigerados) */
+function minItem(c){c=String(c);if((window.PIX3&&window.PIX3[c])||(window.TR_TOP&&window.TR_TOP[c]))return 400;if(window.itemRefrigerado&&window.itemRefrigerado(c))return 150;return 0;}
+function seloMinHtml(c){var m=minItem(c);return m?'<div class="pmin" title="Valor mínimo do pedido com este item">📦 Pedido mín. R$ '+m+(m===150?' (refrigerado)':'')+'</div>':'';}
+function cardClick(ev,i){try{var t=ev&&ev.target;if(t&&t.closest&&t.closest('.pf,button,input,select,a'))return;}catch(e){}abrirProd(i);}
 function fatorPg(c){return PG==='pix'?(1-pixPct(c)):1;}
 function _catOf(c){for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===c)return CATALOG[i].k;}return '';}
 function cartTodosTeste(){return CART.length>0&&CART.every(function(x){return _catOf(x.c)==='tr';});}
@@ -920,11 +948,22 @@ try{var q=new URLSearchParams(location.search);
 var _se=window.sullabEvent;
 window.sullabEvent=function(t,e){e=e||{};try{var r=localStorage.getItem('sullab_ref');if(r&&!e.ref)e.ref=r;}catch(_){}return _se.call(this,t,e);};
 function aplicarUrl(){
-  try{var q=new URLSearchParams(location.search),c=q.get('carrinho'),did=false;
-   if(c){ 
-    var novos=[];c.split(',').forEach(function(par){var a=par.split(':'),cod=decodeURIComponent(a[0]||'').trim(),n=Math.max(1,Math.min(9999,parseInt(a[1])||1));var p=null;for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===cod){p=CATALOG[i];break;}}if(p){var ex=novos.find(function(x){return x.c===cod;});if(ex)ex.qty+=n;else novos.push({c:p.c,n:p.n,m:p.m,img:p.img,pub:p.pub,cnpj:p.cnpj,qty:n});}});
-    if(novos.length){CART.length=0;novos.forEach(function(x){CART.push(x);});salvarCart();atualizarCart();did=true;}}
-   if(did){history.replaceState(null,'',location.pathname);abrirCarrinho();try{sullabEvent('carrinho_por_link',{});}catch(e){}}
+  /* 31/10/2026: ?carrinho=COD:QTD,... substitui o carrinho (o robô do WhatsApp depende disso); com &add=1 SOMA ao carrinho
+     ("Comprar agora" das páginas de produto e de categoria). &nf=COD1,COD2 = itens que a equipe vai confirmar.
+     Dispara add_to_cart (GA4) e AddToCart (Meta) com os itens do link; avisa quando nenhum código do link existe. */
+  try{var q=new URLSearchParams(location.search),c=q.get('carrinho'),soma=q.get('add')==='1',nf=q.get('nf'),did=false,falt=[];
+   if(nf){var lnf=nf.split(',').map(function(s){return decodeURIComponent(s||'').trim().slice(0,60);}).filter(Boolean).slice(0,30);if(lnf.length){try{sessionStorage.setItem('sullab_nf',JSON.stringify(lnf));}catch(e){}window.__nfConfirmar=lnf;did=true;}}
+   if(c){
+    var novos=[];c.split(',').forEach(function(par){var a=par.split(':'),cod=decodeURIComponent(a[0]||'').trim(),n=Math.max(1,Math.min(9999,parseInt(a[1])||1));if(!cod)return;var p=null;for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===cod){p=CATALOG[i];break;}}if(p){var ex=novos.find(function(x){return x.c===cod;});if(ex)ex.qty+=n;else novos.push({c:p.c,n:p.n,m:p.m,img:p.img,pub:p.pub,cnpj:p.cnpj,qty:n});}else falt.push(cod);});
+    if(novos.length){
+     if(!soma)CART.length=0;
+     novos.forEach(function(x){var ex=soma&&CART.find(function(y){return y.c===x.c;});if(ex)ex.qty=Math.min(99999,ex.qty+x.qty);else CART.push(x);});
+     salvarCart();atualizarCart();did=true;
+     try{var its=novos.map(function(x){return {item_id:x.c,item_name:x.n,item_brand:x.m,quantity:x.qty,price:precoItem(x)||0};}),val=Math.round(its.reduce(function(s,x){return s+x.price*x.quantity;},0)*100)/100;
+      if(typeof gtag==='function')gtag('event','add_to_cart',{currency:'BRL',value:val,items:its,origem:soma?'link_comprar':'link_carrinho'});
+      if(typeof fbq==='function')fbq('track','AddToCart',{currency:'BRL',value:val,content_ids:its.map(function(x){return x.item_id;}),content_type:'product',num_items:its.reduce(function(s,x){return s+x.quantity;},0)});}catch(e){}}
+    if(falt.length){window.__linkFaltou=falt;did=true;try{sullabEvent('carrinho_link_invalido',{codigos:falt.slice(0,20)});}catch(e){}}}
+   if(did){history.replaceState(null,'',location.pathname);abrirCarrinho();try{if(c)sullabEvent('carrinho_por_link',{soma:soma?1:0});}catch(e){}}
   }catch(e){}
 }
 window.__aplicarCarrinhoUrl=function(){if(window.__carrinhoUrlFeito)return;window.__carrinhoUrlFeito=true;aplicarUrl();};
@@ -938,7 +977,7 @@ window.atualizarCart=function(){_ac2.apply(this,arguments);
    var box=document.createElement('div');box.className='sv';box.id='svBox';
    box.innerHTML='<b>Não vai fechar agora?</b> Guardamos seu carrinho e avisamos se o preço mudar ou o estoque estiver acabando.'+(tel?'<div style="margin-top:6px">Aviso no WhatsApp ativo: <b>'+tel+'</b></div>':'<div class="svr"><input id="svTel" inputmode="tel" placeholder="Seu WhatsApp com DDD"><button onclick="salvarCarrinhoTel()">Guardar</button></div>')+'<span class="svlk" onclick="copiarLinkCarrinho()">🔗 Copiar link deste carrinho</span><span id="svMsg" style="display:block;margin-top:5px;font-weight:700"></span>';
    df.appendChild(box);
-   var tp=document.createElement('div');tp.className='trustp';tp.innerHTML='<span>🧾 NF-e em todo pedido</span><span>🛡️ Registro ANVISA quando exigido</span><span>🏆 40 anos de mercado</span><span>🚚 Frota própria no RJ</span>';df.appendChild(tp);
+   var tp=document.createElement('div');tp.className='trustp';tp.innerHTML='<a href="/sobre.html">🧾 NF-e em todo pedido</a><a href="/sobre.html">🛡️ Registro ANVISA quando exigido</a><a href="/sobre.html">🏆 40 anos de mercado</a><a href="/politica-de-entrega.html">🚚 Frota própria no RJ</a>';df.appendChild(tp);
   }catch(e){}
 };
 window.salvarCarrinhoTel=function(){var el=document.getElementById('svTel'),m=document.getElementById('svMsg');if(!el)return;var t=el.value.replace(/\D/g,'');
@@ -972,7 +1011,7 @@ document.addEventListener('visibilitychange',function(){
 });
 
 var _ap3=window.abrirProd;
-window.abrirProd=function(i){_ap3.apply(this,arguments);try{var b=document.querySelector('#pmInner .pmb');if(b&&!b.querySelector('.trustp'))b.insertAdjacentHTML('beforeend','<div class="trustp"><span>🧾 NF-e em todo pedido</span><span>🛡️ Registro ANVISA quando exigido</span><span>🏆 Distribuidora há 40 anos</span><span>🚚 Entrega com frota própria no RJ</span></div>');}catch(e){}};
+window.abrirProd=function(i){_ap3.apply(this,arguments);try{var b=document.querySelector('#pmInner .pmb');if(b&&!b.querySelector('.trustp'))b.insertAdjacentHTML('beforeend','<div class="trustp"><a href="/sobre.html">🧾 NF-e em todo pedido</a><a href="/sobre.html">🛡️ Registro ANVISA quando exigido</a><a href="/sobre.html">🏆 Distribuidora há 40 anos</a><a href="/politica-de-entrega.html">🚚 Entrega com frota própria no RJ</a></div>');}catch(e){}};
 })();
 }catch(e){try{console.error(e);}catch(_){}}
 
@@ -1356,7 +1395,7 @@ try{
    arr=arr.slice().sort(function(a,b){var pa=(P[a.c]&&P[a.c][1])?1:0,pb=(P[b.c]&&P[b.c][1])?1:0;var sa=(window.PIX3&&window.PIX3[a.c])?1:0,sb=(window.PIX3&&window.PIX3[b.c])?1:0;return (pb-pa)||(sb-sa);});
    var mostra=arr.slice(0,MAX).map(_card).join('');
    var all='onclick="setDept(\''+r[2]+'\')"';
-   h='<section class="mRow"><div class="mRowH"><h3>'+r[0]+'</h3><a '+all+'>Ver todos ('+arr.length+') →</a></div><div class="mRowS">'+mostra+(arr.length>MAX?'<div class="mAll" '+all+'><b>→</b>Ver todos os '+arr.length+' produtos</div>':'')+'</div></section>';H.push(h);
+   h='<section class="mRow"><div class="mRowH"><h3><a href="#shopAnchor" onclick="setDept(\''+r[2]+'\');return false">'+r[0]+'</a></h3><a '+all+'>Ver todos ('+arr.length+') →</a></div><div class="mRowS">'+mostra+(arr.length>MAX?'<div class="mAll" '+all+'><b>→</b>Ver todos os '+arr.length+' produtos</div>':'')+'</div></section>';H.push(h);
   });
   /* 30/10/2026 (PageSpeed: tarefas longas): as 3 primeiras fileiras na hora; as outras em lotes de 3 quando o navegador estiver livre */
   var gen=(build.__g=(build.__g||0)+1),ric=window.requestIdleCallback||function(f){return setTimeout(function(){f({timeRemaining:function(){return 8;}});},16);};
@@ -1367,6 +1406,57 @@ try{
  var _r=window.render;window.render=function(){_r.apply(this,arguments);try{build();}catch(e){}};
  window.addEventListener('load',function(){try{build();}catch(e){}});
  var _w=innerWidth;window.addEventListener('resize',function(){if(Math.abs(innerWidth-_w)>80){_w=innerWidth;try{build();}catch(e){}}});
+})();
+}catch(e){try{console.error(e);}catch(_){}}
+
+/* ==== conversao (31/10/2026): selos de pedido mínimo, avisos do link do carrinho, barra fixa do celular, cliques sem ação ==== */
+try{
+(function(){
+/* selo "Pedido mín." nos cards já desenhados antes de a lista de refrigerados existir, e nos destaques (Greiner/testes) */
+function selosRefresh(){try{
+  [].forEach.call(document.querySelectorAll('.prod[data-c]'),function(el){if(el.querySelector('.pmin'))return;var h=seloMinHtml(el.getAttribute('data-c'));if(!h)return;var px=el.querySelector('.pixl');if(px)px.insertAdjacentHTML('afterend',h);});
+  [].forEach.call(document.querySelectorAll('.ofc'),function(el){if(el.querySelector('.pmin'))return;var m=(el.getAttribute('onclick')||'').match(/abrirProd\((\d+)\)/);var p=m&&CATALOG[+m[1]];if(!p)return;var h=seloMinHtml(p.c);if(!h)return;var b=el.querySelector('.ofb');if(b)b.insertAdjacentHTML('beforebegin',h);else el.insertAdjacentHTML('beforeend',h);});
+}catch(e){}}
+window.selosRefresh=selosRefresh;
+var _rd=window.render;window.render=function(){var r=_rd.apply(this,arguments);selosRefresh();return r;};
+['montarGreiner','montarOfertas'].forEach(function(n){var o=window[n];if(typeof o==='function')window[n]=function(){var r=o.apply(this,arguments);selosRefresh();return r;};});
+/* selo no modal do produto */
+var _apM=window.abrirProd;
+window.abrirProd=function(i){var r=_apM.apply(this,arguments);try{var p=CATALOG[i],b=document.querySelector('#pmInner .pixl.big');if(p&&b&&!document.querySelector('#pmInner .pmin'))b.insertAdjacentHTML('afterend',seloMinHtml(p.c));}catch(e){}return r;};
+
+/* avisos do link do carrinho: código inexistente e itens que a equipe vai confirmar (&nf=) */
+function nfLista(){var l=window.__nfConfirmar;if(!l){try{l=JSON.parse(sessionStorage.getItem('sullab_nf')||'null');}catch(e){l=null;}}return (l&&l.length)?l:null;}
+function nomeCod(c){for(var i=0;i<CATALOG.length;i++)if(CATALOG[i].c===c)return CATALOG[i].n+' (cód. '+c+')';return 'cód. '+c;}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+window.fecharAvisoLink=function(k){if(k==='nf'){window.__nfConfirmar=null;try{sessionStorage.removeItem('sullab_nf');}catch(e){}}else window.__linkFaltou=null;atualizarCart();};
+window.__nfConfirmarLista=nfLista;
+var _acL=window.atualizarCart;
+window.atualizarCart=function(){var r=_acL.apply(this,arguments);try{
+  var di=document.getElementById('ditems');if(di){var h='',fa=window.__linkFaltou,nf=nfLista();
+    if(fa&&fa.length)h+='<div class="lkAviso warn" role="alert"><button type="button" class="x" aria-label="Fechar aviso" onclick="fecharAvisoLink(\'faltou\')">×</button>⚠️ <b>'+(CART.length?'Alguns códigos do link não estão no catálogo do site:':'Nenhum produto deste link foi encontrado no catálogo do site.')+'</b> '+esc(fa.slice(0,12).join(', '))+'<br>Busque o produto pelo nome acima ou <a class="lk" onclick="abrirContatoWA(\'duvida\',\'Link do carrinho com código não encontrado: '+esc(fa.slice(0,12).join(', ')).replace(/'/g,'')+'\')">fale com a gente</a>.</div>';
+    if(nf)h+='<div class="lkAviso nf"><button type="button" class="x" aria-label="Fechar aviso" onclick="fecharAvisoLink(\'nf\')">×</button>📝 <b>Itens que a equipe vai confirmar</b> (disponibilidade e preço, pelo WhatsApp, depois do pedido):<ul>'+nf.map(function(c){return '<li>'+esc(nomeCod(c))+'</li>';}).join('')+'</ul></div>';
+    if(h)di.insertAdjacentHTML('afterbegin',h);}
+  mbarRender();
+}catch(e){}return r;};
+/* barra do frete grátis: atualiza a barra única quando a cotação do CEP chega */
+var _gh=window._gratisHtml;if(typeof _gh==='function')window._gratisHtml=function(){var r=_gh.apply(this,arguments);setTimeout(progRefresh,0);return r;};
+
+/* barra fixa do celular (home e catálogo): total + Finalizar */
+function mbarRender(){try{
+  var b=document.getElementById('mbar');
+  if(!b){b=document.createElement('div');b.id='mbar';b.className='mbar';document.body.appendChild(b);}
+  if(!CART.length){document.body.classList.remove('temCart');b.innerHTML='';return;}
+  var n=CART.reduce(function(s,x){return s+x.qty;},0),sub=totalCart(),semP=CART.some(function(x){return !precoItem(x);}),f=faltaTubo();
+  var btn=semP?'<button type="button" onclick="abrirCarrinho()">Ver carrinho</button>':(f>0?'<button type="button" class="falta" onclick="minimoBloqueado(\'barra_fixa\')">Faltam '+brl(f)+'</button>':'<button type="button" onclick="abrirCheckout()">Finalizar</button>');
+  b.innerHTML='<button type="button" class="mbT" onclick="abrirCarrinho()" aria-label="Abrir carrinho"><small>🛒 '+n+(n===1?' item':' itens')+'</small><b>'+(sub>0?brl(sub):'Sob consulta')+'</b></button>'+btn;
+  document.body.classList.add('temCart');
+}catch(e){}}
+window.mbarRender=mbarRender;
+
+/* botões indisponíveis: aria-disabled + motivo ao clicar (o clique não some sem explicação) */
+document.addEventListener('click',function(e){var el=e.target&&e.target.closest&&e.target.closest('[aria-disabled="true"]');if(!el)return;e.preventDefault();e.stopPropagation();slAviso(el.getAttribute('data-motivo')||'Opção indisponível no momento.');},true);
+
+selosRefresh();mbarRender();
 })();
 }catch(e){try{console.error(e);}catch(_){}}
 
