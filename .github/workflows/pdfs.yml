@@ -38,7 +38,7 @@ jobs:
         run: |
           git config user.name "sullab-pdfs"
           git config user.email "comercial@sullabrj.com.br"
-          git add docs/Tabela_de_Precos_SULLAB.pdf docs/Catalogo_SULLAB_Vacuette_e_Testes_Rapidos.pdf docs/Catalogo_SULLAB_Completo.pdf
+          git add docs/*.pdf  # todos os PDFs gerados (inclui os por linha); antes só 3 eram adicionados e o pull --rebase falhava com "unstaged changes"
           if git diff --cached --quiet; then echo "PDFs sem mudança"; exit 0; fi
           git commit -m "PDFs comerciais regerados a partir dos preços do site"
           git pull --rebase origin main
