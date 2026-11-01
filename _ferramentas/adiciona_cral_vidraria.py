@@ -2,7 +2,7 @@
 """Cadastra no site a linha de VIDRARIA e MICROSCÓPIOS da CRAL (30/10/2026).
 
 Entrada: /home/claude/cral_portal_30-10-2026.txt (campos do portal da CRAL)
-Preço: microscópios = portal x 1,50; vidraria = portal x 1,40.
+Preço: microscópios = portal x 1,50; vidraria = portal x 1,40 (até 01/11/2026; depois os preços vêm da tabela de mercado: gerar_vidraria_pdf.py --precos).
 Gera/atualiza: data/catalogo.json (SEED), data/precos.json (PRECOS), js/loja.js (QTD, DEPTS, fileiras do celular),
 index.html (rodapé e ?v= dos arquivos acima — desde 30/10/2026 os dados saíram do index.html),
 kw.json, ft.json, p/*.html, categoria/vidraria-de-laboratorio.html (nova),
