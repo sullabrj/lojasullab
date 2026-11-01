@@ -165,7 +165,7 @@ function ensureFT(cb){if(FTMAP){return cb&&cb();}if(_ftLoading){return setTimeou
 function semAcento(s){return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 function _nrmMed(t){return String(t).replace(/[×✕]/g,'x').replace(/ø/g,' ').replace(/(\d)\s*x\s*(\d)/g,'$1x$2').replace(/(\d)\s+(mm|ml|cm|ul)\b/g,'$1$2');}
 /* ==== busca (31/10/2026): sinônimos, plurais, código sem espaço/hífen, 1 erro de digitação e relevância ==== */
-var BUSCA_STOP={de:1,do:1,da:1,dos:1,das:1,para:1,pra:1,com:1,e:1,em:1,o:1,a:1,os:1,as:1,um:1,uma:1,no:1,na:1,ml:1,mls:1};
+var BUSCA_STOP={html:1,htm:1,un:1,und:1,unid:1,cx:1,pct:1,c:1,x:1,de:1,do:1,da:1,dos:1,das:1,para:1,pra:1,com:1,e:1,em:1,o:1,a:1,os:1,as:1,um:1,uma:1,no:1,na:1,ml:1,mls:1};
 /* troca: o termo vira só a alternativa (marca/apelido que não existe no catálogo) */
 var SINON_TROCA={vacutainer:['vacuette'],vacuntainer:['vacuette'],vacutaine:['vacuette'],vacutainner:['vacuette'],bd:['vacuette'],greiner:['vacuette'],eppendorf:['microtubo'],eppendorff:['microtubo'],
   hcg:['gravidez','hcg'],covid19:['covid'],coronavirus:['covid'],sarscov2:['covid'],'sars-cov-2':['covid']};
@@ -246,7 +246,7 @@ function buscaVaziaHtml(t){var e=function(s){return String(s).replace(/[&<>"']/g
 /* ==== fim busca ==== */
 var TOP_VENDA=['25492','454087','454036','456001','454921','PA03','PA36','PA31','PA186','743','PRD00003','450072','410','CLT24H2LT','18260NM','18248A','PA26','PA384','PA85','PA14','PA187','PA406','454482','454235','456211','454071','455071','CLT80SNM','CLT50SM','S240RB'];
 function filtrados(){
-  var _rel={},_bq=FILTRO.busca?buscaPrep(FILTRO.busca):null;
+  FILTRO._aprox=0;var _rel={},_bq=FILTRO.busca?buscaPrep(FILTRO.busca):null;
   var arr=CATALOG.filter(function(p){
     if(FILTRO.dept && deptOf(p.k)!==FILTRO.dept) return false;
     if(FILTRO.marca && p.m!==FILTRO.marca) return false;
@@ -264,6 +264,16 @@ function filtrados(){
     /* com busca: relevância primeiro (nome > marca > código > palavras-chave); mais vendidos desempatam */
     arr=arr.map(function(p,ix){return [p,_sc(p),ix,_rel[p.c]||0];}).sort(function(a,b){return (b[3]-a[3])||(b[1]-a[1])||(a[2]-b[2]);}).map(function(x){return x[0];});
   }
+  if(!arr.length&&FILTRO.busca&&_bq&&_bq.g.length>=2){
+    /* busca tolerante (01/11/2026): nome colado de outro site/fornecedor — aceita quem casa com a maioria das palavras */
+    var _n=_bq.g.length,_min=Math.max(1,Math.ceil(_n*0.6)),_rx=[];
+    CATALOG.forEach(function(p){if(FILTRO.dept&&deptOf(p.k)!==FILTRO.dept)return;if(FILTRO.marca&&p.m!==FILTRO.marca)return;
+      var F=_bCampos(p),ok=0,tot=0,fort=0;
+      _bq.g.forEach(function(g){var s=Math.max(4*_bTem(F.n,g),3*_bTem(F.m,g),2.5*_bTem(F.c,g),1*_bTem(F.kw,g));if(s){ok++;tot+=s;if(g.t.length>=4&&!/^\d+$/.test(g.t))fort++;}});
+      if(ok>=_min&&fort>=1)_rx.push([p,ok*10+tot]);});
+    _rx.sort(function(a,b){return b[1]-a[1];});
+    if(_rx.length){arr=_rx.slice(0,12).map(function(x){return x[0];});FILTRO._aprox=1;return arr;}
+  }
   return arr;
 }
 var _bvT=null,_bvSent={};
@@ -274,7 +284,7 @@ function render(){
   var arr=filtrados();
   document.getElementById('resCount').textContent=arr.length;
   var t=document.getElementById('shopTitle');
-  if(FILTRO.busca)t.textContent='Resultados para "'+FILTRO.busca+'"';
+  if(FILTRO.busca)t.textContent=(FILTRO._aprox?'Produtos parecidos com "':'Resultados para "')+FILTRO.busca+'"';
   else if(FILTRO.dept){var d=DEPTS.find(x=>x.key===FILTRO.dept);t.textContent=d?d.nome:'Catálogo';}
   else if(FILTRO.marca)t.textContent=FILTRO.marca;
   else t.textContent='Catálogo';
@@ -311,7 +321,11 @@ function marcarNav(){[...document.querySelectorAll('#deptNav .dept')].forEach(e=
 function irProdutos(){document.getElementById('shopAnchor').scrollIntoView({behavior:'smooth',block:'start'});}
 function toggleCNPJ(){CNPJ=!CNPJ;document.getElementById('cnpjSwitch').classList.toggle('off',!CNPJ);render();atualizarCart();}
 
-function step(i,d,btn){var sp=btn.parentElement.querySelector('span');var v=Math.max(1,(parseInt(sp.textContent)||1)+d);sp.textContent=v;}
+function step(i,d,btn){var sp=btn.parentElement.querySelector('span');var v=Math.max(1,(parseInt(sp.textContent)||1)+d);sp.textContent=v;
+  /* feedback do toque (01/11/2026): o + e o − mostram a mudança e o botão de compra passa a dizer a quantidade */
+  try{sp.style.transition='transform .15s';sp.style.transform='scale(1.35)';setTimeout(function(){sp.style.transform='';},160);
+    var add=btn.parentElement.parentElement.querySelector('button.add');if(add){if(!add.dataset.t0)add.dataset.t0=add.textContent;add.textContent=v>1?('+ Carrinho ('+v+')'):add.dataset.t0;}
+    if(navigator.vibrate)navigator.vibrate(8);}catch(e){}}
 function addCart(i,btn){
   var qty=parseInt(btn.parentElement.querySelector('.stepper span').textContent)||1;
   var p=CATALOG[i];
@@ -724,20 +738,26 @@ function cotarFreteLoja(){if(window._fBusy)return;var cep=soDig(val('ckCep'));va
 function aplicarCupom(){var c=(val('ckCupom')||'').toUpperCase().replace(/\s/g,'');var msg=document.getElementById('cupomMsg');if(!c){cupomPct=0;cupomCod='';if(msg)msg.textContent='';ckTotais();return;}if(CUPONS[c]){cupomPct=CUPONS[c];cupomCod=c;if(msg){msg.style.color='var(--green-d)';msg.innerHTML='✓ Cupom '+c+' aplicado — '+Math.round(cupomPct*100)+'% OFF.';}}else{cupomPct=0;cupomCod='';if(msg){msg.style.color='#b3261e';msg.textContent='Cupom inválido.';}}ckTotais();}
 function _freteBarCart(){return '';}
 function ckTotais(){try{var _ok=boletoOk();var _pb=document.getElementById('pgBoleto');if(_pb){_pb.style.opacity=_ok?'1':'.5';_pb.querySelector('input').disabled=!_ok;}if(!_ok&&PG==='boleto'){PG='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value==='pix');});}}catch(e){}var t=CART.reduce(function(s,x){return s+(Math.round(precoItem(x)*fatorPg(x.c)*100)/100)*x.qty;},0)*(1-cupomPct)+(freteSelLoja||0);var n=CART.reduce(function(s,x){return s+x.qty;},0);document.getElementById('ckTot').textContent=brl(t);document.getElementById('ckQt').textContent='('+n+' '+(n===1?'item':'itens')+(PG==='pix'?' · desconto Pix':'')+(cupomPct?(' · −'+Math.round(cupomPct*100)+'%'):'')+(freteSelLoja?(' · frete '+brl(freteSelLoja)):'')+')';}
-function abrirCheckout(){try{sullabFirebase();}catch(_e){}if(!CART.length){return;}if(faltaTubo()>0){abrirCarrinho();return;}fecharCarrinho();preencherFicha();ckModo();setPg(PG);cupomPct=0;cupomCod='';zerarFrete();try{window._freteReset&&window._freteReset();}catch(e){}var cc=document.getElementById('ckCupom');if(cc)cc.value='';var cm=document.getElementById('cupomMsg');if(cm)cm.textContent='';renderFrete();_freteDoCarrinho();ckTotais();document.getElementById('ckErr').style.display='none';pixMostrar(false);
+function abrirCheckout(){try{sullabFirebase();}catch(_e){}if(!CART.length){return;}if(faltaTubo()>0){abrirCarrinho();return;}fecharCarrinho();preencherFicha();ckEndSync();ckModo();setPg(PG);cupomPct=0;cupomCod='';zerarFrete();try{window._freteReset&&window._freteReset();}catch(e){}var cc=document.getElementById('ckCupom');if(cc)cc.value='';var cm=document.getElementById('cupomMsg');if(cm)cm.textContent='';renderFrete();_freteDoCarrinho();ckTotais();document.getElementById('ckErr').style.display='none';pixMostrar(false);
   if(_PX&&!_PX.fim&&_PX.chave===chaveFrete()&&Date.now()<_PX.exp){_pxRender();pixMostrar(true);_pxTick();_PX.tick=setInterval(_pxTick,1000);_pxStatus();}
   document.getElementById('cko').classList.add('on');}
 function fecharCheckout(){document.getElementById('cko').classList.remove('on');_pxParar();}
 function fichaSalva(){try{return JSON.parse(localStorage.getItem('sullab_ficha')||'{}');}catch(e){return {};}}
 function preencherFicha(){var f=fichaSalva();var map={ckDoc:'doc',ckNome:'nome',ckEmail:'email',ckTel:'tel',ckCep:'cep',ckNum:'num',ckCompl:'compl',ckLog:'log',ckBairro:'bairro',ckCidade:'cidade',ckUf:'uf'};for(var id in map){if(f[map[id]])document.getElementById(id).value=f[map[id]];}if(f.doct)setDoc(f.doct);}
 function coletarFicha(){return {doct:DOCT,doc:val('ckDoc'),nome:val('ckNome'),email:val('ckEmail'),tel:val('ckTel'),cep:val('ckCep'),num:val('ckNum'),compl:val('ckCompl'),log:val('ckLog'),bairro:val('ckBairro'),cidade:val('ckCidade'),uf:val('ckUf')};}
-function cepAuto(){var c=soDig(val('ckCep'));if(c.length!==8)return;fetch('https://brasilapi.com.br/api/cep/v1/'+c).then(function(r){return r.json();}).then(function(d){if(d&&d.street){if(!val('ckLog'))document.getElementById('ckLog').value=d.street;if(!val('ckBairro'))document.getElementById('ckBairro').value=d.neighborhood||'';document.getElementById('ckCidade').value=d.city||'';document.getElementById('ckUf').value=d.state||'';}if(!document.querySelector('#freteOpts label'))renderFrete();}).catch(function(){});}
-function cnpjAuto(){var c=soDig(val('ckDoc'));if(c.length!==14||docAlfa(val('ckDoc')))return;fetch('https://brasilapi.com.br/api/cnpj/v1/'+c).then(function(r){return r.json();}).then(function(d){if(d&&d.razao_social){if(!val('ckNome'))document.getElementById('ckNome').value=d.razao_social;if(!val('ckCep')&&d.cep){document.getElementById('ckCep').value=String(d.cep);cepAuto();}if(!val('ckLog')&&d.logradouro)document.getElementById('ckLog').value=(d.descricao_tipo_de_logradouro?d.descricao_tipo_de_logradouro+' ':'')+d.logradouro;if(!val('ckNum')&&d.numero)document.getElementById('ckNum').value=String(d.numero);if(!val('ckBairro')&&d.bairro)document.getElementById('ckBairro').value=d.bairro;if(!val('ckCidade')&&d.municipio)document.getElementById('ckCidade').value=d.municipio;if(!val('ckUf')&&d.uf)document.getElementById('ckUf').value=d.uf;}renderFrete();}).catch(function(){});}
+function cepAuto(){var c=soDig(val('ckCep'));if(c.length!==8)return;fetch('https://brasilapi.com.br/api/cep/v1/'+c).then(function(r){return r.json();}).then(function(d){if(d&&d.street){if(!val('ckLog'))document.getElementById('ckLog').value=d.street;if(!val('ckBairro'))document.getElementById('ckBairro').value=d.neighborhood||'';document.getElementById('ckCidade').value=d.city||'';document.getElementById('ckUf').value=d.state||'';}ckEndSync();if(!document.querySelector('#freteOpts label'))renderFrete();}).catch(function(){ckEndAbrir();});}
+function cnpjAuto(){var c=soDig(val('ckDoc'));if(c.length!==14||docAlfa(val('ckDoc')))return;fetch('https://brasilapi.com.br/api/cnpj/v1/'+c).then(function(r){return r.json();}).then(function(d){if(d&&d.razao_social){if(!val('ckNome'))document.getElementById('ckNome').value=d.razao_social;if(!val('ckCep')&&d.cep){document.getElementById('ckCep').value=String(d.cep);cepAuto();}if(!val('ckLog')&&d.logradouro)document.getElementById('ckLog').value=(d.descricao_tipo_de_logradouro?d.descricao_tipo_de_logradouro+' ':'')+d.logradouro;if(!val('ckNum')&&d.numero)document.getElementById('ckNum').value=String(d.numero);if(!val('ckBairro')&&d.bairro)document.getElementById('ckBairro').value=d.bairro;if(!val('ckCidade')&&d.municipio)document.getElementById('ckCidade').value=d.municipio;if(!val('ckUf')&&d.uf)document.getElementById('ckUf').value=d.uf;}ckEndSync();renderFrete();}).catch(function(){});}
 /* 31/10/2026: o motivo do erro vai também ao Clarity (tag "checkout_erro" filtrável nas gravações) e ao GA4 com a etapa */
 function _ckErroLog(m,etapa){var mot=String(m||'').slice(0,90);try{if(typeof gtag==='function')gtag('event','checkout_erro',{motivo:mot,etapa:etapa||'form'});}catch(x){}
   try{if(window.clarity){clarity('set','checkout_erro',mot);if(etapa)clarity('set','checkout_erro_etapa',String(etapa));clarity('event','checkout_erro');}}catch(x){}}
 function ckErro(m){var e=document.getElementById('ckErr');e.textContent=m;e.style.display='block';e.scrollIntoView({block:'nearest'});_ckErroLog(m,'form');}
-function ckFoco(id){try{var e=document.getElementById(id);if(e&&!_ehMobile())e.focus();if(e)e.classList.add('ckbad');setTimeout(function(){if(e)e.classList.remove('ckbad');},2500);}catch(x){}}
+/* endereço enxuto no celular (01/11/2026): rua/bairro/cidade/UF vêm do CEP e ficam recolhidos; o cliente só confere e informa número */
+function ckEndAbrir(){var b=document.getElementById('ckEndBox'),b2=document.getElementById('ckEndBox2'),r=document.getElementById('ckEndRes');if(b)b.hidden=false;if(b2)b2.hidden=false;if(r)r.hidden=true;}
+function ckEndSync(){try{var b=document.getElementById('ckEndBox'),b2=document.getElementById('ckEndBox2'),r=document.getElementById('ckEndRes');if(!b||!r)return;
+  var l=val('ckLog'),ci=val('ckCidade'),u=val('ckUf'),ba=val('ckBairro');
+  if(l&&ci&&u){b.hidden=true;if(b2)b2.hidden=true;r.hidden=false;var t=document.getElementById('ckEndTx');if(t)t.textContent=l+(ba?' · '+ba:'')+' · '+ci+'/'+u.toUpperCase();}
+  else{b.hidden=false;if(b2)b2.hidden=false;r.hidden=true;}}catch(e){}}
+function ckFoco(id){try{if(/^ck(Log|Bairro|Cidade|Uf)$/.test(id))ckEndAbrir();var e=document.getElementById(id);if(e&&!_ehMobile())e.focus();if(e)e.classList.add('ckbad');setTimeout(function(){if(e)e.classList.remove('ckbad');},2500);}catch(x){}}
 /* ==== 31/10/2026: Pix transparente — QR na própria página (Worker: POST /pix e GET /pix/status a cada 4 s) ==== */
 var _PX=null;
 function _pxEv(n,p){try{if(typeof gtag==='function')gtag('event',n,p||{});}catch(e){}try{if(window.clarity)clarity('event',n);}catch(e){}}
@@ -953,7 +973,7 @@ function fecharRastreio(){document.getElementById('rast').classList.remove('on')
 function acompanharWhats(num){abrirWhats('Olá! Quero acompanhar o meu pedido '+num+'. Pode me passar o status?');}
 function _rastBox(msg,num){return '<div style="border:1px solid var(--line);border-radius:11px;padding:12px;margin-top:8px;font-size:12.5px;color:var(--muted)">'+msg+'<br><span class="rm" style="display:inline-block;margin-top:7px;color:var(--green-d);font-weight:700;cursor:pointer" onclick="acompanharWhats(\''+(num||'')+'\')">💬 Acompanhar pelo WhatsApp →</span></div>';}
 function lookupRastreio(){var n=(document.getElementById('rastNum').value||'').trim();var ch=(document.getElementById('rastChave').value||'').trim();var box=document.getElementById('rastResult');
-  if(!n){box.innerHTML='';return;}
+  if(!n){box.innerHTML='<div style="font-size:12.5px;color:#b3261e;padding:10px 2px">Digite o código do pedido (começa com SLB-) que você recebeu no WhatsApp ou e-mail.</div>';try{document.getElementById('rastNum').focus();}catch(e){}return;}
   if(!ch){box.innerHTML=_rastBox('Informe o e-mail usado no pedido para ver o status — ou fale com a equipe.',n);return;}
   box.innerHTML='<div style="font-size:12.5px;color:var(--muted);padding:10px 2px">Consultando…</div>';
   consultarStatus(n,ch,function(d){
