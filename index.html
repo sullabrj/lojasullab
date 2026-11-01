@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=caac820951",p:"/data/precos.json?v=33170b384f",f:"/data/ficha.json?v=931e30bbe1",j:"/js/loja.js?v=9ee80e3883"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
-<link rel="preload" href="/js/loja.js?v=9ee80e3883" as="script">
+<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=caac820951",p:"/data/precos.json?v=33170b384f",f:"/data/ficha.json?v=931e30bbe1",j:"/js/loja.js?v=f6054aebab"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
+<link rel="preload" href="/js/loja.js?v=f6054aebab" as="script">
 <title>SULLAB · Materiais para laboratório e diagnóstico — atacado com NF-e</title>
 <meta name="description" content="Distribuidora de produtos para laboratório: tubos a vácuo, testes rápidos, reagentes, meios de cultura e descartáveis. Compra no site, NF-e e entrega no Brasil.">
 
@@ -351,6 +351,8 @@
   #cko [hidden]{display:none!important}
   #cko .ckerr{margin-right:34px;font-size:13.5px}
   #cko .frow.ckend{grid-template-columns:1fr 1fr 64px}
+  #cko .ckendres{font-size:13px;color:#33415c;background:#f1f5fb;border-radius:8px;padding:8px 10px;margin:-2px 0 10px;line-height:1.4}
+  #cko #ckEndBox[hidden],#cko #ckEndBox2[hidden],#cko .ckendres[hidden]{display:none}
   #ckPix h3{margin:0 0 4px;font-size:20px;color:var(--navy)}
   .pxbox{text-align:center;border:1px solid var(--line);border-radius:14px;padding:14px 12px 12px;margin:4px 0 14px;background:#fff}
   .pxbox img{display:block;width:232px;height:232px;max-width:100%;margin:0 auto 8px;image-rendering:pixelated}
@@ -757,7 +759,7 @@
   <a class="brand" href="/"><img src="/img/logo-sullab.webp" alt="SULLAB · Materiais para laboratório" width="240" height="213"></a>
   <div class="search">
     <select id="searchCat" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option></select>
-    <input id="searchInput" placeholder="Buscar produto, marca ou código (ex.: tubo EDTA, 454036, COVID)…" onkeydown="if(event.key==='Enter')fazerBusca()">
+    <input id="searchInput" enterkeyhint="search" placeholder="Buscar produto, marca ou código (ex.: tubo EDTA, 454036, COVID)…" onkeydown="if(event.key==='Enter')fazerBusca()">
     <button onclick="fazerBusca()">🔍</button>
   </div>
   <div class="hact">
@@ -918,6 +920,7 @@
   <div id="ckForm">
   <h3 id="ckTit">Finalizar pedido</h3>
   <div class="sub" id="ckSub">Pagamento seguro pelo Mercado Pago &middot; NF-e em todo pedido</div>
+  <a href="#" class="cklnk ckduv2" style="display:block;margin:-6px 0 10px" onclick="duvidaCheckout('checkout');return false">💬 Prefere fechar pelo WhatsApp? Fale com um vendedor</a>
   <div class="fld"><label for="ckTel">Seu WhatsApp (com DDD)</label><input id="ckTel" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" placeholder="(24) 90000-0000"><small class="ckhint">Para enviarmos a nota fiscal, o rastreio e tirar dúvidas do pedido.</small></div>
   <div class="doctab" id="docTab">
     <button type="button" data-d="cnpj" class="on" onclick="setDoc('cnpj')">CNPJ (empresa)</button>
@@ -930,15 +933,20 @@
     <div class="fld"><label for="ckCep">CEP</label><input id="ckCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" oninput="cepAuto()"></div>
     <div></div>
   </div>
+  <div id="ckEndRes" class="ckendres" hidden><span id="ckEndTx"></span> <a href="#" class="cklnk" onclick="ckEndAbrir();return false">alterar</a></div>
+  <div id="ckEndBox">
   <div class="fld"><label for="ckLog">Endereço</label><input id="ckLog" autocomplete="address-line1" placeholder="Rua / Av."></div>
+  </div>
   <div class="frow c2">
     <div class="fld"><label for="ckNum">Número</label><input id="ckNum" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="nº"></div>
     <div class="fld"><label for="ckCompl">Complemento</label><input id="ckCompl" autocomplete="address-line2" placeholder="sala, bloco"></div>
   </div>
+  <div id="ckEndBox2" class="ckendbox2">
   <div class="frow c3 ckend">
     <div class="fld"><label for="ckBairro">Bairro</label><input id="ckBairro" autocomplete="address-level3"></div>
     <div class="fld"><label for="ckCidade">Cidade</label><input id="ckCidade" autocomplete="address-level2"></div>
     <div class="fld"><label for="ckUf">UF</label><input id="ckUf" maxlength="2" autocomplete="address-level1" autocapitalize="characters"></div>
+  </div>
   </div>
   <div id="freteBox" style="margin:2px 0 12px"></div>
   <label id="paysLb" class="cklb">Forma de pagamento</label>
