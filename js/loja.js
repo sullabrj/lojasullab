@@ -117,20 +117,24 @@ function precoDe(p){var r=(window.PRECOS||{})[p.c];return r&&r[1]?r[1]:0;}
 function precoItem(x){var r=(window.PRECOS||{})[x.c];var b=r&&r[1]?r[1]:0;if(b&&x.kq&&x.kd&&x.qty){var q=Math.min(x.kq,x.qty);return (b*(x.qty-q)+b*(1-x.kd)*q)/x.qty;}return b;}
 function precoBase(x){var r=(window.PRECOS||{})[x.c];return r&&r[1]?r[1]:0;}
 
+/* 02/11/2026: Equipamentos sobe para o topo das abas de categorias (microscópios, centrífugas); analisadores em comodato logo depois */
+function DEPTS_TOPO(){var t=DEPTS.filter(function(d){return d.key==='equip';});return t.concat(DEPTS.filter(function(d){return d.key!=='equip';}));}
 function montarDeptNav(){
   var el=document.getElementById('deptNav');
   var html='<div class="dept all" onclick="setDept(\'\')">☰ Todos os departamentos</div>';
-  DEPTS.forEach(function(d){
+  DEPTS_TOPO().forEach(function(d){
     var n=CATALOG.filter(p=>deptOf(p.k)===d.key).length;
     if(n>0) html+='<div class="dept" data-d="'+d.key+'" onclick="setDept(\''+d.key+'\')">'+d.icon+' '+d.nome+'</div>';
+    if(d.key==='equip') html+='<div class="dept" onclick="location.href=\'/equipamentos-comodato.html\'">🧬 Analisadores (comodato)</div>';
   });
   el.innerHTML=html;
 }
 function montarCatTiles(){
   var el=document.getElementById('catTiles');var html='';
-  DEPTS.forEach(function(d){
+  DEPTS_TOPO().forEach(function(d){
     var n=CATALOG.filter(p=>deptOf(p.k)===d.key).length; if(!n)return;
     html+='<div class="ctile" onclick="setDept(\''+d.key+'\')"><div class="ci">'+d.icon+'</div><div><b>'+d.nome+'</b><small class="'+(n<30?'poucos':'')+'">'+n+' produto'+(n>1?'s':'')+'</small></div></div>';
+    if(d.key==='equip') html+='<div class="ctile" onclick="location.href=\'/equipamentos-comodato.html\'"><div class="ci">🧬</div><div><b>Analisadores (comodato)</b><small>Bioquímica, eletrólitos e hematologia</small></div></div>';
   });
   if(!el.querySelector('.cph'))el.innerHTML=html;
   document.getElementById('footCats').innerHTML=DEPTS.filter(d=>CATALOG.some(p=>deptOf(p.k)===d.key)).slice(0,6).map(d=>'<a href="'+catHref(d.key)+'" onclick="setDept(\''+d.key+'\');return false">'+d.nome+'</a>').join('');
