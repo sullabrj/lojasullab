@@ -93,11 +93,13 @@ var DEPTS=[
   {key:'eqbioq', nome:'Equipamentos de bioquímica', icon:'🧪', cats:['eqbioq']},
   {key:'eqhemat', nome:'Equipamentos de hematologia', icon:'🩸', cats:['eqhemat']},
   {key:'eqvet', nome:'Equipamentos veterinários', icon:'🐾', cats:['eqvet']},
+  {key:'microsc', nome:'Microscópios', icon:'🔬', cats:['microsc']},
+  {key:'centrif', nome:'Centrífugas', icon:'🌀', cats:['centrif']},
   {key:'equip', nome:'Equipamentos e acessórios', icon:'🖥️', cats:['equip']},
   {key:'vidraria', nome:'Vidraria de laboratório', icon:'⚗️', cats:['vidraria']}
 ];
 /* 31/10/2026 (SEO): cada departamento tem página estática em /categoria/ — os links da loja levam o href dela (o robô do Google segue; o clique continua filtrando na própria loja) */
-var CAT_URL={tubo:'tubos-a-vacuo',agulha:'seringas-e-agulhas',lanceta:'lancetas',coletoram:'coletores-de-amostra',curativo:'curativos-gaze-e-algodao',lamina:'laminas-e-bisturis',cubeta:'cubetas',pipeta:'pipetas-e-ponteiras',plast:'descartaveis-e-plasticos',meio:'meios-de-cultura',micro:'microbiologia',bioq:'reagentes-de-bioquimica',hemat:'reagentes-de-hematologia-e-coagulacao',sorol:'reagentes-de-sorologia-e-imunologia',controle:'controles-e-calibradores',tr:'testes-rapidos',equip:'equipamentos-e-acessorios',eqbioq:'equipamentos-de-bioquimica',eqhemat:'equipamentos-de-hematologia',eqvet:'equipamentos-veterinarios',vidraria:'vidraria-de-laboratorio'};
+var CAT_URL={tubo:'tubos-a-vacuo',agulha:'seringas-e-agulhas',lanceta:'lancetas',coletoram:'coletores-de-amostra',curativo:'curativos-gaze-e-algodao',lamina:'laminas-e-bisturis',cubeta:'cubetas',pipeta:'pipetas-e-ponteiras',plast:'descartaveis-e-plasticos',meio:'meios-de-cultura',micro:'microbiologia',bioq:'reagentes-de-bioquimica',hemat:'reagentes-de-hematologia-e-coagulacao',sorol:'reagentes-de-sorologia-e-imunologia',controle:'controles-e-calibradores',tr:'testes-rapidos',equip:'equipamentos-e-acessorios',microsc:'microscopios',centrif:'centrifugas',eqbioq:'equipamentos-de-bioquimica',eqhemat:'equipamentos-de-hematologia',eqvet:'equipamentos-veterinarios',vidraria:'vidraria-de-laboratorio'};
 function catHref(k){return CAT_URL[k]?'/categoria/'+CAT_URL[k]+'.html':'#shopAnchor';}
 var _DEPTOF={};function deptOf(catCode){var k=String(catCode);if(_DEPTOF.hasOwnProperty(k))return _DEPTOF[k];for(var d of DEPTS){if(d.cats.indexOf(catCode)>-1)return (_DEPTOF[k]=d.key);}return (_DEPTOF[k]='outros');}
 
@@ -121,7 +123,7 @@ function precoItem(x){var r=(window.PRECOS||{})[x.c];var b=r&&r[1]?r[1]:0;if(b&&
 function precoBase(x){var r=(window.PRECOS||{})[x.c];return r&&r[1]?r[1]:0;}
 
 /* 02/11/2026: Equipamentos sobe para o topo das abas de categorias (microscópios, centrífugas); analisadores em comodato logo depois */
-function DEPTS_TOPO(){var T=['eqbioq','eqhemat','eqvet','equip'];return DEPTS.filter(function(d){return T.indexOf(d.key)>-1;}).concat(DEPTS.filter(function(d){return T.indexOf(d.key)<0;}));}
+function DEPTS_TOPO(){var T=['eqbioq','eqhemat','eqvet','microsc','centrif','equip'];return DEPTS.filter(function(d){return T.indexOf(d.key)>-1;}).concat(DEPTS.filter(function(d){return T.indexOf(d.key)<0;}));}
 function montarDeptNav(){
   var el=document.getElementById('deptNav');
   var html='<div class="dept all" onclick="setDept(\'\')">☰ Todos os departamentos</div>';
@@ -1024,7 +1026,7 @@ function propostaAparelho(i){var p=CATALOG[i];if(!p)return;abrirContatoWA('propo
 function abrirProd(i){
   var p=CATALOG[i];
   var catNome=(DEPTS.find(function(d){return d.key===deptOf(p.k);})||{}).nome||'';
-  var _prm=(window.PRECOS||{})[p.c];var precoHtml=(_prm&&_prm[1])?(((window.PIX3&&window.PIX3[p.c])?'<div style="display:inline-block;background:#1F4E79;color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;margin-top:8px">🏆 Preço exclusivo do site</div>':'')+'<div style="margin-top:10px;line-height:1.45"><div style="font-size:26px;font-weight:800;color:#2f9e63">'+brl(_prm[1])+'</div>'+unitLn(p.c,_prm[1])+'<div style="font-size:13px;color:#3a4a63;font-weight:700">'+brl(Math.round(_prm[1]*(100-pixPct(p.c)*100))/100)+' no Pix</div><div class="pixl big">💚 Pague no Pix e ganhe <b>'+Math.round(pixPct(p.c)*100)+'% de desconto</b></div><div style="font-size:12px;color:#5f6b7c;margin-top:6px">Preço único · NF-e em todo pedido · frete calculado pelo CEP</div></div>'):('<div class="b2bsob" style="font-size:14px;margin-top:8px">Preço sob consulta — solicite o orçamento (NF-e · atacado)</div>');
+  var _prm=(window.PRECOS||{})[p.c];var precoHtml=(_prm&&_prm[1])?(((window.PIX3&&window.PIX3[p.c])?'<div style="display:inline-block;background:#1F4E79;color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;margin-top:8px">🏆 Preço exclusivo do site</div>':'')+'<div style="margin-top:10px;line-height:1.45"><div style="font-size:26px;font-weight:800;color:#2f9e63">'+brl(_prm[1])+'</div>'+unitLn(p.c,_prm[1])+'<div style="font-size:13px;color:#3a4a63;font-weight:700">'+brl(Math.round(_prm[1]*(100-pixPct(p.c)*100))/100)+' no Pix</div><div class="pixl big">💚 Pague no Pix e ganhe <b>'+Math.round(pixPct(p.c)*100)+'% de desconto</b></div><div style="font-size:12px;color:#5f6b7c;margin-top:6px">Preço único · NF-e em todo pedido · frete calculado pelo CEP</div></div>'):('<div class="b2bsob" style="font-size:14px;margin-top:8px">Preço sob consulta — solicite o orçamento'+(['microsc','centrif'].indexOf(p.k)>-1?' (NF-e)':' (NF-e · atacado)')+'</div>');
   var _apar=isAparelho(p);
   if(_apar){precoHtml='<div style="margin-top:10px;font-size:14.5px;line-height:1.45;color:#24455e;font-weight:600">'+APARELHO_TXT+'</div>';}
   var acao=_apar?'<div style="margin-top:16px"><button class="btn navy" style="width:100%" onclick="propostaAparelho('+i+')">📄 Solicitar proposta</button></div>':'<div style="display:flex;gap:10px;align-items:center;margin-top:16px"><div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="btn navy" style="flex:1" onclick="addCart('+i+',this)">🛒 Adicionar</button></div>';
@@ -1228,7 +1230,7 @@ window.fgConsulta=function(auto){
   }).catch(function(){out.innerHTML='Não foi possível consultar agora. O frete aparece no carrinho.';});
 };
 try{var _fc=(fichaSalva()||{}).cep;if(_fc&&document.getElementById('fgCep')){document.getElementById('fgCep').value=String(_fc).replace(/\D/g,'').replace(/^(\d{5})(\d)/,'$1-$2');fgConsulta(true);}}catch(e){}
-var CATPH={tubo:1,tr:1,meio:1,micro:1,bioq:1,hemat:1,eqbioq:1,eqhemat:1,eqvet:1,curativo:1,coletoram:1};
+var CATPH={tubo:1,tr:1,meio:1,micro:1,bioq:1,hemat:1,eqbioq:1,eqhemat:1,eqvet:1,microsc:1,curativo:1,coletoram:1};
 window.montarCatTiles=function(){
   var el=document.getElementById('catTiles');if(!el)return;var h='';
   Object.keys(CATPH).forEach(function(k){var d=DEPTS.find(function(x){return x.key===k;});if(!d)return;var n=CATALOG.filter(function(p){return deptOf(p.k)===k;}).length;if(!n)return;
@@ -1325,7 +1327,7 @@ document.addEventListener('visibilitychange',function(){
 });
 
 var _ap3=window.abrirProd;
-window.abrirProd=function(i){_ap3.apply(this,arguments);try{if(isAparelho(CATALOG[i]))return;var b=document.querySelector('#pmInner .pmb');if(b&&!b.querySelector('.trustp'))b.insertAdjacentHTML('beforeend','<div class="trustp"><a href="/sobre.html">🧾 NF-e em todo pedido</a><a href="/sobre.html">🛡️ Registro ANVISA quando exigido</a><a href="/sobre.html">🏆 Distribuidora há 40 anos</a><a href="/politica-de-entrega.html">🚚 Entrega com frota própria no RJ</a></div>');}catch(e){}};
+window.abrirProd=function(i){_ap3.apply(this,arguments);try{if(isAparelho(CATALOG[i]))return;var b=document.querySelector('#pmInner .pmb');if(b&&!b.querySelector('.trustp'))b.insertAdjacentHTML('beforeend','<div class="trustp"><a href="/sobre.html">🧾 NF-e em todo pedido</a>'+(['microsc','centrif'].indexOf((CATALOG[i]||{}).k)>-1?'':'<a href="/sobre.html">🛡️ Registro ANVISA quando exigido</a>')+'<a href="/sobre.html">🏆 Distribuidora há 40 anos</a><a href="/politica-de-entrega.html">🚚 Entrega com frota própria no RJ</a></div>');}catch(e){}};
 })();
 }catch(e){try{console.error(e);}catch(_){}}
 
@@ -1706,6 +1708,8 @@ try{
   ['Equipamentos de bioquímica',['eqbioq'],'eqbioq'],
   ['Equipamentos de hematologia',['eqhemat'],'eqhemat'],
   ['Equipamentos veterinários',['eqvet'],'eqvet'],
+  ['Microscópios',['microsc'],'microsc'],
+  ['Centrífugas',['centrif'],'centrif'],
   ['Equipamentos e acessórios',['equip'],'equip'],
   ['Vidraria de laboratório',['vidraria'],'vidraria']
  ];
