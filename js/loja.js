@@ -90,11 +90,14 @@ var DEPTS=[
   {key:'sorol', nome:'Reagentes de sorologia/imunologia', icon:'🧬', cats:['sorol']},
   {key:'controle', nome:'Controles e calibradores', icon:'🎯', cats:['controle']},
   {key:'tr', nome:'Testes rápidos', icon:'🧪', cats:['tr']},
+  {key:'eqbioq', nome:'Equipamentos de bioquímica', icon:'🧪', cats:['eqbioq']},
+  {key:'eqhemat', nome:'Equipamentos de hematologia', icon:'🩸', cats:['eqhemat']},
+  {key:'eqvet', nome:'Equipamentos veterinários', icon:'🐾', cats:['eqvet']},
   {key:'equip', nome:'Equipamentos e acessórios', icon:'🖥️', cats:['equip']},
   {key:'vidraria', nome:'Vidraria de laboratório', icon:'⚗️', cats:['vidraria']}
 ];
 /* 31/10/2026 (SEO): cada departamento tem página estática em /categoria/ — os links da loja levam o href dela (o robô do Google segue; o clique continua filtrando na própria loja) */
-var CAT_URL={tubo:'tubos-a-vacuo',agulha:'seringas-e-agulhas',lanceta:'lancetas',coletoram:'coletores-de-amostra',curativo:'curativos-gaze-e-algodao',lamina:'laminas-e-bisturis',cubeta:'cubetas',pipeta:'pipetas-e-ponteiras',plast:'descartaveis-e-plasticos',meio:'meios-de-cultura',micro:'microbiologia',bioq:'reagentes-de-bioquimica',hemat:'reagentes-de-hematologia-e-coagulacao',sorol:'reagentes-de-sorologia-e-imunologia',controle:'controles-e-calibradores',tr:'testes-rapidos',equip:'equipamentos-e-acessorios',vidraria:'vidraria-de-laboratorio'};
+var CAT_URL={tubo:'tubos-a-vacuo',agulha:'seringas-e-agulhas',lanceta:'lancetas',coletoram:'coletores-de-amostra',curativo:'curativos-gaze-e-algodao',lamina:'laminas-e-bisturis',cubeta:'cubetas',pipeta:'pipetas-e-ponteiras',plast:'descartaveis-e-plasticos',meio:'meios-de-cultura',micro:'microbiologia',bioq:'reagentes-de-bioquimica',hemat:'reagentes-de-hematologia-e-coagulacao',sorol:'reagentes-de-sorologia-e-imunologia',controle:'controles-e-calibradores',tr:'testes-rapidos',equip:'equipamentos-e-acessorios',eqbioq:'equipamentos-de-bioquimica',eqhemat:'equipamentos-de-hematologia',eqvet:'equipamentos-veterinarios',vidraria:'vidraria-de-laboratorio'};
 function catHref(k){return CAT_URL[k]?'/categoria/'+CAT_URL[k]+'.html':'#shopAnchor';}
 var _DEPTOF={};function deptOf(catCode){var k=String(catCode);if(_DEPTOF.hasOwnProperty(k))return _DEPTOF[k];for(var d of DEPTS){if(d.cats.indexOf(catCode)>-1)return (_DEPTOF[k]=d.key);}return (_DEPTOF[k]='outros');}
 
@@ -118,14 +121,13 @@ function precoItem(x){var r=(window.PRECOS||{})[x.c];var b=r&&r[1]?r[1]:0;if(b&&
 function precoBase(x){var r=(window.PRECOS||{})[x.c];return r&&r[1]?r[1]:0;}
 
 /* 02/11/2026: Equipamentos sobe para o topo das abas de categorias (microscópios, centrífugas); analisadores em comodato logo depois */
-function DEPTS_TOPO(){var t=DEPTS.filter(function(d){return d.key==='equip';});return t.concat(DEPTS.filter(function(d){return d.key!=='equip';}));}
+function DEPTS_TOPO(){var T=['eqbioq','eqhemat','eqvet','equip'];return DEPTS.filter(function(d){return T.indexOf(d.key)>-1;}).concat(DEPTS.filter(function(d){return T.indexOf(d.key)<0;}));}
 function montarDeptNav(){
   var el=document.getElementById('deptNav');
   var html='<div class="dept all" onclick="setDept(\'\')">☰ Todos os departamentos</div>';
   DEPTS_TOPO().forEach(function(d){
     var n=CATALOG.filter(p=>deptOf(p.k)===d.key).length;
     if(n>0) html+='<div class="dept" data-d="'+d.key+'" onclick="setDept(\''+d.key+'\')">'+d.icon+' '+d.nome+'</div>';
-    if(d.key==='equip') html+='<div class="dept" onclick="location.href=\'/equipamentos-comodato.html\'">🧬 Analisadores (comodato)</div>';
   });
   el.innerHTML=html;
 }
@@ -134,7 +136,6 @@ function montarCatTiles(){
   DEPTS_TOPO().forEach(function(d){
     var n=CATALOG.filter(p=>deptOf(p.k)===d.key).length; if(!n)return;
     html+='<div class="ctile" onclick="setDept(\''+d.key+'\')"><div class="ci">'+d.icon+'</div><div><b>'+d.nome+'</b><small class="'+(n<30?'poucos':'')+'">'+n+' produto'+(n>1?'s':'')+'</small></div></div>';
-    if(d.key==='equip') html+='<div class="ctile" onclick="location.href=\'/equipamentos-comodato.html\'"><div class="ci">🧬</div><div><b>Analisadores (comodato)</b><small>Bioquímica, eletrólitos e hematologia</small></div></div>';
   });
   if(!el.querySelector('.cph'))el.innerHTML=html;
   document.getElementById('footCats').innerHTML=DEPTS.filter(d=>CATALOG.some(p=>deptOf(p.k)===d.key)).slice(0,6).map(d=>'<a href="'+catHref(d.key)+'" onclick="setDept(\''+d.key+'\');return false">'+d.nome+'</a>').join('');
@@ -1221,7 +1222,7 @@ window.fgConsulta=function(auto){
   }).catch(function(){out.innerHTML='Não foi possível consultar agora. O frete aparece no carrinho.';});
 };
 try{var _fc=(fichaSalva()||{}).cep;if(_fc&&document.getElementById('fgCep')){document.getElementById('fgCep').value=String(_fc).replace(/\D/g,'').replace(/^(\d{5})(\d)/,'$1-$2');fgConsulta(true);}}catch(e){}
-var CATPH={tubo:1,tr:1,meio:1,micro:1,bioq:1,hemat:1,curativo:1,coletoram:1};
+var CATPH={tubo:1,tr:1,meio:1,micro:1,bioq:1,hemat:1,eqbioq:1,eqhemat:1,eqvet:1,curativo:1,coletoram:1};
 window.montarCatTiles=function(){
   var el=document.getElementById('catTiles');if(!el)return;var h='';
   Object.keys(CATPH).forEach(function(k){var d=DEPTS.find(function(x){return x.key===k;});if(!d)return;var n=CATALOG.filter(function(p){return deptOf(p.k)===k;}).length;if(!n)return;
@@ -1690,6 +1691,9 @@ try{
   ['Luvas e EPI',['luva','epi'],'luva'],
   ['Lâminas, cubetas e pipetas',['lamina','cubeta','pipeta'],'lamina'],
   ['Descartáveis e plásticos',['plast','hosp'],'plast'],
+  ['Equipamentos de bioquímica',['eqbioq'],'eqbioq'],
+  ['Equipamentos de hematologia',['eqhemat'],'eqhemat'],
+  ['Equipamentos veterinários',['eqvet'],'eqvet'],
   ['Equipamentos e acessórios',['equip'],'equip'],
   ['Vidraria de laboratório',['vidraria'],'vidraria']
  ];

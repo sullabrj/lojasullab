@@ -1432,5 +1432,12 @@
 {"c":"DV240","n":"Dessecador de vidro com tampa, torneira e disco de porcelana Ø 240 mm","m":"CRAL","k":"vidraria","img":"https://lojasullabrj.com.br/img/p/DV240.jpg","t":"img/t/0cc7893deabd.webp"},
 {"c":"DV300","n":"Dessecador de vidro com tampa, torneira e disco de porcelana Ø 300 mm","m":"CRAL","k":"vidraria","img":"https://lojasullabrj.com.br/img/p/DV300.jpg","t":"img/t/7228ed839132.webp"},
 {"c":"3469","n":"Seringa descartável 10 mL sem agulha, bico Luer Slip SR — caixa c/ 500 un","m":"SR","k":"seringa","img":"img/p/3469.webp","t":"img/t/dbc303253844.webp"},
-{"c":"SG25SA-1","n":"Seringa para gasometria 2,5 mL com heparina de lítio, Luer Lock, sem agulha Neolab — caixa c/ 100 un","m":"Neolab","k":"seringa","img":"img/p/SG25SA-1.webp","t":"img/t/9346b9f3e468.webp"}
+{"c":"SG25SA-1","n":"Seringa para gasometria 2,5 mL com heparina de lítio, Luer Lock, sem agulha Neolab — caixa c/ 100 un","m":"Neolab","k":"seringa","img":"img/p/SG25SA-1.webp","t":"img/t/9346b9f3e468.webp"},
+{"c":"EXC400","n":"Analisador automático de bioquímica EXC 400 — 400 testes/h, Zybio","m":"Zybio","k":"eqbioq","img":"img/p/EXC400.webp","t":"img/t/9f3d05e30246.webp"},
+{"c":"EXC200","n":"Analisador automático de bioquímica EXC 200 — até 240 testes/h, Zybio","m":"Zybio","k":"eqbioq","img":"img/p/EXC200.webp","t":"img/t/ac2a3b8a2564.webp"},
+{"c":"EHC120","n":"Analisador automático de bioquímica EHC-120 — até 130 testes/h, Equip Bio","m":"Equip Bio","k":"eqbioq","img":"img/p/EHC120.webp","t":"img/t/05321a8986cb.webp"},
+{"c":"XI921","n":"Analisador eletrolítico XI-921 — Na, K, Cl, Ca e pH, Equip Ion","m":"Equip Ion","k":"eqbioq","img":"img/p/XI921.webp","t":"img/t/2852627c9c90.webp"},
+{"c":"Z50","n":"Analisador hematológico Z50 — 5 partes (5-diff), Zybio","m":"Zybio","k":"eqhemat","img":"img/p/Z50.webp","t":"img/t/265c2feb7972.webp"},
+{"c":"EXZ6000","n":"Analisador hematológico EXZ 6000 com carregador automático, Zybio","m":"Zybio","k":"eqhemat","img":"img/p/EXZ6000.webp","t":"img/t/d085fa878819.webp"},
+{"c":"Z4VET","n":"Analisador de hematologia veterinário Z4 VET — 4 diff, Zybio","m":"Zybio","k":"eqvet","img":"img/p/Z4VET.webp","t":"img/t/b2b1ebd2c12d.webp"}
 ]
