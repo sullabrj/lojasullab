@@ -1090,8 +1090,8 @@ try{
    para carrinho ambiente (o envio viraria isopor); em carrinho refrigerado só sugere NewProv/refrigerado. */
 /* Mapa: para cada departamento, 'linha' = mesma linha (1º) e 'comp' = complemento (2º). */
 var REL={
-  tubo:{linha:['tubo'],comp:['agulha','coletoram','plast','lanceta','curativo']},
-  agulha:{linha:['agulha'],comp:['tubo','coletoram','plast','lanceta','curativo']},
+  tubo:{linha:['tubo'],comp:['agulha','coletoram','tr','pipeta','lamina','plast','curativo','lanceta']},
+  agulha:{linha:['agulha'],comp:['tubo','coletoram','tr','pipeta','lamina','plast','curativo','lanceta']},
   lanceta:{linha:['lanceta'],comp:['tr','curativo']},
   tr:{linha:['tr'],comp:['lanceta','curativo']},
   meio:{linha:['meio'],comp:['micro','plast','lamina']},
@@ -1104,7 +1104,7 @@ var REL={
   pipeta:{linha:['pipeta'],comp:['plast','cubeta']},
   lamina:{linha:['lamina'],comp:['micro','meio','lanceta']},
   curativo:{linha:['curativo'],comp:['lanceta','agulha']},
-  coletoram:{linha:['coletoram'],comp:['tubo','agulha','plast','curativo']},
+  coletoram:{linha:['coletoram'],comp:['tubo','agulha','pipeta','lamina','plast','curativo']},
   plast:{linha:['plast'],comp:['pipeta','meio']},
   vidraria:{linha:['vidraria'],comp:['plast','pipeta']},
   equip:{linha:['equip'],comp:['pipeta','cubeta']}
