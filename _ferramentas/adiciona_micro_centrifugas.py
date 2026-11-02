@@ -53,6 +53,24 @@ for d in RAW:
     it['img'] = IMG_CRAL % it['cod']
     ITENS.append(it)
 
+# fotos já trocadas pelo workflow (arquivo local): nunca voltar ao link da CRAL
+_cat = {p_['c']: p_ for p_ in json.load(open(R + 'data/catalogo.json', encoding='utf-8'))}
+for it in ITENS:
+    if it['cod'] in _cat and _cat[it['cod']].get('img'):
+        it['img'] = _cat[it['cod']]['img']
+
+# microscópios: ficha completa (dados_microscopios.py); a página mantém o endereço que já existe
+from dados_microscopios import ITENS as MICD
+_slug = {}
+for _a in glob.glob(R + 'p/microscopio-*.html'):
+    _m = re.search(r'"sku": "([^"]+)"', open(_a, encoding='utf-8').read())
+    if _m:
+        _slug[_m.group(1)] = os.path.basename(_a)[:-5]
+MIC = []
+for cod, d in MICD.items():
+    MIC.append(dict(d, cod=cod, nome=_cat[cod]['n'], slug=_slug[cod], k='microsc', venda=None, img=_cat[cod]['img'],
+                    url=f'{SITE}/p/{_slug[cod]}.html'))
+
 # ---------------------------------------------------------------- 1) preços dos microscópios (todos os arquivos)
 pre = ds.ler_precos()
 trocas = []
@@ -100,6 +118,9 @@ ds.gravar_catalogo(seed)
 kw = json.load(open(R + 'kw.json', encoding='utf-8'))
 ft = json.load(open(R + 'ft.json', encoding='utf-8'))
 fj = json.load(open(R + 'data/ficha.json', encoding='utf-8'))
+for it in MIC:
+    ft[it['cod']] = ' · '.join(t + ': ' + v for t, v in it['spec'][:8])
+    fj[it['cod']] = {'rows': [[t, v] for t, v in it['spec']], 'why': it['dif'], 'desc': it['desc']}
 for it in ITENS:
     kw[it['cod']] = it['kw']
     ft[it['cod']] = ' · '.join(t + ': ' + v for t, v in it['spec'][:8])
@@ -107,6 +128,9 @@ for it in ITENS:
 json.dump(kw, open(R + 'kw.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 json.dump(ft, open(R + 'ft.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 json.dump(fj, open(R + 'data/ficha.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+
+for it in MIC:
+    it['venda'] = MICROS[it['cod']][1]
 
 # ---------------------------------------------------------------- 3) páginas dos microscópios: nova categoria
 ARQ_MIC = {}
@@ -150,7 +174,7 @@ def card_rel(o):
 def pagina(it):
     cod, n = it['cod'], it['nome']
     ne = html.escape(n)
-    catn, cats = CATS['centrif'][0], CATS['centrif'][1]
+    catn, cats = CATS[it.get('k', 'centrif')][0], CATS[it.get('k', 'centrif')][1]
     preco = it['venda']
     titulo = f'{n} | SULLAB'
     if preco:
@@ -186,7 +210,7 @@ def pagina(it):
     tabela = '<table class="ft">' + ''.join(f'<tr><th>{html.escape(t)}</th><td>{html.escape(v)}</td></tr>' for t, v in it['spec']) + '</table>'
     difs = '<ul class="dif">' + ''.join(f'<li>{html.escape(x)}</li>' for x in it['dif']) + '</ul>'
     descs = ''.join(f'<p class="lead">{html.escape(x)}</p>' for x in it['desc'])
-    rel = ''.join(card_rel(o) for o in ITENS if o is not it and o['cod'] != it.get('espelho'))[:20000]
+    rel = ''.join(card_rel(o) for o in (MIC if it.get('k') == 'microsc' else ITENS) if o is not it and o['cod'] != it.get('espelho'))[:20000]
     faq_html = ''.join(f'<details><summary>{html.escape(q)}</summary><p>{html.escape(a)}</p></details>' for q, a in faq)
     return f'''<!DOCTYPE html><html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -220,13 +244,13 @@ def pagina(it):
 </div></div>
 <h2>Descrição</h2>{descs}<h2>Diferenciais</h2>{difs}<h2>Ficha técnica completa</h2>{tabela}
 <h2>Perguntas frequentes</h2><div class="faq">{faq_html}</div>
-<h2>Outras centrífugas</h2><div class="rel rcards">
+<h2>Outros {'microscópios' if it.get('k') == 'microsc' else 'centrífugas'}</h2><div class="rel rcards">
 {rel}
 </div>
 {FOOT}'''
 
 
-for it in ITENS:
+for it in ITENS + MIC:
     open(R + 'p/' + it['slug'] + '.html', 'w', encoding='utf-8').write(pagina(it))
 
 # ---------------------------------------------------------------- 5) categorias
