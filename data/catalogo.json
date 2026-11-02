@@ -1440,13 +1440,13 @@
 {"c":"Z50","n":"Analisador hematológico Z50 — 5 partes (5-diff), Zybio","m":"Zybio","k":"eqhemat","img":"img/p/Z50.webp","t":"img/t/265c2feb7972.webp"},
 {"c":"EXZ6000","n":"Analisador hematológico EXZ 6000 com carregador automático, Zybio","m":"Zybio","k":"eqhemat","img":"img/p/EXZ6000.webp","t":"img/t/d085fa878819.webp"},
 {"c":"Z4VET","n":"Analisador de hematologia veterinário Z4 VET — 4 diff, Zybio","m":"Zybio","k":"eqvet","img":"img/p/Z4VET.webp","t":"img/t/b2b1ebd2c12d.webp"},
-{"c":"CT-10000","n":"Microcentrífuga CT-10000 — 10.000 rpm, microtubos de 0,2 a 2,0 mL, bivolt","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-10000.jpg","t":"img/t/98e46bdc9795.webp"},
-{"c":"CT-6000","n":"Microcentrífuga CT-6000 — 6.000 rpm, microtubos de 0,2 a 2,0 mL, bivolt","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-6000.jpg","t":"img/t/830e8c464b9c.webp"},
-{"c":"CT-4000Y","n":"Centrífuga de bancada CT-4000Y — 4.000 rpm, 8 tubos de 10 a 15 mL, bivolt","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-4000Y.jpg","t":"img/t/3c055b4464eb.webp"},
-{"c":"CT-4000Y12","n":"Centrífuga de bancada CT-4000Y12 — 4.000 rpm, 12 tubos de 10 a 15 mL, bivolt","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-4000Y12.jpg","t":"img/t/ac2e83f6acd7.webp"},
-{"c":"CT-12000","n":"Centrífuga para microhematócrito CT-12000 — 12.000 rpm, 24 capilares, 110 V","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-12000.jpg","t":"img/t/530ee1c49ac3.webp"},
-{"c":"CT-12000-220V","n":"Centrífuga para microhematócrito CT-12000 — 12.000 rpm, 24 capilares, 220 V","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-12000-220V.jpg","t":"img/t/530ee1c49ac3.webp"},
-{"c":"CT-4000-220V","n":"Centrífuga de bancada CT-4000 — 4.000 rpm, 24 tubos de 10 a 15 mL, 220 V","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-4000-220V.jpg","t":"img/t/9407df9d9609.webp"},
-{"c":"CT-16000","n":"Microcentrífuga digital CT-16000 — até 13.200 rpm, 18 tubos de 1,5 a 2,2 mL, 110 V","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-16000.jpg","t":"img/t/79bc22f95a83.webp"},
-{"c":"CT-16000-220V","n":"Microcentrífuga digital CT-16000 — até 13.200 rpm, 18 tubos de 1,5 a 2,2 mL, 220 V","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-16000-220V.jpg","t":"img/t/79bc22f95a83.webp"}
+{"c":"CT-10000","n":"Microcentrífuga CT-10000 — 10.000 rpm, microtubos de 0,2 a 2,0 mL, bivolt","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-10000.jpg","t":"img/t/d3e9abbcb0dc.webp"},
+{"c":"CT-6000","n":"Microcentrífuga CT-6000 — 6.000 rpm, microtubos de 0,2 a 2,0 mL, bivolt","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-6000.jpg","t":"img/t/ed572abc99f2.webp"},
+{"c":"CT-4000Y","n":"Centrífuga de bancada CT-4000Y — 4.000 rpm, 8 tubos de 10 a 15 mL, bivolt","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-4000Y.jpg","t":"img/t/2d21d4494ee6.webp"},
+{"c":"CT-4000Y12","n":"Centrífuga de bancada CT-4000Y12 — 4.000 rpm, 12 tubos de 10 a 15 mL, bivolt","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-4000Y12.jpg","t":"img/t/6604a94d01b2.webp"},
+{"c":"CT-12000","n":"Centrífuga para microhematócrito CT-12000 — 12.000 rpm, 24 capilares, 110 V","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-12000.jpg","t":"img/t/1fcb045f6fc4.webp"},
+{"c":"CT-12000-220V","n":"Centrífuga para microhematócrito CT-12000 — 12.000 rpm, 24 capilares, 220 V","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-12000-220V.jpg","t":"img/t/1fcb045f6fc4.webp"},
+{"c":"CT-4000-220V","n":"Centrífuga de bancada CT-4000 — 4.000 rpm, 24 tubos de 10 a 15 mL, 220 V","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-4000-220V.jpg","t":"img/t/30f47abcd3f8.webp"},
+{"c":"CT-16000","n":"Microcentrífuga digital CT-16000 — até 13.200 rpm, 18 tubos de 1,5 a 2,2 mL, 110 V","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-16000.jpg","t":"img/t/d795e8e1f942.webp"},
+{"c":"CT-16000-220V","n":"Microcentrífuga digital CT-16000 — até 13.200 rpm, 18 tubos de 1,5 a 2,2 mL, 220 V","m":"CRAL","k":"centrif","img":"https://lojasullabrj.com.br/img/p/CT-16000-220V.jpg","t":"img/t/d795e8e1f942.webp"}
 ]
