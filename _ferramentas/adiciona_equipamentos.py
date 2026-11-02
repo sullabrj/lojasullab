@@ -16,7 +16,7 @@ R = ds.R
 SITE = 'https://lojasullabrj.com.br'
 HOJE = '2026-11-02'
 FONTE = '/mnt/user-data/uploads/Claude/tmp/equip_img/'
-COMODATO = 'Aparelho fornecido em comodato ou aluguel, mediante contrato — sem preço de tabela. Peça uma proposta que combinamos as condições, o fornecimento dos reagentes e a instalação.'
+COMODATO = 'Equipamento disponível em comodato ou aluguel, mediante contrato. Solicite uma proposta.'
 
 CATS = {
  'eqbioq': ('Equipamentos de bioquímica', 'equipamentos-de-bioquimica', '🧪',
@@ -26,106 +26,10 @@ CATS = {
  'eqvet': ('Equipamentos veterinários', 'equipamentos-veterinarios', '🐾',
             'Analisador de hematologia veterinário para clínicas e laboratórios veterinários, em comodato ou aluguel mediante contrato.'),
 }
-ITENS = [
- {'cod': 'EXC400', 'k': 'eqbioq', 'm': 'Zybio', 'foto': 'equip_EXC400b.png',
-  'nome': 'Analisador automático de bioquímica EXC 400 — 400 testes/h, Zybio',
-  'slug': 'analisador-automatico-de-bioquimica-exc-400-zybio-exc400',
-  'ficha': ['Analisador químico automatizado de chão para rotina de médio e grande porte',
-            'Rendimento constante de 400 testes por hora, com prioridade para amostras STAT durante a rotina',
-            '80 posições de reagente com refrigeração ininterrupta 24 h; 100 posições de amostra, incluindo 5 de emergência',
-            'Volume de reação de 90 a 450 µL; consumo de água de até 20 L/h',
-            '12 comprimentos de onda (340 a 800 nm); lâmpada halógena de tungstênio com cerca de 2.000 h de uso',
-            'Metodologias: ponto final, tempo fixo e cinética; calibração de um ponto, dois pontos e multipontos',
-            'Pré-aquecimento e limpeza automáticos; cubeta de quartzo opcional para uso prolongado',
-            'Interface LIS bidirecional; impressão automática dos resultados; sistema Windows 10',
-            'Marca: Zybio · Modelo: EXC 400'],
-  'kw': 'analisador automatico bioquimica exc 400 exc400 zybio equipamento aparelho 400 testes hora comodato aluguel bioquimico',
-  'sobre': 'O EXC 400 é um analisador químico automatizado de chão que executa 400 testes por hora e combina funções avançadas e versáteis para testes de alta qualidade, com tempo de resposta menor e custo operacional reduzido. Tem 80 posições de reagente refrigeradas, volume de aspiração reduzido para reagente e amostra, economia de água e interface LIS bidirecional. Indicado para laboratórios de médio e grande porte.'},
- {'cod': 'EXC200', 'k': 'eqbioq', 'm': 'Zybio', 'foto': 'equip_EXC200.png',
-  'nome': 'Analisador automático de bioquímica EXC 200 — até 240 testes/h, Zybio',
-  'slug': 'analisador-automatico-de-bioquimica-exc-200-zybio-exc200',
-  'ficha': ['Analisador automático de bioquímica compacto para laboratórios de pequeno e médio porte',
-            'Rendimento de até 240 testes por hora; bioquímica e turbidimetria',
-            'Tela sensível ao toque colorida, com menu de navegação intuitivo e sistema operacional integrado',
-            'Volume de reação de 90 µL; consumo de água inferior a 5 L/h; absorção de reagente com passo de 0,5 µL',
-            'Cubeta de quartzo permanente e semipermanente; lavagem das cubetas em 6 etapas',
-            'Resfriamento ininterrupto de 24 h dos reagentes; carry-over de 0,005%',
-            'Sonda com detecção de nível de líquido, ajuste automático de profundidade e proteção contra colisão',
-            'Leitura de absorbância com linearidade de 0 a 4,0 Abs; interface LIS bidirecional',
-            'Marca: Zybio · Modelo: EXC 200'],
-  'kw': 'analisador automatico bioquimica exc 200 exc200 zybio equipamento aparelho 240 testes hora compacto comodato aluguel bioquimico turbidimetria',
-  'sobre': 'O EXC 200 é um analisador automático de bioquímica pequeno no tamanho e grande na eficiência: rende até 240 testes por hora, com tela sensível ao toque e interface LIS bidirecional. Volume de reação baixo (90 µL) e menor consumo de água resultam em economia. Resfriamento de 24 horas mantém os reagentes em boas condições. Ideal para pequenos e médios laboratórios.'},
- {'cod': 'EHC120', 'k': 'eqbioq', 'm': 'Equip Bio', 'foto': 'equip_EHC120.png',
-  'nome': 'Analisador automático de bioquímica EHC-120 — até 130 testes/h, Equip Bio',
-  'slug': 'analisador-automatico-de-bioquimica-ehc-120-equip-bio-ehc120',
-  'ficha': ['Analisador automático de bioquímica compacto, para pequenos e médios laboratórios',
-            'Capacidade de até 130 testes por hora',
-            'Compartimento refrigerado para reagentes, com 20 a 40 posições; amostras e reagentes com posições adaptáveis',
-            'Cubeta de reação com função especial de transmissão ultravioleta; 60 cubetas',
-            '8 comprimentos de onda; lâmpada halógena de tungstênio',
-            'Ajuste automático da profundidade da sonda e proteção contra colisão da sonda de detecção de nível',
-            'Sistema espectrométrico de matriz totalmente selado; tela sensível ao toque integrada',
-            'Interface Bi-LIS; leitor de código de barras opcional',
-            'Marca: Equip Bio · Modelo: EHC-120'],
-  'kw': 'analisador automatico bioquimica ehc 120 ehc120 equip bio equipamento aparelho 130 testes hora compacto comodato aluguel bioquimico',
-  'sobre': 'O EHC-120 é um analisador automático de bioquímica preciso, compacto e estável, com capacidade de até 130 testes por hora. Compartimento refrigerado para reagentes, posições de amostra e reagente adaptáveis, sistema espectrométrico totalmente selado e tela sensível ao toque com interface Bi-LIS. Indicado para pequenos e médios laboratórios.'},
- {'cod': 'XI921', 'k': 'eqbioq', 'm': 'Equip Ion', 'foto': 'equip_XI921.png',
-  'nome': 'Analisador eletrolítico XI-921 — Na, K, Cl, Ca e pH, Equip Ion',
-  'slug': 'analisador-eletrolitico-xi-921-equip-ion-xi921',
-  'ficha': ['Analisador eletrolítico por eletrodo íon seletivo (medição direta)',
-            'Mede sódio (Na⁺), potássio (K⁺), cloreto (Cl⁻), cálcio (Ca²⁺) e pH',
-            'Amostras: soro, plasma, sangue total e urina diluída',
-            'Calibração, pipetagem de amostra e limpeza da agulha automáticas',
-            'Ampla tela sensível ao toque; impressora térmica interna; porta serial RS-232',
-            'Carregador automático de amostras opcional, com 26 posições (2 de emergência)',
-            'Leitor de código de barras opcional para identificação das amostras',
-            'Disponível com e sem carregador automático',
-            'Marca: Equip Ion · Modelo: XI-921'],
-  'kw': 'analisador eletrolitico xi 921 xi921 equip ion eletrólitos ions sodio potassio cloreto calcio ph eletrodo seletivo comodato aluguel',
-  'sobre': 'O XI-921 é um analisador eletrolítico compacto, eficiente e fácil de usar, com excelente precisão e confiabilidade, alta performance, baixo custo de manutenção e eletrodos altamente duráveis. A calibração, a pipetagem da amostra e a limpeza da agulha são automáticas. Pode ser equipado com carregador automático de amostras e leitor de código de barras.'},
- {'cod': 'Z50', 'k': 'eqhemat', 'm': 'Zybio', 'foto': 'equip_Z50_ok.png',
-  'nome': 'Analisador hematológico Z50 — 5 partes (5-diff), Zybio',
-  'slug': 'analisador-hematologico-z50-5-partes-zybio-z50',
-  'ficha': ['Analisador hematológico automático de 5 partes (hemograma completo com diferencial de 5 partes)',
-            'CBC + 5 DIFF com 25 parâmetros relatáveis e 4 parâmetros de pesquisa',
-            '2 histogramas (RBC e PLT), 1 diagrama de dispersão 2D (WBC/BASO) e 1 diagrama 3D para diferenciação dos leucócitos',
-            'Dispersão a laser em 3 ângulos e citometria de fluxo; impedância para contagem de WBC/BASO, RBC e PLT',
-            'Apenas 18 µL de sangue total venoso ou capilar por exame',
-            'Três reagentes no modo CBC + DIFF; 2 lises embutidos; sistema hidráulico otimizado',
-            'Mais de 20 sinalizadores inteligentes para alterações e morfologia anormal das células',
-            'Tela sensível ao toque de alta definição; design compacto',
-            'Marca: Zybio · Modelo: Z50'],
-  'kw': 'analisador hematologico z50 zybio hemograma 5 partes 5 diff contador hematologico equipamento aparelho hematologia comodato aluguel',
-  'sobre': 'O Z50 é um analisador de hematologia de 5 partes de design compacto, que usa dispersão a laser em três ângulos e citometria de fluxo para a diferenciação dos leucócitos, mesmo em amostras com eosinofilia alta. Com apenas 18 µL de sangue e três reagentes no modo CBC + DIFF, oferece bom desempenho para laboratórios de pequeno e médio porte.'},
- {'cod': 'EXZ6000', 'k': 'eqhemat', 'm': 'Zybio', 'foto': 'equip_EXZ6000.png',
-  'nome': 'Analisador hematológico EXZ 6000 com carregador automático, Zybio',
-  'slug': 'analisador-hematologico-exz-6000-carregador-automatico-zybio-exz6000',
-  'ficha': ['Analisador hematológico automatizado de 5 partes, com carregador automático de até 50 tubos de amostra',
-            '29 parâmetros, 5 diagramas de dispersão e 3 histogramas',
-            'Citometria de fluxo com tecnologia de dispersão a laser',
-            'Apenas 20 µL de sangue total, inclusive em tubo fechado com o carregador automático',
-            'Rendimento de até 90 amostras por hora no modo CBC',
-            'Linearidade de WBC de 500,00 ×10⁹/L e de PLT de 5000 ×10⁹/L',
-            'Tela sensível ao toque de 12,1 polegadas; valores-alvo de CQ importados via pendrive (USB)',
-            'Informações do reagente carregadas automaticamente por radiofrequência (RF)',
-            'Marca: Zybio · Modelo: EXZ 6000'],
-  'kw': 'analisador hematologico exz 6000 exz6000 zybio hemograma carregador automatico 5 partes contador hematologico equipamento hematologia comodato aluguel',
-  'sobre': 'O EXZ 6000 é um analisador hematológico automatizado com carregador automático que processa até 50 tubos por vez, consumindo apenas 20 µL de sangue total em tubo fechado. Mede 29 parâmetros com citometria de fluxo e dispersão a laser. Ideal para laboratórios de médio e grande porte e aplicável ao atendimento pediátrico.'},
- {'cod': 'Z4VET', 'k': 'eqvet', 'm': 'Zybio', 'foto': 'equip_Z4VET.png',
-  'nome': 'Analisador de hematologia veterinário Z4 VET — 4 diff, Zybio',
-  'slug': 'analisador-de-hematologia-veterinario-z4-vet-4-diff-zybio-z4vet',
-  'ficha': ['Analisador de hematologia veterinário compacto de 4 partes (4 diff)',
-            '23 parâmetros e 4 histogramas (RBC, PLT, WBC e EOS)',
-            'Princípio de impedância (Coulter) com algoritmo para medição de eosinófilos, sem reagente extra',
-            'Até 60 amostras por hora; apenas 10 µL de sangue total',
-            'Cães, gatos, hamster, porquinho-da-índia, vaca, ovelha, coelho, vison, porco e alpaca',
-            'Tela sensível ao toque colorida de 10,4 polegadas; impressora térmica integrada ou externa opcional',
-            'Armazenamento de mais de 100.000 resultados; portas USB e rede',
-            'Lise integrado; manutenção simples, com limpeza de sonda e desentupimento automáticos',
-            'Marca: Zybio · Modelo: Z4 VET'],
-  'kw': 'analisador hematologia veterinario z4 vet z4vet zybio hemograma animais cao gato clinica veterinaria 4 diff contador equipamento comodato aluguel',
-  'sobre': 'O Z4 VET é um analisador de hematologia compacto e poderoso, com 4 diff, 23 parâmetros e 4 histogramas, adaptado para pequenos laboratórios e clínicas veterinárias e como máquina de backup para hospitais veterinários de médio e grande porte. Banco de dados com limites de referência de diversas espécies e alertas para resultados anormais.'},
-]
+from dados_equipamentos import ITENS as _D
+ITENS = []
+for d in _D:
+    it = dict(d); it['ficha'] = [t + ': ' + v for t, v in d['spec'][:6]]; it['sobre'] = ' '.join(d['desc']); ITENS.append(it)
 for it in ITENS:
     it['url'] = f'{SITE}/p/{it["slug"]}.html'
     it['img'] = f'{SITE}/img/p/{it["cod"]}.jpg'
@@ -174,9 +78,13 @@ for it in ITENS:
 ds.gravar_catalogo(seed)
 kw = json.load(open(R + 'kw.json', encoding='utf-8')); ft = json.load(open(R + 'ft.json', encoding='utf-8'))
 for it in ITENS:
-    kw[it['cod']] = it['kw']; ft[it['cod']] = ' · '.join(x.rstrip('.') + '.' for x in it['ficha'])
+    kw[it['cod']] = it['kw']; ft[it['cod']] = ' · '.join(t + ': ' + v for t, v in it['spec'][:8])
 json.dump(kw, open(R + 'kw.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 json.dump(ft, open(R + 'ft.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+fj = json.load(open(R + 'data/ficha.json', encoding='utf-8'))
+for it in ITENS:
+    fj[it['cod']] = {'rows': [[t, v] for t, v in it['spec']], 'why': it['dif'], 'desc': it['desc']}
+json.dump(fj, open(R + 'data/ficha.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 info = {p['c']: p for p in seed}
 
 # ---- páginas de produto
@@ -186,16 +94,17 @@ FOOT = tpl[tpl.find('<footer class="siteftr">'):]
 RETURN = {"@type": "MerchantReturnPolicy", "applicableCountry": "BR", "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
           "merchantReturnDays": 7, "returnMethod": "https://schema.org/ReturnByMail", "returnFees": "https://schema.org/FreeReturn",
           "refundType": "https://schema.org/FullRefund", "merchantReturnLink": SITE + "/trocas-e-devolucoes.html"}
+EXTRA = '.ft{width:100%;border-collapse:collapse;font-size:14px;margin:6px 0 18px}.ft th{text-align:left;width:34%;background:#f1f6fa;color:#24455e;font-weight:600;vertical-align:top}.ft th,.ft td{padding:8px 10px;border-bottom:1px solid #e1e8ee}.dif{padding-left:20px;line-height:1.55}.dif li{margin:4px 0}.tipo{color:#4a5a68;margin:6px 0 10px;font-weight:600}'
 def card(o):
     n = html.escape(o['nome'])
-    return f'<a class="rc" href="{o["url"]}"><img src="{o["img"]}" alt="{n}" loading="lazy" width="160" height="160"><span class="rn">{n}</span><b class="rp sc">Sob consulta</b><span class="rv">Ver produto</span></a>'
+    return f'<a class="rc" href="{o["url"]}"><img src="{o["img"]}" alt="{n}" loading="lazy" width="160" height="160"><span class="rn">{n}</span><b class="rp sc">Comodato / aluguel</b><span class="rv">Ver aparelho</span></a>'
 def pagina(it):
     cod, n = it['cod'], it['nome']; ne = html.escape(n)
     catn, cats = it['cat'][0], it['cat'][1]
     titulo = f'{n} | SULLAB'
-    desc = f'{n}. {COMODATO}'
+    desc = f'{n}. ' + it['desc'][0] + ' ' + COMODATO
     de = html.escape(desc)
-    fdesc = ' · '.join(x.rstrip('.') + '.' for x in it['ficha'])
+    fdesc = ' '.join(it['desc'])
     prod = {"@context": "https://schema.org/", "@type": "Product", "name": n, "sku": cod, "category": catn, "description": fdesc,
             "brand": {"@type": "Brand", "name": it['m']}, "image": it['img'], "mpn": cod,
             "offers": {"@type": "Offer", "priceCurrency": "BRL", "availability": "https://schema.org/InStock", "url": it['url'],
@@ -209,9 +118,11 @@ def pagina(it):
            f'<div class="th"><button type="button" class="on" aria-label="Foto do produto" '
            f'onclick="var p=document.getElementById(\'ph\');p.style.backgroundImage=&quot;url(\'{img}\')&quot;;var b=this.parentNode.children;for(var i=0;i<b.length;i++)b[i].className=\'\';this.className=\'on\'">'
            f'<img decoding="async" src="{imgw}" alt="Foto do produto" loading="lazy" width="1240" height="1240"></button></div></div>')
-    ficha = '<br>'.join(html.escape(x.rstrip('.') + '.') for x in it['ficha'])
+    tabela = '<table class="ft">' + ''.join(f'<tr><th>{html.escape(t)}</th><td>{html.escape(v)}</td></tr>' for t, v in it['spec']) + '</table>'
+    difs = '<ul class="dif">' + ''.join(f'<li>{html.escape(x)}</li>' for x in it['dif']) + '</ul>'
+    descs = ''.join(f'<p class="lead">{html.escape(x)}</p>' for x in it['desc'])
     preco_html = f'<div class="preco">{html.escape(COMODATO)}</div>'
-    botoes = f'<a class="btn-whats" href="{SITE}/?orcar={cod}" target="_blank" rel="noopener">📄 Pedir orçamento</a>'
+    botoes = f'<a class="btn-whats" href="{SITE}/?proposta={cod}" target="_blank" rel="noopener">📄 Solicitar proposta</a>'
     rel = ''.join(card(o) for o in ITENS if o is not it)
     return f'''<!DOCTYPE html><html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -226,7 +137,7 @@ def pagina(it):
 
 <script type="application/ld+json">{json.dumps(prod, ensure_ascii=False)}</script>
 <script type="application/ld+json">{json.dumps(bc, ensure_ascii=False)}</script>
-{STYLE.replace('%COD%', cod)}</head><body>
+{STYLE.replace('%COD%', cod).replace('</style>', EXTRA + '</style>')}</head><body>
 <div class="wrap">
 <div class="top"><img src="{SITE}/img/sullab-topo.webp" alt="SULLAB" width="65" height="34"><a href="{SITE}/">SULLAB</a></div>
 <div class="crumb"><a href="{SITE}/">Início</a> › <a href="{SITE}/categoria/{cats}.html">{catn}</a> › {ne}</div>
@@ -234,14 +145,14 @@ def pagina(it):
 {gal}
 <div>
 <h1>{ne}</h1>
-<div class="brand"><b>Marca:</b> {html.escape(it['m'])} · <b>Código:</b> {cod}</div>{preco_html}<div class="tb"><span>📄 Comodato ou aluguel</span><span>🔧 Assistência técnica</span></div><div class="ficha">🔬 <b>Ficha técnica</b><br>{ficha}</div>
+<div class="brand"><b>Marca:</b> {html.escape(it['m'])} · <b>Código:</b> {cod}</div>{preco_html}<div class="tb"><span>📄 Comodato ou aluguel</span><span>🔧 Assistência técnica</span></div><p class="tipo">{html.escape(it['tipo'])}</p>
 {botoes}
 <div>
 <a class="btn2" href="{SITE}/categoria/{cats}.html">Ver {catn}</a>
 </div>
 
 </div></div>
-<h2>Sobre o produto</h2><p class="lead">{html.escape(it['sobre'])}</p>
+<h2>Descrição</h2>{descs}<h2>Diferenciais</h2>{difs}<h2>Ficha técnica completa</h2>{tabela}
 <h2>Outros equipamentos</h2><div class="rel rcards">
 {rel}
 </div>
@@ -256,10 +167,10 @@ foot = ag[ag.find('<footer class="siteftr">'):]
 for k, (nome, slug, ic, lead) in CATS.items():
     lista = [it for it in ITENS if it['k'] == k]
     URLC = f'{SITE}/categoria/{slug}.html'
-    grid = '\n'.join(f'<a href="{it["url"]}"><span class="nm">{html.escape(it["nome"][:80])}</span><span class="prc">Sob consulta →</span><span class="cs">cód. {it["cod"]}</span></a>' for it in lista)
-    faq = [("Esses aparelhos são vendidos?", "Trabalhamos com os analisadores em comodato ou aluguel, mediante contrato. Não há preço de tabela: as condições são combinadas com o laboratório, junto com o fornecimento dos reagentes."),
+    grid = '\n'.join(f'<a href="{it["url"]}"><span class="nm">{html.escape(it["nome"][:80])}</span><span class="prc">Comodato / aluguel →</span><span class="cs">cód. {it["cod"]}</span></a>' for it in lista)
+    faq = [("Como é o fornecimento desses aparelhos?", "Os analisadores são fornecidos em comodato ou aluguel, mediante contrato, com as condições combinadas junto com o fornecimento dos reagentes."),
            ("Vocês fornecem os reagentes e a assistência técnica?", "Sim. A SULLAB fornece os reagentes e soluções e conta com equipe técnica de manutenção de analisadores de bioquímica e hematologia."),
-           ("Como peço uma proposta?", "Abra o aparelho desejado e clique em Pedir orçamento. A equipe responde pelo WhatsApp.")]
+           ("Como peço uma proposta?", "Abra o aparelho desejado e clique em Solicitar proposta. A equipe responde pelo WhatsApp.")]
     faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
     bc_ld = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Início", "item": SITE + "/"}, {"@type": "ListItem", "position": 2, "name": nome, "item": URLC}]}
     il_ld = {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": it['url'], "name": it['nome']} for i, it in enumerate(lista)]}

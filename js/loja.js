@@ -299,7 +299,8 @@ function render(){
     var i=CATALOG.indexOf(p);
     var selo=((window.PIX3&&window.PIX3[p.c])||(window.TR_TOP&&window.TR_TOP[p.c]))?'<span class="selo best">🏆 Preço exclusivo do site</span>':p.selo==='hot'?'<span class="selo hot">🔥 Mais procurado</span>':(p.selo==='top'?'<span class="selo">⭐ Mais vendido</span>':'');
     var precoBloco='';var _pr=(window.PRECOS||{})[p.c];if(_pr&&_pr[1]){precoBloco='<div style="margin:6px 0 2px;line-height:1.32"><div style="font-size:19px;font-weight:800;color:#2f9e63">'+brl(_pr[1])+'</div>'+unitLn(p.c,_pr[1])+'<div class="pixl">💚 <b>'+brl(Math.round(_pr[1]*(100-pixPct(p.c)*100))/100)+'</b> no Pix <span>'+Math.round(pixPct(p.c)*100)+'% off</span></div>'+seloMinHtml(p.c)+'</div>';}
-    var btns='<div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="add" onclick="addCart('+i+',this)">+ Carrinho</button>';
+    var _ap=isAparelho(p);if(_ap)precoBloco='<div style="margin:6px 0 2px;font-size:12.5px;font-weight:700;color:#24455e;line-height:1.3">Comodato ou aluguel<br><span style="font-weight:500;color:#5f6b7c">mediante contrato</span></div>';
+    var btns=_ap?'<button class="add" style="width:100%" onclick="event.stopPropagation();propostaAparelho('+i+')">Solicitar proposta</button>':'<div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="add" onclick="addCart('+i+',this)">+ Carrinho</button>';
     return '<div class="prod" data-c="'+String(p.c).replace(/"/g,'&quot;')+'" onclick="cardClick(event,'+i+')">'+selo+
       '<div class="ph"><img '+imgMini(p,'160px')+' loading="lazy" decoding="async" width="160" height="160" alt="'+p.n+'" onerror="this.removeAttribute(\'srcset\');this.src=\'/img/logo-sullab.png\';this.style.opacity=.35"></div>'+
       '<div class="pb"><span class="bc">'+p.m+' · cód. '+p.c+'</span>'+
@@ -1017,24 +1018,29 @@ function pmSwipe(){var st=document.getElementById('pmStage');if(!st||st.__sw)ret
   st.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;},{passive:true});
   st.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>40)pmNav(dx<0?1:-1);},{passive:true});}
 document.addEventListener('keydown',function(e){var m=document.getElementById('pmodal');if(!m||!m.classList.contains('on'))return;if(e.key==='ArrowRight')pmNav(1);else if(e.key==='ArrowLeft')pmNav(-1);});
+function isAparelho(p){return !!p&&['eqbioq','eqhemat','eqvet'].indexOf(p.k)>-1;}
+var APARELHO_TXT='Equipamento disponível em <b>comodato ou aluguel</b>, mediante contrato.';
+function propostaAparelho(i){var p=CATALOG[i];if(!p)return;abrirContatoWA('proposta','Equipamento: '+p.n+' (cód. '+p.c+')\nTenho interesse em comodato/aluguel. ');}
 function abrirProd(i){
   var p=CATALOG[i];
   var catNome=(DEPTS.find(function(d){return d.key===deptOf(p.k);})||{}).nome||'';
   var _prm=(window.PRECOS||{})[p.c];var precoHtml=(_prm&&_prm[1])?(((window.PIX3&&window.PIX3[p.c])?'<div style="display:inline-block;background:#1F4E79;color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;margin-top:8px">🏆 Preço exclusivo do site</div>':'')+'<div style="margin-top:10px;line-height:1.45"><div style="font-size:26px;font-weight:800;color:#2f9e63">'+brl(_prm[1])+'</div>'+unitLn(p.c,_prm[1])+'<div style="font-size:13px;color:#3a4a63;font-weight:700">'+brl(Math.round(_prm[1]*(100-pixPct(p.c)*100))/100)+' no Pix</div><div class="pixl big">💚 Pague no Pix e ganhe <b>'+Math.round(pixPct(p.c)*100)+'% de desconto</b></div><div style="font-size:12px;color:#5f6b7c;margin-top:6px">Preço único · NF-e em todo pedido · frete calculado pelo CEP</div></div>'):('<div class="b2bsob" style="font-size:14px;margin-top:8px">Preço sob consulta — solicite o orçamento (NF-e · atacado)</div>');
-  var acao='<div style="display:flex;gap:10px;align-items:center;margin-top:16px"><div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="btn navy" style="flex:1" onclick="addCart('+i+',this)">🛒 Adicionar</button></div>';
+  var _apar=isAparelho(p);
+  if(_apar){precoHtml='<div style="margin-top:10px;font-size:14.5px;line-height:1.45;color:#24455e;font-weight:600">'+APARELHO_TXT+'</div>';}
+  var acao=_apar?'<div style="margin-top:16px"><button class="btn navy" style="width:100%" onclick="propostaAparelho('+i+')">📄 Solicitar proposta</button></div>':'<div style="display:flex;gap:10px;align-items:center;margin-top:16px"><div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="btn navy" style="flex:1" onclick="addCart('+i+',this)">🛒 Adicionar</button></div>';
   __pmL=pmLista(p);__pmI=0;
   document.getElementById('pmInner').innerHTML=
     '<div class="pmimg"><div class="pmstage" id="pmStage">'+(__pmL.length>1?'<button class="pmar l" onclick="pmNav(-1)" aria-label="Foto anterior">&#8249;</button>':'')+'<img id="pmMain" width="320" height="320" src="'+__pmL[0]+'" onerror="this.removeAttribute(\'srcset\');this.src=\'/img/logo-sullab.png\';this.style.opacity=.4" alt="'+p.n+'">'+(__pmL.length>1?'<button class="pmar r" onclick="pmNav(1)" aria-label="Próxima foto">&#8250;</button>':'')+'</div>'+(__pmL.length>1?'<div class="pmth" id="pmTh">'+__pmL.map(function(u,k){return '<img class="'+(k?'':'on')+'" width="58" height="58" src="'+u+'" onclick="pmGo('+k+')" alt="'+(k?'Informações técnicas':'Foto do produto')+'" onerror="this.remove();__pmL=__pmL.filter(function(x){return x!==this.getAttribute(\'src\')}.bind(this))">';}).join('')+'</div>':'')+'</div>'+
     '<div class="pmb"><button class="pmx" onclick="fecharProd()">×</button><div class="pml">'+
     '<span class="bc">'+p.m+' · cód. '+p.c+'</span><h3>'+p.n+'</h3>'+(catNome?'<div style="display:inline-block;font-size:11.5px;background:#eef2fb;color:var(--navy);padding:3px 10px;border-radius:8px;margin:2px 0 6px">🗂️ '+catNome+'</div>':'')+precoHtml+
-    '<div style="font-size:12px;color:var(--green-d);font-weight:700;margin-top:6px">'+(precoDe(p)>0?'✓ Preço de empresa (CNPJ) já aplicado':'')+'</div>'+
+    (_apar?'':'<div style="font-size:12px;color:var(--green-d);font-weight:700;margin-top:6px">'+(precoDe(p)>0?'✓ Preço de empresa (CNPJ) já aplicado':'')+'</div>')+
     acao+
-    '<div class="spec" style="margin-top:14px">🏷️ Direto da distribuidora autorizada, sem taxa de marketplace.<br>🧾 NF-e em todo pedido · 📦 envio em 24h · 🛡️ produto com procedência.</div></div>'+
+    (_apar?'<div class="spec" style="margin-top:14px">📄 Comodato ou aluguel, mediante contrato.<br>🧪 Fornecimento de reagentes e soluções · 🔧 Assistência técnica.</div></div>':'<div class="spec" style="margin-top:14px">🏷️ Direto da distribuidora autorizada, sem taxa de marketplace.<br>🧾 NF-e em todo pedido · 📦 envio em 24h · 🛡️ produto com procedência.</div></div>')+
     '<div class="pmr"><div id="pmFicha"></div></div>'+
     '</div>';
   document.getElementById('pmodal').classList.add('on');pmSwipe();
   var _fp=p;ensureFicha(function(){var el=document.getElementById('pmFicha');if(!el)return;var f=FICHA&&FICHA[_fp.c];
-    if(f&&(f.rows||[]).length){el.innerHTML='<div class="fichat"><div class="ft-t">🔬 Ficha técnica</div><table>'+f.rows.map(function(r){return '<tr><th>'+esc(r[0])+'</th><td>'+esc(r[1])+'</td></tr>';}).join('')+'</table>'+((f.why||[]).length?'<div class="ft-w"><b>Por que escolher</b><ul>'+f.why.map(function(w){return '<li>'+esc(w)+'</li>';}).join('')+'</ul></div>':'')+'</div>';return;}
+    if(f&&(f.rows||[]).length){el.innerHTML=((f.desc||[]).length?'<div class="fichat"><div class="ft-t">📝 Descrição</div><div style="font-size:13px;color:#40506b;line-height:1.55">'+f.desc.map(function(d){return '<p style="margin:0 0 8px">'+esc(d)+'</p>';}).join('')+'</div></div>':'')+'<div class="fichat"><div class="ft-t">🔬 Ficha técnica</div><table>'+f.rows.map(function(r){return '<tr><th>'+esc(r[0])+'</th><td>'+esc(r[1])+'</td></tr>';}).join('')+'</table>'+((f.why||[]).length?'<div class="ft-w"><b>'+(isAparelho(_fp)?'Diferenciais':'Por que escolher')+'</b><ul>'+f.why.map(function(w){return '<li>'+esc(w)+'</li>';}).join('')+'</ul></div>':'')+'</div>';return;}
     ensureFT(function(){if(FTMAP&&FTMAP[_fp.c])el.innerHTML='<div class="fichat"><div class="ft-t">🔬 Ficha técnica</div><div style="font-size:12.5px;color:#40506b;line-height:1.5">'+FTMAP[_fp.c].replace(/ · /g,'<br>')+'</div></div>';});});
   
 }
@@ -1233,6 +1239,7 @@ window.montarCatTiles=function(){
 try{montarCatTiles();}catch(e){}
 })();
 (function(){try{
+  var qp=new URLSearchParams(location.search).get('proposta');if(qp){try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}setTimeout(function(){try{var ix=CATALOG.findIndex(function(x){return String(x.c)===qp;});if(ix>-1)abrirProd(ix);}catch(e){}},900);}
   var q=new URLSearchParams(location.search).get('orcar');if(!q)return;
   try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}
   setTimeout(function(){try{
@@ -1318,7 +1325,7 @@ document.addEventListener('visibilitychange',function(){
 });
 
 var _ap3=window.abrirProd;
-window.abrirProd=function(i){_ap3.apply(this,arguments);try{var b=document.querySelector('#pmInner .pmb');if(b&&!b.querySelector('.trustp'))b.insertAdjacentHTML('beforeend','<div class="trustp"><a href="/sobre.html">🧾 NF-e em todo pedido</a><a href="/sobre.html">🛡️ Registro ANVISA quando exigido</a><a href="/sobre.html">🏆 Distribuidora há 40 anos</a><a href="/politica-de-entrega.html">🚚 Entrega com frota própria no RJ</a></div>');}catch(e){}};
+window.abrirProd=function(i){_ap3.apply(this,arguments);try{if(isAparelho(CATALOG[i]))return;var b=document.querySelector('#pmInner .pmb');if(b&&!b.querySelector('.trustp'))b.insertAdjacentHTML('beforeend','<div class="trustp"><a href="/sobre.html">🧾 NF-e em todo pedido</a><a href="/sobre.html">🛡️ Registro ANVISA quando exigido</a><a href="/sobre.html">🏆 Distribuidora há 40 anos</a><a href="/politica-de-entrega.html">🚚 Entrega com frota própria no RJ</a></div>');}catch(e){}};
 })();
 }catch(e){try{console.error(e);}catch(_){}}
 
@@ -1430,6 +1437,10 @@ window.abrirContatoWA=function(motivo,texto){
   if(MOTIVO==='duvida'){
     t('waqTit','Falar com a SULLAB');t('waqSub','Dúvida técnica ou sobre um pedido? Mandamos sua mensagem pelo WhatsApp. <b>Para comprar</b>, use o carrinho ou cole sua lista: é mais rápido.');
     t('waListaLb','Sua mensagem');t('waqBtn','Enviar pelo WhatsApp &rarr;');
+  }else if(MOTIVO==='proposta'){
+    t('waqTit','Solicitar proposta');t('waqSub','Informe seus dados: nossa equipe retorna com as condições de comodato ou aluguel, contrato, reagentes e instalação.');
+    t('waListaLb','Equipamento e observações');t('waqBtn','Enviar pelo WhatsApp &rarr;');
+    var cbx=document.getElementById('waqCart');if(cbx)cbx.style.display='none';
   }else if(MOTIVO==='equipe'){
     t('waqTit','Avisar a equipe');t('waqSub','Informe seus dados: procuramos os itens e mandamos o <b>link do carrinho pronto para pagar</b>.');
     t('waListaLb','Itens que você precisa');t('waqBtn','Enviar para a equipe &rarr;');
@@ -1443,6 +1454,7 @@ window.abrirContatoWA=function(motivo,texto){
 function _salvarParcial(){try{var f=fichaSalva(),m={nome:'waNome',tel:'waTel',cep:'waCep',doc:'waDoc',email:'waEmail',log:'waLog',num:'waNum',compl:'waCompl',bairro:'waBairro',cidade:'waCidade',uf:'waUf'},k;
   for(k in m){var v=val(m[k]);if(v)f[k]=(k==='uf'?v.toUpperCase():v);}f.doct=WA_DOCT;localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}}
 window.confirmarContatoWA=function(){
+  if(MOTIVO==='proposta'){var fp=_waLer(false);if(!fp)return;var tx=(fp.lista||'').trim();if(!tx)return waqErro('Informe o equipamento de interesse.');fecharContatoWA();abrirWhats('Olá! Quero solicitar uma proposta de comodato/aluguel.\n\n'+tx+'\n\n'+_fichaCompleta(fp));return;}
   if(MOTIVO==='duvida'){var f0=_waLer(false);if(f0)_enviarOrcamentoCom(f0,false);return;}
   if(MOTIVO==='equipe'){var fe=_waLer(false);if(fe)registrarPedidoEquipe(fe,'equipe');return;}
   var lista=val('waLista');
