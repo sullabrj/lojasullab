@@ -1230,7 +1230,7 @@ window.fgConsulta=function(auto){
   }).catch(function(){out.innerHTML='Não foi possível consultar agora. O frete aparece no carrinho.';});
 };
 try{var _fc=(fichaSalva()||{}).cep;if(_fc&&document.getElementById('fgCep')){document.getElementById('fgCep').value=String(_fc).replace(/\D/g,'').replace(/^(\d{5})(\d)/,'$1-$2');fgConsulta(true);}}catch(e){}
-var CATPH={tubo:1,tr:1,meio:1,micro:1,bioq:1,hemat:1,eqbioq:1,eqhemat:1,eqvet:1,microsc:1,curativo:1,coletoram:1};
+var CATPH={tubo:1,tr:1,meio:1,micro:1,bioq:1,hemat:1,eqbioq:1,eqhemat:1,eqvet:1,microsc:1,centrif:1,curativo:1,coletoram:1};
 window.montarCatTiles=function(){
   var el=document.getElementById('catTiles');if(!el)return;var h='';
   Object.keys(CATPH).forEach(function(k){var d=DEPTS.find(function(x){return x.key===k;});if(!d)return;var n=CATALOG.filter(function(p){return deptOf(p.k)===k;}).length;if(!n)return;
