@@ -427,7 +427,7 @@ function _gratisHtml(d){
   if(g&&g.falta&&_fMin>0){return h;}
   if(g&&g.falta&&soGreiner()){
     var sg=g.sugestoes&&g.sugestoes[0];
-    h+='<div class="gnudge"><div style="font-weight:800">Tubos e agulhas Vacuette com o menor preço do mercado: frete calculado pelo CEP, sem frete grátis nessa linha.</div>'+(sg?'<div style="font-size:11.5px;margin-top:4px">Leve junto <b>'+sg.q+' × '+String(_nomeCat(sg.c)).split(' · caixa')[0].slice(0,60)+'</b> ('+brl(sg.valor)+') e o frete grátis libera para o pedido todo. <button onclick="addRel(\''+sg.c+'\',this,'+sg.q+',\'gratis\')" style="margin-left:6px;background:var(--green-d);color:#fff;border:0;border-radius:8px;padding:4px 10px;font-weight:800;cursor:pointer">+ Acrescentar</button></div>':'')+'</div>';
+    h+='<div class="gnudge"><div style="font-weight:800">Tubos e agulhas Vacuette com o menor preço do mercado: frete calculado pelo CEP.</div>'+(sg?'<div style="font-size:11.5px;margin-top:4px">🎁 Quer <b>frete grátis</b>? Complete o pedido com <b>'+sg.q+' × '+String(_nomeCat(sg.c)).split(' · caixa')[0].slice(0,60)+'</b> ('+brl(sg.valor)+') e o frete grátis libera para o pedido todo. Descartáveis do dia a dia do laboratório ajudam a completar. <button onclick="addRel(\''+sg.c+'\',this,'+sg.q+',\'gratis\')" style="margin-left:6px;background:var(--green-d);color:#fff;border:0;border-radius:8px;padding:4px 10px;font-weight:800;cursor:pointer">+ Acrescentar</button></div>':'')+'</div>';
     return h;
   }
   if(g&&g.falta){
@@ -1090,8 +1090,8 @@ try{
    para carrinho ambiente (o envio viraria isopor); em carrinho refrigerado só sugere NewProv/refrigerado. */
 /* Mapa: para cada departamento, 'linha' = mesma linha (1º) e 'comp' = complemento (2º). */
 var REL={
-  tubo:{linha:['tubo'],comp:['agulha','plast','curativo']},
-  agulha:{linha:['agulha'],comp:['tubo','plast','curativo']},
+  tubo:{linha:['tubo'],comp:['agulha','coletoram','plast','lanceta','curativo']},
+  agulha:{linha:['agulha'],comp:['tubo','coletoram','plast','lanceta','curativo']},
   lanceta:{linha:['lanceta'],comp:['tr','curativo']},
   tr:{linha:['tr'],comp:['lanceta','curativo']},
   meio:{linha:['meio'],comp:['micro','plast','lamina']},
@@ -1104,7 +1104,7 @@ var REL={
   pipeta:{linha:['pipeta'],comp:['plast','cubeta']},
   lamina:{linha:['lamina'],comp:['micro','meio','lanceta']},
   curativo:{linha:['curativo'],comp:['lanceta','agulha']},
-  coletoram:{linha:['coletoram'],comp:['plast','tubo']},
+  coletoram:{linha:['coletoram'],comp:['tubo','agulha','plast','curativo']},
   plast:{linha:['plast'],comp:['pipeta','meio']},
   vidraria:{linha:['vidraria'],comp:['plast','pipeta']},
   equip:{linha:['equip'],comp:['pipeta','cubeta']}
@@ -1112,8 +1112,8 @@ var REL={
 var RANK={top:0,hot:1};
 /* Itens fixos por departamento (complementos que o mapa por categoria não acha sozinho) */
 var POOL={
-  tubo:['450071','450072','EV21','188082','GRL36'],
-  agulha:['454036','454087','454092','188082','GRL36'],
+  tubo:['450071','450072','EV21','GRL36','S240RB','CLT80SNM','188082'],
+  agulha:['454036','454087','454092','GRL36','S240RB','CLT80SNM','188082'],
   tr:['25492'],lanceta:['TR 017-1 RP','16'],
   meio:['18286-10','18288-10','23007','PA382','PA102','PA104','7105-1','1211','1212'],
   micro:['7105-1','18286-10','PA285'],
