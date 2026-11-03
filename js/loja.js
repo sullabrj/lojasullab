@@ -335,13 +335,18 @@ function step(i,d,btn){var sp=btn.parentElement.querySelector('span');var v=Math
     var add=btn.parentElement.parentElement.querySelector('button.add');if(add){if(!add.dataset.t0)add.dataset.t0=add.textContent;add.textContent=v>1?('+ Carrinho ('+v+')'):add.dataset.t0;}
     if(navigator.vibrate)navigator.vibrate(8);}catch(e){}}
 function addCart(i,btn){
-  var qty=parseInt(btn.parentElement.querySelector('.stepper span').textContent)||1;
-  var p=CATALOG[i];
+  /* 02/11/2026: o botão das Ofertas (.ofb) não tem seletor de quantidade ao lado — antes isso gerava erro de JS e o item não entrava no carrinho. Sem seletor = 1 unidade. */
+  var qty=1;
+  try{var sp=btn&&btn.parentElement&&btn.parentElement.querySelector('.stepper span');if(sp)qty=Math.max(1,parseInt(sp.textContent)||1);}catch(e){}
+  var p=CATALOG[i];if(!p)return;
   var ex=CART.find(x=>x.c===p.c);
   if(ex)ex.qty+=qty; else CART.push({c:p.c,n:p.n,m:p.m,img:p.img,pub:p.pub,cnpj:p.cnpj,qty:qty});
   salvarCart();atualizarCart();
-  btn.textContent='✓ Adicionado';btn.style.background='var(--green)';
-  setTimeout(()=>{btn.textContent='Adicionar';btn.style.background='';},1100);
+  if(btn){
+    var t0=btn.dataset.t0o||btn.textContent;btn.dataset.t0o=t0;
+    btn.textContent='✓ Adicionado';btn.style.background='var(--green)';
+    setTimeout(()=>{btn.textContent=t0;btn.style.background='';},1100);
+  }
   abrirCarrinho();
 }
 function salvarCart(){localStorage.setItem('sullab_cart',JSON.stringify(CART));}
