@@ -734,7 +734,7 @@ var _freteOk=null;
 function chaveFrete(){return soDig(val('ckCep'))+'|'+CART.map(function(x){return x.c+':'+x.qty;}).join(',');}
 function freteValido(){return !!(_freteOk&&_freteOk.key===chaveFrete()&&(freteSelLoja>0||_freteOk.gratis||freteSelId==='retirada'));}
 function zerarFrete(){freteSelLoja=0;freteLabelLoja='';freteSelPrazo=0;freteSelId='';freteMeta=null;_freteOk=null;}
-function _freteOpcoes(d,opt,_kq){var ok=(d&&d.opcoes)||[];freteMeta={pesoKg:d.peso,pacotes:d.pacotes,gratis:!!(d.gratis&&d.gratis.ativo)};opt.innerHTML=_gratisHtml(d)+ok.map(function(o,ix){var nm=String(o.nome||'Transportadora').replace(/\x27/g,'');return '<label class="pay1'+(ix===0?' on':'')+'" style="margin-top:6px"><input type="radio" name="frt" value="'+o.preco+'" '+(ix===0?'checked':'')+' onchange="selFreteLoja('+o.preco+',\''+nm+'\','+(o.prazo||0)+',\''+String(o.id||'')+'\')"><span><span class="pn">'+nm+'</span> <span class="pd">'+(o.retirada?'· envie seu motoboy ou transportadora':(o.prazo?('· '+o.prazo+' dias úteis'):''))+'</span></span><span class="ptag" style="color:var(--navy)">'+(o.gratis?'Grátis':(o.retirada?'Por sua conta':brl(o.preco)))+'</span></label>';}).join('');selFreteLoja(ok[0].preco,String(ok[0].nome||'Transportadora').replace(/\x27/g,''),ok[0].prazo||0,String(ok[0].id||''));_freteOk={key:_kq,gratis:!!(d.gratis&&d.gratis.ativo)};}
+function _freteOpcoes(d,opt,_kq){var ok=(d&&d.opcoes)||[];freteMeta={pesoKg:d.peso,pacotes:d.pacotes,gratis:!!(d.gratis&&d.gratis.ativo)};opt.innerHTML=_gratisHtml(d)+ok.map(function(o,ix){var nm=String(o.nome||'Transportadora').replace(/\x27/g,'');var tg=o.tag==='barata'?'<span class="ftag">Mais barata</span> ':(o.tag==='rapida'?'<span class="ftag ftag-r">Mais rápida</span> ':'');return '<label class="pay1'+(ix===0?' on':'')+'" style="margin-top:6px"><input type="radio" name="frt" value="'+o.preco+'" '+(ix===0?'checked':'')+' onchange="selFreteLoja('+o.preco+',\''+nm+'\','+(o.prazo||0)+',\''+String(o.id||'')+'\')"><span>'+tg+'<span class="pn">'+nm+'</span> <span class="pd">'+(o.retirada?'· envie seu motoboy ou transportadora':(o.prazo?('· '+o.prazo+' dias úteis'):''))+'</span></span><span class="ptag" style="color:var(--navy)">'+(o.gratis?'Grátis':(o.retirada?'Por sua conta':brl(o.preco)))+'</span></label>';}).join('');selFreteLoja(ok[0].preco,String(ok[0].nome||'Transportadora').replace(/\x27/g,''),ok[0].prazo||0,String(ok[0].id||''));_freteOk={key:_kq,gratis:!!(d.gratis&&d.gratis.ativo)};}
 /* 31/10/2026: abre o checkout com o frete que o cliente já cotou no carrinho (mesmo CEP e mesmos itens), sem zerar e cotar de novo */
 function _freteDoCarrinho(){try{
   if(typeof _gRes==='undefined'||!_gRes||!_gKey||!(_gRes.opcoes&&_gRes.opcoes.length))return false;
@@ -1520,6 +1520,7 @@ function ufDoCep(c){c=parseInt(String(c||'').replace(/\D/g,'').slice(0,5),10);if
   for(var i=0;i<T.length;i++)if(c>=T[i][0]&&c<=T[i][1])return T[i][2];return '';}
 var RX_SIM=/placa|biplaca|Ø\s?\d|cromo|caldo|[aá]gar|meio de|newp \d|plasma|egg yolk|gema|sangue de carneiro|suplemento vx|rugai|meio sim|urease|epm|mili|kit para (enterob|micob|confirma)|mini kit/i, RX_NAO=/cult pack|stuart|swab|colora|corante|gram|ziehl|papanicolau|lugol|tamp[aã]o|reativo|al[cç]a|agulha/i;
 var EXTRA={'052000':1};
+var RX_CECON=/^A0[12]\d{3}$/; /* 03/11/2026 (Eduardo): discos de antibiograma Cecon são refrigerados (2–8 °C) */
 var EBRAM_AMB=/^(21910|21805|23805|23920|23930|23940|22805|740|741|742|EBIO.*|EB\d{4}|EBCOAG.*)$/;  
 var ISOPOR=0;  
 var NP_REF={"PA242":1,"PA246":1,"PA149":1,"PA150":1,"PA352":1,"PA151":1,"PA152":1,"PA153":1,"PA114":1,"PA121":1,"PA120":1,"PA384":1,"PA42":1,"PA43":1,"PA44":1,"PA45":1,"PA46":1,"PA47":1,"PA48":1,"PA49":1,"PA50":1,"PA18":1,"PA28":1,"PA312":1,"PA340":1,"PA347":1,"PA07":1,"PA13":1,"PA14":1,"PA16":1,"PA24":1,"PA25":1,"PA319":1,"PA321":1,"PA323":1,"PA325":1,"PA328":1,"PA329":1,"PA330":1,"PA331":1,"PA344":1,"PA37":1,"PA39":1,"PA02":1,"PA03":1,"PA406":1,"PA04":1,"PA06":1,"PA08":1,"PA09":1,"PA387":1,"PA10":1,"PA11":1,"PA345":1,"PA12":1,"PA15":1,"PA17":1,"PA19":1,"PA341":1,"PA20":1,"PA346":1,"PA22":1,"PA26":1,"PA23":1,"PA31":1,"PA27":1,"PA32":1,"PA29":1,"PA30":1,"PA380":1,"PA33":1,"PA34":1,"PA35":1,"PA36":1,"PA38":1,"PA40":1,"PA41":1,"PA395":1,"PA308":1,"PA318":1,"PA320":1,"PA322":1,"PA324":1,"PA348":1,"PA349":1,"PA350":1,"PA333":1,"PA334":1,"PA335":1,"PA338":1,"PA339":1,"PA313":1,"PA314":1,"PA315":1,"PA316":1,"PA54":1,"PA58":1,"PA60":1,"PA61":1,"PA63":1,"PA66":1,"PA69":1,"PA75":1,"PA89":1,"PA91":1,"PA94":1,"PA416":1,"PA355":1,"PA356":1,"PA363":1,"PA365":1,"PA368":1,"PA369":1,"PA407":1,"PA248":1,"PA249":1,"PA250":1,"PA251":1,"PA252":1,"PA253":1,"PA254":1,"PA255":1,"PA256":1,"PA257":1,"PA258":1,"PA259":1,"PA260":1,"PA261":1,"PA262":1,"PA263":1,"PA264":1,"PA265":1,"PA266":1,"PA231":1,"PA311":1,"PA394":1,"PA154":1,"PA155":1,"PA158":1,"PA159":1};
@@ -1527,7 +1528,7 @@ var NP_AMB={"PA377":1,"PA163":1,"PA164":1,"PA165":1,"PA166":1,"PA167":1,"PA168":
 var NP_TRANSP_AMB={"PA91":1,"PA315":1,"PA231":1};
 function refrigCod(c){
   if(NP_TRANSP_AMB[c])return false;
-  if(EXTRA[c])return true;
+  if(EXTRA[c]||RX_CECON.test(c))return true;
   if(NP_REF[c])return true;
   if(NP_AMB[c])return false;
   var p=null;for(var i=0;i<CATALOG.length;i++){if(CATALOG[i].c===c){p=CATALOG[i];break;}}
@@ -1545,10 +1546,12 @@ window.fetch=function(u,o){
       var b=JSON.parse(o.body),its=(b&&b.itens)||[],uf=ufDoCep(b&&b.cep);
       if(its.some(function(i){return refrigCod(String(i.c));})){
         return _f.apply(this,arguments).then(function(r){return r.json().then(function(d){
-          d=d||{};var ops=UF_BLOQ.test(uf)?[]:(d.opcoes||[]).filter(function(x){return (parseInt(x.prazo)||99)<=(UF_VIZ.test(uf)?PRAZO_MAX_VIZ:PRAZO_MAX)&&(uf==='RJ'||!/jet|j&t/i.test(String(x.nome||'')))&&!/latam/i.test(String(x.nome||'')); });
+          d=d||{};var ops;
+          if(d.refrigSrv){ops=(d.opcoes||[]).slice();window._refrigPlaca=!!d.placa;window._refrigPrazo=d.prazoRefrig||(d.placa?3:5);} /* 03/11/2026: o servidor já escolheu a mais rápida dentro do prazo (placa 3 dias úteis, demais refrigerados 5) */
+          else ops=UF_BLOQ.test(uf)?[]:(d.opcoes||[]).filter(function(x){return (parseInt(x.prazo)||99)<=(UF_VIZ.test(uf)?PRAZO_MAX_VIZ:PRAZO_MAX)&&(uf==='RJ'||!/jet|j&t/i.test(String(x.nome||'')))&&!/latam/i.test(String(x.nome||'')); });
           if(!d.refrigSrv)ops=ops.map(function(x){var y=Object.assign({},x);if(y.gratis){y.preco=y.economia||0;delete y.gratis;delete y.economia;}y.preco=Math.round(((+y.preco||0)+ISOPOR)*100)/100;return y;});
           if(d.gratis&&!d.refrigSrv){d.gratis={ativo:false,falta:null,sugestoes:[]};}
-          ops.sort(function(a,c){return (a.preco-c.preco)||(a.prazo-c.prazo);}); /* 31/10/2026: dentro do prazo, a mais barata */
+          if(!d.refrigSrv)ops.sort(function(a,c){return (a.preco-c.preco)||(a.prazo-c.prazo);});
           d.opcoes=ops.slice(0,1);d.refrigerado=true;
           window._refrigSemOpcao=!d.opcoes.length;
           if(!d.opcoes.length&&d.gratis){d.gratis.ativo=false;d.gratis.falta=null;}
@@ -1559,10 +1562,12 @@ window.fetch=function(u,o){
   }catch(e){}
   return _f.apply(this,arguments);
 };
-var AVISO='<div id="refrigAviso" style="background:#eef6ff;border:1px solid #c9ddf5;color:#1f3c73;border-radius:9px;padding:8px 10px;font-size:12px;margin:6px 0;line-height:1.4">❄️ <b>Produto refrigerado:</b> vai pela transportadora mais rápida, com entrega em até 3 dias úteis, e é postado no início da semana para não ficar parado no fim de semana.</div>';
+window._refrigPlaca=false;window._refrigPrazo=0;
+function prazoRefrig(){if(window._refrigPrazo)return window._refrigPrazo;var pl=CART.some(function(x){return refrigCod(String(x.c))&&/\bplaca/i.test(String(x.n||''));});return pl?3:5;}
+function AVISO(){return '<div id="refrigAviso" style="background:#eef6ff;border:1px solid #c9ddf5;color:#1f3c73;border-radius:9px;padding:8px 10px;font-size:12px;margin:6px 0;line-height:1.4">❄️ <b>Produto refrigerado:</b> vai pela transportadora mais rápida, com entrega em até '+prazoRefrig()+' dias úteis, e é postado no início da semana para não ficar parado no fim de semana.</div>';}
 function nomesRefrig(){return CART.filter(function(x){return refrigCod(String(x.c));}).map(function(x){return String(x.n||x.c).slice(0,60);});}
 window.refrigSemMsg=function(){var n=nomesRefrig();
-  return '<div style="background:#fff6e5;border:1px solid #f1d7a6;color:#7a5a12;border-radius:9px;padding:8px 10px;font-size:12px;line-height:1.45">❄️ <b>Não entregamos produto refrigerado neste CEP.</b><br>Placas e meios prontos precisam chegar refrigerados em até 3 dias úteis, e para a sua região o prazo de entrega passa disso.'+(n.length?'<br>Item refrigerado no carrinho: <b>'+n.join('</b>, <b>')+'</b>.':'')+'<br>Os demais produtos (não refrigerados) podemos enviar normalmente: é só remover o item refrigerado do carrinho.</div>';};
+  return '<div style="background:#fff6e5;border:1px solid #f1d7a6;color:#7a5a12;border-radius:9px;padding:8px 10px;font-size:12px;line-height:1.45">❄️ <b>Não entregamos produto refrigerado neste CEP.</b><br>'+(prazoRefrig()===3?'Placas e meios prontos precisam chegar refrigerados em até 3 dias úteis':'Produto refrigerado precisa chegar em até 5 dias úteis')+', e para a sua região o prazo de entrega passa disso.'+(n.length?'<br>Item refrigerado no carrinho: <b>'+n.join('</b>, <b>')+'</b>.':'')+'<br>Os demais produtos (não refrigerados) podemos enviar normalmente: é só remover o item refrigerado do carrinho.</div>';};
 var SEM='<div id="refrigSem" style="margin:6px 0">'+'</div>';
 function marcar(){
   try{
@@ -1570,7 +1575,7 @@ function marcar(){
     var a=document.getElementById('refrigAviso'),s=document.getElementById('refrigSem');
     var bt0=document.getElementById('ckPayBtn');
     if(!cartRefrigerado()){if(a)a.remove();if(s)s.remove();if(bt0&&bt0.disabled&&/refrigerada/.test(bt0.textContent)){bt0.disabled=false;bt0.style.opacity='';bt0.textContent='Pagar agora →';}return;}
-    if(!a)box.insertAdjacentHTML('afterbegin',AVISO);
+    if(!a)box.insertAdjacentHTML('afterbegin',AVISO());else{var _pz=' até '+prazoRefrig()+' dias úteis';if(a.innerHTML.indexOf(_pz)<0)a.outerHTML=AVISO();}
     var opt=document.getElementById('freteOpts'),calc=opt&&/Informe o CEP|Calculando/.test(opt.innerText||'');
     var sem=window._refrigSemOpcao&&!calc&&!(opt&&opt.querySelector('label'));
     if(sem&&!s){box.insertAdjacentHTML('beforeend',SEM);s=document.getElementById('refrigSem');if(s)s.innerHTML=refrigSemMsg();}else if(!sem&&s)s.remove();
@@ -1584,7 +1589,7 @@ setInterval(function(){var c=document.getElementById('cko');if(c&&c.classList.co
 var _pg=window.pagarMP;
 window.pagarMP=function(){
   if(cartRefrigerado()){
-    if(window._refrigSemOpcao)return ckErro('Não entregamos produto refrigerado neste CEP: ele precisa chegar em até 3 dias úteis e, para a sua região, o prazo passa disso. Remova o item refrigerado para seguir com os demais.');
+    if(window._refrigSemOpcao)return ckErro('Não entregamos produto refrigerado neste CEP: ele precisa chegar em até '+prazoRefrig()+' dias úteis e, para a sua região, o prazo passa disso. Remova o item refrigerado para seguir com os demais.');
     if(!freteSelLoja&&!(freteMeta&&freteMeta.gratis))return ckErro('Produto refrigerado: calcule o frete pelo CEP antes de pagar.');
   }
   return _pg.apply(this,arguments);
@@ -1687,8 +1692,9 @@ try{
 })();
 (function(){var _ac=window.atualizarCart;window.atualizarCart=function(){_ac.apply(this,arguments);
  try{if(!matchMedia('(max-width:700px)').matches)return;var dl=document.querySelector('.drawer .dleft'),df=document.getElementById('df');if(!dl||!df)return;
-  [].slice.call(dl.children).forEach(function(n){if(n.classList.contains('sv')||n.classList.contains('trustp'))n.remove();});
-  df.querySelectorAll('.sv,.trustp').forEach(function(n){dl.appendChild(n);});
+  var dr=document.querySelector('.drawer .dright')||dl; /* 03/11/2026: no celular, "guardar carrinho" e selos vão para o FIM do resumo (produtos primeiro) */
+  [].slice.call(dl.children).concat([].slice.call(dr.children)).forEach(function(n){if(n.classList.contains('sv')||n.classList.contains('trustp'))n.remove();});
+  df.querySelectorAll('.sv,.trustp').forEach(function(n){dr.appendChild(n);});
  }catch(e){}};})();
 setInterval(function(){var b=document.getElementById('retBar');if(b&&!b.__t){b.__t=setTimeout(function(){if(b.parentNode)b.remove();},12000);}},1000);
 }catch(e){try{console.error(e);}catch(_){}}
