@@ -80,21 +80,25 @@
   /* ---- 26/10/2026: aviso de cookies (LGPD) + Consent Mode do Google. Analytics sempre; anúncios personalizados só com "Aceitar" ---- */
   (function(){try{
     var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}
-    if(c)return;
+    /* 02/11/2026: aceite OBRIGATÓRIO — tela cheia, só "Aceitar e continuar" (quem recusou antes também vê). Fora: página da política
+       (para dar para ler) e robôs de busca/anúncio/PageSpeed, que não clicam. */
+    if(c==='sim')return;
+    if(/privacidade/.test(location.pathname))return;
+    if(/bot|crawl|spider|googlebot|adsbot|mediapartners|lighthouse|inspectiontool|storebot|bingbot|facebookexternalhit/i.test(navigator.userAgent||''))return;
     var mk=function(){if(document.getElementById('slCk'))return;
-      var st=document.createElement('style');st.textContent='#slCk{position:fixed;left:12px;right:12px;bottom:12px;z-index:100000;max-width:720px;margin:0 auto;background:#fff;color:#1a2433;border:1px solid #dbe4f0;border-radius:14px;box-shadow:0 10px 34px rgba(20,40,70,.22);padding:14px 16px;font:14px/1.45 -apple-system,Segoe UI,Roboto,Arial,sans-serif;display:flex;gap:12px;align-items:center;flex-wrap:wrap}#slCk p{margin:0;flex:1 1 260px}#slCk a{color:#1f4e79;font-weight:700}#slCk .b{display:flex;gap:8px;flex:0 0 auto}#slCk button{border:0;border-radius:10px;font-weight:800;font-size:15px;min-height:44px;padding:0 18px;cursor:pointer}#slCk .ok{background:#2f9e63;color:#fff}#slCk .no{background:#eef3fb;color:#1f3a5f}body:has(#cko.on) #slCk,body:has(#drawer.on) #slCk,body:has(#pmodal.on) #slCk{display:none}@media(max-width:700px){#slCk{left:8px;right:8px;bottom:8px;padding:10px 12px;gap:8px;font-size:13px;line-height:1.35}#slCk .b{width:100%}#slCk button{flex:1;min-height:38px;font-size:14px}body.slCkBar #slCk{bottom:84px}}';
+      var st=document.createElement('style');st.textContent='#slCk{position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483000;background:rgba(15,30,50,.8);display:flex;align-items:center;justify-content:center;padding:16px;font:14px/1.45 -apple-system,Segoe UI,Roboto,Arial,sans-serif}#slCk .cd{background:#fff;color:#1a2433;border-radius:16px;max-width:440px;width:100%;padding:22px 20px;box-shadow:0 14px 44px rgba(0,0,0,.35)}#slCk h2{margin:0 0 8px;font-size:19px;color:#1f4e79}#slCk p{margin:0 0 16px;font-size:14.5px;line-height:1.5}#slCk a{color:#1f4e79;font-weight:700}#slCk button{width:100%;border:0;border-radius:12px;background:#2f9e63;color:#fff;font-weight:800;font-size:16px;min-height:48px;cursor:pointer}html.slCkLock,html.slCkLock body{overflow:hidden!important}';
       document.head.appendChild(st);
       var d=document.createElement('div');d.id='slCk';d.setAttribute('role','dialog');d.setAttribute('aria-label','Aviso de cookies');
-      d.innerHTML='<p>Usamos cookies para melhorar sua experiência. <a href="/privacidade.html">Política de Privacidade</a>.</p><div class="b"><button type="button" class="no">Recusar</button><button type="button" class="ok">Aceitar</button></div>';
+      d.innerHTML='<div class="cd"><h2>Antes de continuar</h2><p>Usamos cookies para o funcionamento da loja, para medir o uso do site e para personalizar anúncios. Para acessar, é necessário aceitar. <a href="/privacidade.html">Política de Privacidade</a>.</p><button type="button" class="ok">Aceitar e continuar</button></div>';d.setAttribute('aria-modal','true');
       if(document.getElementById('pmBar'))document.body.classList.add('slCkBar');
-      document.body.appendChild(d);
+      document.body.appendChild(d);document.documentElement.classList.add('slCkLock');
       var fim=function(v){try{localStorage.setItem('sl_consent',v);}catch(e){}
         var g=v==='sim'?'granted':'denied';G('consent','update',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:'granted'});
         try{if(window.clarity)window.clarity('consent',v==='sim');}catch(e){}
         FB('consent',v==='sim'?'grant':'revoke');
-        ev('cookies_'+(v==='sim'?'aceitou':'recusou'),{});d.remove();};
+        ev('cookies_'+(v==='sim'?'aceitou':'recusou'),{});document.documentElement.classList.remove('slCkLock');d.remove();};
       d.querySelector('.ok').onclick=function(){fim('sim');};
-      d.querySelector('.no').onclick=function(){fim('nao');};
+      try{d.querySelector('.ok').focus();}catch(e){}
     };
     /* 30/10/2026: aviso entra junto com a página (antes: 1,2 s depois). Aparecendo atrasado, ele virava o "maior elemento"
        da tela no celular e empurrava o LCP do PageSpeed para depois de 1,2 s */

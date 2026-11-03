@@ -372,7 +372,7 @@ def criar_categoria_quimicos():
          f'<script type="application/ld+json">{json.dumps(il, ensure_ascii=False)}</script>\n'
          + estilo + '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">'
          '<link rel="icon" type="image/png" sizes="192x192" href="/favicon.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">'
-         '<script defer src="/rastreio.js?v=7"></script>\n</head><body>\n<div class="wrap">\n'
+         '<script defer src="/rastreio.js?v=9"></script>\n</head><body>\n<div class="wrap">\n'
          f'<div class="top"><img src="{SITE}/img/sullab-topo.webp" alt="SULLAB" width="65" height="34"><a href="{SITE}/">SULLAB</a></div>\n'
          f'<div class="crumb"><a href="{SITE}/">Início</a> › {NOVA_CAT_NOME}</div>\n<h1>{NOVA_CAT_NOME}</h1>\n'
          '<p class="lead">Reagentes químicos Biolog em grau P.A., puríssimo e analítico — sais, ácidos, indicadores, corantes e soluções prontas '
