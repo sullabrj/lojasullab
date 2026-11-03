@@ -328,6 +328,7 @@ GUIA = {
     '455092': ('Vermelha, anel preto', 'Ativador de coágulo', 'Sorologia, banco de sangue e bioquímica', '5 a 10x', '10290310034'),
     '456001': ('Branca, anel preto', 'Sem aditivo', 'Coleta de descarte e exames sem aditivo', '', ''),
     '454327': ('Azul clara, anel preto', 'Citrato de sódio 3,2% (9NC)', 'TP/INR, TTPA, fibrinogênio, D-dímero', '4x', '10290310032'),
+    '454321': ('Azul clara, anel branco', 'Citrato de sódio 3,2% (9NC)', 'TP/INR, TTPA, fibrinogênio, D-dímero', '4x', '10290310032'),
     '450539': ('Azul clara', 'Citrato de sódio 3,2% (9NC)', 'Coagulação em pediatria (acompanha carrier)', '3 a 4x', ''),
     '454085': ('Cinza, anel branco', 'Fluoreto de sódio + K3EDTA (FE)', 'Glicemia, curva glicêmica, lactato', '5 a 10x', '10290310032'),
     '454091': ('Cinza, anel preto', 'Fluoreto de sódio + K3EDTA (FE)', 'Glicemia, curva glicêmica, lactato', '5 a 10x', '10290310032'),
@@ -337,7 +338,7 @@ GUIA = {
     '450072': ('', '', 'Agulha múltipla 21G (25×0,8 mm) para coleta a vácuo, bisel trifacetado', '', '10290310013'),
 }
 # Ordem de coleta recomendada (CLSI): citrato → soro (com e sem gel) → heparina → EDTA → fluoreto.
-ORDEM_COLETA = ['454327', '450539', '454092', '455092', '454071', '454482', '456071', '455071', '456001',
+ORDEM_COLETA = ['454327', '454321', '450539', '454092', '455092', '454071', '454482', '456071', '455071', '456001',
                 '454030', '456080', '454036', '454087', '454921', '454235', '456211', '454085', '454091']
 # Testes rápidos DeepBlue: (amostra/uso, registro ANVISA)
 GUIA_TR = {
