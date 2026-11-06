@@ -75,6 +75,8 @@ Object.assign(PROD, {"EV21":[29.23,4.001],"19150":[117.94,38.317],"19230":[125.9
 // 02/11/2026 microscopios (preços novos do estudo de mercado) e centrífugas CRAL: FRETE_TAB [kg,alt,larg,comp] com folga; PROD [preço, lucro líquido = preço x 0,8512 - custo]
 Object.assign(FRETE_TAB, {"CT-10000":[2.3,20,26,26],"CT-6000":[2.0,20,25,25],"CT-4000Y":[8.5,29,36,40],"CT-4000Y12":[8.5,29,36,40],"CT-12000":[11.5,30,37,42],"CT-12000-220V":[11.5,30,37,42],"CT-4000-220V":[16,34,45,50],"CT-16000":[11.5,30,37,42],"CT-16000-220V":[11.5,30,37,42]});
 Object.assign(PROD, {"MICB-10":[2390.0,555.018],"MICBTRI10":[3990.0,960.518],"MICB100-INF":[4790.0,1425.358],"MICB200-INF":[5470.0,1009.344],"MICBTRI100-INF":[6190.0,1552.278],"MICB-20":[13900.0,5179.69],"MIBEST":[2090.0,795.658],"CT-10000":[1390.0,322.238],"CT-6000":[929.0,129.705],"CT-4000Y":[2149.0,325.329],"CT-4000Y12":[1890.0,104.868],"CT-12000":[4990.0,242.128],"CT-12000-220V":[4990.0,242.128]});
+// 05/11/2026 (Eduardo): 3026 HDL ultra-sensível kit pequeno — custo NF 78154 (14/07/2026) R$ 570,08, markup Ebram linha menor 80% => R$ 1.026,14 (+R$ 8 isopor no site)
+Object.assign(PROD, {"3026":[1026.14,264.69]});
 // 31/10/2026 (estudo robô do carrinho): a lista antiga tinha 55 códigos e 30 eram refrigerados — sugerir um deles a um carrinho
 // de temperatura ambiente virava o envio em refrigerado (isopor, prazo de 3 dias, +50%). Agora: SUG = só ambiente, lucro
 // líquido >= 25% e preço R$ 45–300 (testes rápidos primeiro); SUG_REFRIG = o que pode entrar num carrinho que já vai em isopor.
