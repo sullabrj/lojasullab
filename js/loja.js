@@ -460,7 +460,7 @@ function gboxRender(){
   b.className='gbox';b.innerHTML=base+'<div id="gmsg">Calculando frete…</div>';
   clearTimeout(_gTimer);_gTimer=setTimeout(function(){cotarFreteCarrinho(true);},350);
 }
-function cotarFreteCarrinho(auto){
+function cotarFreteCarrinho(auto,_t){
   var el=document.getElementById('cartCep');var cep=soDig(el?el.value:(fichaSalva().cep||''));
   var msg=document.getElementById('gmsg');var b=document.getElementById('gbox');
   if(cep.length!==8){if(b)b.querySelector('div:last-child').innerHTML='Informe um CEP com 8 números.';return;}
@@ -473,9 +473,10 @@ function cotarFreteCarrinho(auto){
   msg.innerHTML='Calculando frete…';
   fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){
     var m2=document.getElementById('gmsg'),b2=document.getElementById('gbox');if(!m2)return;
-    if((!d||!d.opcoes||!d.opcoes.length)&&!(d&&d.gratis&&(d.gratis.ativo||d.gratis.falta))){m2.innerHTML=(d&&(d.consulta||d.bloqueado))?'🚚 Frete será confirmado no atendimento.':(window.refrigSemMsg&&window.cartRefrigerado&&cartRefrigerado()&&window._refrigSemOpcao)?refrigSemMsg():'⚠️ <b>Frete não encontrado para o CEP '+cep.replace(/^(\d{5})(\d{3})$/,'$1-$2')+'.</b> Confira se o CEP está correto ou fale com a gente no WhatsApp.';return;}
+    if((!d||!d.opcoes||!d.opcoes.length)&&!(d&&d.gratis&&(d.gratis.ativo||d.gratis.falta))&&!_t&&!(d&&(d.consulta||d.bloqueado))&&!(window.cartRefrigerado&&cartRefrigerado()&&window._refrigSemOpcao)){m2.innerHTML='Confirmando o frete com as transportadoras…';setTimeout(function(){cotarFreteCarrinho(auto,1);},1500);return;}
+    if((!d||!d.opcoes||!d.opcoes.length)&&!(d&&d.gratis&&(d.gratis.ativo||d.gratis.falta))){m2.innerHTML=(d&&(d.consulta||d.bloqueado))?'🚚 Frete será confirmado no atendimento.':(window.refrigSemMsg&&window.cartRefrigerado&&cartRefrigerado()&&window._refrigSemOpcao)?refrigSemMsg():'⚠️ <b>Não conseguimos confirmar o frete para o CEP '+cep.replace(/^(\d{5})(\d{3})$/,'$1-$2')+' agora.</b> <a href="#" onclick="cotarFreteCarrinho();return false" style="font-weight:700">↻ Tentar de novo</a> · confira o CEP ou fale com a gente no WhatsApp.';return;}
     _gKey=key;_gRes=d;m2.innerHTML=_gratisHtml(d);if(b2)b2.className='gbox'+((d.gratis&&d.gratis.ativo)?' ok':'');
-  }).catch(function(){var m3=document.getElementById('gmsg');if(m3)m3.innerHTML='Não foi possível calcular o frete agora — confirmamos no atendimento.';});
+  }).catch(function(){var m3=document.getElementById('gmsg');if(!_t){if(m3)m3.innerHTML='Confirmando o frete com as transportadoras…';setTimeout(function(){cotarFreteCarrinho(auto,1);},1500);return;}if(m3)m3.innerHTML='Não conseguimos calcular o frete agora. <a href="#" onclick="cotarFreteCarrinho();return false" style="font-weight:700">↻ Tentar de novo</a>';});
 }
 function ckModo(){var online=(DOCT==='cnpj');var b=document.getElementById('ckPayBtn'),p=document.getElementById('pays'),l=document.getElementById('paysLb'),sb=document.getElementById('ckSub'),sf=document.getElementById('ckSafe'),tt=document.getElementById('ckTit');
   if(b){b.textContent=online?'Pagar agora →':'Enviar pedido para orçamento →';b.setAttribute('onclick',online?'pagarMP()':'salvarFichaCheckout();fecharCheckout();enviarOrcamento()');}
@@ -631,8 +632,17 @@ function temGreiner(){return CART.some(function(x){return !!(window.PIX3&&window
 function temTeste(){return CART.some(function(x){return !!(window.TR_TOP&&window.TR_TOP[x.c]);});}
 function temTubo(){return temGreiner()||temTeste();}  
 var PED_MIN_GERAL=100,PED_MIN_REFRIG=150;
-function pedMin(){return temGreiner()?TUBO_MIN:(temTeste()?TESTE_MIN:((window.cartRefrigerado&&window.cartRefrigerado())?PED_MIN_REFRIG:PED_MIN_GERAL));}
-function msgMin(){return temGreiner()?'Pedido mínimo de R$ 250,00 somando tubos e agulhas Vacuette (pode misturar com testes rápidos e outros itens no mesmo pedido).':(temTeste()?'Pedido mínimo de R$ 150,00 somando testes rápidos — vale o total do pedido.':((window.cartRefrigerado&&window.cartRefrigerado())?'Pedido mínimo de R$ 150,00 para pedidos com produto refrigerado — vale o total do pedido, não o item.':'Pedido mínimo no site: R$ 100,00 no total do pedido.'));}
+/* 05/11/2026 (Eduardo, simulação de frete refrigerado em 10 regiões): mínimo do refrigerado por região do CEP de entrega —
+   RJ e Zona da Mata mineira R$ 150 (frete ~R$ 40); demais Sudeste/Sul/Centro-Oeste R$ 250 (frete ~R$ 85–95); Norte e Nordeste R$ 400 (frete R$ 125–180).
+   Sem CEP ainda: vale R$ 150 e o checkout confere com o CEP antes de pagar. */
+function _cepMin(){var c='';try{var k=document.getElementById('cko'),e=document.getElementById('ckCep');if(k&&k.classList.contains('on')&&e)c=soDig(e.value);}catch(x){}if(c.length!==8){try{c=soDig(fichaSalva().cep||'');}catch(x){c='';}}return c.length===8?c:'';}
+function minRefrig(){var c=_cepMin();if(!c)return PED_MIN_REFRIG;var n=+c.slice(0,5);
+  if((n>=20000&&n<=28999)||(n>=36000&&n<=36999))return 150;
+  if((n>=40000&&n<=69999)||(n>=76800&&n<=77999))return 400;
+  return 250;}
+function pedMin(){var m=PED_MIN_GERAL;if(temTeste())m=Math.max(m,TESTE_MIN);if(temGreiner())m=Math.max(m,TUBO_MIN);if(window.cartRefrigerado&&window.cartRefrigerado())m=Math.max(m,minRefrig());return m;}
+function _msgRefrig(){var r=minRefrig(),c=_cepMin();return (c?'Pedido mínimo de '+brl(r)+' para pedidos com produto refrigerado entregues no seu CEP':'Pedido mínimo a partir de R$ 150,00 para pedidos com produto refrigerado (varia com o CEP)')+' — R$ 150 no RJ e na Zona da Mata mineira, R$ 250 nas demais regiões do Sudeste, Sul e Centro-Oeste, R$ 400 no Norte e Nordeste. Vale o total do pedido, não o item.';}
+function msgMin(){if(window.cartRefrigerado&&window.cartRefrigerado()&&minRefrig()>(temGreiner()?TUBO_MIN:(temTeste()?TESTE_MIN:PED_MIN_GERAL)))return _msgRefrig();return temGreiner()?'Pedido mínimo de R$ 250,00 somando tubos e agulhas Vacuette (pode misturar com testes rápidos e outros itens no mesmo pedido).':(temTeste()?'Pedido mínimo de R$ 150,00 somando testes rápidos — vale o total do pedido.':((window.cartRefrigerado&&window.cartRefrigerado())?'Pedido mínimo de R$ 150,00 para pedidos com produto refrigerado — vale o total do pedido, não o item.':'Pedido mínimo no site: R$ 100,00 no total do pedido.'));}
 function faltaTubo(){return Math.max(0,Math.round((pedMin()-totalCart())*100)/100);}
 /* 31/10/2026: barra única de progresso no carrinho — primeiro o pedido mínimo, depois o frete grátis (quando o CEP já foi cotado) */
 function _gratisAtual(){try{if(!_gRes||!_gKey)return null;var cep=soDig((fichaSalva().cep)||''),its=CART.filter(function(x){return precoItem(x)>0;});var k=cep+'|'+its.map(function(x){return String(x.c)+'x'+x.qty;}).join(',');return k===_gKey?(_gRes.gratis||null):null;}catch(e){return null;}}
@@ -744,10 +754,12 @@ function _freteDoCarrinho(){try{
   var opt=document.getElementById('freteOpts');if(!opt)return false;
   _freteOpcoes(_gRes,opt,chaveFrete());return true;
 }catch(e){return false;}}
-function cotarFreteLoja(){if(window._fBusy)return;var cep=soDig(val('ckCep'));var opt=document.getElementById('freteOpts');if(!opt)return;if(cep.length!==8){opt.innerHTML='<div style="font-size:13.5px;color:var(--muted);padding:5px 0">Informe o CEP no campo acima.</div>';return;}opt.innerHTML='<div class="fcalc"><span class="spn"></span>Calculando o frete para o seu CEP…</div>';window._fBusy=1;try{var _fb=document.querySelectorAll('#freteBox .ckwa');for(var _i=0;_i<_fb.length;_i++){_fb[_i].disabled=true;_fb[_i].style.opacity=.55;}}catch(e){}var _fim=function(){window._fBusy=0;try{var _fb=document.querySelectorAll('#freteBox .ckwa');for(var _i=0;_i<_fb.length;_i++){_fb[_i].disabled=false;_fb[_i].style.opacity=1;}}catch(e){}};
+function cotarFreteLoja(_t){if(window._fBusy)return;var cep=soDig(val('ckCep'));var opt=document.getElementById('freteOpts');if(!opt)return;if(cep.length!==8){opt.innerHTML='<div style="font-size:13.5px;color:var(--muted);padding:5px 0">Informe o CEP no campo acima.</div>';return;}opt.innerHTML='<div class="fcalc"><span class="spn"></span>Calculando o frete para o seu CEP…</div>';window._fBusy=1;try{var _fb=document.querySelectorAll('#freteBox .ckwa');for(var _i=0;_i<_fb.length;_i++){_fb[_i].disabled=true;_fb[_i].style.opacity=.55;}}catch(e){}var _fim=function(){window._fBusy=0;try{var _fb=document.querySelectorAll('#freteBox .ckwa');for(var _i=0;_i<_fb.length;_i++){_fb[_i].disabled=false;_fb[_i].style.opacity=1;}}catch(e){}};
   zerarFrete();try{ckTotais();}catch(e){}var _kq=chaveFrete();
   var itens=CART.map(function(x){return {c:String(x.c),q:x.qty,v:precoItem(x)};});
-  fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){_fim();var ok=(d&&d.opcoes)||[];if(!ok.length){freteMeta=null;_ckErroLog(((d&&(d.consulta||d.bloqueado))?'frete sob consulta ':'frete sem opcao ')+cep,'frete');opt.innerHTML=_gratisHtml(d)+'<div style="font-size:13.5px;color:var(--muted);padding:5px 0">'+((d&&(d.consulta||d.bloqueado))?'Frete será confirmado no checkout / WhatsApp.':'<b>Frete não encontrado para este CEP.</b> Confira se o CEP está correto ou fale com a gente no WhatsApp.')+'</div>';return;}if(_kq!==chaveFrete())return;_freteOpcoes(d,opt,_kq);}).catch(function(){_fim();zerarFrete();try{ckTotais();}catch(e){}_ckErroLog('frete falha de rede '+cep,'frete');opt.innerHTML='<div style="font-size:13.5px;color:var(--muted);padding:5px 0">Não foi possível calcular agora — o frete será confirmado pelo WhatsApp.</div>';});}
+  fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:itens})}).then(function(r){return r.json();}).then(function(d){_fim();var ok=(d&&d.opcoes)||[];if(!ok.length){freteMeta=null;var _leg=!!((d&&(d.consulta||d.bloqueado))||window._refrigSemOpcao);if(!_leg&&!_t&&_kq===chaveFrete()){opt.innerHTML='<div class="fcalc"><span class="spn"></span>Confirmando o frete com as transportadoras…</div>';setTimeout(function(){if(_kq===chaveFrete())cotarFreteLoja(1);},1500);return;}_ckErroLog(((d&&(d.consulta||d.bloqueado))?'frete sob consulta ':'frete sem opcao ')+cep,'frete');opt.innerHTML=_gratisHtml(d)+'<div style="font-size:13.5px;color:var(--muted);padding:5px 0">'+((d&&(d.consulta||d.bloqueado))?'Frete será confirmado no checkout / WhatsApp.':_freteFalhaHtml())+'</div>';return;}if(_kq!==chaveFrete())return;_freteOpcoes(d,opt,_kq);}).catch(function(){_fim();zerarFrete();try{ckTotais();}catch(e){}if(!_t&&_kq===chaveFrete()){opt.innerHTML='<div class="fcalc"><span class="spn"></span>Confirmando o frete com as transportadoras…</div>';setTimeout(function(){if(_kq===chaveFrete())cotarFreteLoja(1);},1500);return;}_ckErroLog('frete falha de rede '+cep,'frete');opt.innerHTML='<div style="font-size:13.5px;color:var(--muted);padding:5px 0">'+_freteFalhaHtml()+'</div>';});}
+/* 05/11/2026: falha na cotação (transportadora fora do ar) — o site tenta de novo sozinho; se falhar de novo, mostra o botão em vez de "frete sem opção" */
+function _freteFalhaHtml(){return '<b>Não conseguimos confirmar o frete agora</b> (as transportadoras demoraram a responder). <button type="button" class="ckwa" style="display:inline;color:var(--navy-l);font-weight:700;padding:4px 0" onclick="cotarFreteLoja()">↻ Tentar de novo</button><br><span style="font-size:12.5px">Se continuar, confira o CEP ou fale com a gente no WhatsApp.</span>';}
 function aplicarCupom(){var c=(val('ckCupom')||'').toUpperCase().replace(/\s/g,'');var msg=document.getElementById('cupomMsg');if(!c){cupomPct=0;cupomCod='';if(msg)msg.textContent='';ckTotais();return;}if(CUPONS[c]){cupomPct=CUPONS[c];cupomCod=c;if(msg){msg.style.color='var(--green-d)';msg.innerHTML='✓ Cupom '+c+' aplicado — '+Math.round(cupomPct*100)+'% OFF.';}}else{cupomPct=0;cupomCod='';if(msg){msg.style.color='#b3261e';msg.textContent='Cupom inválido.';}}ckTotais();}
 function _freteBarCart(){return '';}
 function ckTotais(){try{var _ok=boletoOk();var _pb=document.getElementById('pgBoleto');if(_pb){_pb.style.opacity=_ok?'1':'.5';_pb.querySelector('input').disabled=!_ok;}if(!_ok&&PG==='boleto'){PG='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value==='pix');});}}catch(e){}var t=CART.reduce(function(s,x){return s+(Math.round(precoItem(x)*fatorPg(x.c)*100)/100)*x.qty;},0)*(1-cupomPct)+(freteSelLoja||0);var n=CART.reduce(function(s,x){return s+x.qty;},0);document.getElementById('ckTot').textContent=brl(t);document.getElementById('ckQt').textContent='('+n+' '+(n===1?'item':'itens')+(PG==='pix'?' · desconto Pix':'')+(cupomPct?(' · −'+Math.round(cupomPct*100)+'%'):'')+(freteSelLoja?(' · frete '+brl(freteSelLoja)):'')+')';}
@@ -775,8 +787,7 @@ function ckFoco(id){try{if(/^ck(Log|Bairro|Cidade|Uf)$/.test(id))ckEndAbrir();va
 var _PX=null;
 function _pxEv(n,p){try{if(typeof gtag==='function')gtag('event',n,p||{});}catch(e){}try{if(window.clarity)clarity('event',n);}catch(e){}}
 function _pxEl(id){return document.getElementById(id);}
-function pixMostrar(on){var a=_pxEl('ckForm'),b=_pxEl('ckPix');if(a)a.hidden=!!on;if(b)b.hidden=!on;
-  if(on){var e=_pxEl('ckErr');if(e)e.style.display='none';try{_pxEl('cko').querySelector('.ckb').scrollTop=0;}catch(x){}}}
+function pixMostrar(on){_ckPainel(on?'ckPix':'ckForm');}
 function _pxParar(){if(_PX){clearTimeout(_PX.timer);clearInterval(_PX.tick);_PX.timer=_PX.tick=null;}}
 function _pxStat(t,m){var s=_pxEl('pxStat');if(!s)return;s.className='pxstat '+t;
   s.innerHTML=t==='esp'?'<span class="spn"></span><span>Aguardando o pagamento. Após o pagamento a confirmação aparece aqui em segundos.</span>'
@@ -875,8 +886,11 @@ function pagarMP(){
   var endereco={cep:f.cep,logradouro:f.log,numero:f.num,complemento:f.compl,bairro:f.bairro,cidade:f.cidade,uf:f.uf};
   try{var _gs=window._gratisPorSugestao;if(_gs&&!(freteSelLoja>0)&&freteMeta&&freteMeta.gratis&&(Date.now()-_gs.t)<3600000){if(typeof gtag==='function')gtag('event','gratis_fechado_por_sugestao',{c:_gs.c,q:_gs.q,value:Math.round(totalCart()*100)/100,currency:'BRL'});if(window.clarity)clarity('event','gratis_fechado_por_sugestao');}}catch(e){}
   var corpo={pedido:pedido,items:items,method:PG,endereco:endereco,frete:{valor:Math.round((freteSelLoja||0)*100)/100,gratis:!(freteSelLoja>0),servico:freteSelId||'',nome:freteLabelLoja||'',cep:soDig(f.cep)},cliente:{nome:f.nome,doc:docParaMP(f.doc),docTipo:DOCT,tel:f.tel,email:f.email}};
-  /* 31/10/2026: Pix transparente — o QR aparece aqui mesmo (Worker POST /pix); cartão e boleto seguem para o Mercado Pago */
+  /* 31/10/2026: Pix transparente — o QR aparece aqui mesmo (Worker POST /pix).
+     05/11/2026: cartão e boleto também dentro do site (Worker POST /cartao e /boleto); o Checkout Pro abaixo fica só de reserva */
   if(PG==='pix')return pixGerar(corpo,1);
+  if(PG==='cartao')return cartaoAbrir(corpo);
+  if(PG==='boleto')return boletoGerar(corpo,1);
   var btn=document.getElementById('ckPayBtn');var orig=btn.textContent;btn.disabled=true;btn.textContent='Abrindo Mercado Pago…';
   fetch(MP_WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo)})
    .then(function(r){return r.json();}).then(function(d){if(d&&d.init_point){window.location.href=d.init_point;}else{btn.disabled=false;btn.textContent=orig;ckErro('Não foi possível iniciar o pagamento: '+((d&&d.error)||'tente novamente.'));}})
@@ -1808,3 +1822,119 @@ selosRefresh();mbarRender();
 try{window.__lojaFimShim&&window.__lojaFimShim();}catch(e){}
 window.__lojaPronta=true;
 try{window.dispatchEvent(new Event('sullab:loja'));}catch(e){}
+
+/* ==== 05/11/2026: cartão e boleto TRANSPARENTES (dentro do site, como o Pix) ====
+   Cartão: Card Payment Brick do Mercado Pago (o número do cartão fica no formulário seguro do MP; o site só recebe um token)
+           → Worker POST /cartao (preço, frete e parcelas conferidos no servidor).
+   Boleto: Worker POST /boleto → linha digitável, PDF e vencimento aparecem aqui mesmo.
+   Se a chave pública do MP ainda não estiver no Worker (GET /config), o cartão cai no Checkout Pro antigo para não perder a venda. */
+var _CK={cfg:null,sdk:null,brick:null,corpo:null,bol:null};
+function _ckPainel(qual){['ckForm','ckPix','ckCard','ckBol'].forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=(id!==qual);});
+  if(qual!=='ckForm'){var e=document.getElementById('ckErr');if(e)e.style.display='none';try{document.getElementById('cko').querySelector('.ckb').scrollTop=0;}catch(x){}}}
+function _ckEv(n,p){try{if(typeof gtag==='function')gtag('event',n,p||{});}catch(e){}try{if(window.clarity)clarity('event',n);}catch(e){}}
+function _ckTotalCorpo(corpo){return Math.round((corpo.items||[]).reduce(function(s,i){return s+i.unit_price*i.quantity;},0)*100)/100;}
+function _ckProdutos(corpo){return (corpo.items||[]).reduce(function(s,i){return s+(/^frete/i.test(i.title)?0:i.unit_price*i.quantity);},0);}
+function _checkoutPro(corpo){var btn=document.getElementById('ckPayBtn');var orig=btn.textContent;btn.disabled=true;btn.textContent='Abrindo Mercado Pago…';
+  fetch(MP_WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo)})
+   .then(function(r){return r.json();}).then(function(d){if(d&&d.init_point){window.location.href=d.init_point;}else{btn.disabled=false;btn.textContent=orig;ckErro('Não foi possível iniciar o pagamento: '+((d&&d.error)||'tente novamente.'));}})
+   .catch(function(){btn.disabled=false;btn.textContent=orig;ckErro('Erro de conexão com o pagamento online. Tente de novo ou fale com a gente no WhatsApp.');});}
+function _ckConfig(){if(_CK.cfg)return Promise.resolve(_CK.cfg);
+  return fetch(MP_WORKER+'config').then(function(r){return r.json();}).then(function(d){if(d&&/^APP_USR-|^TEST-/.test(d.public_key||''))_CK.cfg=d;return _CK.cfg;}).catch(function(){return null;});}
+function _ckSdk(){if(window.MercadoPago)return Promise.resolve();if(_CK.sdk)return _CK.sdk;
+  _CK.sdk=new Promise(function(ok,ko){var s=document.createElement('script');s.src='https://sdk.mercadopago.com/js/v2';s.async=true;s.onload=function(){ok();};s.onerror=function(){_CK.sdk=null;ko(new Error('sdk'));};document.head.appendChild(s);});
+  return _CK.sdk;}
+function _cardStat(t,m){var s=document.getElementById('cardStat');if(!s)return;if(!t){s.hidden=true;return;}s.hidden=false;s.className='pxstat '+t;
+  s.innerHTML=(t==='esp'?'<span class="spn"></span>':(t==='ok'?'<span class="pxi">✓</span>':'<span class="pxi">!</span>'))+'<span></span>';s.lastChild.textContent=m||'';}
+function _cardDesmontar(){try{if(_CK.brick&&_CK.brick.unmount)_CK.brick.unmount();}catch(e){}_CK.brick=null;var c=document.getElementById('cardBrick');if(c)c.innerHTML='';}
+function cartaoAbrir(corpo){
+  var btn=document.getElementById('ckPayBtn'),orig=btn.textContent;btn.disabled=true;btn.textContent='Abrindo o pagamento com cartão…';
+  var volta=function(){btn.disabled=false;btn.textContent=orig;};
+  _ckConfig().then(function(cfg){
+    if(!cfg){volta();_ckEv('cartao_fallback_pro',{});return _checkoutPro(corpo);}
+    return _ckSdk().then(function(){
+      volta();_CK.corpo=corpo;_cardDesmontar();
+      var total=_ckTotalCorpo(corpo),prod=_ckProdutos(corpo);
+      document.getElementById('cardTot').textContent=brl(total);document.getElementById('cardPed').textContent=corpo.pedido;
+      document.getElementById('cardParc').textContent=prod>=800?'Parcelamento disponível neste pedido.':'Pagamento à vista no cartão (parcelamento em pedidos a partir de R$ 800 em produtos).';
+      _cardStat('');_ckPainel('ckCard');
+      var mp=new MercadoPago(cfg.public_key,{locale:'pt-BR'});
+      var cli=corpo.cliente||{};
+      return mp.bricks().create('cardPayment','cardBrick',{
+        initialization:{amount:total,payer:{email:cli.email||''}},
+        customization:{paymentMethods:{maxInstallments:prod>=800?12:1,minInstallments:1,types:{excluded:['debit_card','prepaid_card']}},visual:{hidePaymentButton:false,style:{theme:'default',customVariables:{baseColor:'#1F4E79'}},texts:{formSubmit:'Pagar '+brl(total)}}},
+        callbacks:{
+          onReady:function(){_ckEv('cartao_form_exibido',{transaction_id:corpo.pedido,value:total});},
+          onError:function(e){try{_ckErroLog('cartao brick '+String((e&&(e.message||e.cause))||'erro').slice(0,60),'cartao');}catch(x){}},
+          onSubmit:function(fd){return cartaoPagar(fd);}
+        }
+      }).then(function(b){_CK.brick=b;});
+    });
+  }).catch(function(){volta();_ckErroLog('cartao sdk indisponivel','cartao');_ckPainel('ckForm');ckErro('Não foi possível abrir o pagamento com cartão agora. Tente de novo ou pague com Pix.');});
+}
+function cartaoPagar(fd){
+  var corpo=_CK.corpo;if(!corpo)return Promise.resolve();
+  _cardStat('esp','Processando o pagamento… não feche esta página.');
+  var b={},k;for(k in corpo)b[k]=corpo[k];
+  b.card={token:fd.token,payment_method_id:fd.payment_method_id,issuer_id:fd.issuer_id,installments:fd.installments,payer:fd.payer||{}};
+  _ckEv('pagar_clique_cartao',{transaction_id:corpo.pedido});
+  return fetch(MP_WORKER+'cartao',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)})
+   .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {ok:r.ok,st:r.status,d:d||{}};});})
+   .then(function(x){var d=x.d;
+     if(!x.ok){_cardStat('erro',d.error||'Não foi possível processar o cartão agora.');_ckErroLog('cartao '+x.st+': '+(d.error||''),'cartao');return;}
+     if(d.status==='approved'){_cardStat('ok','Pagamento aprovado! Abrindo o seu pedido…');return _pgAprovado(String(d.pedido||corpo.pedido),String(d.id),+d.total||_ckTotalCorpo(corpo),'cartao');}
+     if(d.status==='in_process'||d.status==='pending'||d.status==='authorized'){_cardStat('esp',d.mensagem||'Pagamento em análise.');_ckEv('cartao_em_analise',{transaction_id:corpo.pedido});
+       setTimeout(function(){location.href='/obrigado.html?pedido='+encodeURIComponent(corpo.pedido)+'&external_reference='+encodeURIComponent(corpo.pedido)+'&status=in_process&payment_id='+encodeURIComponent(d.id)+'&metodo=cartao&payment_method_id='+encodeURIComponent(b.card.payment_method_id||'');},1800);return;}
+     _cardStat('erro',d.mensagem||'O pagamento foi recusado. Confira os dados ou use outro cartão.');_ckErroLog('cartao recusado '+(d.status_detail||d.status||''),'cartao');
+   })
+   .catch(function(){_cardStat('erro','Erro de conexão. Confira a internet: se o valor aparecer no seu cartão, não pague de novo — fale com a gente no WhatsApp.');_ckErroLog('cartao rede','cartao');});
+}
+function cartaoVoltar(){_cardDesmontar();_CK.corpo=null;_ckPainel('ckForm');return false;}
+/* conversão de pedido pago na própria página (mesma regra do Pix: uma vez por pedido) */
+function _pgAprovado(pedido,id,total,metodo){
+  var lp={};try{lp=JSON.parse(localStorage.getItem('sullab_last_purchase')||'{}')||{};}catch(e){}
+  var its=(lp.ped===pedido&&lp.items)||[],v=Math.round((total||lp.v||0)*100)/100;
+  try{if(lp.ped===pedido){lp.v=v;localStorage.setItem('sullab_last_purchase',JSON.stringify(lp));}}catch(e){}
+  _ckEv(metodo+'_aprovado',{transaction_id:pedido,value:v,currency:'BRL'});
+  var env={};try{env=JSON.parse(localStorage.getItem('sullab_purchase_enviadas')||'{}')||{};}catch(e){}
+  if(!env[pedido]){
+    var gp={transaction_id:pedido,value:v,currency:'BRL',payment_type:metodo};if(its.length)gp.items=its;if(lp.frete)gp.shipping=lp.frete;
+    try{if(typeof gtag==='function'){gtag('event','purchase',gp);gtag('event','conversion',{send_to:'AW-11390766577/zT6SCKz-1KwdEPGbxbcq',value:v||1,currency:'BRL',transaction_id:pedido});}}catch(e){}
+    try{if(typeof fbq==='function')fbq('track','Purchase',{value:v,currency:'BRL',content_type:'product',content_ids:its.map(function(x){return String(x.item_id);}),contents:its.map(function(x){return {id:String(x.item_id),quantity:x.quantity,item_price:x.price};}),num_items:its.reduce(function(s,x){return s+(x.quantity||1);},0)},{eventID:pedido});}catch(e){}
+    try{if(window.clarity)clarity('event','purchase');}catch(e){}
+    env[pedido]=Date.now();try{localStorage.setItem('sullab_purchase_enviadas',JSON.stringify(env));}catch(e){}
+  }
+  var u='/obrigado.html?pedido='+encodeURIComponent(pedido)+'&external_reference='+encodeURIComponent(pedido)+'&status=approved&payment_id='+encodeURIComponent(id)+'&metodo='+metodo+(v?('&total='+v):'');
+  setTimeout(function(){location.href=u;},900);
+}
+/* ---- boleto ---- */
+function boletoGerar(corpo,tent){
+  var btn=document.getElementById(tent>1?'bolNovo':'ckPayBtn'),orig=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='Gerando o boleto…';}
+  var b={},k;for(k in corpo)b[k]=corpo[k];if(tent>1)b.tentativa=tent;
+  var falha=function(m,mot){if(btn){btn.disabled=false;btn.textContent=orig;}_ckErroLog(mot+': '+m,'boleto');if(tent>1){var s=document.getElementById('bolStat');if(s){s.hidden=false;s.textContent=m;}}else{if(/CPF|CNPJ/.test(m))ckFoco('ckDoc');ckErro(m);}};
+  fetch(MP_WORKER+'boleto',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)})
+   .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {ok:r.ok,st:r.status,d:d||{}};});})
+   .then(function(x){var d=x.d;
+     if(x.st===404&&tent===1){if(btn){btn.disabled=false;btn.textContent=orig;}_ckEv('boleto_fallback_pro',{});return _checkoutPro(corpo);} /* Worker antigo ainda no ar: boleto pelo Mercado Pago como antes */
+     if(!x.ok||!(d.linha||d.url))return falha(d.error||'Não foi possível gerar o boleto agora. Tente de novo ou pague com Pix.','boleto_'+x.st);
+     if(btn){btn.disabled=false;btn.textContent=orig;}
+     _CK.bol={pedido:String(d.pedido||corpo.pedido),id:String(d.id),linha:String(d.linha||''),url:String(d.url||''),total:+d.total||0,venc:d.vencimento||'',corpo:corpo,tent:tent};
+     _bolRender();_ckPainel('ckBol');
+     _ckEv('boleto_gerado',{transaction_id:_CK.bol.pedido,value:_CK.bol.total,currency:'BRL'});})
+   .catch(function(){falha('Erro de conexão ao gerar o boleto. Confira a internet e tente de novo.','boleto_rede');});
+}
+function _bolRender(){var B=_CK.bol;if(!B)return;
+  document.getElementById('bolPed').textContent=B.pedido;document.getElementById('bolTot').textContent=brl(B.total);
+  var dv=Date.parse(B.venc||'');document.getElementById('bolVenc').textContent=dv?new Date(dv).toLocaleDateString('pt-BR',{timeZone:'America/Sao_Paulo'}):'3 dias úteis';
+  document.getElementById('bolCode').value=B.linha;document.getElementById('bolCodeBox').hidden=!B.linha;
+  var a=document.getElementById('bolPdf');if(B.url){a.href=B.url;a.hidden=false;}else a.hidden=true;
+  var msg='Olá! Gerei o boleto do pedido '+B.pedido+' no site da SULLAB. Segue o comprovante de pagamento:';
+  document.getElementById('bolWa').href='https://wa.me/5524988383100?text='+encodeURIComponent(msg);
+  var s=document.getElementById('bolStat');if(s)s.hidden=true;var c=document.getElementById('bolCopyBtn');if(c)c.textContent='Copiar';}
+function boletoCopiar(){var B=_CK.bol;if(!B||!B.linha)return;var t=B.linha,b=document.getElementById('bolCopyBtn');
+  var ok=function(){if(b){b.textContent='Copiado ✓';setTimeout(function(){b.textContent='Copiar';},2500);}_ckEv('boleto_copiado',{transaction_id:B.pedido});};
+  var fb=function(){try{var i=document.getElementById('bolCode');i.focus();i.select();try{i.setSelectionRange(0,t.length);}catch(e){}document.execCommand('copy');ok();}catch(e){}};
+  try{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(ok,fb);else fb();}catch(e){fb();}}
+function boletoConcluir(){var B=_CK.bol;if(!B)return false;_ckEv('boleto_concluido',{transaction_id:B.pedido});
+  location.href='/obrigado.html?pedido='+encodeURIComponent(B.pedido)+'&external_reference='+encodeURIComponent(B.pedido)+'&status=pending&payment_id='+encodeURIComponent(B.id)+'&metodo=boleto&payment_method_id=bolbradesco';return false;}
+function boletoVoltar(){_CK.bol=null;_ckPainel('ckForm');return false;}

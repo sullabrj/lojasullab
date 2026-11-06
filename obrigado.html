@@ -118,7 +118,7 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
       _env[_tid]=Date.now();try{localStorage.setItem('sullab_purchase_enviadas',JSON.stringify(_env));}catch(e){}
     };
     /* Pix: confere no Worker que o pagamento está mesmo aprovado antes de contar a conversão */
-    if(metodo==='pix'&&payId&&!_env[_tid]){
+    if((metodo==='pix'||metodo==='cartao')&&payId&&!_env[_tid]){ /* 05/11/2026: cartão transparente também confere no Worker */
       fetch('https://sullab-mp.comercial-0a2.workers.dev/pix/status?id='+encodeURIComponent(payId),{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){if(d&&d.status==='approved')_fire();}).catch(function(){});
     }else _fire();
     try{if(!extRef||!_lp||_lp.ped===extRef)localStorage.removeItem('sullab_cart');}catch(e){}

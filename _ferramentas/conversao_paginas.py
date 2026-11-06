@@ -103,7 +103,7 @@ def selo_min_html(c, grande=False):
         return ''
     txt = ('Pedido mínimo de R$ 250 somando tubos e agulhas Vacuette — pode misturar com outros itens no mesmo pedido' if m == 250
            else ('Pedido mínimo de R$ 150 somando testes rápidos — vale o total do pedido' if c in TR_TOP
-                 else 'Pedido mínimo de R$ 150 em pedidos com produto refrigerado — vale o total do pedido'))
+                 else 'Pedido mínimo com produto refrigerado: R$ 150 no RJ e na Zona da Mata mineira, R$ 250 nas demais regiões do Sudeste, Sul e Centro-Oeste, R$ 400 no Norte e Nordeste — vale o total do pedido'))
     est = ('display:inline-block;margin:2px 0 6px;background:#fff7e8;border:1px solid #f1d3a1;color:#7a4b00;border-radius:8px;'
            'padding:4px 10px;font-size:13px;font-weight:700') if grande else ''
     return f'<div class="pmin"{" style=" + chr(34) + est + chr(34) if est else ""}>📦 {txt}</div>'
@@ -153,7 +153,7 @@ def eh_quimico(info):
 
 def faq_html():
     return ('<details><summary>' + FAQ_PRECO_Q + '</summary><p>' + FAQ_PRECO_A + '</p></details>'
-            '<details><summary>Tem pedido mínimo?</summary><p>No site o pedido mínimo é de R$ 100. Com item refrigerado, R$ 150; '
+            '<details><summary>Tem pedido mínimo?</summary><p>No site o pedido mínimo é de R$ 100. Com item refrigerado, R$ 150 no RJ e na Zona da Mata mineira, R$ 250 nas demais regiões do Sudeste, Sul e Centro-Oeste e R$ 400 no Norte e Nordeste; '
             'com testes rápidos, R$ 150; com tubos e agulhas Vacuette, R$ 250; no boleto, R$ 400.</p></details>'
             '<details><summary>Como pago e recebo a nota fiscal?</summary><p>Pix com 5% de desconto (3% em tubos e agulhas Vacuette) '
             'ou cartão de crédito; boleto a partir de R$ 400. O frete é calculado pelo CEP no carrinho e todo pedido sai com NF-e. '

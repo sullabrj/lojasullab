@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=bd37969d53",p:"/data/precos.json?v=838280ae80",f:"/data/ficha.json?v=a023fa92e8",j:"/js/loja.js?v=d7088f644b"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
-<link rel="preload" href="/js/loja.js?v=d7088f644b" as="script">
+<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=bd37969d53",p:"/data/precos.json?v=838280ae80",f:"/data/ficha.json?v=a023fa92e8",j:"/js/loja.js?v=8d54deceff"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
+<link rel="preload" href="/js/loja.js?v=8d54deceff" as="script">
 <title>SULLAB · Materiais para laboratório e diagnóstico — atacado com NF-e</title>
 <meta name="description" content="Distribuidora de produtos para laboratório: tubos a vácuo, testes rápidos, reagentes, meios de cultura e descartáveis. Compra no site, NF-e e entrega no Brasil.">
 
@@ -362,6 +362,10 @@
   .pxtot{font-size:14px;color:var(--muted)}.pxtot b{display:block;font-size:24px;color:var(--navy);margin-top:2px}
   .pxexp{font-size:13px;color:var(--muted);margin-top:6px}.pxexp b{color:var(--ink);font-variant-numeric:tabular-nums}
   .pxcopy{display:flex;gap:8px;margin-bottom:12px}
+  #ckCard h3,#ckBol h3{margin:0 0 4px;font-size:20px;color:var(--navy)}
+  .cardnota{font-size:12.5px;color:var(--muted);margin:6px 0 10px;line-height:1.45}
+  #cardBrick{min-height:120px}
+  a.ckpay.bolpdf{display:block;text-align:center;text-decoration:none;margin-top:10px}
   .pxcopy input{flex:1;min-width:0;padding:11px;border:1px solid var(--line);border-radius:9px;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--ink);background:var(--bg)}
   .pxcopy button{flex:0 0 auto;border:0;border-radius:9px;background:var(--navy);color:#fff;font-weight:800;font-size:14px;padding:0 18px;min-height:44px;cursor:pointer}
   .pxcopy button:disabled{opacity:.45;cursor:default}
@@ -983,8 +987,8 @@
   <label id="paysLb" class="cklb">Forma de pagamento</label>
   <div class="pays" id="pays">
     <label class="pay1 on"><input type="radio" name="pg" value="pix" checked onchange="setPg('pix')"><span><span class="pn">Pix</span> <span class="pd">&middot; QR Code aqui na página, aprovação na hora</span></span><span class="ptag">até &minus;5%</span></label>
-    <label class="pay1"><input type="radio" name="pg" value="cartao" onchange="setPg('cartao')"><span><span class="pn">Cartão de crédito</span> <span class="pd">&middot; até 2x sem juros · Mercado Pago</span></span></label>
-    <label class="pay1" id="pgBoleto"><input type="radio" name="pg" value="boleto" onchange="setPg('boleto')"><span><span class="pn">Boleto bancário</span> <span class="pd" id="pgBoletoTx">&middot; à vista, compensa em até 3 dias úteis &middot; pedidos a partir de R$ 400</span></span></label>
+    <label class="pay1"><input type="radio" name="pg" value="cartao" onchange="setPg('cartao')"><span><span class="pn">Cartão de crédito</span> <span class="pd">&middot; pague aqui mesmo &middot; parcelado em pedidos a partir de R$ 800</span></span></label>
+    <label class="pay1" id="pgBoleto"><input type="radio" name="pg" value="boleto" onchange="setPg('boleto')"><span><span class="pn">Boleto bancário</span> <span class="pd" id="pgBoletoTx">&middot; gerado aqui mesmo, compensa em até 3 dias úteis &middot; pedidos a partir de R$ 400</span></span></label>
   </div>
   <div id="boletoInfo" style="display:none;font-size:13px;color:#5f6b7c;margin:-2px 0 10px;line-height:1.45">Depois de pagar o boleto, envie o comprovante pelo WhatsApp: liberamos o seu pedido mais rápido, sem esperar a compensação.<br><a href="#" class="cklnk" id="btnFaturado" onclick="boletoFaturado();return false">Empresa (CNPJ)? Peça boleto faturado em 28 ou 45 dias (mediante análise de crédito)</a></div>
   <div class="cktot"><span>Total <span id="ckQt" style="color:var(--muted);font-size:12px"></span></span><b id="ckTot">R$ 0,00</b></div>
@@ -1008,6 +1012,33 @@
    <ol class="pxsteps"><li>Abra o app do seu banco e escolha <b>Pix</b>.</li><li>Leia o QR Code ou cole o código copia e cola.</li><li>Confira o valor e confirme. A confirmação aparece aqui.</li></ol>
    <a href="#" class="cklnk" onclick="return pixVoltar()">&larr; Alterar dados ou forma de pagamento</a>
    <a href="#" class="cklnk ckduv2" onclick="duvidaCheckout('pix');return false">Dúvida? Fale com um vendedor</a>
+  </div>
+  <div id="ckCard" hidden>
+   <h3>Pague com cartão de crédito</h3>
+   <div class="sub">Pedido <b id="cardPed"></b> &middot; total <b id="cardTot">R$ 0,00</b> &middot; NF-e em todo pedido</div>
+   <div class="cardnota" id="cardParc"></div>
+   <div id="cardBrick"></div>
+   <div class="pxstat" id="cardStat" role="status" aria-live="polite" hidden></div>
+   <div class="cardnota">🔒 Os dados do cartão são digitados no formulário seguro do Mercado Pago: a SULLAB não vê nem guarda o número do cartão.</div>
+   <a href="#" class="cklnk" onclick="return cartaoVoltar()">&larr; Alterar dados ou forma de pagamento</a>
+   <a href="#" class="cklnk ckduv2" onclick="duvidaCheckout('cartao');return false">Dúvida? Fale com um vendedor</a>
+  </div>
+  <div id="ckBol" hidden>
+   <h3>Boleto gerado</h3>
+   <div class="sub">Pedido <b id="bolPed"></b> &middot; NF-e em todo pedido</div>
+   <div class="pxbox">
+    <div class="pxtot">Total <b id="bolTot">R$ 0,00</b></div>
+    <div class="pxexp">Vencimento <b id="bolVenc"></b></div>
+    <a class="ckpay bolpdf" id="bolPdf" href="#" target="_blank" rel="noopener" onclick="_ckEv('boleto_pdf',{})">Abrir o boleto (PDF) &rarr;</a>
+   </div>
+   <div id="bolCodeBox">
+    <label class="cklb" for="bolCode">Linha digitável</label>
+    <div class="pxcopy"><input id="bolCode" readonly aria-label="Linha digitável do boleto" onclick="this.select()"><button type="button" id="bolCopyBtn" onclick="boletoCopiar()">Copiar</button></div>
+   </div>
+   <div class="pxstat erro" id="bolStat" role="status" hidden></div>
+   <ol class="pxsteps"><li>Pague no app do banco (copie a linha digitável) ou imprima o PDF.</li><li>O boleto compensa em até 3 dias úteis.</li><li>Para liberar mais rápido, <a id="bolWa" href="#" target="_blank" rel="noopener">mande o comprovante no WhatsApp</a>.</li></ol>
+   <button class="ckpay" onclick="return boletoConcluir()">Concluir pedido &rarr;</button>
+   <a href="#" class="cklnk" onclick="return boletoVoltar()">&larr; Alterar dados ou forma de pagamento</a>
   </div>
  </div>
 </div>
