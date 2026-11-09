@@ -302,7 +302,7 @@ function render(){
     var selo=((window.PIX3&&window.PIX3[p.c])||(window.TR_TOP&&window.TR_TOP[p.c]))?'<span class="selo best">🏆 Preço exclusivo do site</span>':p.selo==='hot'?'<span class="selo hot">🔥 Mais procurado</span>':(p.selo==='top'?'<span class="selo">⭐ Mais vendido</span>':'');
     var precoBloco='';var _pr=(window.PRECOS||{})[p.c];if(_pr&&_pr[1]){precoBloco='<div style="margin:6px 0 2px;line-height:1.32"><div style="font-size:19px;font-weight:800;color:#2f9e63">'+brl(_pr[1])+'</div>'+unitLn(p.c,_pr[1])+'<div class="pixl">💚 <b>'+brl(Math.round(_pr[1]*(100-pixPct(p.c)*100))/100)+'</b> no Pix <span>'+Math.round(pixPct(p.c)*100)+'% off</span></div>'+seloMinHtml(p.c)+'</div>';}
     var _ap=isAparelho(p);if(_ap)precoBloco='<div style="margin:6px 0 2px;font-size:12.5px;font-weight:700;color:#24455e;line-height:1.3">Comodato ou aluguel<br><span style="font-weight:500;color:#5f6b7c">mediante contrato</span></div>';
-    var btns=_ap?'<button class="add" style="width:100%" onclick="event.stopPropagation();propostaAparelho('+i+')">Solicitar proposta</button>':'<div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="add" onclick="addCart('+i+',this)">+ Carrinho</button>';
+    var btns=_ap?'<button class="add" style="width:100%" onclick="event.stopPropagation();propostaAparelho('+i+')">Solicitar proposta</button>':'<div class="stepper"><button onclick="step('+i+',-1,this)">−</button><input class="sq" type="text" inputmode="numeric" value="1" aria-label="Quantidade" onfocus="this.select()" oninput="sqIn(this)" onkeydown="if(event.key===\'Enter\')this.blur()"><button onclick="step('+i+',1,this)">+</button></div><button class="add" onclick="addCart('+i+',this)">+ Carrinho</button>';
     return '<div class="prod" data-c="'+String(p.c).replace(/"/g,'&quot;')+'" onclick="cardClick(event,'+i+')">'+selo+
       '<div class="ph"><img '+imgMini(p,'160px')+' loading="lazy" decoding="async" width="160" height="160" alt="'+p.n+'" onerror="this.removeAttribute(\'srcset\');this.src=\'/img/logo-sullab.png\';this.style.opacity=.35"></div>'+
       '<div class="pb"><span class="bc">'+p.m+' · cód. '+p.c+'</span>'+
@@ -324,12 +324,16 @@ function _setupIO(){}
 function setDept(k){FILTRO.dept=k;FILTRO.marca='';FILTRO.busca='';document.getElementById('searchInput').value='';montarFiltros();render();irProdutos();marcarNav();}
 function setMarca(m){FILTRO.marca=m;FILTRO.busca='';montarFiltros();render();irProdutos();}
 function buscarTermo(t){var el=document.getElementById('searchInput');el.value=t;fazerBusca();}
-function fazerBusca(){FILTRO.busca=document.getElementById('searchInput').value.trim();var sc=document.getElementById('searchCat').value;if(sc)FILTRO.dept=sc;FILTRO.marca='';ensureKw(function(){montarFiltros();render();irProdutos();});}
+function fazerBusca(){FILTRO.busca=document.getElementById('searchInput').value.trim();var sc=document.getElementById('searchCat').value;if(!FILTRO.busca&&!sc){try{var _si=document.getElementById('searchInput');_si.focus();_si.placeholder='Digite o nome, a marca ou o código do produto…';}catch(e){}return;}if(sc&&!FILTRO.busca)FILTRO.dept=sc;if(sc)FILTRO.dept=sc;FILTRO.marca='';ensureKw(function(){montarFiltros();render();irProdutos();});}
 function marcarNav(){[...document.querySelectorAll('#deptNav .dept')].forEach(e=>e.classList.toggle('on',e.getAttribute('data-d')===FILTRO.dept));}
 function irProdutos(){document.getElementById('shopAnchor').scrollIntoView({behavior:'smooth',block:'start'});}
 function toggleCNPJ(){CNPJ=!CNPJ;document.getElementById('cnpjSwitch').classList.toggle('off',!CNPJ);render();atualizarCart();}
 
-function step(i,d,btn){var sp=btn.parentElement.querySelector('span');var v=Math.max(1,(parseInt(sp.textContent)||1)+d);sp.textContent=v;
+function _sqLe(sp){return parseInt(sp.tagName==='INPUT'?sp.value:sp.textContent)||1;}
+function _sqPoe(sp,v){if(sp.tagName==='INPUT')sp.value=v;else sp.textContent=v;}
+function _sqBotao(st,v){try{var add=st.parentElement.querySelector('button.add');if(add){if(!add.dataset.t0)add.dataset.t0=add.textContent;add.textContent=v>1?('+ Carrinho ('+v+')'):add.dataset.t0;}}catch(e){}}
+function sqIn(el){var s=String(el.value||'').replace(/\D/g,'').slice(0,4);if(el.value!==s)el.value=s;_sqBotao(el.parentElement,parseInt(s)||1);}
+function step(i,d,btn){var sp=btn.parentElement.querySelector('input.sq,span');var v=Math.max(1,_sqLe(sp)+d);_sqPoe(sp,v);
   /* feedback do toque (01/11/2026): o + e o − mostram a mudança e o botão de compra passa a dizer a quantidade */
   try{sp.style.transition='transform .15s';sp.style.transform='scale(1.35)';setTimeout(function(){sp.style.transform='';},160);
     var add=btn.parentElement.parentElement.querySelector('button.add');if(add){if(!add.dataset.t0)add.dataset.t0=add.textContent;add.textContent=v>1?('+ Carrinho ('+v+')'):add.dataset.t0;}
@@ -337,7 +341,7 @@ function step(i,d,btn){var sp=btn.parentElement.querySelector('span');var v=Math
 function addCart(i,btn){
   /* 02/11/2026: o botão das Ofertas (.ofb) não tem seletor de quantidade ao lado — antes isso gerava erro de JS e o item não entrava no carrinho. Sem seletor = 1 unidade. */
   var qty=1;
-  try{var sp=btn&&btn.parentElement&&btn.parentElement.querySelector('.stepper span');if(sp)qty=Math.max(1,parseInt(sp.textContent)||1);}catch(e){}
+  try{var sp=btn&&btn.parentElement&&btn.parentElement.querySelector('.stepper input.sq,.stepper span');if(sp){qty=Math.max(1,_sqLe(sp));_sqPoe(sp,1);_sqBotao(sp.parentElement,1);}}catch(e){}
   var p=CATALOG[i];if(!p)return;
   var ex=CART.find(x=>x.c===p.c);
   if(ex)ex.qty+=qty; else CART.push({c:p.c,n:p.n,m:p.m,img:p.img,pub:p.pub,cnpj:p.cnpj,qty:qty});
@@ -363,7 +367,7 @@ function atualizarCart(){
   if(!CART.length){di.innerHTML='<div class="dempty">🛒 Seu carrinho está vazio.<br><span style="font-size:13px">Use a busca acima para encontrar produtos e montar seu pedido.</span></div>';document.getElementById('df').innerHTML='';if(db)db.innerHTML='';return;}
   di.innerHTML=CART.map(function(x){
     var c=String(x.c).replace(/'/g,"\\'");
-    return '<div class="citem"><img '+imgMini(miniDe(x.c)||x,'76px')+' alt="" width="76" height="76" decoding="async" onerror="this.removeAttribute(\'srcset\');this.src=\'/img/logo-sullab.png\'"><div style="min-width:0"><div class="ct">'+x.n+'</div><div class="cc">'+x.m+' · cód. '+x.c+'</div></div>'+
+    return '<div class="citem" data-c="'+String(x.c).replace(/"/g,'')+'"><img '+imgMini(miniDe(x.c)||x,'76px')+' alt="" width="76" height="76" decoding="async" onerror="this.removeAttribute(\'srcset\');this.src=\'/img/logo-sullab.png\'"><div style="min-width:0"><div class="ct">'+x.n+'</div><div class="cc">'+x.m+' · cód. '+x.c+'</div></div>'+
       '<div class="qctl"><div class="stepper"><button onclick="qtyCart(\''+c+'\',-1)" aria-label="Diminuir">−</button><input type="text" inputmode="numeric" value="'+x.qty+'" aria-label="Quantidade" onfocus="this.select()" onchange="setQtyCart(\''+c+'\',this.value)" onkeydown="if(event.key===\'Enter\'){this.blur();}"><button onclick="qtyCart(\''+c+'\',1)" aria-label="Aumentar">+</button></div><button class="rm" onclick="rmCart(\''+c+'\')">🗑 remover</button></div>'+
       _cpLinha(x)+'</div>';
   }).join('');
@@ -1048,7 +1052,7 @@ function abrirProd(i){
   var _prm=(window.PRECOS||{})[p.c];var precoHtml=(_prm&&_prm[1])?(((window.PIX3&&window.PIX3[p.c])?'<div style="display:inline-block;background:#1F4E79;color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;margin-top:8px">🏆 Preço exclusivo do site</div>':'')+'<div style="margin-top:10px;line-height:1.45"><div style="font-size:26px;font-weight:800;color:#2f9e63">'+brl(_prm[1])+'</div>'+unitLn(p.c,_prm[1])+'<div style="font-size:13px;color:#3a4a63;font-weight:700">'+brl(Math.round(_prm[1]*(100-pixPct(p.c)*100))/100)+' no Pix</div><div class="pixl big">💚 Pague no Pix e ganhe <b>'+Math.round(pixPct(p.c)*100)+'% de desconto</b></div><div style="font-size:12px;color:#5f6b7c;margin-top:6px">Preço único · NF-e em todo pedido · frete calculado pelo CEP</div></div>'):('<div class="b2bsob" style="font-size:14px;margin-top:8px">Preço sob consulta — solicite o orçamento'+(['microsc','centrif'].indexOf(p.k)>-1?' (NF-e)':' (NF-e · atacado)')+'</div>');
   var _apar=isAparelho(p);
   if(_apar){precoHtml='<div style="margin-top:10px;font-size:14.5px;line-height:1.45;color:#24455e;font-weight:600">'+APARELHO_TXT+'</div>';}
-  var acao=_apar?'<div style="margin-top:16px"><button class="btn navy" style="width:100%" onclick="propostaAparelho('+i+')">📄 Solicitar proposta</button></div>':'<div style="display:flex;gap:10px;align-items:center;margin-top:16px"><div class="stepper"><button onclick="step('+i+',-1,this)">−</button><span>1</span><button onclick="step('+i+',1,this)">+</button></div><button class="btn navy" style="flex:1" onclick="addCart('+i+',this)">🛒 Adicionar</button></div>';
+  var acao=_apar?'<div style="margin-top:16px"><button class="btn navy" style="width:100%" onclick="propostaAparelho('+i+')">📄 Solicitar proposta</button></div>':'<div style="display:flex;gap:10px;align-items:center;margin-top:16px"><div class="stepper"><button onclick="step('+i+',-1,this)">−</button><input class="sq" type="text" inputmode="numeric" value="1" aria-label="Quantidade" onfocus="this.select()" oninput="sqIn(this)" onkeydown="if(event.key===\'Enter\')this.blur()"><button onclick="step('+i+',1,this)">+</button></div><button class="btn navy" style="flex:1" onclick="addCart('+i+',this)">🛒 Adicionar</button></div>';
   __pmL=pmLista(p);__pmI=0;
   document.getElementById('pmInner').innerHTML=
     '<div class="pmimg"><div class="pmstage" id="pmStage">'+(__pmL.length>1?'<button class="pmar l" onclick="pmNav(-1)" aria-label="Foto anterior">&#8249;</button>':'')+'<img id="pmMain" width="320" height="320" src="'+__pmL[0]+'" onerror="this.removeAttribute(\'srcset\');this.src=\'/img/logo-sullab.png\';this.style.opacity=.4" alt="'+p.n+'">'+(__pmL.length>1?'<button class="pmar r" onclick="pmNav(1)" aria-label="Próxima foto">&#8250;</button>':'')+'</div>'+(__pmL.length>1?'<div class="pmth" id="pmTh">'+__pmL.map(function(u,k){return '<img class="'+(k?'':'on')+'" width="58" height="58" src="'+u+'" onclick="pmGo('+k+')" alt="'+(k?'Informações técnicas':'Foto do produto')+'" onerror="this.remove();__pmL=__pmL.filter(function(x){return x!==this.getAttribute(\'src\')}.bind(this))">';}).join('')+'</div>':'')+'</div>'+
@@ -1209,7 +1213,7 @@ function minimoSugestoes(falta,max){
   var out=[],fam={};for(var i=0;i<cand.length&&out.length<max;i++){if(fam[cand[i].f])continue;fam[cand[i].f]=1;out.push(cand[i]);}
   return out;
 }
-function rowHtml(p,q,motivo){q=q||1;var c=String(p.c).replace(/'/g,"\\'");return '<div class="rrow"><img '+imgMini(p,'46px')+' alt="" loading="lazy" width="46" height="46"><div class="rn">'+p.n+'<small>'+(q>1?(q+' × '+brl(priced(p))+' = '+brl(Math.round(q*priced(p)*100)/100)):brl(priced(p)))+'</small></div><button onclick="addRel(\''+c+'\',this,'+q+',\''+(motivo||'leve_junto')+'\')">+ Adicionar'+(q>1?(' ('+q+')'):'')+'</button></div>';}
+function rowHtml(p,q,motivo){q=q||1;var c=String(p.c).replace(/'/g,"\\'");return '<div class="rrow" data-c="'+String(p.c).replace(/"/g,'')+'"><img '+imgMini(p,'46px')+' alt="" loading="lazy" width="46" height="46"><div class="rn">'+p.n+'<small>'+(q>1?(q+' × '+brl(priced(p))+' = '+brl(Math.round(q*priced(p)*100)/100)):brl(priced(p)))+'</small></div><button onclick="addRel(\''+c+'\',this,'+q+',\''+(motivo||'leve_junto')+'\')">+ Adicionar'+(q>1?(' ('+q+')'):'')+'</button></div>';}
 function relBlock(codes,title,max){var l=relatedFor(codes,max);if(!l.length)return '';return '<div class="relbox"><div class="rt">'+title+' <i>LEVE JUNTO</i></div>'+l.map(function(p){return rowHtml(p,1,'leve_junto');}).join('')+'</div>';}
 function minBlock(max){var f=0;try{f=faltaTubo();}catch(e){}if(!(f>0))return '';var l=minimoSugestoes(f,max);if(!l.length)return relBlock(CART.map(function(x){return x.c;}),'Complete seu pedido',max);
   return '<div class="relbox" id="relMin"><div class="rt">Complete o pedido mínimo <i>FALTAM '+brl(f)+'</i></div><div style="font-size:12px;color:var(--muted);margin:-4px 0 8px">Qualquer um destes fecha o mínimo do seu pedido.</div>'+l.map(function(x){return rowHtml(x.p,x.q,'minimo');}).join('')+'</div>';}
@@ -1244,7 +1248,7 @@ window.fgConsulta=function(auto){
     var g=d&&d.gratis,c=cep.slice(0,5)+'-'+cep.slice(5);
     if(g&&g.falta>0){out.innerHTML='✅ CEP <b>'+c+'</b> salvo: <b>frete grátis disponível para a sua região</b>.<small>Adicione os produtos e veja no carrinho quanto falta para o frete grátis.</small>';}
     else if(g&&g.ativo){out.innerHTML='✅ Para o CEP <b>'+c+'</b>: o <b>frete é grátis</b> já nos pedidos pequenos.';}
-    else{out.innerHTML='Para o CEP <b>'+c+'</b> o frete é calculado no carrinho ou confirmado no atendimento.';}
+    else{var _op=((d&&d.opcoes)||[]).filter(function(o){return (o.valor||0)>0;}).sort(function(a,b){return a.valor-b.valor;});var _pz=_op.length?(_op[0].prazo||99):99;if(_op.length){out.innerHTML='🚚 CEP <b>'+c+'</b> salvo: frete <b>a partir de '+brl(_op[0].valor)+'</b>'+(_pz&&_pz<99?' · entrega em até <b>'+_pz+' dias úteis</b>':'')+'.<small>O valor exato aparece no carrinho, de acordo com os produtos e a quantidade.</small>';}else{out.innerHTML='✅ CEP <b>'+c+'</b> salvo. O frete exato aparece no carrinho, de acordo com os produtos e a quantidade.';}}
     try{sullabEvent&&sullabEvent('frete_gratis_consulta',{cep3:cep.slice(0,3)});}catch(e){}
   }).catch(function(){out.innerHTML='Não foi possível consultar agora. O frete aparece no carrinho.';});
 };
@@ -1938,3 +1942,11 @@ function boletoCopiar(){var B=_CK.bol;if(!B||!B.linha)return;var t=B.linha,b=doc
 function boletoConcluir(){var B=_CK.bol;if(!B)return false;_ckEv('boleto_concluido',{transaction_id:B.pedido});
   location.href='/obrigado.html?pedido='+encodeURIComponent(B.pedido)+'&external_reference='+encodeURIComponent(B.pedido)+'&status=pending&payment_id='+encodeURIComponent(B.id)+'&metodo=boleto&payment_method_id=bolbradesco';return false;}
 function boletoVoltar(){_CK.bol=null;_ckPainel('ckForm');return false;}
+
+/* 09/11/2026 — cliques mortos vistos no Clarity: tocar fora do campo da busca, na foto/nome do item do carrinho e das sugestões, e na foto grande do produto não fazia nada */
+(function(){function idxDe(c){try{return CATALOG.findIndex(function(p){return String(p.c)===String(c);});}catch(e){return -1;}}
+document.addEventListener('click',function(e){var t=e.target;if(!t||!t.closest)return;
+ try{var s=t.closest('.search');if(s&&!t.closest('input,button,a,.sugg,[role=listbox]')){var si=document.getElementById('searchInput');if(si)si.focus();return;}}catch(x){}
+ try{var a=t.closest('.citem img,.citem .ct,.rrow img,.rrow .rn,.rr img,.rr .rn');if(a&&!t.closest('button,input')){var row=a.closest('[data-c]');var i=row?idxDe(row.getAttribute('data-c')):-1;if(i>=0){var noCarr=!!a.closest('.citem,.cres,#cartDrawer,.cart');if(noCarr){try{fecharCarrinho();}catch(x){}}abrirProd(i);}return;}}catch(x){}
+ try{if(t.id==='pmMain'){if(window.__pmL&&__pmL.length>1){pmNav(1);}else{t.classList.toggle('zm');}}}catch(x){}
+},false);})();

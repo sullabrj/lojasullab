@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=bd37969d53",p:"/data/precos.json?v=39c7f2353b",f:"/data/ficha.json?v=a023fa92e8",j:"/js/loja.js?v=8d54deceff"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
-<link rel="preload" href="/js/loja.js?v=8d54deceff" as="script">
+<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=bd37969d53",p:"/data/precos.json?v=39c7f2353b",f:"/data/ficha.json?v=a023fa92e8",j:"/js/loja.js?v=cabd7e48aa"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
+<link rel="preload" href="/js/loja.js?v=cabd7e48aa" as="script">
 <title>SULLAB · Materiais para laboratório e diagnóstico — atacado com NF-e</title>
 <meta name="description" content="Distribuidora de produtos para laboratório: tubos a vácuo, testes rápidos, reagentes, meios de cultura e descartáveis. Compra no site, NF-e e entrega no Brasil.">
 
@@ -179,6 +179,12 @@
   .stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex-shrink:0}
   .stepper button{border:0;background:var(--navy-soft);width:30px;height:36px;font-size:16px;cursor:pointer;color:var(--navy)}
   .stepper span{width:28px;text-align:center;font-weight:700;font-size:14px}
+
+  .stepper input.sq{width:34px;height:36px;border:0;text-align:center;font-weight:700;font-size:16px;font-family:inherit;background:#fff;color:inherit;outline:0;padding:0;-moz-appearance:textfield}
+  .stepper input.sq::-webkit-outer-spin-button,.stepper input.sq::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .citem img,.citem .ct,.rrow img,.rrow .rn,.rr img,.rr .rn{cursor:pointer}
+  .search{cursor:text}
+  #pmMain{cursor:zoom-in;transition:transform .2s}#pmMain.zm{transform:scale(1.7);cursor:zoom-out;position:relative;z-index:2}
   .add{flex:1;background:var(--navy);color:#fff;border:0;border-radius:9px;font-weight:800;font-size:12.5px;cursor:pointer}
   .add:hover{background:var(--navy-d)}
   .add.cot{background:var(--green)}.add.cot:hover{background:var(--green-d)}
@@ -793,7 +799,7 @@
 <header><div class="wrap head">
   <a class="brand" href="/"><img src="/img/logo-sullab.webp" alt="SULLAB · Materiais para laboratório" width="240" height="213"></a>
   <div class="search">
-    <select id="searchCat" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option></select>
+    <select id="searchCat" aria-label="Filtrar por categoria" onchange="fazerBusca()"><option value="">Todas as categorias</option></select>
     <input id="searchInput" enterkeyhint="search" placeholder="Buscar produto, marca ou código (ex.: tubo EDTA, 454036, COVID)…" onkeydown="if(event.key==='Enter')fazerBusca()">
     <button onclick="fazerBusca()">🔍</button>
   </div>
@@ -1095,7 +1101,7 @@
     <div style="display:flex;gap:8px"><input id="rastChave" type="email" placeholder="E-mail usado no pedido" style="flex:1"><button class="ckpay" style="width:auto;padding:11px 16px;margin:0;white-space:nowrap" onclick="lookupRastreio()">Consultar</button></div>
   </div>
   <div id="rastResult"></div>
-  <div style="font-size:12.5px;font-weight:700;color:var(--ink);margin:18px 0 8px">📦 Meus pedidos</div>
+  <div style="font-size:12.5px;font-weight:700;color:var(--navy-l);margin:18px 0 8px;cursor:pointer" onclick="fecharRastreio();abrirConta('reg');">📦 Meus pedidos →</div>
   <div id="rastList"></div>
  </div>
 </div>
