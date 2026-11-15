@@ -30,7 +30,20 @@ a.btn{display:inline-block;background:#2f9e63;color:#fff;text-decoration:none;fo
 
 <script>
 (function(){
-  var seg = decodeURIComponent((location.pathname||'').toLowerCase()).replace(/^\/+|\/+$/g,'');
+  var seg = '';
+  try { seg = decodeURIComponent((location.pathname||'').toLowerCase()); } catch(e) { seg = (location.pathname||'').toLowerCase(); }
+  /* 15/11/2026: tira ".html"/".htm"/".php" do endereço antigo (antes ia junto para a busca e dava "nenhum produto") */
+  seg = seg.replace(/^\/+|\/+$/g,'').replace(/\.(html?|php|aspx?)$/,'');
+
+  /* páginas que mudaram de lugar */
+  var MAPA = {
+    'equipamentos-comodato':'/categoria/equipamentos-de-bioquimica.html',
+    'equipamentos comodato':'/categoria/equipamentos-de-bioquimica.html',
+    'equipamentos_comodato':'/categoria/equipamentos-de-bioquimica.html',
+    'comodato':'/categoria/equipamentos-de-bioquimica.html'
+  };
+  var ultimo = seg.split('/').filter(Boolean).pop() || '';
+  if (MAPA[seg] || MAPA[ultimo]) { location.replace(MAPA[seg] || MAPA[ultimo]); return; }
 
   var MARCAS = ['descarpack','cral','cralplast','biocon','uniqmed','kasvi','newprov','labtest','bioclin','vacuette','greiner','firstlab','olen','prolab','global','medix','bd','injex','labor import','laborimport'];
 
@@ -56,9 +69,31 @@ a.btn{display:inline-block;background:#2f9e63;color:#fff;text-decoration:none;fo
     .trim();
 
   var dest = (termo && termo.length >= 3) ? ('/?q=' + encodeURIComponent(termo)) : '/';
-
   try { document.getElementById('goLink').href = 'https://lojasullabrj.com.br' + dest; } catch(e){}
-  setTimeout(function(){ location.replace(dest); }, 600);
+
+  /* 15/11/2026: antes de cair na busca, procura no sitemap uma página de produto com o mesmo nome do link antigo */
+  var foi = false;
+  function ir(u){ if (foi) return; foi = true; location.replace(u); }
+  function sem(s){ try { return s.normalize('NFD').replace(/[̀-ͯ]/g,''); } catch(e){ return s; } }
+  var PARE = {de:1,da:1,do:1,das:1,dos:1,com:1,para:1,em:1,e:1,c:1,p:1,un:1,und:1,cx:1,caixa:1,html:1};
+  var palavras = sem(seg.split('/').pop() || '').split(/[^a-z0-9]+/).filter(function(w){ return w && w.length >= 2 && !PARE[w]; });
+  if (palavras.length >= 3 && window.fetch) {
+    var tempo = setTimeout(function(){ ir(dest); }, 2500);
+    fetch('/sitemap-produtos.xml').then(function(r){ return r.text(); }).then(function(xml){
+      var re = /<loc>[^<]*\/p\/([^<]+)\.html<\/loc>/g, m, melhor = null, nota = 0;
+      while ((m = re.exec(xml))) {
+        var ws = m[1].split('-'), tem = {}, i, ok = 0;
+        for (i = 0; i < ws.length; i++) tem[ws[i]] = 1;
+        for (i = 0; i < palavras.length; i++) if (tem[palavras[i]]) ok++;
+        var n = ok / palavras.length;
+        if (n > nota) { nota = n; melhor = m[1]; }
+      }
+      clearTimeout(tempo);
+      ir((melhor && nota >= 0.8) ? ('/p/' + melhor + '.html') : dest);
+    }).catch(function(){ clearTimeout(tempo); ir(dest); });
+  } else {
+    setTimeout(function(){ ir(dest); }, 600);
+  }
 })();
 </script>
 </body>

@@ -44,7 +44,7 @@ window.TR_TOP={'TR 017-1 RP':1,'TR 009 IST':1,'TR 009-1 IST':1,'TR 009-1 DT':1,'
 window.GREINER_DE={"450071": 68.44, "450072": 68.44, "454921": 31.61, "456211": 58.09, "454030": 37.01, "454482": 47.49, "450539": 100.56, "456080": 41.9, "454327": 44.69, "454321": 44.69, "454036": 23.74, "454087": 25.14, "454085": 43.37, "454091": 43.99, "454092": 26.54, "454071": 36.39, "456071": 37.01, "455071": 52.37, "455092": 37.01, "456001": 27.93, "454235": 56.1};
 window.GREINER_ORDEM=["454036", "454071", "456071", "454327", "454321", "450071", "450072", "454087", "455071", "456001", "455092", "454921", "454092", "454482", "454030", "456211", "454235", "454085", "454091", "456080", "450539"];
 function irSecao(id){try{var e=document.getElementById(id);if(e)e.scrollIntoView({behavior:'smooth',block:'start'});}catch(x){}}
-function verTodosGreiner(){try{FILTRO.busca='Vacuette';var b=document.getElementById('busca')||document.querySelector('input[type=search]');if(b)b.value='Vacuette';render();var a=document.getElementById('shopAnchor');if(a)a.scrollIntoView({behavior:'smooth'});}catch(e){}}
+function verTodosGreiner(){try{FILTRO.busca='Vacuette';FILTRO.dept='';FILTRO.marca='';var b=document.getElementById('busca')||document.querySelector('input[type=search]');if(b)b.value='Vacuette';render();var a=document.getElementById('shopAnchor');if(a)a.scrollIntoView({behavior:'smooth'});}catch(e){}}
 function montarGreiner(){
   try{
     var sec=document.getElementById('grSec'),g=document.getElementById('grGrid');if(!sec||!g)return;
@@ -175,13 +175,15 @@ function _nrmMed(t){return String(t).replace(/[×✕]/g,'x').replace(/ø/g,' ').
 var BUSCA_STOP={html:1,htm:1,un:1,und:1,unid:1,cx:1,pct:1,c:1,x:1,de:1,do:1,da:1,dos:1,das:1,para:1,pra:1,com:1,e:1,em:1,o:1,a:1,os:1,as:1,um:1,uma:1,no:1,na:1,ml:1,mls:1};
 /* troca: o termo vira só a alternativa (marca/apelido que não existe no catálogo) */
 var SINON_TROCA={vacutainer:['vacuette'],vacuntainer:['vacuette'],vacutaine:['vacuette'],vacutainner:['vacuette'],bd:['vacuette'],greiner:['vacuette'],eppendorf:['microtubo'],eppendorff:['microtubo'],
-  hcg:['gravidez','hcg'],covid19:['covid'],coronavirus:['covid'],sarscov2:['covid'],'sars-cov-2':['covid']};
+  hcg:['gravidez','hcg'],scalp:['escalpe'],torniquete:['garrote'],covid19:['covid'],coronavirus:['covid'],sarscov2:['covid'],'sars-cov-2':['covid']};
 /* soma: o termo continua valendo e ganha alternativas (cor de tampa: "ponteira amarela" continua achando a ponteira) */
 var SINON_SOMA={roxo:['edta'],roxa:['edta'],lilas:['edta'],amarelo:['gel'],amarela:['gel'],vermelho:['soro','ativador'],vermelha:['soro','ativador'],
   azul:['citrato'],verde:['heparina'],cinza:['fluoreto','glicose'],gravidez:['hcg']};
 /* frases que viram um termo só (antes de separar as palavras) */
 var SINON_FRASE=[[/\btampa (roxa|roxo|lilas)\b/g,'edta'],[/\btampa (amarela|amarelo)\b/g,'gel'],[/\btampa (vermelha|vermelho)\b/g,'vermelho'],[/\btampa azul\b/g,'citrato'],
-  [/\btampa verde\b/g,'heparina'],[/\btampa cinza\b/g,'cinza'],[/\bteste (de )?gravidez\b/g,'gravidez'],[/\bbeta ?hcg\b/g,'hcg']];
+  [/\btampa verde\b/g,'heparina'],[/\btampa cinza\b/g,'cinza'],[/\bteste (de )?gravidez\b/g,'gravidez'],[/\bbeta ?hcg\b/g,'hcg'],
+  /* 15/11/2026 (Clarity/planilha): código com prefixo do fornecedor ("BIO-200423", "PA 405") e "tubo SST" */
+  [/\bbio ?-? ?(\d{3,6})\b/g,'$1'],[/\bpa (\d{1,4})\b/g,'pa$1'],[/\bsst\b/g,'gel']];
 function _bNorm(t){return _nrmMed(semAcento(t)).replace(/(\d)\s*mls?\b/g,'$1ml');}
 function _bComp(t){return String(t).replace(/[\s\-\.\/_]+/g,'');}
 /* plural → singular (-s, -es, -ões, -ais, -éis, -is) */
@@ -324,7 +326,7 @@ function _setupIO(){}
 function setDept(k){FILTRO.dept=k;FILTRO.marca='';FILTRO.busca='';document.getElementById('searchInput').value='';montarFiltros();render();irProdutos();marcarNav();}
 function setMarca(m){FILTRO.marca=m;FILTRO.busca='';montarFiltros();render();irProdutos();}
 function buscarTermo(t){var el=document.getElementById('searchInput');el.value=t;fazerBusca();}
-function fazerBusca(){FILTRO.busca=document.getElementById('searchInput').value.trim();var sc=document.getElementById('searchCat').value;if(!FILTRO.busca&&!sc){try{var _si=document.getElementById('searchInput');_si.focus();_si.placeholder='Digite o nome, a marca ou o código do produto…';}catch(e){}return;}if(sc&&!FILTRO.busca)FILTRO.dept=sc;if(sc)FILTRO.dept=sc;FILTRO.marca='';ensureKw(function(){montarFiltros();render();irProdutos();});}
+function fazerBusca(){FILTRO.busca=document.getElementById('searchInput').value.trim();var sc=document.getElementById('searchCat').value;if(!FILTRO.busca&&!sc){try{var _si=document.getElementById('searchInput');_si.focus();_si.placeholder='Digite o nome, a marca ou o código do produto…';}catch(e){}return;}/* 15/11/2026: a busca procura no catálogo inteiro (antes ficava presa na última categoria clicada e dava "nenhum produto") */FILTRO.dept=sc||'';FILTRO.marca='';ensureKw(function(){montarFiltros();render();irProdutos();});}
 function marcarNav(){[...document.querySelectorAll('#deptNav .dept')].forEach(e=>e.classList.toggle('on',e.getAttribute('data-d')===FILTRO.dept));}
 function irProdutos(){document.getElementById('shopAnchor').scrollIntoView({behavior:'smooth',block:'start'});}
 function toggleCNPJ(){CNPJ=!CNPJ;document.getElementById('cnpjSwitch').classList.toggle('off',!CNPJ);render();atualizarCart();}
@@ -766,15 +768,35 @@ function cotarFreteLoja(_t){if(window._fBusy)return;var cep=soDig(val('ckCep'));
 function _freteFalhaHtml(){return '<b>Não conseguimos confirmar o frete agora</b> (as transportadoras demoraram a responder). <button type="button" class="ckwa" style="display:inline;color:var(--navy-l);font-weight:700;padding:4px 0" onclick="cotarFreteLoja()">↻ Tentar de novo</button><br><span style="font-size:12.5px">Se continuar, confira o CEP ou fale com a gente no WhatsApp.</span>';}
 function aplicarCupom(){var c=(val('ckCupom')||'').toUpperCase().replace(/\s/g,'');var msg=document.getElementById('cupomMsg');if(!c){cupomPct=0;cupomCod='';if(msg)msg.textContent='';ckTotais();return;}if(CUPONS[c]){cupomPct=CUPONS[c];cupomCod=c;if(msg){msg.style.color='var(--green-d)';msg.innerHTML='✓ Cupom '+c+' aplicado — '+Math.round(cupomPct*100)+'% OFF.';}}else{cupomPct=0;cupomCod='';if(msg){msg.style.color='#b3261e';msg.textContent='Cupom inválido.';}}ckTotais();}
 function _freteBarCart(){return '';}
-function ckTotais(){try{var _ok=boletoOk();var _pb=document.getElementById('pgBoleto');if(_pb){_pb.style.opacity=_ok?'1':'.5';_pb.querySelector('input').disabled=!_ok;}if(!_ok&&PG==='boleto'){PG='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value==='pix');});}}catch(e){}var t=CART.reduce(function(s,x){return s+(Math.round(precoItem(x)*fatorPg(x.c)*100)/100)*x.qty;},0)*(1-cupomPct)+(freteSelLoja||0);var n=CART.reduce(function(s,x){return s+x.qty;},0);document.getElementById('ckTot').textContent=brl(t);document.getElementById('ckQt').textContent='('+n+' '+(n===1?'item':'itens')+(PG==='pix'?' · desconto Pix':'')+(cupomPct?(' · −'+Math.round(cupomPct*100)+'%'):'')+(freteSelLoja?(' · frete '+brl(freteSelLoja)):'')+')';}
-function abrirCheckout(){try{sullabFirebase();}catch(_e){}if(!CART.length){return;}if(faltaTubo()>0){abrirCarrinho();return;}fecharCarrinho();preencherFicha();ckEndSync();ckModo();setPg(PG);cupomPct=0;cupomCod='';zerarFrete();try{window._freteReset&&window._freteReset();}catch(e){}var cc=document.getElementById('ckCupom');if(cc)cc.value='';var cm=document.getElementById('cupomMsg');if(cm)cm.textContent='';renderFrete();_freteDoCarrinho();ckTotais();document.getElementById('ckErr').style.display='none';pixMostrar(false);
+/* 15/11/2026 (gravação do Clarity): cliente CNPJ tocava no boleto bloqueado e nada acontecia — agora o texto diz quanto falta e o toque explica */
+function _boletoFalta(){return Math.max(0,Math.round((BOLETO_MIN-totalPedidoBruto())*100)/100);}
+function boletoBloqueado(ev){try{if(boletoOk())return;if(ev){ev.preventDefault&&ev.preventDefault();}var e=document.getElementById('ckErr');if(!e)return;
+  e.innerHTML='O boleto é liberado em pedidos a partir de '+brl(BOLETO_MIN)+'. Faltam <b>'+brl(_boletoFalta())+'</b>. Você pode pagar agora por <b>Pix</b> (com desconto) ou <b>cartão</b>, ou <a href="#" class="cklnk" onclick="duvidaCheckout(\'boleto\');return false">falar com um vendedor</a>.';
+  e.style.display='block';e.scrollIntoView({block:'nearest'});_ckErroLog('boleto abaixo do minimo','pagamento');}catch(x){}}
+function ckTotais(){try{var _ok=boletoOk();var _pb=document.getElementById('pgBoleto');if(_pb){_pb.style.opacity=_ok?'1':'.5';_pb.querySelector('input').disabled=!_ok;if(!_pb._bb){_pb._bb=1;_pb.addEventListener('click',boletoBloqueado);}var _bt=document.getElementById('pgBoletoTx');if(_bt){if(!_bt._orig)_bt._orig=_bt.innerHTML;_bt.innerHTML=_ok?_bt._orig:'&middot; liberado em pedidos a partir de '+brl(BOLETO_MIN)+' &middot; <b>faltam '+brl(_boletoFalta())+'</b>';}}if(!_ok&&PG==='boleto'){PG='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value==='pix');});}}catch(e){}var t=CART.reduce(function(s,x){return s+(Math.round(precoItem(x)*fatorPg(x.c)*100)/100)*x.qty;},0)*(1-cupomPct)+(freteSelLoja||0);var n=CART.reduce(function(s,x){return s+x.qty;},0);document.getElementById('ckTot').textContent=brl(t);document.getElementById('ckQt').textContent='('+n+' '+(n===1?'item':'itens')+(PG==='pix'?' · desconto Pix':'')+(cupomPct?(' · −'+Math.round(cupomPct*100)+'%'):'')+(freteSelLoja?(' · frete '+brl(freteSelLoja)):'')+')';}
+function abrirCheckout(){try{sullabFirebase();}catch(_e){}if(!CART.length){return;}if(faltaTubo()>0){abrirCarrinho();return;}fecharCarrinho();preencherFicha();ckEndSync();ckModo();setPg(PG);cupomPct=0;cupomCod='';zerarFrete();try{window._freteReset&&window._freteReset();}catch(e){}var cc=document.getElementById('ckCupom');if(cc)cc.value='';var cm=document.getElementById('cupomMsg');if(cm)cm.textContent='';renderFrete();_ckAbrirFrete();ckTotais();document.getElementById('ckErr').style.display='none';pixMostrar(false);
   if(_PX&&!_PX.fim&&_PX.chave===chaveFrete()&&Date.now()<_PX.exp){_pxRender();pixMostrar(true);_pxTick();_PX.tick=setInterval(_pxTick,1000);_pxStatus();}
   document.getElementById('cko').classList.add('on');}
+/* 15/11/2026: o frete aparece já ao abrir o checkout (o cliente fechava o checkout para ver o frete no carrinho e não voltava) */
+function _ckAbrirFrete(){try{if(_freteDoCarrinho())return;if(soDig(val('ckCep')).length!==8)return;
+  if(!val('ckCidade')||!val('ckUf')){_cepUlt='';cepAuto();return;}cotarFreteLoja();}catch(e){}}
 function fecharCheckout(){document.getElementById('cko').classList.remove('on');_pxParar();}
 function fichaSalva(){try{return JSON.parse(localStorage.getItem('sullab_ficha')||'{}');}catch(e){return {};}}
 function preencherFicha(){var f=fichaSalva();var map={ckDoc:'doc',ckNome:'nome',ckEmail:'email',ckTel:'tel',ckCep:'cep',ckNum:'num',ckCompl:'compl',ckLog:'log',ckBairro:'bairro',ckCidade:'cidade',ckUf:'uf'};for(var id in map){if(f[map[id]])document.getElementById(id).value=f[map[id]];}if(f.doct)setDoc(f.doct);}
 function coletarFicha(){return {doct:DOCT,doc:val('ckDoc'),nome:val('ckNome'),email:val('ckEmail'),tel:val('ckTel'),cep:val('ckCep'),num:val('ckNum'),compl:val('ckCompl'),log:val('ckLog'),bairro:val('ckBairro'),cidade:val('ckCidade'),uf:val('ckUf')};}
-function cepAuto(){var c=soDig(val('ckCep'));if(c.length!==8)return;fetch('https://brasilapi.com.br/api/cep/v1/'+c).then(function(r){return r.json();}).then(function(d){if(d&&d.street){if(!val('ckLog'))document.getElementById('ckLog').value=d.street;if(!val('ckBairro'))document.getElementById('ckBairro').value=d.neighborhood||'';document.getElementById('ckCidade').value=d.city||'';document.getElementById('ckUf').value=d.state||'';}ckEndSync();if(!document.querySelector('#freteOpts label'))renderFrete();}).catch(function(){ckEndAbrir();});}
+/* 15/11/2026 (gravações do Clarity, iPhone): o CEP não preenchia bairro/cidade/UF e o cliente desistia.
+   Agora: BrasilAPI e, se falhar ou vier sem cidade, ViaCEP; preenche cidade/UF mesmo em CEP sem rua (CEP único da cidade);
+   se nada responder, abre os campos para digitar; e já calcula o frete sozinho com o CEP completo. */
+var _cepUlt='';
+function _cepJson(u){var ac=window.AbortController?new AbortController():null;var t=setTimeout(function(){try{ac&&ac.abort();}catch(e){}},6000);
+  return fetch(u,ac?{signal:ac.signal}:{}).then(function(r){clearTimeout(t);if(!r.ok)throw 0;return r.json();},function(e){clearTimeout(t);throw e;});}
+function _cepPoe(d){var s=function(id,v,sempre){var e=document.getElementById(id);if(e&&v&&(sempre||!e.value.trim()))e.value=v;};
+  s('ckLog',d.rua);s('ckBairro',d.bairro);s('ckCidade',d.cidade,1);s('ckUf',d.uf,1);}
+function cepAuto(){var c=soDig(val('ckCep'));if(c.length!==8){_cepUlt='';return;}if(c===_cepUlt)return;_cepUlt=c;
+  var fim=function(d){if(soDig(val('ckCep'))!==c)return;if(d&&d.cidade){_cepPoe(d);ckEndSync();if(!d.rua||!val('ckBairro'))ckEndAbrir();}else{ckEndAbrir();}
+    try{if(!freteValido()&&!_freteDoCarrinho()){renderFrete();cotarFreteLoja();}}catch(e){}};
+  var via=function(){return _cepJson('https://viacep.com.br/ws/'+c+'/json/').then(function(v){return (v&&!v.erro&&v.localidade)?{rua:v.logradouro||'',bairro:v.bairro||'',cidade:v.localidade,uf:v.uf||''}:null;}).catch(function(){return null;});};
+  _cepJson('https://brasilapi.com.br/api/cep/v1/'+c).then(function(d){return (d&&d.city)?{rua:d.street||'',bairro:d.neighborhood||'',cidade:d.city,uf:d.state||''}:via();},via).then(fim);}
 function cnpjAuto(){var c=soDig(val('ckDoc'));if(c.length!==14||docAlfa(val('ckDoc')))return;fetch('https://brasilapi.com.br/api/cnpj/v1/'+c).then(function(r){return r.json();}).then(function(d){if(d&&d.razao_social){if(!val('ckNome'))document.getElementById('ckNome').value=d.razao_social;if(!val('ckCep')&&d.cep){document.getElementById('ckCep').value=String(d.cep);cepAuto();}if(!val('ckLog')&&d.logradouro)document.getElementById('ckLog').value=(d.descricao_tipo_de_logradouro?d.descricao_tipo_de_logradouro+' ':'')+d.logradouro;if(!val('ckNum')&&d.numero)document.getElementById('ckNum').value=String(d.numero);if(!val('ckBairro')&&d.bairro)document.getElementById('ckBairro').value=d.bairro;if(!val('ckCidade')&&d.municipio)document.getElementById('ckCidade').value=d.municipio;if(!val('ckUf')&&d.uf)document.getElementById('ckUf').value=d.uf;}ckEndSync();renderFrete();}).catch(function(){});}
 /* 31/10/2026: o motivo do erro vai também ao Clarity (tag "checkout_erro" filtrável nas gravações) e ao GA4 com a etapa */
 function _ckErroLog(m,etapa){var mot=String(m||'').slice(0,90);try{if(typeof gtag==='function')gtag('event','checkout_erro',{motivo:mot,etapa:etapa||'form'});}catch(x){}
@@ -1244,13 +1266,17 @@ window.fgConsulta=function(auto){
   var code='18288-10',v=precoItem({c:code})||1.64;
   out.className='fgr on';out.innerHTML='Consultando…';
   try{var f=fichaSalva();f.cep=cep;localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}try{document.getElementById('utilCep').innerHTML='📍 Entregar no CEP <b>'+cep.slice(0,5)+'-'+cep.slice(5)+'</b> · alterar';document.getElementById('fgx').classList.add('ok');}catch(e){}
-  fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:[{c:code,q:1,v:v}]})}).then(function(r){return r.json();}).then(function(d){
-    var g=d&&d.gratis,c=cep.slice(0,5)+'-'+cep.slice(5);
+  /* 15/11/2026: o "Consultando…" ficava parado quando a cotação demorava — limite de 8 s e resposta sempre aparece */
+  var c0=cep.slice(0,5)+'-'+cep.slice(5),_fgAc=window.AbortController?new AbortController():null,_fgFim=0;
+  var _fgT=setTimeout(function(){if(_fgFim)return;_fgFim=1;try{_fgAc&&_fgAc.abort();}catch(e){}out.innerHTML='✅ CEP <b>'+c0+'</b> salvo. O frete exato aparece no carrinho, de acordo com os produtos e a quantidade.';},8000);
+  fetch(FRETE2,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cep:cep,itens:[{c:code,q:1,v:v}]}),signal:_fgAc?_fgAc.signal:undefined}).then(function(r){return r.json();}).then(function(d){
+    if(_fgFim)return;_fgFim=1;clearTimeout(_fgT);
+    var g=d&&d.gratis,c=c0;
     if(g&&g.falta>0){out.innerHTML='✅ CEP <b>'+c+'</b> salvo: <b>frete grátis disponível para a sua região</b>.<small>Adicione os produtos e veja no carrinho quanto falta para o frete grátis.</small>';}
     else if(g&&g.ativo){out.innerHTML='✅ Para o CEP <b>'+c+'</b>: o <b>frete é grátis</b> já nos pedidos pequenos.';}
     else{var _op=((d&&d.opcoes)||[]).filter(function(o){return (o.valor||0)>0;}).sort(function(a,b){return a.valor-b.valor;});var _pz=_op.length?(_op[0].prazo||99):99;if(_op.length){out.innerHTML='🚚 CEP <b>'+c+'</b> salvo: frete <b>a partir de '+brl(_op[0].valor)+'</b>'+(_pz&&_pz<99?' · entrega em até <b>'+_pz+' dias úteis</b>':'')+'.<small>O valor exato aparece no carrinho, de acordo com os produtos e a quantidade.</small>';}else{out.innerHTML='✅ CEP <b>'+c+'</b> salvo. O frete exato aparece no carrinho, de acordo com os produtos e a quantidade.';}}
     try{sullabEvent&&sullabEvent('frete_gratis_consulta',{cep3:cep.slice(0,3)});}catch(e){}
-  }).catch(function(){out.innerHTML='Não foi possível consultar agora. O frete aparece no carrinho.';});
+  }).catch(function(){if(_fgFim)return;_fgFim=1;clearTimeout(_fgT);out.innerHTML='✅ CEP <b>'+c0+'</b> salvo. O frete exato aparece no carrinho, de acordo com os produtos e a quantidade.';});
 };
 try{var _fc=(fichaSalva()||{}).cep;if(_fc&&document.getElementById('fgCep')){document.getElementById('fgCep').value=String(_fc).replace(/\D/g,'').replace(/^(\d{5})(\d)/,'$1-$2');fgConsulta(true);}}catch(e){}
 var CATPH={tubo:1,tr:1,meio:1,micro:1,bioq:1,hemat:1,eqbioq:1,eqhemat:1,eqvet:1,microsc:1,centrif:1,curativo:1,coletoram:1};

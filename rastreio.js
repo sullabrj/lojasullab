@@ -117,7 +117,7 @@
   function instalarLoja(){
     if(typeof window.CATALOG==='undefined'||typeof window.addCart!=='function')return;
     wrap('abrirProd',function(i){var p=CATALOG[i];if(p)ev('view_item',{items:[itemDe(p,1)]});});
-    wrap('addCart',function(i,btn){var p=CATALOG[i];if(!p)return;var q=1;try{q=parseInt(btn.parentElement.querySelector('.stepper span').textContent)||1;}catch(e){}
+    wrap('addCart',function(i,btn){var p=CATALOG[i];if(!p)return;var q=1;try{/* 15/11/2026: o contador virou campo digitável (input.sq); botões sem contador não quebram mais no iPhone */var sp=btn&&btn.parentElement?btn.parentElement.querySelector('.stepper input.sq,.stepper span'):null;if(sp)q=parseInt(sp.value!=null&&sp.tagName==='INPUT'?sp.value:sp.textContent,10)||1;}catch(e){}
       var pr=((window.PRECOS||{})[p.c]||[])[1]||0;ev('add_to_cart',{currency:'BRL',value:pr*q,items:[itemDe(p,q)]});});
     wrap('abrirCarrinho',function(){ev('view_cart',{currency:'BRL',value:total(),items:cartItens()});});
     /* 31/10/2026: o wrap roda ANTES da função; abrirCheckout volta ao carrinho quando falta valor para o pedido mínimo — só conta begin_checkout quando o checkout abre de fato */
