@@ -110,7 +110,7 @@ var CART=(function(){try{var v=JSON.parse(localStorage.getItem('sullab_cart')||'
 var CNPJ=true; 
 var FILTRO={dept:'', marca:'', busca:''};
 var _CUR=[],_SHOWN=0,_PAGE=24,_PG=1,_card=null,_io=null;  
-var WHATS='5524988383100';
+var WHATS='5524992578232';
 
 /* 30/10/2026: cartões usam a miniatura WebP de 320 px (campo t do catálogo); a foto grande fica no srcset (telas densas) e no modal */
 function imgMini(p,sz){if(!p)return '';var t=p.t,g=p.img||'';if(!t)return 'src="'+g+'"';t='/'+String(t).replace(/^\//,'');return 'src="'+t+'" srcset="'+t+' 320w, '+g+' 1000w" sizes="'+(sz||'160px')+'"';}
@@ -628,7 +628,7 @@ function duvidaCheckout(onde){
   try{if(window.clarity)clarity('event','duvida_checkout');}catch(e){}
   try{var f=fichaSalva();sullabEvent('checkout_duvida',{tel:f.tel||'',cliente:f.nome||'',total:totalCart(),itens:CART.map(function(x){return {cod:x.c,nome:x.n,q:x.qty};}),link:l,onde:onde||''});}catch(e){}
   try{sessionStorage.setItem('abSent','1');}catch(e){}
-  window.open('https://wa.me/5524988383100?text='+encodeURIComponent(msg),'_blank','noopener');
+  window.open('https://wa.me/5524992578232?text='+encodeURIComponent(msg),'_blank','noopener');
 }
 
 var BOLETO_MIN=400;
@@ -686,7 +686,7 @@ function boletoFaturado(){
   var msg='Olá! Quero fechar este pedido no site da SULLAB com *boleto faturado* (28/45 dias) para empresa.'+(f.nome?('\nEmpresa: '+f.nome):'')+(f.doc?('\nCNPJ: '+f.doc):'')+(f.cep?('\nCEP de entrega: '+f.cep):'')+'\nMeu carrinho: '+l;
   try{sullabEvent('checkout_faturado',{tel:f.tel||'',cliente:f.nome||'',total:totalCart(),link:l});}catch(e){}
   try{sessionStorage.setItem('abSent','1');}catch(e){}
-  window.open('https://wa.me/5524988383100?text='+encodeURIComponent(msg),'_blank','noopener');
+  window.open('https://wa.me/5524992578232?text='+encodeURIComponent(msg),'_blank','noopener');
 }
 var MP_WORKER='https://sullab-mp.comercial-0a2.workers.dev/';
 var SHEET_ENDPOINT='https://script.google.com/macros/s/AKfycbyPKW71fCDUcjZiID5AicTox1a_inSgYqd-4fXHxzsV9ynX1xrIx5mwf4YIGx5lDpL_Lw/exec';
@@ -1959,7 +1959,7 @@ function _bolRender(){var B=_CK.bol;if(!B)return;
   document.getElementById('bolCode').value=B.linha;document.getElementById('bolCodeBox').hidden=!B.linha;
   var a=document.getElementById('bolPdf');if(B.url){a.href=B.url;a.hidden=false;}else a.hidden=true;
   var msg='Olá! Gerei o boleto do pedido '+B.pedido+' no site da SULLAB. Segue o comprovante de pagamento:';
-  document.getElementById('bolWa').href='https://wa.me/5524988383100?text='+encodeURIComponent(msg);
+  document.getElementById('bolWa').href='https://wa.me/5524992578232?text='+encodeURIComponent(msg);
   var s=document.getElementById('bolStat');if(s)s.hidden=true;var c=document.getElementById('bolCopyBtn');if(c)c.textContent='Copiar';}
 function boletoCopiar(){var B=_CK.bol;if(!B||!B.linha)return;var t=B.linha,b=document.getElementById('bolCopyBtn');
   var ok=function(){if(b){b.textContent='Copiado ✓';setTimeout(function(){b.textContent='Copiar';},2500);}_ckEv('boleto_copiado',{transaction_id:B.pedido});};

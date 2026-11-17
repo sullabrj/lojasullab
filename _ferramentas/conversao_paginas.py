@@ -51,8 +51,8 @@ PIX_AVISO = 'Pix somente na chave CNPJ 32.198.434/0001-34 — nunca pedimos paga
 MOVA_LINHA = ('<div class="movaL" style="grid-column:1/-1;text-align:center;font-size:11.5px;color:#9aa7ba;padding:6px 0 0">'
               'Site criado por <a href="https://www.instagram.com/movafilms_/" target="_blank" rel="noopener" '
               'style="display:inline;color:#7a8aa0;text-decoration:underline">MOVA Films</a></div>')
-FOOT_EXTRA = ('<br>📞 <a href="tel:+552433236532">(24) 3323-6532</a> · WhatsApp <a href="https://wa.me/5524988383100" '
-              'target="_blank" rel="noopener">(24) 98838-3100</a> · segunda a sexta, em horário comercial · Instagram '
+FOOT_EXTRA = ('<br>📞 <a href="tel:+552433236532">(24) 3323-6532</a> · WhatsApp <a href="https://wa.me/5524992578232" '
+              'target="_blank" rel="noopener">(24) 99257-8232</a> · segunda a sexta, em horário comercial · Instagram '
               '<a href="https://www.instagram.com/sullabrj/" target="_blank" rel="noopener">@sullabrj</a><br>🔒 ' + PIX_AVISO)
 FAQ_PRECO_Q = 'O preço é o mesmo para empresa e pessoa física?'
 FAQ_PRECO_A = ('Sim. O preço do site é único para empresa (CNPJ) e pessoa física (CPF), sem cadastro: coloque no carrinho, '

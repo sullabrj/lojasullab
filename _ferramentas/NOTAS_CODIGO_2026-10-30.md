@@ -222,7 +222,7 @@ Formato: arquivo · linha (no arquivo ANTES da limpeza) · tipo · comentário �
 - L1065 · JS · mostrar preço CNPJ por padrão  
   → `var FILTRO={dept:'', marca:'', busca:''};`
 - L1067 · JS · 28/10/2026: catálogo paginado (24 por página) — sem rolagem infinita  
-  → `var WHATS='5524988383100';`
+  → `var WHATS='5524992578232';`
 - L1075 · JS · ====== RENDER ESTRUTURAS ======  
   → `function montarDeptNav(){`
 - L1092 · JS · footer cats  
