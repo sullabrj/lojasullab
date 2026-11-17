@@ -49,3 +49,10 @@
   ph.addEventListener('click',abrir);
   ph.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();abrir();}});
 }catch(e){}})();
+
+/* 17/11/2026: a logo do topo não era link (toque "morto" mais comum nas páginas de produto no Clarity) — agora leva à loja */
+(function(){try{
+  var im=document.querySelector('.top>img');if(!im||im.closest('a'))return;
+  var a=document.createElement('a');a.href='https://lojasullabrj.com.br/';a.setAttribute('aria-label','SULLAB — ir para a loja');a.style.cssText='display:inline-flex;align-items:center';
+  im.parentNode.insertBefore(a,im);a.appendChild(im);
+}catch(e){}})();

@@ -856,6 +856,8 @@ function _pxStatus(){var P=_PX;if(!P||P.fim)return;
     if(/cancel|expir|reject/.test(st)||Date.now()>=P.exp)return _pxExpirado(P,st||'tempo');
     if(!P.tick)return;_pxAgendar(document.hidden?10000:4000);
   }).catch(function(){if(_PX!==P||P.fim)return;if(Date.now()>=P.exp+60000)return _pxExpirado(P,'tempo');if(P.tick)_pxAgendar(6000);});}
+/* 17/11/2026: no celular o cliente sai para o app do banco e o navegador congela a consulta; ao voltar para a aba, confere o pagamento na hora */
+try{document.addEventListener('visibilitychange',function(){if(!document.hidden&&_PX&&!_PX.fim&&_PX.tick)_pxAgendar(0);});window.addEventListener('pageshow',function(){if(_PX&&!_PX.fim&&_PX.tick)_pxAgendar(0);});}catch(e){}
 function _pxExpirado(P,motivo){P.fim=1;_pxParar();_pxStat('exp');_pxEl('pxNovo').hidden=false;_pxEl('pxQrBox').classList.add('exp');_pxEl('pxExp').hidden=true;_pxEl('pxCopyBtn').disabled=true;
   _pxEv('pix_expirado',{transaction_id:P.pedido,tentativa:P.tent,motivo:motivo||''});}
 function pixNovo(){if(!_PX)return;pixGerar(_PX.corpo,(_PX.tent||1)+1);}
@@ -1326,7 +1328,9 @@ function aplicarUrl(){
      salvarCart();atualizarCart();did=true;
      try{var its=novos.map(function(x){return {item_id:x.c,item_name:x.n,item_brand:x.m,quantity:x.qty,price:precoItem(x)||0};}),val=Math.round(its.reduce(function(s,x){return s+x.price*x.quantity;},0)*100)/100;
       if(typeof gtag==='function')gtag('event','add_to_cart',{currency:'BRL',value:val,items:its,origem:soma?'link_comprar':'link_carrinho'});
-      if(typeof fbq==='function')fbq('track','AddToCart',{currency:'BRL',value:val,content_ids:its.map(function(x){return x.item_id;}),content_type:'product',num_items:its.reduce(function(s,x){return s+x.quantity;},0)});}catch(e){}}
+      if(typeof fbq==='function')fbq('track','AddToCart',{currency:'BRL',value:val,content_ids:its.map(function(x){return x.item_id;}),content_type:'product',num_items:its.reduce(function(s,x){return s+x.quantity;},0)});
+      /* 17/11/2026: o Clarity não contava o "Comprar" das páginas de produto (caminho principal no celular) como add_to_cart */
+      try{if(window.clarity)clarity('event','add_to_cart');}catch(e2){}}catch(e){}}
     if(falt.length){window.__linkFaltou=falt;did=true;try{sullabEvent('carrinho_link_invalido',{codigos:falt.slice(0,20)});}catch(e){}}}
    if(did){history.replaceState(null,'',location.pathname);abrirCarrinho();try{if(c)sullabEvent('carrinho_por_link',{soma:soma?1:0});}catch(e){}}
   }catch(e){}
