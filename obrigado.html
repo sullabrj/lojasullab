@@ -114,7 +114,8 @@ h1{font-size:23px;margin:6px 0 4px;color:var(--navy)}
       var _fb=function(){try{if(typeof fbq==='function')fbq('track','Purchase',{value:Math.round((_v||0)*100)/100,currency:'BRL',content_type:'product',content_ids:_its.map(function(x){return String(x.item_id);}),contents:_its.map(function(x){return {id:String(x.item_id),quantity:x.quantity,item_price:x.price};}),num_items:_its.reduce(function(s,x){return s+(x.quantity||1);},0)},{eventID:_tid});}catch(e){}};
       /* o rastreio.js (que cria o fbq) é defer: roda antes do DOMContentLoaded */
       if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_fb);else _fb();
-      try{if(window.clarity)clarity('event','purchase');}catch(e){}
+      /* 17/11/2026: o rastreio.js (defer) ainda não criou a fila do Clarity quando este trecho roda; sem a fila a compra confirmada aqui (cartão, retorno do Mercado Pago) nunca chegava ao Clarity */
+      try{window.clarity=window.clarity||function(){(window.clarity.q=window.clarity.q||[]).push(arguments);};window.clarity('event','purchase');}catch(e){}
       _env[_tid]=Date.now();try{localStorage.setItem('sullab_purchase_enviadas',JSON.stringify(_env));}catch(e){}
     };
     /* Pix: confere no Worker que o pagamento está mesmo aprovado antes de contar a conversão */

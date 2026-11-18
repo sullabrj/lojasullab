@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=bd37969d53",p:"/data/precos.json?v=8bd4700d21",f:"/data/ficha.json?v=a023fa92e8",j:"/js/loja.js?v=20261117b"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
-<link rel="preload" href="/js/loja.js?v=20261117b" as="script">
+<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=bd37969d53",p:"/data/precos.json?v=8bd4700d21",f:"/data/ficha.json?v=a023fa92e8",j:"/js/loja.js?v=20261117c"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
+<link rel="preload" href="/js/loja.js?v=20261117c" as="script">
 <title>SULLAB · Materiais para laboratório e diagnóstico — atacado com NF-e</title>
 <meta name="description" content="Distribuidora de produtos para laboratório: tubos a vácuo, testes rápidos, reagentes, meios de cultura e descartáveis. Compra no site, NF-e e entrega no Brasil.">
 
@@ -315,7 +315,8 @@
   .ckb{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:92vh;overflow:auto;padding:24px;position:relative}
   .ckb h3{margin:0 0 4px;font-size:20px;color:var(--navy)}
   .ckb .sub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
-  .ckx{position:absolute;top:14px;right:16px;font-size:24px;cursor:pointer;color:var(--muted);background:0;border:0}
+  .ckx{position:absolute;top:4px;right:6px;width:44px;height:44px;line-height:44px;padding:0;text-align:center;font-size:26px;cursor:pointer;color:var(--muted);background:0;border:0}
+  .cktop{margin:-4px 0 10px;padding:8px 11px;border-radius:9px;background:var(--navy-soft);color:var(--navy);font-size:13.5px;line-height:1.35}.cktop b{font-size:15px}
   .fld{margin-bottom:11px}
   .fld label{display:block;font-size:11.5px;font-weight:700;color:var(--ink);margin-bottom:4px}
   .fld input{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit;color:var(--ink)}
@@ -961,6 +962,7 @@
   <div id="ckForm">
   <h3 id="ckTit">Finalizar pedido</h3>
   <div class="sub" id="ckSub">Pagamento seguro pelo Mercado Pago &middot; NF-e em todo pedido</div>
+  <div class="cktop" id="ckTopTot" hidden></div>
   <a href="#" class="cklnk ckduv2" style="display:block;margin:-6px 0 10px" onclick="duvidaCheckout('checkout');return false">💬 Prefere fechar pelo WhatsApp? Fale com um vendedor</a>
   <div class="fld"><label for="ckTel">Seu WhatsApp (com DDD)</label><input id="ckTel" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="16" placeholder="(24) 90000-0000"><small class="ckhint">Para enviarmos a nota fiscal, o rastreio e tirar dúvidas do pedido.</small></div>
   <div class="doctab" id="docTab">

@@ -885,7 +885,7 @@ document.addEventListener('visibilitychange',function(){try{if(!document.hidden&
 function pagarMP(){
   var f=coletarFicha();
   if(soDig(f.tel).length<10)return ckFoco('ckTel'),ckErro('Informe um WhatsApp com DDD.');
-  if(DOCT==='cnpj'?!cnpjValido(f.doc):!cpfValido(f.doc))return ckFoco('ckDoc'),ckErro(DOCT==='cnpj'?'Confira o CNPJ: são 14 caracteres (números, ou letras e números no CNPJ novo).':'Confira o CPF: são 11 números.');
+  if(DOCT==='cnpj'?!cnpjValido(f.doc):!cpfValido(f.doc))return ckFoco('ckDoc'),ckErro(DOCT==='cnpj'?(String(f.doc||'').replace(/[^0-9A-Za-z]/g,'').length===14?'CNPJ inválido: confira os números digitados.':'Confira o CNPJ: são 14 caracteres (números, ou letras e números no CNPJ novo).'):(soDig(f.doc).length===11?'CPF inválido: confira os números digitados.':'Confira o CPF: são 11 números.'));
   if(!f.nome)return ckFoco('ckNome'),ckErro(DOCT==='cpf'?'Informe seu nome completo.':'Informe a razão social da empresa.');
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))return ckFoco('ckEmail'),ckErro(PG==='pix'?'Informe um e-mail válido para gerar o Pix: é por ele que enviamos a confirmação e a NF-e.':'Informe um e-mail válido.');
   if(soDig(f.cep).length!==8)return ckFoco('ckCep'),ckErro('Informe o CEP com 8 números.');
@@ -1980,3 +1980,18 @@ document.addEventListener('click',function(e){var t=e.target;if(!t||!t.closest)r
  try{var a=t.closest('.citem img,.citem .ct,.rrow img,.rrow .rn,.rr img,.rr .rn');if(a&&!t.closest('button,input')){var row=a.closest('[data-c]');var i=row?idxDe(row.getAttribute('data-c')):-1;if(i>=0){var noCarr=!!a.closest('.citem,.cres,#cartDrawer,.cart');if(noCarr){try{fecharCarrinho();}catch(x){}}abrirProd(i);}return;}}catch(x){}
  try{if(t.id==='pmMain'){if(window.__pmL&&__pmL.length>1){pmNav(1);}else{t.classList.toggle('zm');}}}catch(x){}
 },false);})();
+
+/* 17/11/2026: no celular o total com frete só aparecia no fim do formulário (quase 3 telas abaixo). Resumo no topo do checkout,
+   atualizado sempre que os totais mudam. Só leitura: não altera nenhum cálculo. */
+(function(){try{
+  if(typeof ckTotais!=='function')return;
+  var _ckT0=ckTotais;
+  var sync=function(){try{var t=document.getElementById('ckTopTot'),v=document.getElementById('ckTot');if(!t||!v)return;
+    var tx=(v.textContent||'').trim();if(!tx){t.hidden=true;return;}
+    var comFrete=freteSelLoja>0||freteLabelLoja==='grátis';
+    t.innerHTML='Total do pedido: <b></b> <span></span>';t.querySelector('b').textContent=tx;
+    t.querySelector('span').textContent=comFrete?(freteSelLoja>0?'· já com frete':'· frete grátis'):'· frete calculado pelo CEP abaixo';
+    t.hidden=false;}catch(e){}};
+  ckTotais=function(){var r=_ckT0.apply(this,arguments);sync();return r;};
+  window.ckTotais=ckTotais;
+}catch(e){}})();
