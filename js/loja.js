@@ -31,13 +31,13 @@ document.addEventListener('DOMContentLoaded',function(){try{
 /* ==== ofertas e destaques Greiner ==== */
 /* sem try: as function declarations daqui precisam ficar globais, como no <script> antigo */
 window.OFERTAS=[
-  {c:'TR 017-1 RP',tag:'🏆 Preço exclusivo do site',txt:'R$ 4,00 por teste · COVID-19 antígeno · pronta entrega',de:146.62},
+  {c:'TR 017-1 RP',tag:'🏆 Preço exclusivo do site',txt:'R$ 3,48 por teste · COVID-19 antígeno · queima de estoque',de:100},
   {c:'TR 009-1 IST',tag:'🏆 Preço exclusivo do site',txt:'R$ 1,68 por teste · HBsAg (hepatite B) em tira · pronta entrega',de:89.7},
-  {c:'TR 009-1 DT',tag:'🏆 Preço exclusivo do site',txt:'R$ 4,99 por teste · Dengue IgG/IgM · pronta entrega',de:287.5},
-  {c:'TR 010 DT',tag:'🏆 Preço exclusivo do site',txt:'R$ 10,84 por teste · Dengue NS1 + IgG/IgM · pronta entrega',de:568.67},
+  {c:'TR 009-1 DT',tag:'🏆 Preço exclusivo do site',txt:'R$ 4,34 por teste · Dengue IgG/IgM · pronta entrega',de:249.5},
+  {c:'TR 010 DT',tag:'🏆 Preço exclusivo do site',txt:'R$ 9,43 por teste · Dengue Duo NS1 + IgG/IgM · pronta entrega',de:542.23},
   {c:'TR 008-1 IST',tag:'🏆 Preço exclusivo do site',txt:'R$ 2,35 por teste · Sífilis · pronta entrega'},
   {c:'TR 007 IST',tag:'🏆 Preço exclusivo do site',txt:'R$ 2,22 por teste · HIV 1/2 · pronta entrega'},
-  {c:'TR 008-1 DT',tag:'🏆 Preço exclusivo do site',txt:'R$ 4,99 por teste · Dengue NS1 · pronta entrega',de:273.12},
+  {c:'TR 008-1 DT',tag:'🏆 Preço exclusivo do site',txt:'R$ 4,34 por teste · Dengue NS1 · pronta entrega',de:249.5},
   {c:'TR 016-1 RP',tag:'🏆 Preço exclusivo do site',txt:'R$ 14,90 por teste · RSV (VSR) · pronta entrega',de:431.25}
 ];
 window.TR_TOP={'TR 017-1 RP':1,'TR 009 IST':1,'TR 009-1 IST':1,'TR 009-1 DT':1,'TR 010 DT':1,'TR 008-1 IST':1,'TR 007 IST':1,'TR 008-1 DT':1,'TR 016-1 RP':1};
