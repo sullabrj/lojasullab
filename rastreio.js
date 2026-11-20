@@ -26,7 +26,7 @@
   var CLARITY_ID='z0ww8oyptt'; /* opcional: colar aqui o ID do projeto do Microsoft Clarity (mapa de calor e gravação de tela) */
   var AW_ID='AW-11390766577';
   /* v2 22/10/2026: páginas sem a tag do GA4 no HTML (categorias, guias, blog, ofertas, indique, institucionais) carregam o gtag.js aqui */
-  if(typeof window.gtag!=='function'){try{window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};(function(){var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}var g=c==='sim'?'granted':'denied';window.gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:'granted',wait_for_update:500});window.gtag('set','ads_data_redaction',g==='denied');})();window.gtag('js',new Date());window.gtag('config','G-RK2PX868MS');}catch(e){}}
+  if(typeof window.gtag!=='function'){try{window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments);};(function(){var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}var g=c==='nao'?'denied':'granted';window.gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:'granted',wait_for_update:500});window.gtag('set','ads_data_redaction',g==='denied');})();window.gtag('js',new Date());window.gtag('config','G-RK2PX868MS');}catch(e){}}
   slDefer(function(){try{if(document.querySelector('script[src*="googletagmanager.com/gtag/js"]'))return;var gs=document.createElement('script');gs.async=1;gs.src='https://www.googletagmanager.com/gtag/js?id=G-RK2PX868MS';document.head.appendChild(gs);}catch(e){}});
   function G(){try{window.dataLayer=window.dataLayer||[];if(typeof window.gtag==='function')window.gtag.apply(null,arguments);}catch(e){}}
   /* 26/10/2026: os passos do checkout também viram eventos do Clarity, para filtrar as gravações de quem desistiu */
@@ -40,7 +40,7 @@
     slDefer(function(){var t=document.createElement('script');t.async=!0;t.src='https://connect.facebook.net/en_US/fbevents.js';
     var y=document.getElementsByTagName('script')[0];y.parentNode.insertBefore(t,y);});
     var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}
-    if(c!=='sim')window.fbq('consent','revoke');
+    if(c==='nao')window.fbq('consent','revoke');
     window.fbq('init',META_PIXEL);window.fbq('track','PageView');
   }catch(e){}})();
   function FB(){try{if(typeof window.fbq==='function')window.fbq.apply(null,arguments);}catch(e){}}
@@ -82,23 +82,27 @@
     var c='';try{c=localStorage.getItem('sl_consent')||'';}catch(e){}
     /* 02/11/2026: aceite OBRIGATÓRIO — tela cheia, só "Aceitar e continuar" (quem recusou antes também vê). Fora: página da política
        (para dar para ler) e robôs de busca/anúncio/PageSpeed, que não clicam. */
-    if(c==='sim')return;
+    if(c==='sim'||c==='nao')return;
+    /* 20/11/2026: o aviso em tela cheia travava a loja (Clarity: visitas de anuncio saiam sem aceitar e o Meta nao via a visita).
+       Agora e uma faixa no rodape que nao bloqueia nada; medicao e anuncios valem desde a chegada e "Recusar" desliga. */
+    G('consent','update',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted',analytics_storage:'granted'});G('set','ads_data_redaction',false);
+    try{if(sessionStorage.getItem('sl_ckv')){localStorage.setItem('sl_consent','sim');return;}}catch(e){}
     if(/privacidade/.test(location.pathname))return;
     if(/bot|crawl|spider|googlebot|adsbot|mediapartners|lighthouse|inspectiontool|storebot|bingbot|facebookexternalhit/i.test(navigator.userAgent||''))return;
     var mk=function(){if(document.getElementById('slCk'))return;
-      var st=document.createElement('style');st.textContent='#slCk{position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483000;background:rgba(15,30,50,.8);display:flex;align-items:center;justify-content:center;padding:16px;font:14px/1.45 -apple-system,Segoe UI,Roboto,Arial,sans-serif}#slCk .cd{background:#fff;color:#1a2433;border-radius:16px;max-width:440px;width:100%;padding:22px 20px;box-shadow:0 14px 44px rgba(0,0,0,.35)}#slCk h2{margin:0 0 8px;font-size:19px;color:#1f4e79}#slCk p{margin:0 0 16px;font-size:14.5px;line-height:1.5}#slCk a{color:#1f4e79;font-weight:700}#slCk button{width:100%;border:0;border-radius:12px;background:#2f9e63;color:#fff;font-weight:800;font-size:16px;min-height:48px;cursor:pointer}html.slCkLock,html.slCkLock body{overflow:hidden!important}';
+      var st=document.createElement('style');st.textContent='#slCk{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:#12263d;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px 10px;flex-wrap:wrap;padding:8px 12px;font:12.5px/1.35 -apple-system,Segoe UI,Roboto,Arial,sans-serif;box-shadow:0 -4px 16px rgba(0,0,0,.25)}#slCk p{margin:0;flex:1 1 220px;min-width:0}#slCk a{color:#9fd0ff;font-weight:700}#slCk .bt{display:flex;gap:6px;align-items:center}#slCk button{border:0;border-radius:10px;font-weight:800;font-size:13px;min-height:36px;padding:0 14px;cursor:pointer}#slCk .ok{background:#2f9e63;color:#fff}#slCk .no{background:transparent;color:#cfd9e6;text-decoration:underline;padding:0 6px;font-weight:600}body.slCkBar #slCk,body.temCart #slCk{bottom:auto;top:0}';
       document.head.appendChild(st);
       var d=document.createElement('div');d.id='slCk';d.setAttribute('role','dialog');d.setAttribute('aria-label','Aviso de cookies');
-      d.innerHTML='<div class="cd"><h2>Antes de continuar</h2><p>Usamos cookies para o funcionamento da loja, para medir o uso do site e para personalizar anúncios. Para acessar, é necessário aceitar. <a href="/privacidade.html">Política de Privacidade</a>.</p><button type="button" class="ok">Aceitar e continuar</button></div>';d.setAttribute('aria-modal','true');
+      d.innerHTML='<p>Usamos cookies para o funcionamento da loja, medir o uso do site e personalizar anúncios. Ao continuar navegando, você concorda. <a href="/privacidade.html">Política de Privacidade</a>.</p><div class="bt"><button type="button" class="no">Recusar</button><button type="button" class="ok">Entendi</button></div>';try{sessionStorage.setItem('sl_ckv','1');}catch(e){}
       if(document.getElementById('pmBar'))document.body.classList.add('slCkBar');
-      document.body.appendChild(d);document.documentElement.classList.add('slCkLock');
+      document.body.appendChild(d);
       var fim=function(v){try{localStorage.setItem('sl_consent',v);}catch(e){}
         var g=v==='sim'?'granted':'denied';G('consent','update',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:'granted'});
         try{if(window.clarity)window.clarity('consent',v==='sim');}catch(e){}
         FB('consent',v==='sim'?'grant':'revoke');
         ev('cookies_'+(v==='sim'?'aceitou':'recusou'),{});document.documentElement.classList.remove('slCkLock');d.remove();};
-      d.querySelector('.ok').onclick=function(){fim('sim');};
-      try{d.querySelector('.ok').focus();}catch(e){}
+      d.querySelector('.ok').onclick=function(){fim('sim');};d.querySelector('.no').onclick=function(){fim('nao');};
+      
     };
     /* 30/10/2026: aviso entra junto com a página (antes: 1,2 s depois). Aparecendo atrasado, ele virava o "maior elemento"
        da tela no celular e empurrava o LCP do PageSpeed para depois de 1,2 s */
