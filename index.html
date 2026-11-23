@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=bd37969d53",p:"/data/precos.json?v=b8a376dd8d",f:"/data/ficha.json?v=a023fa92e8",j:"/js/loja.js?v=2984afcc26"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
-<link rel="preload" href="/js/loja.js?v=2984afcc26" as="script">
+<script>(function(){var V=window.__LOJA_V={c:"/data/catalogo.json?v=bd37969d53",p:"/data/precos.json?v=b8a376dd8d",f:"/data/ficha.json?v=a023fa92e8",j:"/js/loja.js?v=adb26dd12a"};function g(u,o){return fetch(u,o).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});}function d(o){return Promise.all([g(V.c,o),g(V.p,o)]);}window.__dadosLoja=d().catch(function(){return d({cache:"reload"});});var Q=[],N=["abrirCarrinho","abrirConta","abrirContatoWA","abrirListaOrcamento","abrirRastreio","boletoFaturado","buscarTermo","carregarMeusPedidos","cartBuscar","cepAuto","cnpjAuto","confirmarContatoWA","definirSenhaSite","duvidaCheckout","fazerBusca","fbCadastro","fbLogin","fbLogout","fbReset","fecharCarrinho","fecharCheckout","fecharConta","fecharContatoWA","fecharProd","fecharRastreio","fgConsulta","irProdutos","irSecao","lookupRastreio","pagarMP","render","setAccDoc","setAccTab","setDept","setDoc","setPg","toggleCNPJ","verTodosGreiner","waArquivoWhats","waCepAuto","waDocAuto","waSetDoc"];N.forEach(function(n){if(typeof window[n]!=="function")window[n]=function(){Q.push([n,arguments]);};});window.addEventListener("sullab:loja",function(){var q=Q;Q=[];q.forEach(function(c){try{window[c[0]].apply(window,c[1]);}catch(e){}});});})();</script>
+<link rel="preload" href="/js/loja.js?v=adb26dd12a" as="script">
 <title>SULLAB · Materiais para laboratório e diagnóstico — atacado com NF-e</title>
 <meta name="description" content="Distribuidora de produtos para laboratório: tubos a vácuo, testes rápidos, reagentes, meios de cultura e descartáveis. Compra no site, NF-e e entrega no Brasil.">
 
@@ -782,7 +782,12 @@
 @media(min-width:701px){.prova{display:none!important}.bannerHome{margin:12px 0 8px}}
 @media(max-width:700px){.bannerHome{display:none!important}.prova{grid-template-columns:96px 1fr;gap:10px;padding:10px;align-items:start}.prova picture{aspect-ratio:1/1;border-radius:10px}.prova h1{font-size:16px;margin:0 0 4px}.prova ul{font-size:12.5px;gap:3px}.prova li small{display:none}
  .cepTop{padding:10px 12px!important;margin:10px 0 8px!important}.cepTop .fgt span{display:none}.cepTop .fgt b{font-size:14px}}
-.ctile small{display:none}</style></head>
+.ctile small{display:none}</style><style id="modo-orc">/* 23/11/2026 modo orçamento: sem cotação de frete nem checkout na tela */
+#fgx,.gbox,#gbox,#progMin,.ckduv{display:none!important}
+#df a.wbtn[data-orc]{display:block;background:#25D366;color:#fff;font-size:16px;font-weight:800;padding:14px;border:0;border-radius:10px;text-align:center;cursor:pointer;margin-top:12px}
+#df .orcnota{font-size:12px;color:#5f6b7c;text-align:center;margin:6px 0 10px}
+</style>
+</head>
 <body>
 
 
@@ -1055,7 +1060,7 @@
  <div class="ckb">
   <button class="ckx" onclick="fecharContatoWA()">&times;</button>
   <h3 id="waqTit">Monte seu pedido</h3>
-  <div class="sub" id="waqSub">Cole sua lista: o site encontra os produtos, monta o carrinho e calcula o frete. <b>Você paga no Pix (5% de desconto; 3% em tubos e agulhas Vacuette) ou cartão (até 2x sem juros)</b> e recebe NF-e.</div>
+  <div class="sub" id="waqSub">Preencha seus dados e enviamos pelo <b>WhatsApp</b> o orçamento com <b>preço final, frete e prazo</b>. Todo pedido sai com NF-e.</div>
   <div class="ckerr" id="waqErr"></div>
   <div id="waqCart" style="display:none;background:var(--navy-soft);border-radius:10px;padding:9px 11px;font-size:12.5px;color:var(--navy);margin-bottom:12px"></div>
   <div class="doctab" id="waDocTab" style="margin-bottom:12px">
@@ -1068,28 +1073,28 @@
   </div>
   <div class="frow c2">
    <div class="fld"><label>WhatsApp *</label><input id="waTel" inputmode="tel" autocomplete="tel" placeholder="(24) 90000-0000"></div>
-   <div class="fld"><label>E-mail * <span style="font-weight:400;color:var(--muted)">(para acompanhar o pedido)</span></label><input id="waEmail" type="email" autocomplete="email" placeholder="voce@empresa.com.br"></div>
+   <div class="fld"><label>E-mail <span style="font-weight:400;color:var(--muted)">(opcional)</span></label><input id="waEmail" type="email" autocomplete="email" placeholder="voce@empresa.com.br"></div>
   </div>
   <div class="frow c3">
    <div class="fld"><label>CEP *</label><input id="waCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" oninput="waCepAuto()"></div>
-   <div class="fld" style="grid-column:span 2"><label>Endereço (rua) *</label><input id="waLog" autocomplete="address-line1" placeholder="Rua / Avenida"></div>
+   <div class="fld" style="grid-column:span 2"><label>Endereço (rua) <span style="font-weight:400;color:var(--muted)">(opcional)</span></label><input id="waLog" autocomplete="address-line1" placeholder="Rua / Avenida"></div>
   </div>
   <div class="frow c3">
-   <div class="fld"><label>Número *</label><input id="waNum" autocomplete="off" placeholder="Nº" maxlength="10"></div>
+   <div class="fld"><label>Número</label><input id="waNum" autocomplete="off" placeholder="Nº" maxlength="10"></div>
    <div class="fld" style="grid-column:span 2"><label>Complemento</label><input id="waCompl" autocomplete="address-line2" placeholder="Sala, bloco, andar (opcional)"></div>
   </div>
   <div class="frow c3">
-   <div class="fld"><label>Bairro *</label><input id="waBairro" placeholder="Bairro"></div>
-   <div class="fld"><label>Cidade *</label><input id="waCidade" autocomplete="address-level2" placeholder="Cidade"></div>
-   <div class="fld"><label>UF *</label><input id="waUf" maxlength="2" autocomplete="address-level1" placeholder="RJ" style="text-transform:uppercase"></div>
+   <div class="fld"><label>Bairro</label><input id="waBairro" placeholder="Bairro"></div>
+   <div class="fld"><label>Cidade</label><input id="waCidade" autocomplete="address-level2" placeholder="Cidade"></div>
+   <div class="fld"><label>UF</label><input id="waUf" maxlength="2" autocomplete="address-level1" placeholder="RJ" style="text-transform:uppercase"></div>
   </div>
   <div class="fld"><label id="waListaLb">Itens do orçamento</label><textarea id="waLista" rows="4" placeholder="Um item por linha. Ex.:
 10 tubo EDTA 4 mL
 5 teste dengue NS1
 2 lanceta 28G"></textarea></div>
-  <button class="ckpay" id="waqBtn" onclick="confirmarContatoWA()">Montar meu carrinho &rarr;</button>
-  <button class="ckwa" style="color:var(--navy-l)" onclick="waArquivoWhats()">📎 Minha lista é foto, PDF, Excel ou áudio: mandar no WhatsApp e receber o carrinho pronto</button>
-  <div class="cksafe">🔒 Usamos seus dados só para o pedido, a NF-e e a entrega.</div>
+  <button class="ckpay" id="waqBtn" onclick="confirmarContatoWA()">💬 Enviar pedido de orçamento no WhatsApp &rarr;</button>
+  <button class="ckwa" style="color:var(--navy-l)" onclick="waArquivoWhats()">📎 Minha lista é foto, PDF, Excel ou áudio: mandar direto no WhatsApp</button>
+  <div class="cksafe">🔒 Usamos seus dados só para o orçamento, a NF-e e a entrega. Sem pagamento no site.</div>
 </div>
 </div>
 
