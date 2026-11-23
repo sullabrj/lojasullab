@@ -1073,7 +1073,7 @@ function propostaAparelho(i){var p=CATALOG[i];if(!p)return;abrirContatoWA('propo
 function abrirProd(i){
   var p=CATALOG[i];
   var catNome=(DEPTS.find(function(d){return d.key===deptOf(p.k);})||{}).nome||'';
-  var _prm=(window.PRECOS||{})[p.c];var precoHtml=(_prm&&_prm[1])?(((window.PIX3&&window.PIX3[p.c])?'<div style="display:inline-block;background:#1F4E79;color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;margin-top:8px">🏆 Preço exclusivo do site</div>':'')+'<div style="margin-top:10px;line-height:1.45"><div style="font-size:26px;font-weight:800;color:#2f9e63">'+brl(_prm[1])+'</div>'+unitLn(p.c,_prm[1])+'<div style="font-size:13px;color:#3a4a63;font-weight:700">'+brl(Math.round(_prm[1]*(100-pixPct(p.c)*100))/100)+' no Pix</div><div class="pixl big">💚 Pague no Pix e ganhe <b>'+Math.round(pixPct(p.c)*100)+'% de desconto</b></div><div style="font-size:12px;color:#5f6b7c;margin-top:6px">Preço único · NF-e em todo pedido · frete calculado pelo CEP</div></div>'):('<div class="b2bsob" style="font-size:14px;margin-top:8px">Preço sob consulta — solicite o orçamento'+(['microsc','centrif'].indexOf(p.k)>-1?' (NF-e)':' (NF-e · atacado)')+'</div>');
+  var _prm=(window.PRECOS||{})[p.c];var precoHtml=(_prm&&_prm[1])?(((window.PIX3&&window.PIX3[p.c])?'<div style="display:inline-block;background:#1F4E79;color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;margin-top:8px">🏆 Preço exclusivo do site</div>':'')+'<div style="margin-top:10px;line-height:1.45"><div style="font-size:26px;font-weight:800;color:#2f9e63">'+brl(_prm[1])+'</div>'+unitLn(p.c,_prm[1])+'<div style="font-size:13px;color:#3a4a63;font-weight:700">'+brl(Math.round(_prm[1]*(100-pixPct(p.c)*100))/100)+' no Pix</div><div class="pixl big">💚 Pague no Pix e ganhe <b>'+Math.round(pixPct(p.c)*100)+'% de desconto</b></div><div style="font-size:12px;color:#5f6b7c;margin-top:6px">Preço de tabela · NF-e em todo pedido · frete e prazo no orçamento pelo WhatsApp</div></div>'):('<div class="b2bsob" style="font-size:14px;margin-top:8px">Preço sob consulta — solicite o orçamento'+(['microsc','centrif'].indexOf(p.k)>-1?' (NF-e)':' (NF-e · atacado)')+'</div>');
   var _apar=isAparelho(p);
   if(_apar){precoHtml='<div style="margin-top:10px;font-size:14.5px;line-height:1.45;color:#24455e;font-weight:600">'+APARELHO_TXT+'</div>';}
   var acao=_apar?'<div style="margin-top:16px"><button class="btn navy" style="width:100%" onclick="propostaAparelho('+i+')">📄 Solicitar proposta</button></div>':'<div style="display:flex;gap:10px;align-items:center;margin-top:16px"><div class="stepper"><button onclick="step('+i+',-1,this)">−</button><input class="sq" type="text" inputmode="numeric" value="1" aria-label="Quantidade" onfocus="this.select()" oninput="sqIn(this)" onkeydown="if(event.key===\'Enter\')this.blur()"><button onclick="step('+i+',1,this)">+</button></div><button class="btn navy" style="flex:1" onclick="addCart('+i+',this)">🛒 Adicionar</button></div>';
@@ -1995,3 +1995,102 @@ document.addEventListener('click',function(e){var t=e.target;if(!t||!t.closest)r
   ckTotais=function(){var r=_ckT0.apply(this,arguments);sync();return r;};
   window.ckTotais=ckTotais;
 }catch(e){}})();
+
+/* =====================================================================
+   23/11/2026 — MODO ORÇAMENTO PELO WHATSAPP
+   O site deixa de vender com pagamento online e frete automático.
+   O cliente monta o carrinho → informa CNPJ/CPF, nome, WhatsApp e CEP →
+   os dados ficam salvos na planilha (pedido_wa) → abre o WhatsApp com a
+   lista pronta. Preço final, frete e pagamento são combinados pela equipe.
+   Para desfazer: apagar este bloco (e o CSS "modo-orc" no index.html).
+   ===================================================================== */
+(function(){
+  window.MODO_ORCAMENTO = true;
+
+  /* sem pedido mínimo, sem frete grátis/cotação no carrinho */
+  faltaTubo = function(){ return 0; };
+  gboxRender = function(){ var b = document.getElementById('gbox'); if (b) b.innerHTML = ''; };
+  _gratisAtual = function(){ return null; };
+  progHtml = function(){ return ''; };
+  minimoBloqueado = function(){ enviarOrcamento(); };
+
+  /* todo "Finalizar compra / Pagar" vira pedido de orçamento */
+  abrirCheckout = function(){ try { fecharCarrinho(); } catch (e) {} abrirContatoWA(); };
+  window.abrirCheckout = abrirCheckout;
+  btnFinalizarHtml = function(){ return ''; };
+  window.duvidaCheckout = function(){ abrirContatoWA('duvida'); };
+
+  /* formulário: obrigatórios só CNPJ/CPF, nome, WhatsApp e CEP */
+  _waLer = function(arquivo){
+    var nome = val('waNome'), tel = val('waTel'), cep = val('waCep'), doc = val('waDoc'), email = val('waEmail'), lista = val('waLista');
+    var log = val('waLog'), num = val('waNum'), compl = val('waCompl'), bairro = val('waBairro'), cidade = val('waCidade'), uf = val('waUf').toUpperCase();
+    var nd = soDig(doc).length;
+    if (WA_DOCT === 'cnpj' && !/^[0-9A-Z]{12}[0-9]{2}$/.test(docLimpo(doc))) return waqErro('Informe o CNPJ com 14 caracteres — ou troque para CPF.'), null;
+    if (WA_DOCT === 'cpf' && nd !== 11) return waqErro('Informe o CPF com 11 números (ou troque para CNPJ).'), null;
+    if (!nome) return waqErro(WA_DOCT === 'cnpj' ? 'Informe o nome da empresa.' : 'Informe seu nome completo.'), null;
+    if (soDig(tel).length < 10) return waqErro('Informe um WhatsApp com DDD — ex.: (24) 90000-0000.'), null;
+    if (soDig(cep).length !== 8) return waqErro('Informe o CEP de entrega (8 números) — usamos para calcular o frete do orçamento.'), null;
+    if (email && !/.+@.+\..+/.test(email)) return waqErro('O e-mail parece incompleto — corrija ou deixe em branco.'), null;
+    if (!arquivo && !CART.length && lista.length < 3) return waqErro('Digite pelo menos um item — ou toque em "mandar foto, PDF, Excel ou áudio" logo abaixo.'), null;
+    var f = fichaSalva(); f.nome = nome; f.tel = tel; f.cep = cep; f.doc = doc; f.doct = WA_DOCT; f.email = email;
+    f.log = log; f.num = num; f.compl = compl; f.bairro = bairro; f.cidade = cidade; f.uf = uf;
+    try { localStorage.setItem('sullab_ficha', JSON.stringify(f)); } catch (e) {}
+    f.lista = lista; return f;
+  };
+
+  /* envio: grava o lead na planilha e abre o WhatsApp — sem cotar frete */
+  _enviarOrcamentoCom = function(f, arquivo){
+    var lista = ((f && f.lista) || '').trim();
+    if (!CART.length && !lista && !arquivo) return;
+    var _pid = 'SLB-' + Date.now(); window._pedAtual = _pid;
+    freteSelLoja = 0; freteLabelLoja = 'a calcular'; freteSelPrazo = 0; freteMeta = null;
+    dispararPedido('pedido_wa', 'whatsapp', f, _pid);
+    try { if (typeof gtag === 'function') gtag('event', 'generate_lead', { value: totalCart() || 0, currency: 'BRL', transaction_id: _pid }); } catch (e) {}
+    try { sessionStorage.setItem('abSent', '1'); } catch (e) {}
+    var msg = 'Olá! Quero um orçamento na SULLAB (pedido ' + _pid + ').\n\n' +
+      (arquivo ? 'Vou enviar minha lista (foto, PDF, Excel ou áudio) logo em seguida.\n' + (CART.length ? '\nJá escolhi no site:\n' + _itensTexto('') + '\n' : '')
+               : '— Itens —\n' + _itensTexto(lista) + '\n') +
+      '\nFrete: a calcular pela equipe SULLAB.\n\n' + _fichaCompleta(f) + '\n\nPodem me passar o orçamento com frete e prazo?';
+    fecharContatoWA();
+    abrirWhats(msg);
+  };
+  _fichaCompleta = function(f){
+    var l = ['— Dados do cliente —', 'Nome/Empresa: ' + (f.nome || ''), (f.doct === 'cpf' ? 'CPF: ' : 'CNPJ: ') + (f.doc || ''), 'WhatsApp: ' + (f.tel || '')];
+    if (f.email) l.push('E-mail: ' + f.email);
+    l.push('— Entrega —');
+    var rua = [f.log, f.num].filter(Boolean).join(', ') + (f.compl ? (' — ' + f.compl) : '');
+    if (rua) l.push(rua);
+    l.push([f.bairro, [f.cidade, f.uf].filter(Boolean).join('/')].filter(Boolean).join(' · ') + (f.cep ? ((f.bairro || f.cidade) ? ' · ' : '') + 'CEP ' + f.cep : ''));
+    return l.join('\n');
+  };
+  window.confirmarContatoWA = function(){ var f = _waLer(false); if (!f) return; _enviarOrcamentoCom(f, false); };
+  confirmarContatoWA = window.confirmarContatoWA;
+
+  /* textos dos botões que antes levavam ao pagamento */
+  function ajustarTextos(){
+    try {
+      document.querySelectorAll('[onclick*="abrirCheckout"],[onclick*="minimoBloqueado"]').forEach(function(b){
+        var t = (b.textContent || '').trim();
+        if (/Finalizar|Faltam|Pagar|Comprar/i.test(t)) b.textContent = /mbar/.test((b.parentNode && b.parentNode.id) || '') ? 'Pedir orçamento' : 'Pedir orçamento no WhatsApp';
+        b.classList.remove('falta', 'dmin');
+      });
+      var df = document.getElementById('df');
+      if (df && CART.length) {
+        var w = df.querySelector('a.wbtn[onclick="enviarOrcamento()"]');
+        if (!w) {  /* um trecho antigo remove esse botão quando o carrinho tem preço: recoloca */
+          w = document.createElement('a'); w.className = 'wbtn'; w.setAttribute('role', 'button'); w.setAttribute('onclick', 'enviarOrcamento()');
+          var ref = df.querySelector('.pixbox') || [].slice.call(df.querySelectorAll('.row')).pop();
+          if (ref && ref.parentNode === df) ref.insertAdjacentElement('afterend', w); else df.appendChild(w);
+        }
+        w.dataset.orc = '1'; w.textContent = '💬 Pedir orçamento pelo WhatsApp'; w.removeAttribute('style');
+        if (!df.querySelector('.orcnota')) w.insertAdjacentHTML('afterend', '<div class="orcnota">Preço final, frete e prazo chegam pelo WhatsApp. Sem pagamento no site.</div>');
+      }
+    } catch (e) {}
+  }
+  var _ac2 = window.atualizarCart;
+  window.atualizarCart = function(){ var r = _ac2.apply(this, arguments); ajustarTextos(); return r; };
+  atualizarCart = window.atualizarCart;
+  if (typeof mbarRender === 'function') { var _mb = mbarRender; mbarRender = function(){ var r = _mb.apply(this, arguments); ajustarTextos(); return r; }; window.mbarRender = mbarRender; }
+  try { atualizarCart(); } catch (e) {}
+  try { mbarRender(); } catch (e) {}
+})();
