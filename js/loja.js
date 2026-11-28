@@ -377,7 +377,7 @@ function atualizarCart(){
   document.getElementById('df').innerHTML=
     '<div style="font-size:16px;font-weight:800;color:var(--navy);margin-bottom:10px">Resumo do pedido</div>'+
     '<div class="row"><span>'+CART.length+(CART.length===1?' produto':' produtos')+' · '+n+(n===1?' unidade':' unidades')+'</span></div>'+
-    (sub>0?'<div class="row"><span>Subtotal</span><b class="tot">'+brl(sub)+'</b></div><div class="pixbox">💚 <span>Pague no <b>Pix</b> e ganhe <b>'+(CART.every(function(x){return window.PIX3[x.c];})?'3% de desconto':(CART.some(function(x){return window.PIX3[x.c];})?'desconto (5%; tubos e agulhas Vacuette 3%)':'5% de desconto'))+'</b><small>Total no Pix: <b>'+brl(Math.round(CART.reduce(function(s2,x){return s2+(Math.round(precoItem(x)*(1-pixPct(x.c))*100)/100)*x.qty;},0)*100)/100)+'</b> · NF-e em todo pedido</small></span></div>':'')+
+    (sub>0?'<div class="row"><span>Subtotal</span><b class="tot">'+brl(sub)+'</b></div><div class="pixbox">💚 <span>Pague no <b>Pix</b> e ganhe <b>'+'3% de desconto'+'</b><small>Total no Pix: <b>'+brl(Math.round(CART.reduce(function(s2,x){return s2+(Math.round(precoItem(x)*(1-pixPct(x.c))*100)/100)*x.qty;},0)*100)/100)+'</b> · NF-e em todo pedido</small></span></div>':'')+
     (sub>0?'<div id="progMin" class="progMin">'+progHtml()+'</div>':'')+
     '<div class="gbox" id="gbox"></div>'+
     (semPreco?'<div class="note">Alguns itens são sob consulta: peça o orçamento pelo WhatsApp.</div>':'')+
@@ -500,7 +500,7 @@ function _ehMobile(){return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.us
 function enviarOrcamento(){
   abrirContatoWA();
 }
-function abrirListaOrcamento(){try{fecharCarrinho();}catch(e){} abrirContatoWA();}
+function abrirListaOrcamento(){try{fecharCarrinho();}catch(e){} abrirContatoWA();try{var l=document.getElementById('waLista'),tt=document.getElementById('waqTit'),lb=document.getElementById('waListaLb'),cb=document.getElementById('waqCart');if(tt)tt.textContent='Cole sua lista de compras';if(lb)lb.textContent='Sua lista * (um item por linha: quantidade e produto)';if(l&&cb&&cb.parentNode){var bx=l.parentNode;if(!window._waListaOrig)window._waListaOrig={bx:bx,p:bx.parentNode,n:bx.nextSibling};cb.parentNode.insertBefore(bx,cb.nextSibling);l.rows=7;setTimeout(function(){try{l.focus();}catch(e){}},80);}}catch(e){}}
 function _copiaFicha(f,extra){var o={},k;for(k in f)o[k]=f[k];for(k in (extra||{}))o[k]=extra[k];return o;}
 function _linhasCart(){return CART.map(function(x){return '• '+x.qty+'x '+x.n+' (cód '+x.c+')';});}
 function _fichaCompleta(f){
@@ -596,7 +596,7 @@ function _waLer(arquivo){
   try{localStorage.setItem('sullab_ficha',JSON.stringify(f));}catch(e){}
   f.lista=lista;return f;
 }
-function abrirContatoWA(motivo,textoLista){
+function _waListaVolta(){try{var o=window._waListaOrig;if(o&&o.bx&&o.p){o.p.insertBefore(o.bx,o.n&&o.n.parentNode===o.p?o.n:null);}}catch(e){}} function abrirContatoWA(motivo,textoLista){ _waListaVolta();
   var f=fichaSalva();
   var s=function(id,v){var e=document.getElementById(id);if(e)e.value=v||'';};
   s('waNome',f.nome);s('waTel',f.tel);s('waCep',f.cep);s('waDoc',f.doc);s('waEmail',f.email);
@@ -646,7 +646,7 @@ function minRefrig(){var c=_cepMin();if(!c)return PED_MIN_REFRIG;var n=+c.slice(
   if((n>=20000&&n<=28999)||(n>=36000&&n<=36999))return 150;
   if((n>=40000&&n<=69999)||(n>=76800&&n<=77999))return 400;
   return 250;}
-function pedMin(){var m=PED_MIN_GERAL;if(temTeste())m=Math.max(m,TESTE_MIN);if(temGreiner())m=Math.max(m,TUBO_MIN);if(window.cartRefrigerado&&window.cartRefrigerado())m=Math.max(m,minRefrig());return m;}
+function pedMin(){return 0; /* 28/11/2026: sem pedido mínimo */ var m=PED_MIN_GERAL;if(temTeste())m=Math.max(m,TESTE_MIN);if(temGreiner())m=Math.max(m,TUBO_MIN);if(window.cartRefrigerado&&window.cartRefrigerado())m=Math.max(m,minRefrig());return m;}
 function _msgRefrig(){var r=minRefrig(),c=_cepMin();return (c?'Pedido mínimo de '+brl(r)+' para pedidos com produto refrigerado entregues no seu CEP':'Pedido mínimo a partir de R$ 150,00 para pedidos com produto refrigerado (varia com o CEP)')+' — R$ 150 no RJ e na Zona da Mata mineira, R$ 250 nas demais regiões do Sudeste, Sul e Centro-Oeste, R$ 400 no Norte e Nordeste. Vale o total do pedido, não o item.';}
 function msgMin(){if(window.cartRefrigerado&&window.cartRefrigerado()&&minRefrig()>(temGreiner()?TUBO_MIN:(temTeste()?TESTE_MIN:PED_MIN_GERAL)))return _msgRefrig();return temGreiner()?'Pedido mínimo de R$ 250,00 somando tubos e agulhas Vacuette (pode misturar com testes rápidos e outros itens no mesmo pedido).':(temTeste()?'Pedido mínimo de R$ 150,00 somando testes rápidos — vale o total do pedido.':((window.cartRefrigerado&&window.cartRefrigerado())?'Pedido mínimo de R$ 150,00 para pedidos com produto refrigerado — vale o total do pedido, não o item.':'Pedido mínimo no site: R$ 100,00 no total do pedido.'));}
 function faltaTubo(){return Math.max(0,Math.round((pedMin()-totalCart())*100)/100);}
@@ -728,7 +728,7 @@ function docParaMP(s){return docAlfa(s)?'':String(s||'');}
 function docInput(el){try{if(DOCT==='cnpj'&&/[a-z]/.test(el.value)){var p=el.selectionStart;el.value=el.value.toUpperCase();try{el.setSelectionRange(p,p);}catch(e){}}}catch(e){}if(DOCT==='cnpj')cnpjAuto();}
 function setPg(p){if(p==='boleto'&&!boletoOk()){p='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;ckErro('Boleto disponível para pedidos a partir de R$ 400,00.');}PG=p;var _bi=document.getElementById('boletoInfo');if(_bi)_bi.style.display=(p==='boleto')?'block':'none';document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value===p);});ckTotais();}
 window.PIX3={"450071":1,"450072":1,"454036":1,"454087":1,"454921":1,"454235":1,"456211":1,"454071":1,"454482":1,"456071":1,"455071":1,"454092":1,"455092":1,"456001":1,"454327":1,"454321":1,"454085":1,"454091":1,"454030":1,"456080":1,"450539":1};
-function pixPct(c){return (c&&window.PIX3[c])?0.03:0.05;}
+function pixPct(c){return 0.03;} /* 28/11/2026: Pix 3% em todo o site */
 /* 31/10/2026: pedido mínimo visível no card, no modal e na página do produto (R$ 250 tubos/agulhas Vacuette; R$ 150 testes rápidos e refrigerados) */
 function minItem(c){c=String(c);if(window.PIX3&&window.PIX3[c])return 250;if(window.TR_TOP&&window.TR_TOP[c])return 150;if(window.itemRefrigerado&&window.itemRefrigerado(c))return 150;return 0;}
 /* 31/10/2026 (dono): o selo por item confundia (parecia mínimo DAQUELE item). O mínimo é por categoria e vale o total do pedido: fica só no carrinho (msgMin) e na página do produto, com o texto completo. */
@@ -945,8 +945,8 @@ function setAccDoc(d){ACCDOC=d;document.getElementById('rgCnpj').classList.toggl
 function accErro(m){var e=document.getElementById('accErr');e.textContent=m;e.style.display='block';}
 function _primeiroNome(){return (window.__profile&&window.__profile.razao)?String(window.__profile.razao).split(' ')[0]:'minha conta';}
 function atualizarConta(){var u=window.__user;var inb=document.getElementById('accIn'),outb=document.getElementById('accOut');var _ds=document.getElementById('accSenha');if(_ds&&_ds.style.display!=='none'){if(inb)inb.style.display='none';if(outb)outb.style.display='none';}else if(inb&&outb){if(u){inb.style.display='';outb.style.display='none';document.getElementById('accNome').textContent='Olá, '+((window.__profile&&window.__profile.razao)||(u.email||'').split('@')[0])+'!';document.getElementById('accEmail').textContent=u.email||'';}else{inb.style.display='none';outb.style.display='';}}
-  var l=document.getElementById('accLbl');if(l)l.textContent=u?'conectado':'CNPJ';
-  var ut=document.getElementById('accUtil');if(ut)ut.textContent=u?('Olá, '+_primeiroNome()):'Entrar / Cadastrar CNPJ';}
+  var l=document.getElementById('accLbl');if(l)l.textContent=u?'conectado':'pedidos e NF-e';
+  var ut=document.getElementById('accUtil');if(ut)ut.textContent=u?('Olá, '+_primeiroNome()):'Minha conta';}
 function _acPost(body){return fetch(SHEET_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(function(r){return r.json();});}
 function _acH(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function fbLogin(){var id=val('liEmail'),pass=document.getElementById('liPass').value;if(!id||!pass)return accErro('Informe e-mail (ou CPF/CNPJ) e senha.');if(!AUTH){if(_fbTenta(fbLogin))return accErro('Conectando…');return accErro('Login disponível na loja publicada.');}
@@ -1096,7 +1096,7 @@ function abrirProd(i){
 function fecharProd(){document.getElementById('pmodal').classList.remove('on');}
 window.addEventListener('mousedown',function(e){window.__mdT=e.target;},true);
 window.addEventListener('load',function(){setTimeout(function(){ensureKw();},3000);setTimeout(function(){ensureFT();},3200);});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){fecharProd();fecharCarrinho();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){try{var _w=document.getElementById('waq'),_a=document.getElementById('acc'),_r=document.getElementById('rast');if(_w&&_w.classList.contains('on')){fecharContatoWA();return;}if(_a&&_a.classList.contains('on')){fecharConta();return;}if(_r&&_r.classList.contains('on')){fecharRastreio();return;}}catch(x){}fecharProd();fecharCarrinho();}});
 
 function carregarLive(){
   if(!/^https?:/.test(location.origin))return;

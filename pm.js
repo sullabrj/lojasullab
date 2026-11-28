@@ -15,7 +15,7 @@
   if(v>0&&m){var pb=document.querySelector('.preco');if(pb&&!pb.querySelector('.pmpix')){var px=document.createElement('span');px.className='pmpix';px.innerHTML='💚 '+brl(Math.round(v*(100-pct))/100)+' no Pix<span>'+pct+'% off</span>';pb.appendChild(px);}}
   var mob=window.matchMedia&&matchMedia('(max-width:700px)').matches;
   /* no celular o botão de compra fica logo abaixo do preço */
-  if(mob){var ref=document.querySelector('.tb')||document.querySelector('.preco');if(ref&&ref.parentNode===buy.parentNode)ref.parentNode.insertBefore(buy,ref.nextSibling);}
+  /* 28/11/2026: também no computador */ if(true){var ref=document.querySelector('.tb')||document.querySelector('.preco');if(ref&&ref.parentNode===buy.parentNode)ref.parentNode.insertBefore(buy,ref.nextSibling);}
   /* barra fixa embaixo: preço + quantidade + comprar */
   var bar=document.createElement('div');bar.id='pmBar';
   var q=1,lbl=(buy.textContent||'').replace(/^[^A-Za-zÀ-ú]+/,'').trim()||'Comprar';
