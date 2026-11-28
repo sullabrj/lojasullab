@@ -92,7 +92,7 @@ REGRAS = [
 SOBRE = ('SULLAB · 40 anos de mercado. Distribuidora com centro de distribuição e frota próprios, '
          'e assistência técnica própria em analisadores de bioquímica e hematologia para clientes com contrato.')
 # Trechos que o index.html precisa conter para as regras acima continuarem iguais ao site.
-CONFERE_SITE = ['3% de desconto', 'R$ 300', '40 anos']
+CONFERE_SITE = ['3% de desconto', '40 anos']
 
 
 # ---------------------------------------------------------------- leitura dos dados
