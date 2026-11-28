@@ -84,14 +84,13 @@ CONTATO = 'comercial@sullabrj.com.br · (24) 3323-6532 · lojasullabrj.com.br'
 REGRAS = [
     '<b>Preços exclusivos para compra no site</b> lojasullabrj.com.br.',
     '<b>Como pedir:</b> monte o carrinho no site e peça o orçamento pelo WhatsApp.',
-    '<b>Pix:</b> 3% de desconto.',
     '<b>Frete e prazo</b> confirmados no orçamento pelo WhatsApp.',
     '<b>NF-e</b> em todo pedido.',
 ]
 SOBRE = ('SULLAB · 40 anos de mercado. Distribuidora com centro de distribuição e frota próprios, '
          'e assistência técnica própria em analisadores de bioquímica e hematologia para clientes com contrato.')
 # Trechos que o index.html precisa conter para as regras acima continuarem iguais ao site.
-CONFERE_SITE = ['3% de desconto', '40 anos']
+CONFERE_SITE = ['40 anos']
 
 
 # ---------------------------------------------------------------- leitura dos dados
@@ -410,9 +409,9 @@ def secoes_destaque(d):
     trs_cod = list(d['tr_top']) or [p['c'] for p in d['catalogo'] if p['k'] == 'tr']
     trs = [por_cod[c] for c in trs_cod if c in por_cod]
     trs.sort(key=lambda p: p['n'])
-    return [('Tubos para coleta a vácuo Greiner Vacuette®', tubos, 'Pix 3% de desconto'),
-            ('Agulhas para coleta a vácuo Greiner Vacuette®', agulhas, 'Pix 3% de desconto'),
-            ('Testes rápidos', trs, 'Pix 3% de desconto')]
+    return [('Tubos para coleta a vácuo Greiner Vacuette®', tubos, 'NF-e em todo pedido'),
+            ('Agulhas para coleta a vácuo Greiner Vacuette®', agulhas, 'NF-e em todo pedido'),
+            ('Testes rápidos', trs, 'NF-e em todo pedido')]
 
 
 def secoes_meios(d):
@@ -423,10 +422,10 @@ def secoes_meios(d):
         return 'placa' if 'placa' in n else 'tubo' if 'tubo' in n else 'frasco' if 'frasco' in n else 'outro'
     g = {k: sorted([p for p in itens if grupo(p) == k], key=lambda p: p['n'].lower())
          for k in ('placa', 'tubo', 'frasco', 'outro')}
-    return [('Placas prontas (meios de cultura preparados) NewProv', g['placa'], 'Pix 3% de desconto'),
-            ('Meios de cultura em tubo NewProv', g['tubo'], 'Pix 3% de desconto'),
-            ('Meios de cultura em frasco NewProv', g['frasco'], 'Pix 3% de desconto'),
-            ('Outros itens de microbiologia NewProv', g['outro'], 'Pix 3% de desconto')]
+    return [('Placas prontas (meios de cultura preparados) NewProv', g['placa'], 'NF-e em todo pedido'),
+            ('Meios de cultura em tubo NewProv', g['tubo'], 'NF-e em todo pedido'),
+            ('Meios de cultura em frasco NewProv', g['frasco'], 'NF-e em todo pedido'),
+            ('Outros itens de microbiologia NewProv', g['outro'], 'NF-e em todo pedido')]
 
 
 # 31/10/2026 (Eduardo, lead Ângela Cristina): cada anúncio manda o PDF da linha anunciada.
@@ -482,7 +481,7 @@ class Doc(BaseDocTemplate):
         c.drawRightString(w - 16 * mm, y + 1.5 * mm, dir_)
         if self.rodape_regras:
             c.setFont('Sans', 8)
-            c.drawString(16 * mm, y - 2.5 * mm, 'Preços do site · Pix 3% · '
+            c.drawString(16 * mm, y - 2.5 * mm, 'Preços do site · '
                          'frete e prazo confirmados no orçamento pelo WhatsApp · NF-e em todo pedido')
         c.linkURL(SITE + '/?utm_source=pdf&utm_medium=rodape', (16 * mm, y, w - 16 * mm, y + 5 * mm), relative=0)
         c.restoreState()

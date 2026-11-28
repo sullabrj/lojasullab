@@ -351,11 +351,7 @@ function addCart(i,btn){
   if(btn){
     var t0=btn.dataset.t0o||btn.textContent;btn.dataset.t0o=t0;
     btn.textContent='✓ Adicionado';btn.style.background='var(--green)';
-    setTimeout(()=>{btn.textContent=t0;btn.style.background='';},1100);
-  }
-  abrirCarrinho();
-}
-function salvarCart(){localStorage.setItem('sullab_cart',JSON.stringify(CART));}
+    setTimeout(()=>{btn.textContent=t0;btn.style.background='';},1100);   }   /* 28/11/2026 (Eduardo): não abre o carrinho a cada item; a barra de baixo leva ao carrinho */ try{mbarRender();var _mb=document.getElementById('mbar');if(_mb){_mb.classList.remove('pulse');void _mb.offsetWidth;_mb.classList.add('pulse');}}catch(e){} } function salvarCart(){localStorage.setItem('sullab_cart',JSON.stringify(CART));}
 function rmCart(c){CART=CART.filter(x=>x.c!==c);salvarCart();atualizarCart();}
 function qtyCart(c,d){var it=CART.find(x=>x.c===c);if(!it)return;it.qty=Math.max(1,Math.min(99999,it.qty+d));salvarCart();atualizarCart();}
 function setQtyCart(c,v){var it=CART.find(x=>x.c===c);if(!it)return;var n=parseInt(String(v).replace(/\D/g,''),10);if(!n||n<1)n=1;it.qty=Math.min(99999,n);salvarCart();atualizarCart();}
@@ -728,7 +724,7 @@ function docParaMP(s){return docAlfa(s)?'':String(s||'');}
 function docInput(el){try{if(DOCT==='cnpj'&&/[a-z]/.test(el.value)){var p=el.selectionStart;el.value=el.value.toUpperCase();try{el.setSelectionRange(p,p);}catch(e){}}}catch(e){}if(DOCT==='cnpj')cnpjAuto();}
 function setPg(p){if(p==='boleto'&&!boletoOk()){p='pix';var _r=document.querySelector('#pays input[value=pix]');if(_r)_r.checked=true;ckErro('Boleto disponível para pedidos a partir de R$ 400,00.');}PG=p;var _bi=document.getElementById('boletoInfo');if(_bi)_bi.style.display=(p==='boleto')?'block':'none';document.querySelectorAll('#pays .pay1').forEach(function(l){l.classList.toggle('on',l.querySelector('input').value===p);});ckTotais();}
 window.PIX3={"450071":1,"450072":1,"454036":1,"454087":1,"454921":1,"454235":1,"456211":1,"454071":1,"454482":1,"456071":1,"455071":1,"454092":1,"455092":1,"456001":1,"454327":1,"454321":1,"454085":1,"454091":1,"454030":1,"456080":1,"450539":1};
-function pixPct(c){return 0.03;} /* 28/11/2026: Pix 3% em todo o site */
+function pixPct(c){return 0;} /* 28/11/2026: sem desconto no Pix */
 /* 31/10/2026: pedido mínimo visível no card, no modal e na página do produto (R$ 250 tubos/agulhas Vacuette; R$ 150 testes rápidos e refrigerados) */
 function minItem(c){c=String(c);if(window.PIX3&&window.PIX3[c])return 250;if(window.TR_TOP&&window.TR_TOP[c])return 150;if(window.itemRefrigerado&&window.itemRefrigerado(c))return 150;return 0;}
 /* 31/10/2026 (dono): o selo por item confundia (parecia mínimo DAQUELE item). O mínimo é por categoria e vale o total do pedido: fica só no carrinho (msgMin) e na página do produto, com o texto completo. */
@@ -1073,7 +1069,7 @@ function propostaAparelho(i){var p=CATALOG[i];if(!p)return;abrirContatoWA('propo
 function abrirProd(i){
   var p=CATALOG[i];
   var catNome=(DEPTS.find(function(d){return d.key===deptOf(p.k);})||{}).nome||'';
-  var _prm=(window.PRECOS||{})[p.c];var precoHtml=(_prm&&_prm[1])?(((window.PIX3&&window.PIX3[p.c])?'<div style="display:inline-block;background:#1F4E79;color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;margin-top:8px">🏆 Preço exclusivo do site</div>':'')+'<div style="margin-top:10px;line-height:1.45"><div style="font-size:26px;font-weight:800;color:#2f9e63">'+brl(_prm[1])+'</div>'+unitLn(p.c,_prm[1])+'<div style="font-size:13px;color:#3a4a63;font-weight:700">'+brl(Math.round(_prm[1]*(100-pixPct(p.c)*100))/100)+' no Pix</div><div class="pixl big">💚 Pague no Pix e ganhe <b>'+Math.round(pixPct(p.c)*100)+'% de desconto</b></div><div style="font-size:12px;color:#5f6b7c;margin-top:6px">Preço de tabela · NF-e em todo pedido · frete e prazo no orçamento pelo WhatsApp</div></div>'):('<div class="b2bsob" style="font-size:14px;margin-top:8px">Preço sob consulta — solicite o orçamento'+(['microsc','centrif'].indexOf(p.k)>-1?' (NF-e)':' (NF-e · atacado)')+'</div>');
+  var _prm=(window.PRECOS||{})[p.c];var precoHtml=(_prm&&_prm[1])?(((window.PIX3&&window.PIX3[p.c])?'<div style="display:inline-block;background:#1F4E79;color:#fff;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;margin-top:8px">🏆 Preço exclusivo do site</div>':'')+'<div style="margin-top:10px;line-height:1.45"><div style="font-size:26px;font-weight:800;color:#2f9e63">'+brl(_prm[1])+'</div>'+unitLn(p.c,_prm[1])+'<div class="pixl big">💚 Pague no Pix e ganhe <b>'+Math.round(pixPct(p.c)*100)+'% de desconto</b></div><div style="font-size:12px;color:#5f6b7c;margin-top:6px">Preço de tabela · NF-e em todo pedido · frete e prazo no orçamento pelo WhatsApp</div></div>'):('<div class="b2bsob" style="font-size:14px;margin-top:8px">Preço sob consulta — solicite o orçamento'+(['microsc','centrif'].indexOf(p.k)>-1?' (NF-e)':' (NF-e · atacado)')+'</div>');
   var _apar=isAparelho(p);
   if(_apar){precoHtml='<div style="margin-top:10px;font-size:14.5px;line-height:1.45;color:#24455e;font-weight:600">'+APARELHO_TXT+'</div>';}
   var acao=_apar?'<div style="margin-top:16px"><button class="btn navy" style="width:100%" onclick="propostaAparelho('+i+')">📄 Solicitar proposta</button></div>':'<div style="display:flex;gap:10px;align-items:center;margin-top:16px"><div class="stepper"><button onclick="step('+i+',-1,this)">−</button><input class="sq" type="text" inputmode="numeric" value="1" aria-label="Quantidade" onfocus="this.select()" oninput="sqIn(this)" onkeydown="if(event.key===\'Enter\')this.blur()"><button onclick="step('+i+',1,this)">+</button></div><button class="btn navy" style="flex:1" onclick="addCart('+i+',this)">🛒 Adicionar</button></div>';
@@ -1366,7 +1362,7 @@ function retorno(){try{
   if(!CART.length)return;var last=PREV_VISIT,now=Date.now();
   if(last&&now-last>1800000&&!sessionStorage.getItem('retShown')){
     var n=CART.reduce(function(s,x){return s+x.qty;},0);var b=document.createElement('div');b.id='retBar';b.className='on';
-    b.innerHTML='<span>Você deixou <b>'+n+(n===1?' item':' itens')+'</b> no carrinho. Finalize com <b>desconto no Pix</b>.</span><button class="go" onclick="abrirCarrinho();this.parentNode.remove()">Ver carrinho</button><button class="x" onclick="this.parentNode.remove()" aria-label="Fechar">×</button>';
+    b.innerHTML='<span>Você deixou <b>'+n+(n===1?' item':' itens')+'</b> no carrinho. Peça o orçamento pelo WhatsApp.</span><button class="go" onclick="abrirCarrinho();this.parentNode.remove()">Ver carrinho</button><button class="x" onclick="this.parentNode.remove()" aria-label="Fechar">×</button>';
     document.body.appendChild(b);sessionStorage.setItem('retShown','1');try{sullabEvent('carrinho_retorno',{});}catch(e){}}
  }catch(e){}}
 window.addEventListener('load',function(){setTimeout(retorno,1200);});
@@ -1839,7 +1835,7 @@ function mbarRender(){try{
   if(!b){b=document.createElement('div');b.id='mbar';b.className='mbar';document.body.appendChild(b);}
   if(!CART.length){document.body.classList.remove('temCart');b.innerHTML='';return;}
   var n=CART.reduce(function(s,x){return s+x.qty;},0),sub=totalCart(),semP=CART.some(function(x){return !precoItem(x);}),f=faltaTubo();
-  var btn=semP?'<button type="button" onclick="abrirCarrinho()">Ver carrinho</button>':(f>0?'<button type="button" class="falta" onclick="minimoBloqueado(\'barra_fixa\')">Faltam '+brl(f)+'</button>':'<button type="button" onclick="abrirCheckout()">Finalizar</button>');
+  var btn='<button type="button" onclick="abrirCarrinho()">Pedir orçamento →</button>';
   b.innerHTML='<button type="button" class="mbT" onclick="abrirCarrinho()" aria-label="Abrir carrinho"><small>🛒 '+n+(n===1?' item':' itens')+'</small><b>'+(sub>0?brl(sub):'Sob consulta')+'</b></button>'+btn;
   document.body.classList.add('temCart');
 }catch(e){}}

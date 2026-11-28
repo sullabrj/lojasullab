@@ -81,6 +81,6 @@ function gerar(){var n=document.getElementById('nm').value.trim(),t=document.get
  try{fetch(EP,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'indicador_cadastro',nome:n,tel:t,email:e,pix:px,codigo:code,link:LINK,t:SULLAB_EVT_TOKEN})});}catch(x){}
  document.getElementById('lk').textContent=LINK;document.getElementById('res').style.display='block';}
 function copiar(){try{navigator.clipboard.writeText(LINK);}catch(x){prompt('Copie o link:',LINK);}}
-function zap(){window.open('https://wa.me/?text='+encodeURIComponent('Compre material de laboratório com NF-e e Pix com 3% de desconto na SULLAB: '+LINK),'_blank');}
+function zap(){window.open('https://wa.me/?text='+encodeURIComponent('Compre material de laboratório com NF-e na SULLAB: '+LINK),'_blank');}
 </script>
 </body></html>
