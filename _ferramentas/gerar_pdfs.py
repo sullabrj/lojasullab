@@ -85,7 +85,6 @@ REGRAS = [
     '<b>Preços exclusivos para compra no site</b> lojasullabrj.com.br.',
     '<b>Como pedir:</b> monte o carrinho no site e peça o orçamento pelo WhatsApp.',
     '<b>Pix:</b> 3% de desconto.',
-    '<b>Pedido mínimo:</b> R$ 300 no total do pedido, pode misturar produtos.',
     '<b>Frete e prazo</b> confirmados no orçamento pelo WhatsApp.',
     '<b>NF-e</b> em todo pedido.',
 ]
@@ -483,7 +482,7 @@ class Doc(BaseDocTemplate):
         c.drawRightString(w - 16 * mm, y + 1.5 * mm, dir_)
         if self.rodape_regras:
             c.setFont('Sans', 8)
-            c.drawString(16 * mm, y - 2.5 * mm, 'Preços do site · Pix 3% · pedido mínimo R$ 300 · '
+            c.drawString(16 * mm, y - 2.5 * mm, 'Preços do site · Pix 3% · '
                          'frete e prazo confirmados no orçamento pelo WhatsApp · NF-e em todo pedido')
         c.linkURL(SITE + '/?utm_source=pdf&utm_medium=rodape', (16 * mm, y, w - 16 * mm, y + 5 * mm), relative=0)
         c.restoreState()
