@@ -83,19 +83,16 @@ S_PEQ = estilo('peq', fontSize=9.5, leading=12.5, textColor=CINZA)
 CONTATO = 'comercial@sullabrj.com.br · (24) 3323-6532 · lojasullabrj.com.br'
 REGRAS = [
     '<b>Preços exclusivos para compra no site</b> lojasullabrj.com.br.',
-    '<b>Pix:</b> 5% de desconto (3% em tubos e agulhas Vacuette).',
-    '<b>Cartão de crédito:</b> até 2x sem juros.',
-    '<b>Boleto faturado em 28 ou 45 dias</b> para CNPJ, em pedidos a partir de R$ 400 (mediante análise de crédito).',
-    '<b>Pedido mínimo:</b> R$ 100 (geral) · R$ 150 com item refrigerado · '
-    'R$ 150 com testes rápidos · R$ 250 com tubos/agulhas Vacuette · R$ 400 no boleto.',
-    '<b>Frete</b> calculado pelo CEP no carrinho do site.',
+    '<b>Como pedir:</b> monte o carrinho no site e peça o orçamento pelo WhatsApp.',
+    '<b>Pix:</b> 3% de desconto.',
+    '<b>Pedido mínimo:</b> R$ 300 no total do pedido, pode misturar produtos.',
+    '<b>Frete e prazo</b> confirmados no orçamento pelo WhatsApp.',
     '<b>NF-e</b> em todo pedido.',
 ]
 SOBRE = ('SULLAB · 40 anos de mercado. Distribuidora com centro de distribuição e frota próprios, '
          'e assistência técnica própria em analisadores de bioquímica e hematologia para clientes com contrato.')
 # Trechos que o index.html precisa conter para as regras acima continuarem iguais ao site.
-CONFERE_SITE = ['até 2x sem juros', '28 ou 45 dias', 'R$ 100,00', 'R$ 150,00', 'R$ 400,00',
-                '5% de desconto', '3% em tubos e agulhas Vacuette', '40 anos']
+CONFERE_SITE = ['3% de desconto', 'R$ 300', '40 anos']
 
 
 # ---------------------------------------------------------------- leitura dos dados
@@ -416,7 +413,7 @@ def secoes_destaque(d):
     trs.sort(key=lambda p: p['n'])
     return [('Tubos para coleta a vácuo Greiner Vacuette®', tubos, 'Pix 3% de desconto'),
             ('Agulhas para coleta a vácuo Greiner Vacuette®', agulhas, 'Pix 3% de desconto'),
-            ('Testes rápidos', trs, 'Pix 5% de desconto')]
+            ('Testes rápidos', trs, 'Pix 3% de desconto')]
 
 
 def secoes_meios(d):
@@ -427,10 +424,10 @@ def secoes_meios(d):
         return 'placa' if 'placa' in n else 'tubo' if 'tubo' in n else 'frasco' if 'frasco' in n else 'outro'
     g = {k: sorted([p for p in itens if grupo(p) == k], key=lambda p: p['n'].lower())
          for k in ('placa', 'tubo', 'frasco', 'outro')}
-    return [('Placas prontas (meios de cultura preparados) NewProv', g['placa'], 'Pix 5% de desconto'),
-            ('Meios de cultura em tubo NewProv', g['tubo'], 'Pix 5% de desconto'),
-            ('Meios de cultura em frasco NewProv', g['frasco'], 'Pix 5% de desconto'),
-            ('Outros itens de microbiologia NewProv', g['outro'], 'Pix 5% de desconto')]
+    return [('Placas prontas (meios de cultura preparados) NewProv', g['placa'], 'Pix 3% de desconto'),
+            ('Meios de cultura em tubo NewProv', g['tubo'], 'Pix 3% de desconto'),
+            ('Meios de cultura em frasco NewProv', g['frasco'], 'Pix 3% de desconto'),
+            ('Outros itens de microbiologia NewProv', g['outro'], 'Pix 3% de desconto')]
 
 
 # 31/10/2026 (Eduardo, lead Ângela Cristina): cada anúncio manda o PDF da linha anunciada.
@@ -486,8 +483,8 @@ class Doc(BaseDocTemplate):
         c.drawRightString(w - 16 * mm, y + 1.5 * mm, dir_)
         if self.rodape_regras:
             c.setFont('Sans', 8)
-            c.drawString(16 * mm, y - 2.5 * mm, 'Preços do site · Pix 5% (3% Vacuette) · cartão até 2x sem juros · '
-                         'boleto 28/45 dias p/ CNPJ a partir de R$ 400 · frete por CEP · NF-e em todo pedido')
+            c.drawString(16 * mm, y - 2.5 * mm, 'Preços do site · Pix 3% · pedido mínimo R$ 300 · '
+                         'frete e prazo confirmados no orçamento pelo WhatsApp · NF-e em todo pedido')
         c.linkURL(SITE + '/?utm_source=pdf&utm_medium=rodape', (16 * mm, y, w - 16 * mm, y + 5 * mm), relative=0)
         c.restoreState()
 

@@ -53,10 +53,9 @@ FOTOS = [('BEFA50', 'Béquer forma alta', 0), ('BEFB250', 'Béquer forma baixa',
 
 REGRAS_VIDRARIA = [
     '<b>Como pedir:</b> envie os itens e as quantidades pelo WhatsApp (24) 3323-6532 ou por comercial@sullabrj.com.br.',
-    '<b>Pagamento:</b> Pix, cartão de crédito até 2x sem juros ou boleto faturado em 28 ou 45 dias para CNPJ, '
-    'em pedidos a partir de R$ 400 (mediante análise de crédito).',
-    '<b>Pedido mínimo:</b> R$ 100.',
-    '<b>Frete</b> calculado pelo CEP de entrega.',
+    '<b>Pagamento:</b> Pix com 3% de desconto; demais formas combinadas no orçamento.',
+    '<b>Pedido mínimo:</b> R$ 300 no total do pedido.',
+    '<b>Frete e prazo</b> confirmados no orçamento pelo WhatsApp.',
     '<b>NF-e</b> em todo pedido.',
     '<b>Disponibilidade</b> confirmada no fechamento do pedido.',
 ]
