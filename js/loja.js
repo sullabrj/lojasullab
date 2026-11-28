@@ -52,7 +52,7 @@ function montarGreiner(){
     if(!L.length){sec.style.display='none';return;}
     g.innerHTML=L.slice(0,8).map(function(x){
       var pr=(window.PRECOS||{})[x.p.c],v=pr&&pr[1]?pr[1]:0;if(!v)return '';var de=GREINER_DE[x.p.c];
-      return '<div class="ofc" onclick="abrirProd('+x.i+')"><span class="oft">🏆 Preço exclusivo do site</span><div class="ofi"><img '+imgMini(x.p,'120px')+' width="120" height="120" loading="lazy" decoding="async" alt=""'+x.p.n.replace(/"/g,'&quot;')+'"></div><div class="ofn">'+x.p.n+'</div><div class="ofp">'+(de&&de>v?'<s>'+brl(de)+'</s>':'')+brl(v)+'</div>'+(typeof unitLn==='function'?'<div class="ofu">'+unitLn(x.p.c,v)+'</div>':'')+'<button class="ofb" onclick="event.stopPropagation();addCart('+x.i+',this)">🛒 + Carrinho</button></div>';
+      return '<div class="ofc" onclick="abrirProd('+x.i+')"><span class="oft">🏆 Preço exclusivo do site</span><div class="ofi"><img '+imgMini(x.p,'120px')+' width="120" height="120" loading="lazy" decoding="async" alt=""'+x.p.n.replace(/"/g,'&quot;')+'"></div><div class="ofn">'+x.p.n+'</div><div class="ofp">'+(de&&de>v?'<s>'+brl(de)+'</s>':'')+brl(v)+'</div>'+(typeof unitLn==='function'?'<div class="ofu">'+unitLn(x.p.c,v)+'</div>':'')+'<div class="ofbuy" onclick="event.stopPropagation()"><div class="stepper"><button type="button" onclick="step('+x.i+',-1,this)" aria-label="Diminuir">−</button><input class="sq" type="text" inputmode="numeric" value="1" aria-label="Quantidade" onfocus="this.select()" oninput="sqIn(this)" onkeydown="if(event.key===\'Enter\')this.blur()"><button type="button" onclick="step('+x.i+',1,this)" aria-label="Aumentar">+</button></div><button type="button" class="add ofb" onclick="addCart('+x.i+',this)">Adicionar ao carrinho</button></div></div>';
     }).join('');
     sec.style.display='';
   }catch(e){}
@@ -65,7 +65,7 @@ function montarOfertas(){
     g.innerHTML=L.slice(0,8).map(function(x){
       var pr=(window.PRECOS||{})[x.p.c],v=pr&&pr[1]?pr[1]:0;
       var preco=v?'<div class="ofp">'+(x.o.de?'<s>'+brl(x.o.de)+'</s>':'')+brl(v)+'</div>'+(typeof unitLn==='function'?'<div class="ofu">'+unitLn(x.p.c,v)+'</div>':''):'<div class="ofp" style="font-size:14px;color:#1f3c73">Sob consulta</div>';
-      return '<div class="ofc" onclick="abrirProd('+x.i+')"><span class="oft">'+(x.o.tag||'Oferta')+'</span><div class="ofi"><img '+imgMini(x.p,'120px')+' width="120" height="120" loading="lazy" decoding="async" alt=""'+x.p.n.replace(/"/g,'&quot;')+'"></div><div class="ofn">'+x.p.n+'</div><div class="ofd">'+(x.o.txt||x.p.m)+'</div>'+preco+'<button class="ofb" onclick="event.stopPropagation();abrirProd('+x.i+')">Ver oferta</button></div>';
+      return '<div class="ofc" onclick="abrirProd('+x.i+')"><span class="oft">'+(x.o.tag||'Oferta')+'</span><div class="ofi"><img '+imgMini(x.p,'120px')+' width="120" height="120" loading="lazy" decoding="async" alt=""'+x.p.n.replace(/"/g,'&quot;')+'"></div><div class="ofn">'+x.p.n+'</div><div class="ofd">'+(x.o.txt||x.p.m)+'</div>'+preco+'<div class="ofbuy" onclick="event.stopPropagation()"><div class="stepper"><button type="button" onclick="step('+x.i+',-1,this)" aria-label="Diminuir">−</button><input class="sq" type="text" inputmode="numeric" value="1" aria-label="Quantidade" onfocus="this.select()" oninput="sqIn(this)" onkeydown="if(event.key===\'Enter\')this.blur()"><button type="button" onclick="step('+x.i+',1,this)" aria-label="Aumentar">+</button></div><button type="button" class="add ofb" onclick="addCart('+x.i+',this)">Adicionar ao carrinho</button></div></div>';
     }).join('');
     sec.style.display='';
   }catch(e){}
@@ -304,7 +304,7 @@ function render(){
     var selo=((window.PIX3&&window.PIX3[p.c])||(window.TR_TOP&&window.TR_TOP[p.c]))?'<span class="selo best">🏆 Preço exclusivo do site</span>':p.selo==='hot'?'<span class="selo hot">🔥 Mais procurado</span>':(p.selo==='top'?'<span class="selo">⭐ Mais vendido</span>':'');
     var precoBloco='';var _pr=(window.PRECOS||{})[p.c];if(_pr&&_pr[1]){precoBloco='<div style="margin:6px 0 2px;line-height:1.32"><div style="font-size:19px;font-weight:800;color:#2f9e63">'+brl(_pr[1])+'</div>'+unitLn(p.c,_pr[1])+'<div class="pixl">💚 <b>'+brl(Math.round(_pr[1]*(100-pixPct(p.c)*100))/100)+'</b> no Pix <span>'+Math.round(pixPct(p.c)*100)+'% off</span></div>'+seloMinHtml(p.c)+'</div>';}
     var _ap=isAparelho(p);if(_ap)precoBloco='<div style="margin:6px 0 2px;font-size:12.5px;font-weight:700;color:#24455e;line-height:1.3">Comodato ou aluguel<br><span style="font-weight:500;color:#5f6b7c">mediante contrato</span></div>';
-    var btns=_ap?'<button class="add" style="width:100%" onclick="event.stopPropagation();propostaAparelho('+i+')">Solicitar proposta</button>':'<div class="stepper"><button onclick="step('+i+',-1,this)">−</button><input class="sq" type="text" inputmode="numeric" value="1" aria-label="Quantidade" onfocus="this.select()" oninput="sqIn(this)" onkeydown="if(event.key===\'Enter\')this.blur()"><button onclick="step('+i+',1,this)">+</button></div><button class="add" onclick="addCart('+i+',this)">+ Carrinho</button>';
+    var btns=_ap?'<button class="add" style="width:100%" onclick="event.stopPropagation();propostaAparelho('+i+')">Solicitar proposta</button>':'<div class="stepper"><button onclick="step('+i+',-1,this)">−</button><input class="sq" type="text" inputmode="numeric" value="1" aria-label="Quantidade" onfocus="this.select()" oninput="sqIn(this)" onkeydown="if(event.key===\'Enter\')this.blur()"><button onclick="step('+i+',1,this)">+</button></div><button class="add" onclick="addCart('+i+',this)">Adicionar ao carrinho</button>';
     return '<div class="prod" data-c="'+String(p.c).replace(/"/g,'&quot;')+'" onclick="cardClick(event,'+i+')">'+selo+
       '<div class="ph"><img '+imgMini(p,'160px')+' loading="lazy" decoding="async" width="160" height="160" alt="'+p.n+'" onerror="this.removeAttribute(\'srcset\');this.src=\'/img/logo-sullab.png\';this.style.opacity=.35"></div>'+
       '<div class="pb"><span class="bc">'+p.m+' · cód. '+p.c+'</span>'+
@@ -333,12 +333,12 @@ function toggleCNPJ(){CNPJ=!CNPJ;document.getElementById('cnpjSwitch').classList
 
 function _sqLe(sp){return parseInt(sp.tagName==='INPUT'?sp.value:sp.textContent)||1;}
 function _sqPoe(sp,v){if(sp.tagName==='INPUT')sp.value=v;else sp.textContent=v;}
-function _sqBotao(st,v){try{var add=st.parentElement.querySelector('button.add');if(add){if(!add.dataset.t0)add.dataset.t0=add.textContent;add.textContent=v>1?('+ Carrinho ('+v+')'):add.dataset.t0;}}catch(e){}}
+function _sqBotao(st,v){try{var add=st.parentElement.querySelector('button.add');if(add){if(!add.dataset.t0)add.dataset.t0=add.textContent;add.textContent=v>1?('Adicionar ('+v+')'):add.dataset.t0;}}catch(e){}}
 function sqIn(el){var s=String(el.value||'').replace(/\D/g,'').slice(0,4);if(el.value!==s)el.value=s;_sqBotao(el.parentElement,parseInt(s)||1);}
 function step(i,d,btn){var sp=btn.parentElement.querySelector('input.sq,span');var v=Math.max(1,_sqLe(sp)+d);_sqPoe(sp,v);
   /* feedback do toque (01/11/2026): o + e o − mostram a mudança e o botão de compra passa a dizer a quantidade */
   try{sp.style.transition='transform .15s';sp.style.transform='scale(1.35)';setTimeout(function(){sp.style.transform='';},160);
-    var add=btn.parentElement.parentElement.querySelector('button.add');if(add){if(!add.dataset.t0)add.dataset.t0=add.textContent;add.textContent=v>1?('+ Carrinho ('+v+')'):add.dataset.t0;}
+    var add=btn.parentElement.parentElement.querySelector('button.add');if(add){if(!add.dataset.t0)add.dataset.t0=add.textContent;add.textContent=v>1?('Adicionar ('+v+')'):add.dataset.t0;}
     if(navigator.vibrate)navigator.vibrate(8);}catch(e){}}
 function addCart(i,btn){
   /* 02/11/2026: o botão das Ofertas (.ofb) não tem seletor de quantidade ao lado — antes isso gerava erro de JS e o item não entrava no carrinho. Sem seletor = 1 unidade. */
@@ -1253,7 +1253,7 @@ window.atualizarCart=function(){_ac.apply(this,arguments);try{var cr=document.ge
   var g=null;try{g=_gratisAtual();}catch(e){}
   var soG=false;try{soG=soGreiner();}catch(e){}
   if(g&&g.falta>0&&g.sugestoes&&g.sugestoes.length&&!soG){cr.innerHTML='';marcarVista('gratis',g.sugestoes.length);return;}
-  cr.innerHTML=relBlock(CART.map(function(x){return x.c;}),'Leve junto',3);if(cr.innerHTML)marcarVista('leve_junto',3);}catch(e){}};
+  cr.innerHTML='';/* 28/11/2026 (Eduardo): Leve junto saiu do carrinho — Clarity 30 dias: visto em 253 sessoes, 9 cliques */}catch(e){}};
 window.__sullabRel={rowHtml:rowHtml,priced:priced,relatedFor:relatedFor,minimoSugestoes:minimoSugestoes};
 var _ap=window.abrirProd;
 window.abrirProd=function(i){_ap.apply(this,arguments);try{var p=CATALOG[i],b=document.querySelector('#pmInner .pmb');if(b&&p)b.insertAdjacentHTML('beforeend',relBlock([p.c],'Quem leva este item costuma levar também',4));}catch(e){}};
